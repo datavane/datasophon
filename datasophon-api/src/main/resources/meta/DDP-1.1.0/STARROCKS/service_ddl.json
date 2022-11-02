@@ -1,0 +1,241 @@
+{
+  "name": "StarRocks",
+  "label": "StarRocks",
+  "description": "新一代极速全场景MPP数据库",
+  "version": "2.2.2",
+  "sortNum": 5,
+  "dependencies":[],
+  "packageName": "StarRocks-2.2.2.tar.gz",
+  "decompressPackageName": "StarRocks-2.2.2",
+  "roles": [
+    {
+      "name": "FE",
+      "label": "FE",
+      "roleType": "master",
+      "cardinality": "1+",
+      "logFile": "fe/log/fe.log",
+      "jmxPort": 8030,
+      "startRunner": {
+        "timeout": "60",
+        "program": "fe/bin/start_fe.sh",
+        "args": [
+          "--daemon"
+        ]
+      },
+      "stopRunner": {
+        "timeout": "600",
+        "program": "fe/bin/stop_fe.sh",
+        "args": [
+          "--daemon"
+        ]
+      },
+      "statusRunner": {
+        "timeout": "60",
+        "program": "fe/bin/status_fe.sh",
+        "args": [
+          "status",
+          "fe"
+        ]
+      },
+      "externalLink": {
+        "name": "FE UI",
+        "label": "FE UI",
+        "url": "http://${host}:8030"
+      }
+    },
+    {
+      "name": "BE",
+      "label": "BE",
+      "roleType": "worker",
+      "cardinality": "1+",
+      "logFile": "be/log/be.log",
+      "jmxPort": 8040,
+      "startRunner": {
+        "timeout": "60",
+        "program": "be/bin/start_be.sh",
+        "args": [
+          "--daemon"
+        ]
+      },
+      "stopRunner": {
+        "timeout": "600",
+        "program": "be/bin/stop_be.sh",
+        "args": [
+          "--daemon"
+        ]
+      },
+      "statusRunner": {
+        "timeout": "60",
+        "program": "be/bin/status_be.sh",
+        "args": [
+          "status",
+          "be"
+        ]
+      }
+    }
+  ],
+  "configWriter": {
+    "generators": [
+      {
+        "filename": "be.conf",
+        "configFormat": "properties",
+        "outputDirectory": "be/conf",
+        "includeParams": [
+          "sys_log_level",
+          "be_port",
+          "webserver_port",
+          "heartbeat_service_port",
+          "brpc_port",
+          "storage_root_path",
+          "default_rowset_type",
+          "custom.be.conf"
+        ]
+      },
+      {
+        "filename": "fe.conf",
+        "configFormat": "custom",
+        "outputDirectory": "fe/conf",
+        "templateName": "fe.ftl",
+        "includeParams": [
+          "meta_dir",
+          "cluster_id",
+          "custom.fe.conf"
+        ]
+      }
+    ]
+  },
+  "parameters": [
+    {
+      "name": "sys_log_level",
+      "label": "BE服务日志级别",
+      "description": "",
+      "required": true,
+      "type": "select",
+      "value": "",
+      "configurableInWizard": true,
+      "selectValue": [
+        "INFO",
+        "WARNING",
+        "ERROR",
+        "FATAL"
+      ],
+      "hidden": false,
+      "defaultValue": "INFO"
+    },
+    {
+      "name": "be_port",
+      "label": "BE admin端口",
+      "description": "BE admin端口",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "9060"
+    },
+    {
+      "name": "webserver_port",
+      "label": "BE WebServer端口",
+      "description": "BE WebServer端口",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "8040"
+    },
+    {
+      "name": "heartbeat_service_port",
+      "label": "BE心跳服务端口",
+      "description": "BE心跳服务端口",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "9050"
+    },
+    {
+      "name": "brpc_port",
+      "label": "BE Rpc端口",
+      "description": "BE Rpc端口",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "8060"
+    },
+    {
+      "name": "storage_root_path",
+      "label": "BE数据存储目录",
+      "description": "BE数据存储目录，可配置多个，按分号分隔，例如/data1,medium:HDD;/data2,medium:SSD;/data3",
+      "configType": "path",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${STARROCKS_HOME}/storage"
+    },
+    {
+      "name": "default_rowset_type",
+      "label": "默认行数据类型",
+      "description": "默认行数据类型",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "beta"
+    },
+    {
+      "name": "meta_dir",
+      "label": "FE元数据目录",
+      "description": "配置FE元数据目录",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "/opt/datasophon/StarRocks-2.2.2/fe/meta"
+    },
+    {
+      "name": "cluster_id",
+      "label": "集群ID",
+      "description": "相同集群ID的FE/BE节点属于同一个集群",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "1"
+    },
+    {
+      "name": "custom.fe.conf",
+      "label": "自定义配置fe.conf",
+      "description": "自定义配置",
+      "configType": "custom",
+      "required": false,
+      "type": "multipleWithKey",
+      "value": [],
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": ""
+    },
+    {
+      "name": "custom.be.conf",
+      "label": "自定义配置be.conf",
+      "description": "自定义配置",
+      "configType": "custom",
+      "required": false,
+      "type": "multipleWithKey",
+      "value": [],
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": ""
+    }
+  ]
+}

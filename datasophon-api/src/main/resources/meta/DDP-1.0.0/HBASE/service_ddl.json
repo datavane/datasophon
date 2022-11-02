@@ -1,0 +1,240 @@
+{
+  "name": "HBASE",
+  "label": "Hbase",
+  "description": "分布式列式海量存储数据库",
+  "version": "2.2.7",
+  "sortNum": 9,
+  "dependencies":["HDFS"],
+  "packageName": "hbase-2.2.7.tar.gz",
+  "decompressPackageName": "hbase-2.2.7",
+  "runAs":"root",
+  "roles": [
+    {
+      "name": "HbaseMaster",
+      "label": "HbaseMaster",
+      "roleType": "master",
+      "cardinality": "1+",
+      "logFile": "logs/hbase-${user}-master-${host}.log",
+      "jmxPort": 16100,
+      "startRunner": {
+        "timeout": "60",
+        "program": "bin/hbase-daemon.sh",
+        "args": [
+          "start",
+          "master"
+        ]
+      },
+      "stopRunner": {
+        "timeout": "600",
+        "program": "bin/hbase-daemon.sh",
+        "args": [
+          "stop",
+          "master"
+        ]
+      },
+      "statusRunner": {
+        "timeout": "60",
+        "program": "bin/hbase-daemon.sh",
+        "args": [
+          "status",
+          "master"
+        ]
+      },
+      "restartRunner": {
+        "timeout": "60",
+        "program": "bin/hbase-daemon.sh",
+        "args": [
+          "restart",
+          "master"
+        ]
+      },
+      "externalLink": {
+        "name": "HbaseMaster Ui",
+        "label": "HbaseMaster Ui",
+        "url": "http://${host}:16010"
+      }
+    },
+    {
+      "name": "RegionServer",
+      "label": "RegionServer",
+      "roleType": "worker",
+      "cardinality": "1+",
+      "logFile": "logs/hbase-${user}-regionserver-${host}.log",
+      "jmxPort": 16101,
+      "startRunner": {
+        "timeout": "60",
+        "program": "bin/hbase-daemon.sh",
+        "args": [
+          "start",
+          "regionserver"
+        ]
+      },
+      "stopRunner": {
+        "timeout": "600",
+        "program": "bin/hbase-daemon.sh",
+        "args": [
+          "stop",
+          "regionserver"
+        ]
+      },
+      "statusRunner": {
+        "timeout": "60",
+        "program": "bin/hbase-daemon.sh",
+        "args": [
+          "status","regionserver"
+        ]
+      },
+      "restartRunner": {
+        "timeout": "60",
+        "program": "bin/hbase-daemon.sh",
+        "args": [
+          "restart",
+          "regionserver"
+      ]
+    }
+    }
+  ],
+  "configWriter": {
+    "generators": [
+      {
+        "filename": "hbase-site.xml",
+        "configFormat": "xml",
+        "outputDirectory": "conf",
+        "includeParams": [
+          "hbase.cluster.distributed",
+          "hbase.rootdir",
+          "hbase.zookeeper.quorum",
+          "hbase.wal.provider",
+          "hbase.unsafe.stream.capability.enforce",
+          "custom.hbase.site.xml"
+        ]
+      },
+      {
+        "filename": "install.properties",
+        "configFormat": "custom",
+        "outputDirectory": "ranger-hbase-plugin",
+        "templateName": "ranger-hbase.ftl",
+        "includeParams": [
+          "rangerAdminUrl"
+        ]
+      }
+    ]
+  },
+  "parameters": [
+    {
+      "name": "hbase.cluster.distributed",
+      "label": "hbase.cluster.distributed",
+      "description": "hbase.cluster.distributed",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "true"
+    },
+    {
+      "name": "hbase.rootdir",
+      "label": "hbase.rootdir",
+      "description": "hbase.rootdir",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "/hbase"
+    },
+    {
+      "name": "hbase.zookeeper.quorum",
+      "label": "hbase.zookeeper.quorum",
+      "description": "hbase.zookeeper.quorum",
+      "required": true,
+      "type": "input",
+      "value": "${zkUrls}",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": ""
+    },
+    {
+      "name": "hbase.wal.provider",
+      "label": "hbase.wal.provider",
+      "description": "hbase.wal.provider",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "filesystem"
+    },
+    {
+      "name": "hbase.unsafe.stream.capability.enforce",
+      "label": "hbase.unsafe.stream.capability.enforce",
+      "description": "hbase.unsafe.stream.capability.enforce",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "false"
+    },
+    {
+      "name": "hbase.security.authorization",
+      "label": "启用Ranger权限",
+      "description": "",
+      "configType": "permission",
+      "required": false,
+      "type": "switch",
+      "value": true,
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": true
+    },
+    {
+      "name": "hbase.coprocessor.master.classes",
+      "label": "RangerHbaseMaster认证类",
+      "description": "",
+      "configType": "permission",
+      "required": false,
+      "type": "input",
+      "value": "org.apache.ranger.authorization.hbase.RangerAuthorizationCoprocessor",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "org.apache.ranger.authorization.hbase.RangerAuthorizationCoprocessor"
+    },
+    {
+      "name": "hbase.coprocessor.region.classes",
+      "label": "RangerHbaseRegion认证类",
+      "description": "",
+      "configType": "permission",
+      "required": false,
+      "type": "input",
+      "value": "org.apache.ranger.authorization.hbase.RangerAuthorizationCoprocessor",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "org.apache.ranger.authorization.hbase.RangerAuthorizationCoprocessor"
+    },
+    {
+      "name": "rangerAdminUrl",
+      "label": "Ranger访问地址",
+      "description": "",
+      "required": false,
+      "configType": "map",
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": ""
+    },
+    {
+      "name": "custom.hbase.site.xml",
+      "label": "自定义配置hbase-site.xml",
+      "description": "自定义配置",
+      "configType": "custom",
+      "required": false,
+      "type": "multipleWithKey",
+      "value":[],
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": ""
+    }
+  ]
+}

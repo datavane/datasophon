@@ -1,0 +1,413 @@
+package com.datasophon.api.utils;
+
+import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.pattern.Patterns;
+import akka.util.Timeout;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.crypto.SecureUtil;
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.service.*;
+import com.datasophon.api.master.ServiceActor;
+import com.datasophon.common.model.*;
+import com.datasophon.dao.entity.*;
+import com.datasophon.dao.enums.*;
+import com.datasophon.api.service.*;
+import com.datasophon.common.Constants;
+import com.datasophon.common.cache.CacheUtils;
+import com.datasophon.common.command.ExecuteCmdCommand;
+import com.datasophon.common.command.ExecuteServiceRoleCommand;
+import com.datasophon.common.command.FileOperateCommand;
+import com.datasophon.common.enums.CommandType;
+import com.datasophon.common.enums.ServiceExecuteState;
+import com.datasophon.common.enums.ServiceRoleType;
+import com.datasophon.common.utils.ExecResult;
+import com.datasophon.common.utils.PlaceholderUtils;
+import com.datasophon.common.utils.PropertyUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import scala.concurrent.Await;
+import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
+import scala.concurrent.duration.FiniteDuration;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+public class ProcessUtils {
+    private static final Logger logger = LoggerFactory.getLogger(ProcessUtils.class);
+
+
+    public static void saveServiceInstallInfo(ServiceRoleInfo serviceRoleInfo) {
+        ClusterServiceInstanceService serviceInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceInstanceService.class);
+        ClusterServiceInstanceConfigService serviceInstanceConfigService = SpringTool.getApplicationContext().getBean(ClusterServiceInstanceConfigService.class);
+        ClusterServiceRoleInstanceService serviceRoleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
+        ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
+        ClusterServiceRoleInstanceWebuisService webuisService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceWebuisService.class);
+        ClusterServiceInstanceRoleGroupService roleGroupService = SpringTool.getApplicationContext().getBean(ClusterServiceInstanceRoleGroupService.class);
+
+        ClusterInfoEntity clusterInfo = clusterInfoService.getById(serviceRoleInfo.getClusterId());
+        //判断当前服务实例是否存在，不存在则新增
+        ClusterServiceInstanceEntity clusterServiceInstance = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(serviceRoleInfo.getClusterId(), serviceRoleInfo.getParentName());
+        if (Objects.isNull(clusterServiceInstance)) {
+            clusterServiceInstance = new ClusterServiceInstanceEntity();
+            clusterServiceInstance.setClusterId(serviceRoleInfo.getClusterId());
+            clusterServiceInstance.setServiceName(serviceRoleInfo.getParentName());
+            clusterServiceInstance.setServiceState(ServiceState.RUNNING);
+            clusterServiceInstance.setCreateTime(new Date());
+            clusterServiceInstance.setUpdateTime(new Date());
+            serviceInstanceService.save(clusterServiceInstance);
+            //保存服务实例配置
+            List<ServiceConfig> list = (List<ServiceConfig>) CacheUtils.get(clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceRoleInfo.getParentName() + Constants.CONFIG);
+            String config = JSON.toJSONString(list);
+            ClusterServiceInstanceConfigEntity clusterServiceInstanceConfig = new ClusterServiceInstanceConfigEntity();
+            clusterServiceInstanceConfig.setClusterId(serviceRoleInfo.getClusterId());
+            clusterServiceInstanceConfig.setServiceId(clusterServiceInstance.getId());
+            clusterServiceInstanceConfig.setConfigJson(config);
+            clusterServiceInstanceConfig.setConfigJsonMd5(SecureUtil.md5(config));
+            clusterServiceInstanceConfig.setConfigVersion(1);
+            clusterServiceInstanceConfig.setCreateTime(new Date());
+            clusterServiceInstanceConfig.setUpdateTime(new Date());
+            serviceInstanceConfigService.save(clusterServiceInstanceConfig);
+        } else {
+            clusterServiceInstance.setServiceState(ServiceState.RUNNING);
+            clusterServiceInstance.setServiceStateCode(ServiceState.RUNNING.getValue());
+            serviceInstanceService.updateById(clusterServiceInstance);
+        }
+        Integer roleGroupId = (Integer) CacheUtils.get("UseRoleGroup_" + clusterServiceInstance.getId());
+        ClusterServiceInstanceRoleGroup roleGroup = roleGroupService.getById(roleGroupId);
+
+        //保存服务角色实例
+        ClusterServiceRoleInstanceEntity roleInstanceEntity = serviceRoleInstanceService.getOneServiceRole(serviceRoleInfo.getName(), serviceRoleInfo.getHostname(), clusterInfo.getId());
+        if (Objects.isNull(roleInstanceEntity)) {
+            ClusterServiceRoleInstanceEntity roleInstance = new ClusterServiceRoleInstanceEntity();
+            roleInstance.setServiceId(clusterServiceInstance.getId());
+            roleInstance.setRoleType(CommonUtils.convertRoleType(serviceRoleInfo.getRoleType().getName()));
+            roleInstance.setCreateTime(new Date());
+            roleInstance.setHostname(serviceRoleInfo.getHostname());
+            roleInstance.setClusterId(serviceRoleInfo.getClusterId());
+            roleInstance.setServiceRoleName(serviceRoleInfo.getName());
+            roleInstance.setServiceRoleState(ServiceRoleState.RUNNING);
+            roleInstance.setUpdateTime(new Date());
+            roleInstance.setServiceName(serviceRoleInfo.getParentName());
+            roleInstance.setRoleGroupId(roleGroup.getId());
+            roleInstance.setNeedRestart(NeedRestart.NO);
+            serviceRoleInstanceService.save(roleInstance);
+            if("zkserver".equals(roleInstance.getServiceRoleName().toLowerCase())){
+                ClusterZkService clusterZkService = SpringTool.getApplicationContext().getBean(ClusterZkService.class);
+                ClusterZk clusterZk = new ClusterZk();
+                clusterZk.setMyid((Integer) CacheUtils.get("zkserver_"+serviceRoleInfo.getHostname()));
+                clusterZk.setClusterId(serviceRoleInfo.getClusterId());
+                clusterZk.setZkServer(roleInstance.getHostname());
+                clusterZkService.save(clusterZk);
+            }
+
+
+            if (Objects.nonNull(serviceRoleInfo.getExternalLink())) {
+
+                ExternalLink externalLink = serviceRoleInfo.getExternalLink();
+                List<ClusterServiceRoleInstanceWebuis> list = webuisService.list(new QueryWrapper<ClusterServiceRoleInstanceWebuis>()
+                        .eq(Constants.NAME, externalLink.getName() + "(" + serviceRoleInfo.getHostname() + ")"));
+                if (Objects.nonNull(list) && list.size() > 0) {
+                    logger.info("web ui already exists");
+                } else {
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put("${host}", serviceRoleInfo.getHostname());
+                    String url = PlaceholderUtils.replacePlaceholders(externalLink.getUrl(), map, Constants.REGEX_VARIABLE);
+                    ClusterServiceRoleInstanceWebuis webuis = new ClusterServiceRoleInstanceWebuis();
+                    webuis.setWebUrl(url);
+                    webuis.setServiceInstanceId(clusterServiceInstance.getId());
+                    webuis.setServiceRoleInstanceId(roleInstance.getId());
+                    webuis.setName(externalLink.getName() + "(" + serviceRoleInfo.getHostname() + ")");
+                    webuisService.save(webuis);
+                }
+
+            }
+        }
+
+    }
+
+    public static void saveHostInstallInfo(StartWorkerMessage message, String clusterCode, ClusterHostService clusterHostService) {
+        ClusterInfoService clusterInfoService = (ClusterInfoService) SpringTool.getBean("clusterInfoService");
+        ClusterHostEntity clusterHostEntity = new ClusterHostEntity();
+        BeanUtil.copyProperties(message, clusterHostEntity);
+        Map<String, String> hostIp = (Map<String, String>) CacheUtils.get(Constants.HOST_IP);
+
+        ClusterInfoEntity cluster = clusterInfoService.getClusterByClusterCode(clusterCode);
+
+        clusterHostEntity.setClusterId(cluster.getId());
+        clusterHostEntity.setCheckTime(new Date());
+        clusterHostEntity.setRack("default");
+        clusterHostEntity.setCreateTime(new Date());
+        clusterHostEntity.setIp(hostIp.get(message.getHostname()));
+        clusterHostEntity.setHostState(1);
+        clusterHostEntity.setManaged(MANAGED.YES);
+        clusterHostService.save(clusterHostEntity);
+    }
+
+    public static void updateCommandStateToFailed( String hostCommandId) {
+        logger.info("hostCommandId is {}",hostCommandId);
+        //worker以及下游节点全部取消
+        ClusterServiceCommandHostCommandService service = SpringTool.getApplicationContext().getBean(ClusterServiceCommandHostCommandService.class);
+        ClusterServiceCommandHostCommandEntity hostCommand = service.getByHostCommandId(hostCommandId);
+        logger.info("hostCommandName is {}",hostCommand.getCommandName());
+        List<ClusterServiceCommandHostCommandEntity> hostCommandList = service.getHostCommandListByCommandId(hostCommand.getCommandId());
+        for (ClusterServiceCommandHostCommandEntity hostCommandEntity : hostCommandList) {
+            if(hostCommandEntity.getCommandState() == CommandState.RUNNING && hostCommandEntity.getHostCommandId() != hostCommandId){
+                logger.info("{} host command  set to failed",hostCommandEntity.getCommandName());
+                hostCommandEntity.setCommandState(CommandState.FAILED);
+                hostCommandEntity.setCommandProgress(100);
+                service.updateByHostCommandId(hostCommandEntity);
+                UpdateCommandHostMessage message = new UpdateCommandHostMessage();
+                message.setCommandId(hostCommand.getCommandId());
+                message.setCommandHostId(hostCommandEntity.getCommandHostId());
+                message.setHostname(hostCommandEntity.getHostname());
+                if (hostCommand.getServiceRoleType() == RoleType.MASTER) {
+                    message.setServiceRoleType(ServiceRoleType.MASTER);
+                } else {
+                    message.setServiceRoleType(ServiceRoleType.WORKER);
+                }
+                ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
+                ActorRef commandActor = (ActorRef) CacheUtils.get("commandActor");
+                system.scheduler().scheduleOnce(FiniteDuration.apply(3L, TimeUnit.SECONDS), commandActor, message, system.dispatcher(), ActorRef.noSender());
+
+            }
+        }
+
+    }
+
+    public static void tellCommandActorResult(String serviceName, ExecuteServiceRoleCommand executeServiceRoleCommand, ServiceExecuteState state) {
+        ActorRef serviceExecuteResult = (ActorRef) CacheUtils.get("serviceExecuteResultActor");
+        ServiceExecuteResultMessage serviceExecuteResultMessage = new ServiceExecuteResultMessage();
+        serviceExecuteResultMessage.setServiceExecuteState(state);
+        serviceExecuteResultMessage.setDag(executeServiceRoleCommand.getDag());
+        serviceExecuteResultMessage.setServiceName(serviceName);
+        serviceExecuteResultMessage.setClusterCode(executeServiceRoleCommand.getClusterCode());
+        serviceExecuteResultMessage.setServiceRoleType(executeServiceRoleCommand.getServiceRoleType());
+        serviceExecuteResultMessage.setCommandType(executeServiceRoleCommand.getCommandType());
+        serviceExecuteResultMessage.setDag(executeServiceRoleCommand.getDag());
+        serviceExecuteResultMessage.setClusterId(executeServiceRoleCommand.getClusterId());
+        serviceExecuteResultMessage.setActiveTaskList(executeServiceRoleCommand.getActiveTaskList());
+        serviceExecuteResultMessage.setErrorTaskList(executeServiceRoleCommand.getErrorTaskList());
+        serviceExecuteResultMessage.setReadyToSubmitTaskList(executeServiceRoleCommand.getReadyToSubmitTaskList());
+        serviceExecuteResultMessage.setCompleteTaskList(executeServiceRoleCommand.getCompleteTaskList());
+
+
+        serviceExecuteResult.tell(serviceExecuteResultMessage, ActorRef.noSender());
+    }
+
+    public static ClusterServiceCommandHostCommandEntity handleCommandResult(String hostCommandId, Boolean execResult, String execOut) {
+        ClusterServiceCommandHostCommandService service = SpringTool.getApplicationContext().getBean(ClusterServiceCommandHostCommandService.class);
+
+        ClusterServiceCommandHostCommandEntity hostCommand = service.getByHostCommandId(hostCommandId);
+        hostCommand.setCommandProgress(100);
+        if (execResult) {
+            hostCommand.setCommandState(CommandState.SUCCESS);
+            hostCommand.setResultMsg("success");
+            logger.info("{} in {} success", hostCommand.getCommandName(), hostCommand.getHostname());
+        } else {
+            hostCommand.setCommandState(CommandState.FAILED);
+            hostCommand.setResultMsg(execOut);
+            logger.info("{} in {} failed", hostCommand.getCommandName(), hostCommand.getHostname());
+        }
+        service.updateByHostCommandId(hostCommand);
+        //更新command host进度
+        //更新command进度
+        UpdateCommandHostMessage message = new UpdateCommandHostMessage();
+        message.setExecResult(execResult);
+        message.setCommandId(hostCommand.getCommandId());
+        message.setCommandHostId(hostCommand.getCommandHostId());
+        message.setHostname(hostCommand.getHostname());
+        if (hostCommand.getServiceRoleType() == RoleType.MASTER) {
+            message.setServiceRoleType(ServiceRoleType.MASTER);
+        } else {
+            message.setServiceRoleType(ServiceRoleType.WORKER);
+        }
+        ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
+        ActorRef commandActor = (ActorRef) CacheUtils.get("commandActor");
+        system.scheduler().scheduleOnce(FiniteDuration.apply(3L, TimeUnit.SECONDS), commandActor, message, system.dispatcher(), ActorRef.noSender());
+
+        return hostCommand;
+    }
+
+    public static void buildExecuteServiceRoleCommand(
+            Integer clusterId,
+            CommandType commandType,
+            String clusterCode,
+            DAGGraph<String, ServiceNode, String> dag,
+            Map<String, ServiceExecuteState> activeTaskList,
+            Map<String, String> errorTaskList,
+            Map<String, String> readyToSubmitTaskList,
+            Map<String, String> completeTaskList,
+            String node,
+            List<ServiceRoleInfo> masterRoles,
+            ActorSelection serviceActor,
+            ServiceRoleType serviceRoleType) {
+        ExecuteServiceRoleCommand executeServiceRoleCommand = new ExecuteServiceRoleCommand(clusterId, node, masterRoles);
+        executeServiceRoleCommand.setServiceRoleType(serviceRoleType);
+        executeServiceRoleCommand.setCommandType(commandType);
+        executeServiceRoleCommand.setDag(dag);
+        executeServiceRoleCommand.setClusterCode(clusterCode);
+        executeServiceRoleCommand.setClusterId(clusterId);
+        executeServiceRoleCommand.setActiveTaskList(activeTaskList);
+        executeServiceRoleCommand.setErrorTaskList(errorTaskList);
+        executeServiceRoleCommand.setReadyToSubmitTaskList(readyToSubmitTaskList);
+        executeServiceRoleCommand.setCompleteTaskList(completeTaskList);
+        serviceActor.tell(executeServiceRoleCommand, ActorRef.noSender());
+    }
+
+    public static ClusterServiceCommandEntity generateCommandEntity(Integer clusterId, CommandType commandType, String serviceName) {
+        ClusterServiceCommandEntity commandEntity = new ClusterServiceCommandEntity();
+        String commandId = IdUtil.simpleUUID();
+        commandEntity.setCommandId(commandId);
+        commandEntity.setClusterId(clusterId);
+        commandEntity.setCommandName(commandType.getCommandName(PropertyUtils.getString(Constants.LOCALE_LANGUAGE)) + Constants.SPACE + serviceName);
+        commandEntity.setCommandProgress(0);
+        commandEntity.setCommandState(CommandState.RUNNING);
+        commandEntity.setCommandType(commandType.getValue());
+        commandEntity.setCreateTime(new Date());
+//        commandEntity.setCreateBy(SecurityUtils.getUsername());
+        commandEntity.setCreateBy("admin");
+        commandEntity.setServiceName(serviceName);
+        return commandEntity;
+    }
+
+    public static ClusterServiceCommandHostEntity generateCommandHostEntity(String commandId, String hostname) {
+        ClusterServiceCommandHostEntity commandHost = new ClusterServiceCommandHostEntity();
+        String commandHostId = IdUtil.simpleUUID();
+        commandHost.setCommandHostId(commandHostId);
+        commandHost.setCommandId(commandId);
+        commandHost.setHostname(hostname);
+        commandHost.setCommandState(CommandState.RUNNING);
+        commandHost.setCommandProgress(0);
+        commandHost.setCreateTime(new Date());
+
+        return commandHost;
+    }
+
+    public static ClusterServiceCommandHostCommandEntity generateCommandHostCommandEntity(CommandType commandType, String commandId, String serviceRoleName, RoleType serviceRoleType, ClusterServiceCommandHostEntity commandHost) {
+        ClusterServiceCommandHostCommandEntity hostCommand = new ClusterServiceCommandHostCommandEntity();
+        String hostCommandId = IdUtil.simpleUUID();
+        hostCommand.setHostCommandId(hostCommandId);
+        hostCommand.setServiceRoleName(serviceRoleName);
+        hostCommand.setCommandHostId(commandHost.getCommandHostId());
+        hostCommand.setCommandState(CommandState.RUNNING);
+        hostCommand.setCommandProgress(0);
+        hostCommand.setHostname(commandHost.getHostname());
+        hostCommand.setCommandName(commandType.getCommandName(PropertyUtils.getString(Constants.LOCALE_LANGUAGE)) + Constants.SPACE + serviceRoleName);
+        hostCommand.setCommandId(commandId);
+        hostCommand.setCommandType(commandType.getValue());
+        hostCommand.setServiceRoleType(serviceRoleType);
+        hostCommand.setCreateTime(new Date());
+        return hostCommand;
+    }
+
+    public static void updateServiceRoleState(CommandType commandType ,String serviceRoleName, String hostname, Integer clusterId, ServiceRoleState serviceRoleState) {
+        ClusterServiceRoleInstanceService serviceRoleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
+        ClusterServiceRoleInstanceEntity serviceRole = serviceRoleInstanceService.getOneServiceRole(serviceRoleName, hostname, clusterId);
+        serviceRole.setServiceRoleState(serviceRoleState);
+        serviceRole.setServiceRoleStateCode(serviceRoleState.getValue());
+        if(commandType != CommandType.STOP_SERVICE){
+            serviceRole.setNeedRestart(NeedRestart.NO);
+        }
+        serviceRoleInstanceService.updateById(serviceRole);
+    }
+
+    public static void generateClusterVariable(Map<String, String> globalVariables, Integer clusterId, String variableName, String value) {
+        ClusterVariableService variableService = SpringTool.getApplicationContext().getBean(ClusterVariableService.class);
+        ClusterVariable clusterVariable = variableService.getVariableByVariableName(variableName, clusterId);
+        if (globalVariables.containsKey(variableName) && Objects.nonNull(clusterVariable) && !value.equals(clusterVariable.getVariableValue())) {
+            logger.info("update variable {} value {} to {}",variableName,clusterVariable.getVariableValue(),value);
+            clusterVariable.setVariableValue(value);
+            variableService.updateById(clusterVariable);
+        } else {
+            ClusterVariable newClusterVariable = new ClusterVariable();
+            newClusterVariable.setClusterId(clusterId);
+            newClusterVariable.setVariableName(variableName);
+            newClusterVariable.setVariableValue(value);
+            variableService.save(newClusterVariable);
+        }
+        globalVariables.put(variableName, value);
+    }
+
+    public static void hdfsECMethond(Integer serviceInstanceId,ClusterServiceRoleInstanceService roleInstanceService,TreeSet<String> list,String type,String roleName) throws Exception {
+        ActorSystem actorSystem = (ActorSystem) CacheUtils.get("actorSystem");
+
+        List<ClusterServiceRoleInstanceEntity> namenodes = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                .eq(Constants.SERVICE_ID, serviceInstanceId)
+                .eq(Constants.SERVICE_ROLE_NAME, roleName));
+
+        //更新namenode节点的whitelist白名单
+        for (ClusterServiceRoleInstanceEntity namenode : namenodes) {
+            ActorSelection actorSelection = actorSystem.actorSelection("akka.tcp://datasophon@" + namenode.getHostname() + ":2552/user/worker/fileOperateActor");
+            ActorSelection execCmdActor = actorSystem.actorSelection("akka.tcp://datasophon@" + namenode.getHostname() + ":2552/user/worker/executeCmdActor");
+            Timeout timeout = new Timeout(Duration.create(180, "seconds"));
+            FileOperateCommand fileOperateCommand = new FileOperateCommand();
+            fileOperateCommand.setLines(list);
+            fileOperateCommand.setPath("/opt/datasophon/hadoop-3.3.3/etc/hadoop/"+type);
+            Future<Object> future = Patterns.ask(actorSelection, fileOperateCommand, timeout);
+            ExecResult fileOperateResult = (ExecResult) Await.result(future, timeout.duration());
+            if(Objects.nonNull(fileOperateResult) && fileOperateResult.getExecResult()){
+                logger.info("write {} success in namenode {}",type,namenode.getHostname());
+                //刷新白名单
+                ExecuteCmdCommand command = new ExecuteCmdCommand();
+                ArrayList<String> commands = new ArrayList<>();
+                commands.add("/opt/datasophon/hadoop-3.3.3/bin/hdfs");
+                commands.add("dfsadmin");
+                commands.add("-refreshNodes");
+                command.setCommands(commands);
+                Future<Object> execFuture = Patterns.ask(execCmdActor, command, timeout);
+                ExecResult execResult = (ExecResult) Await.result(execFuture, timeout.duration());
+                if(execResult.getExecResult()){
+                    logger.info("hdfs dfsadmin -refreshNodes success at {}",namenode.getHostname());
+                }
+            }
+        }
+    }
+    public static void createServiceActor(ClusterInfoEntity clusterInfo) {
+        FrameServiceService frameServiceService = SpringTool.getApplicationContext().getBean(FrameServiceService.class);
+        ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
+        List<FrameServiceEntity> frameServiceList = frameServiceService.getAllFrameServiceByFrameCode(clusterInfo.getClusterFrame());
+        for (FrameServiceEntity frameServiceEntity : frameServiceList) {
+            //创建服务actor
+            logger.info("create {} actor",clusterInfo.getClusterCode()+"-serviceActor-"+frameServiceEntity.getServiceName());
+            system.actorOf(Props.create(ServiceActor.class)
+                    .withDispatcher("my-forkjoin-dispatcher"), clusterInfo.getClusterCode()+"-serviceActor-"+frameServiceEntity.getServiceName());
+        }
+    }
+    /**
+     * 并集：左边集合与右边集合合并
+     * @param left
+     * @param right
+     * @return
+     */
+    public static List<ServiceConfig> addAll(List<ServiceConfig> left, List<ServiceConfig> right){
+        if (left == null){
+            return null;
+        }
+        if (right == null){
+            return left;
+        }
+        //使用LinkedList方便插入和删除
+        List<ServiceConfig> res = new LinkedList<>(right);
+        Set<String> set = new HashSet<>();
+        //
+        for(ServiceConfig item : left){
+            set.add(item.getName());
+        }
+        //迭代器遍历listA
+        Iterator<ServiceConfig> iter = res.iterator();
+        while(iter.hasNext()){
+            ServiceConfig item = iter.next();
+            //如果set中包含id则remove
+            if(!set.contains(item.getName())){
+                left.add(item);
+            }
+        }
+        return left;
+    }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "FLINK",
+  "label": "Flink",
+  "description": "实时计算引擎",
+  "version": "1.13.3",
+  "sortNum": 6,
+  "dependencies":[],
+  "packageName": "flink-1.13.3.tar.gz",
+  "decompressPackageName": "flink-1.13.3",
+  "runAs":"root",
+  "roles": [
+    {
+      "name": "FlinkClient",
+      "label": "FlinkClient",
+      "roleType": "client",
+      "cardinality": "1+",
+      "logFile": "logs/hadoop-${user}-datanode-${host}.log"
+    }
+  ],
+  "configWriter": {
+    "generators": [
+    ]
+  },
+  "parameters": [
+  ]
+}
