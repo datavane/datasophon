@@ -6,8 +6,9 @@ import akka.pattern.Patterns;
 import akka.util.Timeout;
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.ClusterYarnQueueService;
-import com.datasophon.api.master.handler.ServiceConfigureHandler;
+import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
@@ -66,7 +67,6 @@ public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMap
 
     @Override
     public Result refreshQueues(Integer clusterId) throws Exception {
-        ActorSystem actorSystem = (ActorSystem) CacheUtils.get("actorSystem");
         List<ClusterYarnQueue> list = this.list(new QueryWrapper<ClusterYarnQueue>()
                 .eq(Constants.CLUSTER_ID,clusterId));
         //查询resourcemanager节点
@@ -117,7 +117,7 @@ public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMap
                 hostname = roleInstanceEntity.getHostname();
             }
         }
-        ActorSelection execCmdActor = actorSystem.actorSelection("akka.tcp://ddh@" + hostname + ":2552/user/worker/executeCmdActor");
+        ActorSelection execCmdActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + hostname + ":2552/user/worker/executeCmdActor");
         ExecuteCmdCommand command = new ExecuteCmdCommand();
         Timeout timeout = new Timeout(Duration.create(180, "seconds"));
         ArrayList<String> commands = new ArrayList<>();

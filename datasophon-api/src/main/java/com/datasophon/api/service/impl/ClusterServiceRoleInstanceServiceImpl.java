@@ -4,6 +4,7 @@ import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.*;
 import com.datasophon.dao.entity.*;
 import com.datasophon.api.service.*;
@@ -136,8 +137,8 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
         command.setLogFile(logFile);
         command.setDecompressPackageName(frameServiceEntity.getDecompressPackageName());
         logger.info("start to get {} log from {}", serviceRole.getServiceRoleName(), roleInstance.getHostname());
-        ActorSystem actorSystem = (ActorSystem) CacheUtils.get("actorSystem");
-        ActorSelection configActor = actorSystem.actorSelection("akka.tcp://ddh@" + roleInstance.getHostname() + ":2552/user/worker/logActor");
+
+        ActorSelection configActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + roleInstance.getHostname() + ":2552/user/worker/logActor");
         Timeout timeout = new Timeout(Duration.create(60, "seconds"));
         Future<Object> logFuture = Patterns.ask(configActor, command, timeout);
         ExecResult logResult = (ExecResult) Await.result(logFuture, timeout.duration());
@@ -244,5 +245,13 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
         return this.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                     .eq(Constants.SERVICE_ID,serviceInstanceId)
                     .eq(Constants.NEET_RESTART, NeedRestart.YES));
+    }
+
+    @Override
+    public List<ClusterServiceRoleInstanceEntity> getStoppedRoleInstanceOnHost(Integer clusterId, String hostname, ServiceRoleState state) {
+        return roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                .eq(Constants.CLUSTER_ID, clusterId)
+                .eq(Constants.HOSTNAME, hostname)
+                .eq(Constants.SERVICE_ROLE_STATE, state));
     }
 }

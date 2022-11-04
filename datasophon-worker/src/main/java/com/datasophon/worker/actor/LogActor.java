@@ -46,7 +46,7 @@ public class LogActor extends UntypedActor {
                 logStr = FileUtils.readLastRows(Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName() + Constants.SLASH + logFileName, Charset.defaultCharset(), PropertyUtils.getInt("rows"));
             }else{
                 String workDir = System.getProperty("user.dir");
-                logStr = FileUtils.readLastRows(workDir +"/logs/ddh-worker.log", Charset.defaultCharset(), PropertyUtils.getInt("rows"));
+                logStr = FileUtils.readLastRows(workDir +"/logs/datasophon-worker.log", Charset.defaultCharset(), PropertyUtils.getInt("rows"));
             }
             execResult.setExecResult(true);
             execResult.setExecOut(logStr);

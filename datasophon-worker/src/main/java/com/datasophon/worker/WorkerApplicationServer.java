@@ -29,17 +29,17 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class WorkerApplicationServer {
-    private static final Logger logger = LoggerFactory.getLogger(WorkerApplicationServer.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(WorkerApplicationServer.class);
 
     public static void main(String[] args) throws UnknownHostException, NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException, MalformedObjectNameException {
         System.out.println(System.getProperty("user.dir"));
         //启动actorsystem
         String hostname = InetAddress.getLocalHost().getHostName();
         Config config = ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" + hostname);
-        ActorSystem system = ActorSystem.create("ddh", config.withFallback(ConfigFactory.load()));
+        ActorSystem system = ActorSystem.create("datasophon", config.withFallback(ConfigFactory.load()));
         //初始化actor
-        ActorRef worker = system.actorOf(Props.create(WorkerActor.class, hostname), "worker");
+        system.actorOf(Props.create(WorkerActor.class), "worker");
 
         ActorRef remoteEventActor = system.actorOf(Props.create(RemoteEventActor.class), "remoteEventActor");
 
@@ -51,7 +51,7 @@ public class WorkerApplicationServer {
 
         String masterHost = PropertyUtils.getString("masterHost");
 
-        ActorSelection masterActor = system.actorSelection("akka.tcp://ddh@" + masterHost + ":2551/user/master");
+        ActorSelection workerStartActor = system.actorSelection("akka.tcp://datasophon@" + masterHost + ":2551/user/master/workerStartActor");
 
         String workDir = System.getProperty("user.dir");
         System.out.println(workDir);
@@ -76,7 +76,7 @@ public class WorkerApplicationServer {
         ShellUtils.execWithStatus(Constants.INSTALL_PATH, commands, 60L);
 
 
-        masterActor.tell(startWorkerMessage, ActorRef.noSender());
+        workerStartActor.tell(startWorkerMessage, ActorRef.noSender());
         logger.info("start worker");
 
         MBeanServer platformMBeanServer = ManagementFactory.getPlatformMBeanServer();

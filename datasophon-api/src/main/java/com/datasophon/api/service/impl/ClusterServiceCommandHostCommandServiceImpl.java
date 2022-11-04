@@ -4,6 +4,7 @@ import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.FrameServiceRoleService;
 import com.datasophon.api.service.FrameServiceService;
@@ -120,8 +121,7 @@ public class ClusterServiceCommandHostCommandServiceImpl extends ServiceImpl<Clu
         command.setLogFile(logFile);
         command.setDecompressPackageName(frameServiceEntity.getDecompressPackageName());
         logger.info("start to get {} log from {}", serviceRole.getServiceRoleName(), hostCommand.getHostname());
-        ActorSystem actorSystem = (ActorSystem) CacheUtils.get("actorSystem");
-        ActorSelection configActor = actorSystem.actorSelection("akka.tcp://ddh@" + hostCommand.getHostname() + ":2552/user/worker/logActor");
+        ActorSelection configActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + hostCommand.getHostname() + ":2552/user/worker/logActor");
         Timeout timeout = new Timeout(Duration.create(60, "seconds"));
         Future<Object> logFuture = Patterns.ask(configActor, command, timeout);
         ExecResult logResult = (ExecResult) Await.result(logFuture, timeout.duration());

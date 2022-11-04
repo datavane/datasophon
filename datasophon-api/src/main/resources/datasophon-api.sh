@@ -43,7 +43,7 @@ cd $DDH_HOME
 
 if [ "$command" = "api" ]; then
   LOG_FILE="-Dlogging.config=classpath:logback-api.xml -Dspring.profiles.active=api"
-  CLASS=com.datasophon.ddh.api.DDHApplicationServer
+  CLASS=com.datasophon.api.DDHApplicationServer
   JMX="-javaagent:$DDH_HOME/jmx/jmx_prometheus_javaagent-0.16.1.jar=8586:$DDH_HOME/jmx/jmx_exporter_config.yaml"
   HEAP_OPTS="-Xms1g -Xmx1g -Xmn512m"
   export DDH_OPTS="$HEAP_OPTS $DDH_OPTS $JMX"

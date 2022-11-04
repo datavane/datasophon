@@ -31,4 +31,5 @@ public final class SpringTool implements ApplicationContextAware {
     public static Object getBean(String name) {
         return getApplicationContext().getBean(name);
     }
+
 }

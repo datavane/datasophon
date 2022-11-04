@@ -34,7 +34,6 @@ public class ServiceExecuteResultActor extends UntypedActor {
             Map<String, String> errorTaskList = result.getErrorTaskList();
             Map<String, String> readyToSubmitTaskList = result.getReadyToSubmitTaskList();
             Map<String, String> completeTaskList = result.getCompleteTaskList();
-            ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
             ActorRef submitTaskNodeActor = (ActorRef) CacheUtils.get("submitTaskNodeActor");
             String node = result.getServiceName();
             ServiceNode servicNode = dag.getNode(node);
@@ -55,7 +54,7 @@ public class ServiceExecuteResultActor extends UntypedActor {
                     List<ServiceRoleInfo> elseRoles = serviceNode.getElseRoles();
                     if (elseRoles.size() > 0) {
                         logger.info("start to submit worker/client roles");
-                        ActorSelection serviceActor = system.actorSelection("/user/"+result.getClusterCode()+"-serviceActor-" + node);
+                        ActorRef serviceActor = ActorUtils.getLocalActor(ServiceActor.class,  result.getClusterCode() + "-serviceActor-" + node);
                         ProcessUtils.buildExecuteServiceRoleCommand(result.getClusterId(),result.getCommandType(),result.getClusterCode(), dag, activeTaskList, errorTaskList, readyToSubmitTaskList, completeTaskList, node, elseRoles, serviceActor, ServiceRoleType.WORKER);
                     } else {
                         activeTaskList.remove(node);

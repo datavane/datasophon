@@ -1,15 +1,13 @@
 package com.datasophon.api.service.impl;
 
 import akka.actor.ActorRef;
-import akka.actor.ActorSelection;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.enums.Status;
+import com.datasophon.api.master.DispatcherWorkerActor;
 import com.datasophon.api.master.HostActor;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.master.ActorUtils;
@@ -72,7 +70,6 @@ public class InstallServiceImpl implements InstallService {
      */
     @Override
     public Result analysisHostList(Integer clusterId, String hosts, String sshUser, Integer sshPort, Integer page, Integer pageSize) {
-        ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
 
         List<HostInfo> list = new ArrayList<>();
         hosts = hosts.replace(" ", "");
@@ -105,8 +102,7 @@ public class InstallServiceImpl implements InstallService {
                             if (ObjectUtil.isNotNull(hostInfo) ) {
                                 map.put(hostInfo.getHostname(), hostInfo);
                                 if(!hostInfo.isManaged()){
-                                    tellHostCheck(system, clusterCode, hostInfo);
-//                                    ActorSelection hostActor = system.actorSelection("/user/hostActor-" + hostInfo.getHostname());
+                                    tellHostCheck( clusterCode, hostInfo);
                                     ;
                                 }
                             }
@@ -119,7 +115,7 @@ public class InstallServiceImpl implements InstallService {
                             if (ObjectUtil.isNotNull(hostInfo)) {
                                 map.put(hostInfo.getHostname(), hostInfo);
                                 if(!hostInfo.isManaged()){
-                                    tellHostCheck(system, clusterCode, hostInfo);
+                                    tellHostCheck(clusterCode, hostInfo);
                                 }
                             }
                         }
@@ -129,7 +125,7 @@ public class InstallServiceImpl implements InstallService {
                     if (ObjectUtil.isNotNull(hostInfo) ) {
                         map.put(hostInfo.getHostname(), hostInfo);
                         if(!hostInfo.isManaged()){
-                            tellHostCheck(system, clusterCode, hostInfo);
+                            tellHostCheck(clusterCode, hostInfo);
                         }
                     }
                 }
@@ -147,11 +143,8 @@ public class InstallServiceImpl implements InstallService {
         return Result.success(result).put(Constants.TOTAL, list.size());
     }
 
-    private void tellHostCheck(ActorSystem system, String clusterCode, HostInfo hostInfo) {
-        ActorRef actor = ActorUtils.getActor("hostActor-" + hostInfo.getHostname());
-        if(Objects.isNull(actor)){
-           actor = system.actorOf(Props.create(HostActor.class),"hostActor-"+ hostInfo.getHostname());
-        }
+    private void tellHostCheck(String clusterCode, HostInfo hostInfo) {
+        ActorRef actor = ActorUtils.getLocalActor(HostActor.class,"hostActor-" + hostInfo.getHostname());
         actor.tell(new HostCheckCommand(hostInfo, clusterCode), ActorRef.noSender());
     }
 
@@ -206,15 +199,13 @@ public class InstallServiceImpl implements InstallService {
 
     @Override
     public Result rehostCheck(Integer clusterId, String hostnames, String sshUser, Integer sshPort) {
-        ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
-
         //开启主机校验
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         String clusterCode = clusterInfo.getClusterCode();
         Map<String, HostInfo> map = (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
         for (String hostname : hostnames.split(",")) {
             if (map.containsKey(hostname)) {
-                ActorSelection hostActor = system.actorSelection("/user/hostActor-" + hostname);
+                ActorRef hostActor = ActorUtils.getLocalActor(HostActor.class,"hostActor-" + hostname);
                 HostInfo hostInfo = map.get(hostname);
                 hostInfo.setCheckResult(new CheckResult(Status.START_CHECK_HOST.getCode(), Status.START_CHECK_HOST.getMsg()));
                 hostActor.tell(new HostCheckCommand(hostInfo, clusterCode), ActorRef.noSender());
@@ -226,7 +217,6 @@ public class InstallServiceImpl implements InstallService {
 
     @Override
     public Result dispatcherHostAgentList(Integer clusterId, Integer installStateCode, Integer page, Integer pageSize) {
-        ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
 
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         String clusterCode = clusterInfo.getClusterCode();
@@ -243,7 +233,7 @@ public class InstallServiceImpl implements InstallService {
                 hostInfo.setInstallState(InstallState.SUCCESS);
             }else if(!CacheUtils.constainsKey(distributeAgentKey+Constants.UNDERLINE+hostInfo.getHostname())){
                 logger.info("start to dispatcher host agent to {}",hostInfo.getHostname());
-                ActorSelection hostActor = system.actorSelection("/user/hostActor-" + hostInfo.getHostname());
+                ActorRef hostActor = ActorUtils.getLocalActor(DispatcherWorkerActor.class,"dispatcherWorkerActor-" + hostInfo.getHostname());
                 hostInfo.setInstallStateCode(InstallState.RUNNING.getValue());
                 hostInfo.setCreateTime(new Date());
                 hostActor.tell(new DispatcherHostAgentCommand(hostInfo, clusterId, clusterInfo.getClusterFrame()), ActorRef.noSender());
@@ -269,9 +259,7 @@ public class InstallServiceImpl implements InstallService {
 
     @Override
     public Result reStartDispatcherHostAgent(Integer clusterId, String hostnames) {
-//        ActorRef hostActor = (ActorRef) CacheUtils.get("hostActor");
 
-        ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         String clusterCode = clusterInfo.getClusterCode();
         Map<String, HostInfo> map = (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
@@ -286,7 +274,7 @@ public class InstallServiceImpl implements InstallService {
                 hostInfo.setSshUser("root");
                 hostInfo.setSshPort(22);
             }
-            ActorSelection hostActor = system.actorSelection("/user/hostActor-" + hostInfo.getHostname());
+            ActorRef hostActor = ActorUtils.getLocalActor(DispatcherWorkerActor.class,"dispatcherWorkerActor-" + hostname);
             hostInfo.setInstallState(InstallState.RUNNING);
             hostInfo.setErrMsg("");
             hostInfo.setInstallStateCode(InstallState.RUNNING.getValue());

@@ -1,8 +1,9 @@
-package com.datasophon.api.master.handler;
+package com.datasophon.api.master.handler.service;
 
 import akka.actor.ActorSelection;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import com.datasophon.api.master.ActorUtils;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.GenerateServiceConfigCommand;
 import com.datasophon.common.model.ServiceRoleInfo;
@@ -25,7 +26,7 @@ public class ServiceConfigureHandler extends ServiceHandler{
             generateServiceConfigCommand.setMyid((Integer) CacheUtils.get("zkserver_"+serviceRoleInfo.getHostname()));
         }
         generateServiceConfigCommand.setServiceRoleName(serviceRoleInfo.getName());
-        ActorSelection configActor = actorSystem.actorSelection("akka.tcp://ddh@" + serviceRoleInfo.getHostname() + ":2552/user/worker/configureServiceActor");
+        ActorSelection configActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + serviceRoleInfo.getHostname() + ":2552/user/worker/configureServiceActor");
 //        if(serviceRoleInfo.getRoleType() == ServiceRoleType.CLIENT){
 //            ExecResult execResult = new ExecResult();
 //            execResult.setExecResult(true);

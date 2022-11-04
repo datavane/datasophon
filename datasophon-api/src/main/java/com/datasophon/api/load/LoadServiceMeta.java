@@ -78,31 +78,23 @@ public class LoadServiceMeta implements ApplicationRunner {
         //加载hosts文件，获取ip与hostname对面的map
         HostUtils.read();
         logger.info("put ip host map into cache");
-        //创建主机actor
-        ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
-        Map<String,String>  hostIpMap = (Map<String, String>) CacheUtils.get(Constants.HOST_IP);
-        for (Map.Entry<String, String> entry : hostIpMap.entrySet()) {
-            String hostname = entry.getKey();
-            system.actorOf(Props.create(HostActor.class).withDispatcher("my-forkjoin-dispatcher"),"hostActor-"+hostname);
-        }
         //加载服务配置，服务角色信息，服务角色配置，服务角色启停脚本信息
         File[] ddps = FileUtil.ls(path);
         //加载全局变量
         List<ClusterInfoEntity> clusters = clusterInfoService.list();
-//        List<ClusterInfoEntity> clusters = (List<ClusterInfoEntity>) result.getData();
-        if(Objects.nonNull(clusters) && clusters.size() > 0){
+        if (Objects.nonNull(clusters) && clusters.size() > 0) {
             for (ClusterInfoEntity cluster : clusters) {
                 HashMap<String, String> globalVariables = new HashMap<>();
-                List<ClusterVariable> variables = variableService.list(new QueryWrapper<ClusterVariable>().eq(Constants.CLUSTER_ID,cluster.getId()));
+                List<ClusterVariable> variables = variableService.list(new QueryWrapper<ClusterVariable>().eq(Constants.CLUSTER_ID, cluster.getId()));
                 for (ClusterVariable variable : variables) {
-                    globalVariables.put(variable.getVariableName(),variable.getVariableValue());
+                    globalVariables.put(variable.getVariableName(), variable.getVariableValue());
                 }
-                globalVariables.put("${installPath}",Constants.INSTALL_PATH);
+                globalVariables.put("${installPath}", Constants.INSTALL_PATH);
                 globalVariables.put("${apiHost}", InetAddress.getLocalHost().getHostName());
                 globalVariables.put("${apiPort}", configBean.getServerPort());
-                globalVariables.put("${HADOOP_HOME}","/opt/datasophon/hadoop-3.3.3");
+                globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + "/hadoop-3.3.3");
                 logger.info(globalVariables.get("${apiHost}"));
-                CacheUtils.put("globalVariables"+Constants.UNDERLINE+cluster.getId(),globalVariables);
+                CacheUtils.put("globalVariables" + Constants.UNDERLINE + cluster.getId(), globalVariables);
                 ProcessUtils.createServiceActor(cluster);
             }
         }
@@ -112,7 +104,7 @@ public class LoadServiceMeta implements ApplicationRunner {
             List<File> files = FileUtil.loopFiles(path);
             String frameCode = path.getName();
             FrameInfoEntity frameInfo = frameInfoService.getOne(new QueryWrapper<FrameInfoEntity>().eq("frame_code", frameCode));
-            if(Objects.isNull(frameInfo)){
+            if (Objects.isNull(frameInfo)) {
                 frameInfo = new FrameInfoEntity();
                 frameInfo.setFrameCode(frameCode);
                 frameInfoService.save(frameInfo);
@@ -149,20 +141,20 @@ public class LoadServiceMeta implements ApplicationRunner {
                         }
                     }
                     //服务信息及服务配置信息持久化到数据库
-                    FrameServiceEntity serviceEntity  = frameServiceService.getServiceByFrameIdAndServiceName(frameInfo.getId(),serviceName);
-                    if(Objects.isNull(serviceEntity)){
+                    FrameServiceEntity serviceEntity = frameServiceService.getServiceByFrameIdAndServiceName(frameInfo.getId(), serviceName);
+                    if (Objects.isNull(serviceEntity)) {
                         serviceEntity = new FrameServiceEntity();
-                        generateFrameService(frameCode, frameInfo, serviceName, serviceDdl, serviceInfo, serviceInfoMd5, serviceEntity,cofigMap,serviceInfo.getDecompressPackageName());
+                        generateFrameService(frameCode, frameInfo, serviceName, serviceDdl, serviceInfo, serviceInfoMd5, serviceEntity, cofigMap, serviceInfo.getDecompressPackageName());
 
                         frameServiceService.save(serviceEntity);
-                    }else if(!serviceEntity.getServiceJsonMd5().equals(serviceInfoMd5)){
+                    } else if (!serviceEntity.getServiceJsonMd5().equals(serviceInfoMd5)) {
                         String configMapStr = JSONObject.toJSONString(cofigMap);
                         String cofigMapStrMd5 = SecureUtil.md5(configMapStr);
-                        if(!cofigMapStrMd5.equals(serviceEntity.getConfigFileJsonMd5())){
+                        if (!cofigMapStrMd5.equals(serviceEntity.getConfigFileJsonMd5())) {
                             //更新服务实例配置文件
-                            updateServiceInstanceConfig(frameCode,serviceInfo.getName(),serviceInfo.getParameters(),cofigMap);
+                            updateServiceInstanceConfig(frameCode, serviceInfo.getName(), serviceInfo.getParameters(), cofigMap);
                         }
-                        generateFrameService(frameCode, frameInfo, serviceName, serviceDdl, serviceInfo, serviceInfoMd5, serviceEntity,cofigMap,serviceInfo.getDecompressPackageName());
+                        generateFrameService(frameCode, frameInfo, serviceName, serviceDdl, serviceInfo, serviceInfoMd5, serviceEntity, cofigMap, serviceInfo.getDecompressPackageName());
                         frameServiceService.updateById(serviceEntity);
                     }
                     logger.info("put {} {} service config into cache", frameCode, serviceName);
@@ -175,21 +167,21 @@ public class LoadServiceMeta implements ApplicationRunner {
                     for (ServiceRoleInfo serviceRole : serviceRoles) {
                         String key = frameCode + Constants.UNDERLINE + serviceInfo.getName() + Constants.UNDERLINE + serviceRole.getName();
                         logger.info("put {} {} {} service role info into cache", frameCode, serviceName, serviceRole.getName());
-                        String jmxKey = frameCode+Constants.UNDERLINE+Constants.SERVICE_ROLE_JMX_MAP;
-                        if(StringUtils.isNotBlank(serviceRole.getJmxPort())){
-                            jmxMap.put(serviceRole.getName(),serviceRole.getJmxPort());
+                        String jmxKey = frameCode + Constants.UNDERLINE + Constants.SERVICE_ROLE_JMX_MAP;
+                        if (StringUtils.isNotBlank(serviceRole.getJmxPort())) {
+                            jmxMap.put(serviceRole.getName(), serviceRole.getJmxPort());
                         }
-                        CacheUtils.put(jmxKey,jmxMap);
+                        CacheUtils.put(jmxKey, jmxMap);
                         CacheUtils.put(key, serviceRole);
                         String serviceRoleJson = JSONObject.toJSONString(serviceRole);
                         String serviceRoleJsonMd5 = SecureUtil.md5(serviceRoleJson);
                         //持久化服务角色元信息至数据库
-                        FrameServiceRoleEntity role = roleService.getServiceRoleByServiceIdAndServiceRoleName(serviceEntity.getId(),serviceRole.getName());
-                        if(Objects.isNull(role)){
+                        FrameServiceRoleEntity role = roleService.getServiceRoleByServiceIdAndServiceRoleName(serviceEntity.getId(), serviceRole.getName());
+                        if (Objects.isNull(role)) {
                             role = new FrameServiceRoleEntity();
                             generateFrameServiceRole(frameCode, serviceEntity, serviceRole, serviceRoleJson, serviceRoleJsonMd5, role);
                             roleService.save(role);
-                        }else if(!role.getServiceRoleJsonMd5().equals(serviceRoleJsonMd5)){
+                        } else if (!role.getServiceRoleJsonMd5().equals(serviceRoleJsonMd5)) {
                             generateFrameServiceRole(frameCode, serviceEntity, serviceRole, serviceRoleJson, serviceRoleJsonMd5, role);
                             roleService.updateById(role);
                         }
@@ -207,7 +199,7 @@ public class LoadServiceMeta implements ApplicationRunner {
         //查询集群的服务实例
         for (ClusterInfoEntity cluster : clusters) {
             ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(cluster.getId(), serviceName);
-            if(Objects.nonNull(serviceInstance)){
+            if (Objects.nonNull(serviceInstance)) {
                 ClusterServiceRoleGroupConfig config = roleGroupService.getRoleGroupConfigByServiceId(serviceInstance.getId());
                 String configJson = config.getConfigJson();
                 List<ServiceConfig> serviceConfigs = JSONArray.parseArray(configJson, ServiceConfig.class);
@@ -219,41 +211,6 @@ public class LoadServiceMeta implements ApplicationRunner {
         }
 
     }
-
-    /**
-     * 差集：删除左边集合中在右边集合存在的元素并返回
-     * @param left
-     * @param right
-     * @return
-     */
-    private static List<ServiceConfig> removeAll(List<ServiceConfig> left, List<ServiceConfig> right){
-        if (left == null){
-            return null;
-        }
-        if (right == null){
-            return left;
-        }
-        //使用LinkedList方便插入和删除
-        List<ServiceConfig> res = new LinkedList<>(left);
-        Set<String> set = new HashSet<>();
-        //
-        for(ServiceConfig item : right){
-            set.add(item.getName());
-        }
-        //迭代器遍历listA
-        Iterator<ServiceConfig> iter = res.iterator();
-        while(iter.hasNext()){
-            ServiceConfig item = iter.next();
-            //如果set中包含id则remove
-            if(set.contains(item.getName())){
-                iter.remove();
-            }
-        }
-        return res;
-    }
-
-
-
 
     private void generateFrameServiceRole(String frameCode, FrameServiceEntity serviceEntity, ServiceRoleInfo serviceRole, String serviceRoleJson, String serviceRoleJsonMd5, FrameServiceRoleEntity role) {
         role.setServiceId(serviceEntity.getId());

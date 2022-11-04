@@ -44,11 +44,9 @@ cd $DDH_HOME
 if [ "$command" = "worker" ]; then
    LOG_FILE="-Dlogging.config=classpath:logback-worker.xml -Dspring.profiles.active=worker"
    JMX="-javaagent:$DDH_HOME/jmx/jmx_prometheus_javaagent-0.16.1.jar=8585:$DDH_HOME/jmx/jmx_exporter_config.yaml"
-  CLASS=com.datasophon.ddh.worker.WorkerApplicationServer
+  CLASS=com.datasophon.worker.WorkerApplicationServer
   HEAP_OPTS="-Xms100m -Xmx200m"
   export DDH_OPTS="$HEAP_OPTS $DDH_OPTS $API_SERVER_OPTS"
-elif [ "$command" = "all" ]; then
-  CLASS=com.datasophon.data.service.DataServiceApplication
 else
   echo "Error: No command named \`$command' was found."
   exit 1

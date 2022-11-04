@@ -128,7 +128,7 @@
                     <!-- 打包后的包名是否包含assembly的id名 -->
                     <appendAssemblyId>false</appendAssemblyId>
                     <!-- 指定最后tar或者zip包的名字 -->
-                    <finalName>ddh</finalName>
+                    <finalName>datasophon-manager</finalName>
                     <!-- tar或者zip包的输出目录 -->
                     <outputDirectory>target/</outputDirectory>
                     <descriptors>

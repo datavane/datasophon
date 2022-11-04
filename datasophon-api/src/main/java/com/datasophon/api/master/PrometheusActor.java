@@ -9,7 +9,7 @@ import cn.hutool.http.HttpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.service.ClusterServiceInstanceService;
 import com.datasophon.api.utils.SpringTool;
-import com.datasophon.api.master.handler.ServiceConfigureHandler;
+import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
 import com.datasophon.api.service.ClusterHostService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.common.Constants;
@@ -155,7 +155,7 @@ public class PrometheusActor extends UntypedActor {
             ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
             ClusterServiceRoleInstanceEntity prometheusInstance = roleInstanceService.getOneServiceRole("Prometheus", null, command.getClusterId());
 
-            ActorSelection alertConfigActor = actorSystem.actorSelection("akka.tcp://ddh@" + prometheusInstance.getHostname() + ":2552/user/worker/alertConfigActor");
+            ActorSelection alertConfigActor = actorSystem.actorSelection("akka.tcp://datasophon@" + prometheusInstance.getHostname() + ":2552/user/worker/alertConfigActor");
             Timeout timeout = new Timeout(Duration.create(180, "seconds"));
             Future<Object> configureFuture = Patterns.ask(alertConfigActor, command, timeout);
             ExecResult configResult = (ExecResult) Await.result(configureFuture, timeout.duration());

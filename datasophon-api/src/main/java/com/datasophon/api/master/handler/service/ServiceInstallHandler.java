@@ -1,10 +1,11 @@
-package com.datasophon.api.master.handler;
+package com.datasophon.api.master.handler.service;
 
 import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import cn.hutool.core.io.FileUtil;
+import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.api.service.ClusterHostService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
@@ -38,7 +39,6 @@ public class ServiceInstallHandler extends ServiceHandler{
             execResult.setExecOut("already installed");
             return execResult;
         }
-        ActorSystem actorSystem = (ActorSystem) CacheUtils.get("actorSystem");
         InstallServiceRoleCommand installServiceRoleCommand = new InstallServiceRoleCommand();
         installServiceRoleCommand.setServiceName(serviceRoleInfo.getParentName());
         installServiceRoleCommand.setServiceRoleName(serviceRoleInfo.getName());
@@ -53,7 +53,7 @@ public class ServiceInstallHandler extends ServiceHandler{
             String armMd5 = FileUtil.readString(Constants.MASTER_MANAGE_PACKAGE_PATH+Constants.SLASH + serviceRoleInfo.getDecompressPackageName() + "-arm.tar.gz.md5", Charset.defaultCharset());
             installServiceRoleCommand.setPackageMd5(armMd5);
         }
-        ActorSelection actorSelection = actorSystem.actorSelection("akka.tcp://ddh@" + serviceRoleInfo.getHostname() + ":2552/user/worker/installServiceActor");
+        ActorSelection actorSelection = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + serviceRoleInfo.getHostname() + ":2552/user/worker/installServiceActor");
         Timeout timeout = new Timeout(Duration.create(180, "seconds"));
         Future<Object> future = Patterns.ask(actorSelection, installServiceRoleCommand, timeout);
         ExecResult installResult = (ExecResult) Await.result(future, timeout.duration());

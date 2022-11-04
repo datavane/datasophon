@@ -3,6 +3,8 @@ package com.datasophon.api.service.impl;
 import akka.actor.*;
 import com.datasophon.api.configuration.ConfigBean;
 import com.datasophon.api.enums.Status;
+import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.master.ServiceActor;
 import com.datasophon.api.service.*;
 import com.datasophon.dao.entity.*;
 import com.datasophon.api.service.*;
@@ -60,7 +62,7 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
     public Result saveCluster(ClusterInfoEntity clusterInfo) {
         //集群编码判重
         List<ClusterInfoEntity> list = this.list(new QueryWrapper<ClusterInfoEntity>().eq(Constants.CLUSTER_CODE, clusterInfo.getClusterCode()));
-        if(Objects.nonNull(list) && list.size() >= 1){
+        if (Objects.nonNull(list) && list.size() >= 1) {
             return Result.error(Status.CLUSTER_CODE_EXISTS.getMsg());
         }
         clusterInfo.setCreateTime(new Date());
@@ -78,22 +80,21 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         ProcessUtils.createServiceActor(clusterInfo);
 
         HashMap<String, String> globalVariables = new HashMap<>();
-        globalVariables.put("${installPath}",Constants.INSTALL_PATH);
+        globalVariables.put("${installPath}", Constants.INSTALL_PATH);
         globalVariables.put("${apiHost}", CacheUtils.getString("hostname"));
         globalVariables.put("${apiPort}", configBean.getServerPort());
-        globalVariables.put("${HADOOP_HOME}","/opt/datasophon/hadoop-3.3.3");
+        globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + "/hadoop-3.3.3");
 
-        CacheUtils.put("globalVariables"+Constants.UNDERLINE+clusterInfo.getId(),globalVariables);
+        CacheUtils.put("globalVariables" + Constants.UNDERLINE + clusterInfo.getId(), globalVariables);
         return Result.success();
     }
-
 
 
     @Override
     public Result getClusterList() {
         List<ClusterInfoEntity> list = this.list();
         for (ClusterInfoEntity clusterInfoEntity : list) {
-            List<UserInfoEntity> userList =  clusterUserService.getAllClusterManagerByClusterId(clusterInfoEntity.getId());
+            List<UserInfoEntity> userList = clusterUserService.getAllClusterManagerByClusterId(clusterInfoEntity.getId());
             clusterInfoEntity.setClusterManagerList(userList);
             clusterInfoEntity.setClusterStateCode(clusterInfoEntity.getClusterState().getValue());
         }
@@ -102,14 +103,14 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
 
     @Override
     public Result runningClusterList() {
-        List<ClusterInfoEntity> list = this.list(new QueryWrapper<ClusterInfoEntity>().eq(Constants.CLUSTER_STATE,ClusterState.RUNNING));
+        List<ClusterInfoEntity> list = this.list(new QueryWrapper<ClusterInfoEntity>().eq(Constants.CLUSTER_STATE, ClusterState.RUNNING));
         return Result.success(list);
     }
 
     @Override
     public Result updateClusterState(Integer clusterId, Integer clusterState) {
         ClusterInfoEntity clusterInfo = this.getById(clusterId);
-        if(clusterState == 2){
+        if (clusterState == 2) {
             clusterInfo.setClusterState(ClusterState.RUNNING);
         }
         this.updateById(clusterInfo);
@@ -118,21 +119,21 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
 
     @Override
     public List<ClusterInfoEntity> getClusterByFrameCode(String frameCode) {
-        return this.list(new QueryWrapper<ClusterInfoEntity>().eq(Constants.CLUSTER_FRAME,frameCode));
+        return this.list(new QueryWrapper<ClusterInfoEntity>().eq(Constants.CLUSTER_FRAME, frameCode));
     }
 
     @Override
     public Result updateCluster(ClusterInfoEntity clusterInfo) {
         //集群编码判重
         List<ClusterInfoEntity> list = this.list(new QueryWrapper<ClusterInfoEntity>().eq(Constants.CLUSTER_CODE, clusterInfo.getClusterCode()));
-        if(Objects.nonNull(list) && list.size() >= 1){
+        if (Objects.nonNull(list) && list.size() >= 1) {
             ClusterInfoEntity clusterInfoEntity = list.get(0);
-            if(clusterInfoEntity.getId() != clusterInfo.getId()){
+            if (clusterInfoEntity.getId() != clusterInfo.getId()) {
                 return Result.error(Status.CLUSTER_CODE_EXISTS.getMsg());
             }
         }
         ClusterInfoEntity cluster = this.getById(clusterInfo.getId());
-        if(cluster.getClusterCode() != clusterInfo.getClusterCode()){
+        if (cluster.getClusterCode() != clusterInfo.getClusterCode()) {
             ProcessUtils.createServiceActor(clusterInfo);
         }
         this.updateById(clusterInfo);
@@ -144,12 +145,11 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         Integer id = ids.get(0);
         ClusterInfoEntity clusterInfo = this.getById(id);
         this.removeByIds(ids);
-        ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
         List<FrameServiceEntity> frameServiceList = frameServiceService.getAllFrameServiceByFrameCode(clusterInfo.getClusterFrame());
         for (FrameServiceEntity frameServiceEntity : frameServiceList) {
             //创建服务actor
-            ActorSelection actorSelection = system.actorSelection("/user/" + clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
-            actorSelection.tell(PoisonPill.getInstance(), ActorRef.noSender());
+            ActorRef actor = ActorUtils.getLocalActor(ServiceActor.class,clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
+            actor.tell(PoisonPill.getInstance(), ActorRef.noSender());
         }
 
     }

@@ -1,0 +1,28 @@
+#!/bin/sh
+# chkconfig: 35 95 1
+usage="Usage: start.sh (start|stop|restart) <command> "
+
+startStop=$1
+
+
+case $startStop in
+  (start)
+    sh /opt/datasophon/datasophon-worker/bin/datasophon-worker.sh start worker
+    ;;
+  (stop)
+    sh /opt/datasophon/datasophon-worker/bin/datasophon-worker.sh stop worker
+      ;;
+  (status)
+    sh /opt/datasophon/datasophon-worker/bin/datasophon-worker.sh status worker
+      ;;
+  (restart)
+    sh /opt/datasophon/datasophon-worker/bin/datasophon-worker.sh restart worker
+      ;;
+  (*)
+    echo $usage
+    exit 1
+    ;;
+
+esac
+
+echo "End $startStop $command."

@@ -31,7 +31,7 @@ public interface ClusterServiceRoleInstanceService extends IService<ClusterServi
 
     void deleteServiceRole(List<String> idList);
 
-    List<ClusterServiceRoleInstanceEntity> getServiceRoleInstanceListByClusterIdAndRoleName(Integer clusterId, String resourceManager);
+    List<ClusterServiceRoleInstanceEntity> getServiceRoleInstanceListByClusterIdAndRoleName(Integer clusterId, String roleName);
 
     List<ClusterServiceRoleInstanceEntity> getRunningServiceRoleInstanceListByServiceId(Integer serviceInstanceId);
 
@@ -42,5 +42,7 @@ public interface ClusterServiceRoleInstanceService extends IService<ClusterServi
     void updateToNeedRestart(Integer roleGroupId);
 
     List<ClusterServiceRoleInstanceEntity> getObsoleteService(Integer id);
+
+    List<ClusterServiceRoleInstanceEntity> getStoppedRoleInstanceOnHost(Integer clusterId, String hostname, ServiceRoleState state);
 }
 

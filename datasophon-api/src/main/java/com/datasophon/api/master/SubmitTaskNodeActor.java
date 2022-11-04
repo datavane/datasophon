@@ -1,5 +1,6 @@
 package com.datasophon.api.master;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
 import akka.actor.UntypedActor;
@@ -39,7 +40,6 @@ public class SubmitTaskNodeActor extends UntypedActor {
             Map<String, String> errorTaskList = submitActiveTaskNodeCommand.getErrorTaskList();
             Map<String, String> readyToSubmitTaskList = submitActiveTaskNodeCommand.getReadyToSubmitTaskList();
             Map<String, String> completeTaskList = submitActiveTaskNodeCommand.getCompleteTaskList();
-            ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
             //遍历dag执行服务指令
             if (readyToSubmitTaskList.size() > 0) {
                 for (String node : readyToSubmitTaskList.keySet()) {
@@ -61,8 +61,7 @@ public class SubmitTaskNodeActor extends UntypedActor {
                     List<ServiceRoleInfo> masterRoles = serviceNode.getMasterRoles();
 
                     activeTaskList.put(node, ServiceExecuteState.RUNNING);
-
-                    ActorSelection serviceActor = system.actorSelection("/user/"+submitActiveTaskNodeCommand.getClusterCode()+"-serviceActor-" + node);
+                    ActorRef serviceActor = ActorUtils.getLocalActor(ServiceActor.class, submitActiveTaskNodeCommand.getClusterCode() + "-serviceActor-" + node);
                     if (masterRoles.size() > 0) {
                         logger.info("start to submit {} master roles", node);
                         ProcessUtils.buildExecuteServiceRoleCommand(submitActiveTaskNodeCommand.getClusterId(), submitActiveTaskNodeCommand.getCommandType(),submitActiveTaskNodeCommand.getClusterCode(), dag, activeTaskList, errorTaskList, readyToSubmitTaskList, completeTaskList, node, masterRoles, serviceActor, ServiceRoleType.MASTER);

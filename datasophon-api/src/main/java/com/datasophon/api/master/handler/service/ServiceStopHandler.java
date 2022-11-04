@@ -1,8 +1,9 @@
-package com.datasophon.api.master.handler;
+package com.datasophon.api.master.handler.service;
 
 import akka.actor.ActorSelection;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import com.datasophon.api.master.ActorUtils;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.enums.ServiceRoleType;
 import com.datasophon.common.model.ServiceRoleInfo;
@@ -30,7 +31,7 @@ public class ServiceStopHandler extends ServiceHandler{
             }
             return execResult;
         }
-        ActorSelection stopActor = actorSystem.actorSelection("akka.tcp://ddh@" + serviceRoleInfo.getHostname() + ":2552/user/worker/stopServiceActor");
+        ActorSelection stopActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + serviceRoleInfo.getHostname() + ":2552/user/worker/stopServiceActor");
         Timeout timeout = new Timeout(Duration.create(180, "seconds"));
         Future<Object> startFuture = Patterns.ask(stopActor, serviceRoleOperateCommand, timeout);
         ExecResult execResult = (ExecResult) Await.result(startFuture, timeout.duration());

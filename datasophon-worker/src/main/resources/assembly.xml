@@ -10,7 +10,7 @@
     <fileSets>
         <!--拷贝application.yml文件到jar包的外部conf目录下面-->
         <fileSet>
-            <directory>${basedir}/../ddh-worker/src/main/resources</directory>
+            <directory>${basedir}/../datasophon-worker/src/main/resources</directory>
             <includes>
                 <include>**/*.yml</include>
                 <include>**/logback-worker.xml</include>
@@ -20,12 +20,20 @@
             <outputDirectory>conf</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>${basedir}/../ddh-worker/src/main/resources/templates</directory>
+            <directory>${basedir}/../datasophon-worker/src/main/resources/templates</directory>
             <includes>
                 <include>**/*.ftl</include>
                 <include>**/*.yml</include>
             </includes>
             <outputDirectory>conf/templates</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../datasophon-common/src/main/resources</directory>
+            <includes>
+                <include>**/*.properties</include>
+                <include>**/*.xml</include>
+            </includes>
+            <outputDirectory>conf</outputDirectory>
         </fileSet>
 
         <!--拷贝start.sh启动脚本文件到bin目录下面-->
@@ -67,7 +75,7 @@
             <!-- 打包需要包含的文件 -->
             <includes>
                 <include>*.jar</include>
-                <include>../ddh-worker-1.0-SNAPSHOT.jar</include>
+                <include>../datasophon-worker-1.0-SNAPSHOT.jar</include>
             </includes>
         </fileSet>
         <fileSet>
@@ -75,7 +83,7 @@
             <outputDirectory>lib</outputDirectory>
             <!-- 打包需要包含的文件 -->
             <includes>
-                <include>ddh-worker-1.0-SNAPSHOT.jar</include>
+                <include>datasophon-worker-1.0-SNAPSHOT.jar</include>
             </includes>
         </fileSet>
 

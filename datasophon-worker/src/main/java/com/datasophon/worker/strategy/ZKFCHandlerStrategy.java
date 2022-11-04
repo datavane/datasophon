@@ -1,5 +1,6 @@
 package com.datasophon.worker.strategy;
 
+import com.datasophon.common.Constants;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.utils.ExecResult;
@@ -20,10 +21,10 @@ public class ZKFCHandlerStrategy implements ServiceRoleStrategy {
             logger.info("start to execute hdfs zkfc -formatZK");
 
             ArrayList<String> commands = new ArrayList<>();
-            commands.add("/opt/datasophon/hadoop-3.3.3/bin/hdfs");
+            commands.add(Constants.INSTALL_PATH+ "/hadoop-3.3.3/bin/hdfs");
             commands.add("zkfc");
             commands.add("-formatZK");
-            ExecResult execResult = ShellUtils.execWithStatus("/opt/datasophon/hadoop-3.3.3", commands, 30L);
+            ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH+ "/hadoop-3.3.3", commands, 30L);
             if (execResult.getExecResult()){
                 logger.info("zkfc format success");
                 startResult = serviceHandler.start(command.getStartRunner(),command.getStatusRunner(),command.getDecompressPackageName(),command.getRunAs());

@@ -1,4 +1,4 @@
-package com.datasophon.api.master.handler;
+package com.datasophon.api.master.handler.service;
 
 import akka.actor.ActorSystem;
 import com.datasophon.common.cache.CacheUtils;
@@ -11,7 +11,6 @@ public abstract class ServiceHandler {
 
     private ServiceHandler next;
 
-    ActorSystem actorSystem = (ActorSystem) CacheUtils.get("actorSystem");
 
     public abstract ExecResult handlerRequest(ServiceRoleInfo serviceRoleInfo ) throws Exception;
 

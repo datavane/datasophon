@@ -18,8 +18,6 @@ public class MasterServer extends UntypedActor {
 
     private static final Logger logger = LoggerFactory.getLogger(MasterServer.class);
 
-    private ActorRef hostActor;
-
 
     //定义监督策略
     private static SupervisorStrategy strategy = new OneForOneStrategy(3,
@@ -34,7 +32,7 @@ public class MasterServer extends UntypedActor {
     @Override
     public void preStart() throws Exception {
         ActorRef serviceActor = getContext().actorOf(Props.create(ServiceActor.class).withDispatcher("my-pinned-dispatcher"), "serviceActor");
-        this.hostActor = getContext().actorOf(Props.create(HostActor.class).withDispatcher("my-pinned-dispatcher"), "hostActor");
+        ActorRef workerStartActor = getContext().actorOf(Props.create(WorkerStartActor.class).withDispatcher("my-pinned-dispatcher"), "workerStartActor");
         ActorRef command = getContext().actorOf(Props.create(ServiceCommandActor.class).withDispatcher("my-pinned-dispatcher"), "commandActor");
 
         ActorRef dagBuildActor = getContext().actorOf(Props.create(DAGBuildActor.class).withDispatcher("my-pinned-dispatcher"), "dagBuildActor");
@@ -44,14 +42,14 @@ public class MasterServer extends UntypedActor {
         ActorRef starRocksActor = getContext().actorOf(Props.create(StarRocksActor.class).withDispatcher("my-pinned-dispatcher"), "starRocksActor");
         ActorRef hdfsECActor = getContext().actorOf(Props.create(HdfsECActor.class).withDispatcher("my-pinned-dispatcher"), "hdfsECActor");
         getContext().watch(serviceActor);
-        getContext().watch(hostActor);
+        getContext().watch(workerStartActor);
         getContext().watch(command);
         getContext().watch(dagBuildActor);
         getContext().watch(submitTaskNodeActor);
         getContext().watch(serviceExecuteResultActor);
         getContext().watch(starRocksActor);
         getContext().watch(hdfsECActor);
-        CacheUtils.put("hostActor",hostActor);
+        CacheUtils.put("hostActor",workerStartActor);
         CacheUtils.put("serviceActor",serviceActor);
         CacheUtils.put("commandActor",command);
         CacheUtils.put("dagBuildActor",dagBuildActor);
@@ -72,9 +70,7 @@ public class MasterServer extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
         if (message instanceof StartWorkerMessage) {
-            StartWorkerMessage host = (StartWorkerMessage) message;
-            logger.info("receive worker started message from {}",host.getHostname());
-            hostActor.tell(host, ActorRef.noSender());
+
         } else if(message instanceof Terminated){
             Terminated t = (Terminated) message;
             logger.info("actor {} terminated",t.getActor().path());

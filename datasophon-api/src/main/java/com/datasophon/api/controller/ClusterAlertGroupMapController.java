@@ -19,7 +19,7 @@ import com.datasophon.api.service.ClusterAlertGroupMapService;
  * @date 2022-07-13 10:01:06
  */
 @RestController
-@RequestMapping("api/clusteralertgroupmap")
+@RequestMapping("cluster/alert/group/map")
 public class ClusterAlertGroupMapController {
     @Autowired
     private ClusterAlertGroupMapService clusterAlertGroupMapService;

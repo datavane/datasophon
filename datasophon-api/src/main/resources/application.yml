@@ -10,9 +10,9 @@ security:
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://ddp1:3306/ddh?useUnicode=true&characterEncoding=utf-8
-    username: root
-    password: ddp1
+    url: jdbc:mysql://localhost:3306/datasophon?useUnicode=true&characterEncoding=utf-8
+    username: datasophon
+    password: datasophon
     driver-class-name: com.mysql.jdbc.Driver
 #json格式化全局配置
   jackson:
@@ -25,8 +25,8 @@ spring:
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
   #实体扫描，多个package用逗号或者分号分隔
-  typeAliasesPackage: com.datasophon.ddh.dao.entity
-  typeEnumsPackage: com.datasophon.ddh.dao.enums
+  typeAliasesPackage: com.datasophon.dao.entity
+  typeEnumsPackage: com.datasophon.dao.enums
   global-config:
     #数据库相关配置
     db-config:

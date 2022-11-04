@@ -1,6 +1,7 @@
 package com.datasophon.worker.metrics;
 
 import cn.hutool.core.io.FileUtil;
+import com.datasophon.common.Constants;
 import com.datasophon.common.model.ServiceRoleRunner;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.worker.handler.ServiceHandler;
@@ -17,7 +18,7 @@ public class EsMetrics implements EsMetricsMXBean {
 
     @Override
     public Integer getEsUp() {
-        if(FileUtil.exist("/opt/datasophon/elasticsearch-7.16.2")){
+        if(FileUtil.exist(Constants.INSTALL_PATH+"/elasticsearch-7.16.2")){
             ServiceHandler serviceHandler = new ServiceHandler();
             ServiceRoleRunner serviceRoleRunner = new ServiceRoleRunner();
             serviceRoleRunner.setTimeout("60");

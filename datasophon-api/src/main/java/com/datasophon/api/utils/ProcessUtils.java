@@ -11,6 +11,8 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.master.ServiceCommandActor;
 import com.datasophon.api.service.*;
 import com.datasophon.api.master.ServiceActor;
 import com.datasophon.common.model.*;
@@ -171,10 +173,13 @@ public class ProcessUtils {
                 } else {
                     message.setServiceRoleType(ServiceRoleType.WORKER);
                 }
-                ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
-                ActorRef commandActor = (ActorRef) CacheUtils.get("commandActor");
-                system.scheduler().scheduleOnce(FiniteDuration.apply(3L, TimeUnit.SECONDS), commandActor, message, system.dispatcher(), ActorRef.noSender());
-
+                ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class, "commandActor");
+                ActorUtils.actorSystem.scheduler().scheduleOnce(
+                        FiniteDuration.apply(3L, TimeUnit.SECONDS),
+                        commandActor,
+                        message,
+                        ActorUtils.actorSystem.dispatcher(),
+                        ActorRef.noSender());
             }
         }
 
@@ -227,9 +232,13 @@ public class ProcessUtils {
         } else {
             message.setServiceRoleType(ServiceRoleType.WORKER);
         }
-        ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
-        ActorRef commandActor = (ActorRef) CacheUtils.get("commandActor");
-        system.scheduler().scheduleOnce(FiniteDuration.apply(3L, TimeUnit.SECONDS), commandActor, message, system.dispatcher(), ActorRef.noSender());
+
+        ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class,"commandActor");
+        ActorUtils.actorSystem.scheduler().scheduleOnce(FiniteDuration.apply(
+                3L, TimeUnit.SECONDS),
+                commandActor, message,
+                ActorUtils.actorSystem.dispatcher(),
+                ActorRef.noSender());
 
         return hostCommand;
     }
@@ -245,7 +254,7 @@ public class ProcessUtils {
             Map<String, String> completeTaskList,
             String node,
             List<ServiceRoleInfo> masterRoles,
-            ActorSelection serviceActor,
+            ActorRef serviceActor,
             ServiceRoleType serviceRoleType) {
         ExecuteServiceRoleCommand executeServiceRoleCommand = new ExecuteServiceRoleCommand(clusterId, node, masterRoles);
         executeServiceRoleCommand.setServiceRoleType(serviceRoleType);
@@ -370,12 +379,12 @@ public class ProcessUtils {
     }
     public static void createServiceActor(ClusterInfoEntity clusterInfo) {
         FrameServiceService frameServiceService = SpringTool.getApplicationContext().getBean(FrameServiceService.class);
-        ActorSystem system = (ActorSystem) CacheUtils.get("actorSystem");
+
         List<FrameServiceEntity> frameServiceList = frameServiceService.getAllFrameServiceByFrameCode(clusterInfo.getClusterFrame());
         for (FrameServiceEntity frameServiceEntity : frameServiceList) {
             //创建服务actor
             logger.info("create {} actor",clusterInfo.getClusterCode()+"-serviceActor-"+frameServiceEntity.getServiceName());
-            system.actorOf(Props.create(ServiceActor.class)
+            ActorUtils.actorSystem.actorOf(Props.create(ServiceActor.class)
                     .withDispatcher("my-forkjoin-dispatcher"), clusterInfo.getClusterCode()+"-serviceActor-"+frameServiceEntity.getServiceName());
         }
     }
