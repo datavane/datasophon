@@ -99,10 +99,10 @@ public class ProcessUtils {
             roleInstance.setRoleGroupId(roleGroup.getId());
             roleInstance.setNeedRestart(NeedRestart.NO);
             serviceRoleInstanceService.save(roleInstance);
-            if("zkserver".equals(roleInstance.getServiceRoleName().toLowerCase())){
+            if ("zkserver".equals(roleInstance.getServiceRoleName().toLowerCase())) {
                 ClusterZkService clusterZkService = SpringTool.getApplicationContext().getBean(ClusterZkService.class);
                 ClusterZk clusterZk = new ClusterZk();
-                clusterZk.setMyid((Integer) CacheUtils.get("zkserver_"+serviceRoleInfo.getHostname()));
+                clusterZk.setMyid((Integer) CacheUtils.get("zkserver_" + serviceRoleInfo.getHostname()));
                 clusterZk.setClusterId(serviceRoleInfo.getClusterId());
                 clusterZk.setZkServer(roleInstance.getHostname());
                 clusterZkService.save(clusterZk);
@@ -151,16 +151,16 @@ public class ProcessUtils {
         clusterHostService.save(clusterHostEntity);
     }
 
-    public static void updateCommandStateToFailed( String hostCommandId) {
-        logger.info("hostCommandId is {}",hostCommandId);
+    public static void updateCommandStateToFailed(String hostCommandId) {
+        logger.info("hostCommandId is {}", hostCommandId);
         //worker以及下游节点全部取消
         ClusterServiceCommandHostCommandService service = SpringTool.getApplicationContext().getBean(ClusterServiceCommandHostCommandService.class);
         ClusterServiceCommandHostCommandEntity hostCommand = service.getByHostCommandId(hostCommandId);
-        logger.info("hostCommandName is {}",hostCommand.getCommandName());
+        logger.info("hostCommandName is {}", hostCommand.getCommandName());
         List<ClusterServiceCommandHostCommandEntity> hostCommandList = service.getHostCommandListByCommandId(hostCommand.getCommandId());
         for (ClusterServiceCommandHostCommandEntity hostCommandEntity : hostCommandList) {
-            if(hostCommandEntity.getCommandState() == CommandState.RUNNING && hostCommandEntity.getHostCommandId() != hostCommandId){
-                logger.info("{} host command  set to failed",hostCommandEntity.getCommandName());
+            if (hostCommandEntity.getCommandState() == CommandState.RUNNING && hostCommandEntity.getHostCommandId() != hostCommandId) {
+                logger.info("{} host command  set to failed", hostCommandEntity.getCommandName());
                 hostCommandEntity.setCommandState(CommandState.FAILED);
                 hostCommandEntity.setCommandProgress(100);
                 service.updateByHostCommandId(hostCommandEntity);
@@ -233,7 +233,7 @@ public class ProcessUtils {
             message.setServiceRoleType(ServiceRoleType.WORKER);
         }
 
-        ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class,"commandActor");
+        ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class, "commandActor");
         ActorUtils.actorSystem.scheduler().scheduleOnce(FiniteDuration.apply(
                 3L, TimeUnit.SECONDS),
                 commandActor, message,
@@ -315,12 +315,12 @@ public class ProcessUtils {
         return hostCommand;
     }
 
-    public static void updateServiceRoleState(CommandType commandType ,String serviceRoleName, String hostname, Integer clusterId, ServiceRoleState serviceRoleState) {
+    public static void updateServiceRoleState(CommandType commandType, String serviceRoleName, String hostname, Integer clusterId, ServiceRoleState serviceRoleState) {
         ClusterServiceRoleInstanceService serviceRoleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
         ClusterServiceRoleInstanceEntity serviceRole = serviceRoleInstanceService.getOneServiceRole(serviceRoleName, hostname, clusterId);
         serviceRole.setServiceRoleState(serviceRoleState);
         serviceRole.setServiceRoleStateCode(serviceRoleState.getValue());
-        if(commandType != CommandType.STOP_SERVICE){
+        if (commandType != CommandType.STOP_SERVICE) {
             serviceRole.setNeedRestart(NeedRestart.NO);
         }
         serviceRoleInstanceService.updateById(serviceRole);
@@ -330,7 +330,7 @@ public class ProcessUtils {
         ClusterVariableService variableService = SpringTool.getApplicationContext().getBean(ClusterVariableService.class);
         ClusterVariable clusterVariable = variableService.getVariableByVariableName(variableName, clusterId);
         if (globalVariables.containsKey(variableName) && Objects.nonNull(clusterVariable) && !value.equals(clusterVariable.getVariableValue())) {
-            logger.info("update variable {} value {} to {}",variableName,clusterVariable.getVariableValue(),value);
+            logger.info("update variable {} value {} to {}", variableName, clusterVariable.getVariableValue(), value);
             clusterVariable.setVariableValue(value);
             variableService.updateById(clusterVariable);
         } else {
@@ -343,8 +343,7 @@ public class ProcessUtils {
         globalVariables.put(variableName, value);
     }
 
-    public static void hdfsECMethond(Integer serviceInstanceId,ClusterServiceRoleInstanceService roleInstanceService,TreeSet<String> list,String type,String roleName) throws Exception {
-        ActorSystem actorSystem = (ActorSystem) CacheUtils.get("actorSystem");
+    public static void hdfsECMethond(Integer serviceInstanceId, ClusterServiceRoleInstanceService roleInstanceService, TreeSet<String> list, String type, String roleName) throws Exception {
 
         List<ClusterServiceRoleInstanceEntity> namenodes = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                 .eq(Constants.SERVICE_ID, serviceInstanceId)
@@ -352,68 +351,71 @@ public class ProcessUtils {
 
         //更新namenode节点的whitelist白名单
         for (ClusterServiceRoleInstanceEntity namenode : namenodes) {
-            ActorSelection actorSelection = actorSystem.actorSelection("akka.tcp://datasophon@" + namenode.getHostname() + ":2552/user/worker/fileOperateActor");
-            ActorSelection execCmdActor = actorSystem.actorSelection("akka.tcp://datasophon@" + namenode.getHostname() + ":2552/user/worker/executeCmdActor");
+            ActorSelection actorSelection = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + namenode.getHostname() + ":2552/user/worker/fileOperateActor");
+            ActorSelection execCmdActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + namenode.getHostname() + ":2552/user/worker/executeCmdActor");
             Timeout timeout = new Timeout(Duration.create(180, "seconds"));
             FileOperateCommand fileOperateCommand = new FileOperateCommand();
             fileOperateCommand.setLines(list);
-            fileOperateCommand.setPath("/opt/datasophon/hadoop-3.3.3/etc/hadoop/"+type);
+            fileOperateCommand.setPath(Constants.INSTALL_PATH + "/hadoop-3.3.3/etc/hadoop/" + type);
             Future<Object> future = Patterns.ask(actorSelection, fileOperateCommand, timeout);
             ExecResult fileOperateResult = (ExecResult) Await.result(future, timeout.duration());
-            if(Objects.nonNull(fileOperateResult) && fileOperateResult.getExecResult()){
-                logger.info("write {} success in namenode {}",type,namenode.getHostname());
+            if (Objects.nonNull(fileOperateResult) && fileOperateResult.getExecResult()) {
+                logger.info("write {} success in namenode {}", type, namenode.getHostname());
                 //刷新白名单
                 ExecuteCmdCommand command = new ExecuteCmdCommand();
                 ArrayList<String> commands = new ArrayList<>();
-                commands.add("/opt/datasophon/hadoop-3.3.3/bin/hdfs");
+                commands.add(Constants.INSTALL_PATH + "/hadoop-3.3.3/bin/hdfs");
                 commands.add("dfsadmin");
                 commands.add("-refreshNodes");
                 command.setCommands(commands);
                 Future<Object> execFuture = Patterns.ask(execCmdActor, command, timeout);
                 ExecResult execResult = (ExecResult) Await.result(execFuture, timeout.duration());
-                if(execResult.getExecResult()){
-                    logger.info("hdfs dfsadmin -refreshNodes success at {}",namenode.getHostname());
+                if (execResult.getExecResult()) {
+                    logger.info("hdfs dfsadmin -refreshNodes success at {}", namenode.getHostname());
                 }
             }
         }
     }
+
     public static void createServiceActor(ClusterInfoEntity clusterInfo) {
         FrameServiceService frameServiceService = SpringTool.getApplicationContext().getBean(FrameServiceService.class);
 
         List<FrameServiceEntity> frameServiceList = frameServiceService.getAllFrameServiceByFrameCode(clusterInfo.getClusterFrame());
         for (FrameServiceEntity frameServiceEntity : frameServiceList) {
             //创建服务actor
-            logger.info("create {} actor",clusterInfo.getClusterCode()+"-serviceActor-"+frameServiceEntity.getServiceName());
+            logger.info("create {} actor", clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
             ActorUtils.actorSystem.actorOf(Props.create(ServiceActor.class)
-                    .withDispatcher("my-forkjoin-dispatcher"), clusterInfo.getClusterCode()+"-serviceActor-"+frameServiceEntity.getServiceName());
+                    .withDispatcher("my-forkjoin-dispatcher"), clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
         }
     }
+
     /**
      * 并集：左边集合与右边集合合并
+     *
      * @param left
      * @param right
      * @return
      */
-    public static List<ServiceConfig> addAll(List<ServiceConfig> left, List<ServiceConfig> right){
-        if (left == null){
+    public static List<ServiceConfig> addAll(List<ServiceConfig> left, List<ServiceConfig> right) {
+        if (left == null) {
             return null;
         }
-        if (right == null){
+        if (right == null) {
             return left;
         }
         //使用LinkedList方便插入和删除
         List<ServiceConfig> res = new LinkedList<>(right);
         Set<String> set = new HashSet<>();
         //
-        for(ServiceConfig item : left){
+        for (ServiceConfig item : left) {
             set.add(item.getName());
         }
         //迭代器遍历listA
         Iterator<ServiceConfig> iter = res.iterator();
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             ServiceConfig item = iter.next();
             //如果set中包含id则remove
-            if(!set.contains(item.getName())){
+            if (!set.contains(item.getName())) {
                 left.add(item);
             }
         }

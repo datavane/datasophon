@@ -118,4 +118,9 @@ public class ClusterAlertQuotaServiceImpl extends ServiceImpl<ClusterAlertQuotaM
         clusterAlertQuota.setServiceCategory(alertGroupEntity.getAlertGroupCategory());
         this.save(clusterAlertQuota);
     }
+
+    @Override
+    public List<ClusterAlertQuota> listAlertQuotaByServiceName(String serviceName) {
+        return this.list(new QueryWrapper<ClusterAlertQuota>().eq(Constants.SERVICE_CATEGORY,serviceName));
+    }
 }

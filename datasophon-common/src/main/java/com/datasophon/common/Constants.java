@@ -100,6 +100,7 @@ public final class Constants {
     public static final String CPU_ARCHITECTURE = "cpu_architecture";
     public static final String HOST_STATE = "host_state";
     public static final String FAILED = "failed";
+    public static final String SERVICE_CATEGORY = "service_category";
 
     private Constants() {
         throw new IllegalStateException("Constants Exception");

@@ -3,29 +3,25 @@ package com.datasophon.api.master;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.datasophon.api.service.ClusterInfoService;
-import com.datasophon.api.service.ClusterServiceCommandHostService;
-import com.datasophon.api.service.ClusterServiceCommandService;
+import com.datasophon.api.service.*;
 import com.datasophon.api.utils.SpringTool;
-import com.datasophon.api.service.ClusterServiceCommandHostCommandService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.GeneratePrometheusConfigCommand;
 import com.datasophon.common.command.GenerateSRPromConfigCommand;
 import com.datasophon.common.command.HdfsEcCommand;
 import com.datasophon.common.model.UpdateCommandHostMessage;
-import com.datasophon.dao.entity.ClusterInfoEntity;
-import com.datasophon.dao.entity.ClusterServiceCommandEntity;
-import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
-import com.datasophon.dao.entity.ClusterServiceCommandHostEntity;
+import com.datasophon.dao.entity.*;
 import com.datasophon.dao.enums.ClusterState;
 import com.datasophon.dao.enums.CommandState;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class ServiceCommandActor extends UntypedActor {
@@ -80,14 +76,6 @@ public class ServiceCommandActor extends UntypedActor {
                         clusterInfoService.updateById(clusterInfo);
                     }
                     String serviceName = command.getServiceName();
-//                    if("starrocks".equals(serviceName.toLowerCase())){
-//                        logger.info("start to generate starrocks");
-//                        ActorRef starRocksActor = (ActorRef) CacheUtils.get("starRocksActor");
-//                        GenerateStarRocksHAMessage starRocksHAMessage = new GenerateStarRocksHAMessage();
-//                        starRocksHAMessage.setServiceInstanceId(command.getServiceInstanceId());
-//                        starRocksHAMessage.setClusterId(clusterInfo.getId());
-//                        starRocksActor.tell(starRocksHAMessage,getSelf());
-//                    }
                     if("hdfs".equals(serviceName.toLowerCase())){
                         ActorRef hdfsECActor = (ActorRef) CacheUtils.get("hdfsECActor");
                         HdfsEcCommand hdfsEcCommand = new HdfsEcCommand();
@@ -110,10 +98,11 @@ public class ServiceCommandActor extends UntypedActor {
                         prometheusConfigCommand.setClusterId(clusterInfo.getId());
                         prometheusActor.tell(prometheusConfigCommand, getSelf());
                     }
-                    if("alertmanager".equals(serviceName.toLowerCase())){
-                        //生成告警配置
-
-                    }
+                    ClusterAlertQuotaService alertQuotaService = SpringTool.getApplicationContext().getBean(ClusterAlertQuotaService.class);
+                    List<ClusterAlertQuota> list = alertQuotaService.listAlertQuotaByServiceName(serviceName);
+                    List<Integer> ids = list.stream().map(e -> e.getId()).collect(Collectors.toList());
+                    String alertQuotaIds = StringUtils.join(ids, ",");
+                    alertQuotaService.start(clusterInfo.getId(),alertQuotaIds);
                 }
                 List<ClusterServiceCommandHostEntity> list = commandHostService.findFailedCommandHost(message.getCommandId());
                 if(list.size() > 0){

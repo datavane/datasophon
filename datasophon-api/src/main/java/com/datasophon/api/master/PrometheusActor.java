@@ -149,13 +149,12 @@ public class PrometheusActor extends UntypedActor {
                 HttpUtil.post("http://"+prometheusInstance.getHostname()+":9090/-/reload","");
             }
         }else if(msg instanceof GenerateAlertConfigCommand){
-            ActorSystem actorSystem = (ActorSystem) CacheUtils.get("actorSystem");
 
             GenerateAlertConfigCommand command = (GenerateAlertConfigCommand) msg;
             ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
             ClusterServiceRoleInstanceEntity prometheusInstance = roleInstanceService.getOneServiceRole("Prometheus", null, command.getClusterId());
 
-            ActorSelection alertConfigActor = actorSystem.actorSelection("akka.tcp://datasophon@" + prometheusInstance.getHostname() + ":2552/user/worker/alertConfigActor");
+            ActorSelection alertConfigActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + prometheusInstance.getHostname() + ":2552/user/worker/alertConfigActor");
             Timeout timeout = new Timeout(Duration.create(180, "seconds"));
             Future<Object> configureFuture = Patterns.ask(alertConfigActor, command, timeout);
             ExecResult configResult = (ExecResult) Await.result(configureFuture, timeout.duration());

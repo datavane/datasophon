@@ -14,7 +14,7 @@
       "roleType": "master",
       "cardinality": "1+",
       "logFile": "fe/log/fe.log",
-      "jmxPort": 8030,
+      "jmxPort": 18030,
       "startRunner": {
         "timeout": "60",
         "program": "fe/bin/start_fe.sh",
@@ -40,7 +40,7 @@
       "externalLink": {
         "name": "FE UI",
         "label": "FE UI",
-        "url": "http://${host}:8030"
+        "url": "http://${host}:18030"
       }
     },
     {
@@ -49,7 +49,7 @@
       "roleType": "worker",
       "cardinality": "1+",
       "logFile": "be/log/be.log",
-      "jmxPort": 8040,
+      "jmxPort": 18040,
       "startRunner": {
         "timeout": "60",
         "program": "be/bin/start_be.sh",
