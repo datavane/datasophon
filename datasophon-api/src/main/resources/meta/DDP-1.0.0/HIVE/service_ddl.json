@@ -13,7 +13,7 @@
       "label": "HiveServer2",
       "roleType": "master",
       "cardinality": "1",
-      "logFile": "/tmp/root/hive.log",
+      "logFile": "logs/hiveserver2.out",
       "jmxPort": 11000,
       "startRunner": {
         "timeout": "60",
@@ -184,7 +184,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "jdbc:mysql://${apiHost}:3306/hive?useUnicode=true&amp;characterEncoding=UTF-8"
+      "defaultValue": "jdbc:mysql://${apiHost}:3306/hive?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false"
     },
     {
       "name": "hive.server2.enable.doAs",
@@ -294,7 +294,7 @@
       "configType": "custom",
       "required": false,
       "type": "multipleWithKey",
-      "value": [{"HIVE_AUX_JARS_PATH":"/opt/datasophon/hive-3.1.0/auxlibs"}],
+      "value": [{"HIVE_AUX_JARS_PATH":"${INSTALL_PATH}/hive-3.1.0/auxlibs"}],
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": ""

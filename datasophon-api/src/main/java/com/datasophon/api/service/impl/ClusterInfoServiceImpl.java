@@ -52,6 +52,9 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
     @Autowired
     private FrameServiceService frameServiceService;
 
+    @Autowired
+    private ClusterHostService clusterHostService;
+
     @Override
     public ClusterInfoEntity getClusterByClusterCode(String clusterCode) {
         ClusterInfoEntity clusterInfoEntity = clusterInfoMapper.getClusterByClusterCode(clusterCode);
@@ -80,7 +83,7 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         ProcessUtils.createServiceActor(clusterInfo);
 
         HashMap<String, String> globalVariables = new HashMap<>();
-        globalVariables.put("${installPath}", Constants.INSTALL_PATH);
+        globalVariables.put("${INSTALL_PATH}",Constants.INSTALL_PATH);
         globalVariables.put("${apiHost}", CacheUtils.getString("hostname"));
         globalVariables.put("${apiPort}", configBean.getServerPort());
         globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + "/hadoop-3.3.3");
@@ -145,6 +148,8 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         Integer id = ids.get(0);
         ClusterInfoEntity clusterInfo = this.getById(id);
         this.removeByIds(ids);
+        //delete host
+        clusterHostService.deleteHostByClusterId(id);
         List<FrameServiceEntity> frameServiceList = frameServiceService.getAllFrameServiceByFrameCode(clusterInfo.getClusterFrame());
         for (FrameServiceEntity frameServiceEntity : frameServiceList) {
             //创建服务actor

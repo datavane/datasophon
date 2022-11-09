@@ -51,26 +51,26 @@ public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMap
     public Result listByPage(Integer clusterId, Integer page, Integer pageSize) {
         Integer offset = (page - 1) * pageSize;
         List<ClusterYarnQueue> list = this.list(new QueryWrapper<ClusterYarnQueue>()
-                .eq(Constants.CLUSTER_ID,clusterId)
+                .eq(Constants.CLUSTER_ID, clusterId)
                 .orderByDesc(Constants.CREATE_TIME)
                 .last("limit " + offset + "," + pageSize));
         int count = this.count(new QueryWrapper<ClusterYarnQueue>()
                 .eq(Constants.CLUSTER_ID, clusterId));
         for (ClusterYarnQueue clusterYarnQueue : list) {
-            String minResources = clusterYarnQueue.getMinCore()+"Core,"+clusterYarnQueue.getMinMem()+"GB";
-            String maxResources = clusterYarnQueue.getMaxCore()+"Core,"+clusterYarnQueue.getMaxMem()+"GB";
+            String minResources = clusterYarnQueue.getMinCore() + "Core," + clusterYarnQueue.getMinMem() + "GB";
+            String maxResources = clusterYarnQueue.getMaxCore() + "Core," + clusterYarnQueue.getMaxMem() + "GB";
             clusterYarnQueue.setMinResources(minResources);
             clusterYarnQueue.setMaxResources(maxResources);
         }
-        return Result.success(list).put(Constants.TOTAL,count);
+        return Result.success(list).put(Constants.TOTAL, count);
     }
 
     @Override
     public Result refreshQueues(Integer clusterId) throws Exception {
         List<ClusterYarnQueue> list = this.list(new QueryWrapper<ClusterYarnQueue>()
-                .eq(Constants.CLUSTER_ID,clusterId));
+                .eq(Constants.CLUSTER_ID, clusterId));
         //查询resourcemanager节点
-        List<ClusterServiceRoleInstanceEntity> roleList = roleInstanceService.getServiceRoleInstanceListByClusterIdAndRoleName(clusterId,"ResourceManager");
+        List<ClusterServiceRoleInstanceEntity> roleList = roleInstanceService.getServiceRoleInstanceListByClusterIdAndRoleName(clusterId, "ResourceManager");
 
         //构建configfilemap
         HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
@@ -85,11 +85,11 @@ public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMap
         ArrayList<JSONObject> queueList = new ArrayList<>();
         for (ClusterYarnQueue clusterYarnQueue : list) {
             JSONObject queue = new JSONObject();
-            Integer minMem = clusterYarnQueue.getMinMem()*1024;
-            Integer maxMem = clusterYarnQueue.getMaxMem()*1024;
-            clusterYarnQueue.setMinResources(minMem+"mb,"+clusterYarnQueue.getMinCore()+"vcores");
-            clusterYarnQueue.setMaxResources(maxMem+"mb,"+clusterYarnQueue.getMaxCore()+"vcores");
-            BeanUtil.copyProperties(clusterYarnQueue,queue,false);
+            Integer minMem = clusterYarnQueue.getMinMem() * 1024;
+            Integer maxMem = clusterYarnQueue.getMaxMem() * 1024;
+            clusterYarnQueue.setMinResources(minMem + "mb," + clusterYarnQueue.getMinCore() + "vcores");
+            clusterYarnQueue.setMaxResources(maxMem + "mb," + clusterYarnQueue.getMaxCore() + "vcores");
+            BeanUtil.copyProperties(clusterYarnQueue, queue, false);
             queueList.add(queue);
         }
         config.setName("queueList");
@@ -110,10 +110,10 @@ public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMap
             serviceRoleInfo.setHostname(roleInstanceEntity.getHostname());
             ServiceConfigureHandler configureHandler = new ServiceConfigureHandler();
             ExecResult execResult = configureHandler.handlerRequest(serviceRoleInfo);
-            if(!execResult.getExecResult()){
+            if (!execResult.getExecResult()) {
                 return Result.error("刷新队列到Yarn失败");
             }
-            if(StringUtils.isBlank(hostname)){
+            if (StringUtils.isBlank(hostname)) {
                 hostname = roleInstanceEntity.getHostname();
             }
         }
@@ -121,15 +121,15 @@ public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMap
         ExecuteCmdCommand command = new ExecuteCmdCommand();
         Timeout timeout = new Timeout(Duration.create(180, "seconds"));
         ArrayList<String> commands = new ArrayList<>();
-        commands.add("/opt/datasophon/hadoop-3.3.3/bin/yarn");
+        commands.add(Constants.INSTALL_PATH + "/hadoop-3.3.3/bin/yarn");
         commands.add("rmadmin");
         commands.add("-refreshQueues");
         command.setCommands(commands);
         Future<Object> execFuture = Patterns.ask(execCmdActor, command, timeout);
         ExecResult execResult = (ExecResult) Await.result(execFuture, timeout.duration());
-        if(execResult.getExecResult()){
-            logger.info("yarn dfsadmin -refreshQueues success at {}",hostname);
-        }else {
+        if (execResult.getExecResult()) {
+            logger.info("yarn dfsadmin -refreshQueues success at {}", hostname);
+        } else {
             logger.info(execResult.getExecOut());
             return Result.error("刷新队列到Yarn失败");
         }

@@ -317,7 +317,7 @@
       "value":"",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "/opt/datasophon/hadoop-3.3.3/etc/hadoop/fair-scheduler.xml"
+      "defaultValue": "${INSTALL_PATH}/hadoop-3.3.3/etc/hadoop/fair-scheduler.xml"
     },
     {
       "name": "yarn.scheduler.fair.preemption",

@@ -472,7 +472,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "/opt/datasophon/flink-1.13.3/pid"
+      "defaultValue": "${INSTALL_PATH}/flink-1.13.3/pid"
     },
     {
       "name": "metrics.reporter.prom.class",

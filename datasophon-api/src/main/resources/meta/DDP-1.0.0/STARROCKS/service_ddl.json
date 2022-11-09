@@ -199,7 +199,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "/opt/datasophon/StarRocks-2.2.2/fe/meta"
+      "defaultValue": "${INSTALL_PATH}/StarRocks-2.2.2/fe/meta"
     },
     {
       "name": "cluster_id",

@@ -115,4 +115,9 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
         list.add(rack);
         return Result.success(list);
     }
+
+    @Override
+    public void deleteHostByClusterId(Integer clusterId) {
+        this.remove(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID,clusterId));
+    }
 }

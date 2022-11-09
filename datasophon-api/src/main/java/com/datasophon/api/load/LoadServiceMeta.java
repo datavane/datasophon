@@ -89,10 +89,10 @@ public class LoadServiceMeta implements ApplicationRunner {
                 for (ClusterVariable variable : variables) {
                     globalVariables.put(variable.getVariableName(), variable.getVariableValue());
                 }
-                globalVariables.put("${installPath}", Constants.INSTALL_PATH);
                 globalVariables.put("${apiHost}", InetAddress.getLocalHost().getHostName());
                 globalVariables.put("${apiPort}", configBean.getServerPort());
                 globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + "/hadoop-3.3.3");
+                globalVariables.put("${INSTALL_PATH}",Constants.INSTALL_PATH);
                 logger.info(globalVariables.get("${apiHost}"));
                 CacheUtils.put("globalVariables" + Constants.UNDERLINE + cluster.getId(), globalVariables);
                 ProcessUtils.createServiceActor(cluster);

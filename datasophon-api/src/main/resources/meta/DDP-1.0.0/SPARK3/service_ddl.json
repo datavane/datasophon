@@ -83,7 +83,7 @@
       "configType": "custom",
       "required": false,
       "type": "multipleWithKey",
-      "value": [{"SPARK_CLASSPATH":"/opt/datasophon/spark-3.1.3/carbonlib/*"}],
+      "value": [{"SPARK_CLASSPATH":"${INSTALL_PATH}/spark-3.1.3/carbonlib/*"}],
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": ""

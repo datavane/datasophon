@@ -27,5 +27,7 @@ public interface ClusterHostService extends IService<ClusterHostEntity> {
     Result deleteHost(Integer hostId);
 
     Result getRack(Integer clusterId);
+
+    void deleteHostByClusterId(Integer id);
 }
 

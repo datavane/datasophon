@@ -38,6 +38,8 @@ public class DDHApplicationServer extends SpringBootServletInitializer {
 
     @PostConstruct
     public void run() throws UnknownHostException {
+        String hostName = InetAddress.getLocalHost().getHostName();
+        CacheUtils.put("hostname",hostName);
         ActorUtils.init();
     }
 }

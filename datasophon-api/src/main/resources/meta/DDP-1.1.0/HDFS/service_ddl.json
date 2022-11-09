@@ -668,7 +668,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "/opt/datasophon/hadoop-3.3.3/etc/hadoop/whitelist"
+      "defaultValue": "${INSTALL_PATH}/hadoop-3.3.3/etc/hadoop/whitelist"
     },
     {
       "name": "dfs.hosts.exclude",
@@ -679,7 +679,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "/opt/datasophon/hadoop-3.3.3/etc/hadoop/blacklist"
+      "defaultValue": "${INSTALL_PATH}/hadoop-3.3.3/etc/hadoop/blacklist"
     },
     {
       "name": "custom.core.site.xml",
