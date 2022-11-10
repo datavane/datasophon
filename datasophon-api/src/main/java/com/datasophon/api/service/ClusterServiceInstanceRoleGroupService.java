@@ -2,6 +2,7 @@ package com.datasophon.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceInstanceRoleGroup;
 import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 
@@ -17,10 +18,14 @@ public interface ClusterServiceInstanceRoleGroupService extends IService<Cluster
 
     ClusterServiceInstanceRoleGroup getRoleGroupByServiceInstanceId(Integer id);
 
-    void saveRoleGroup(Integer serviceInstanceId, Integer roleGroupId, String roleGroupName);
+    Result saveRoleGroup(Integer serviceInstanceId, Integer roleGroupId, String roleGroupName);
 
     void bind(String roleInstanceIds, Integer roleGroupId);
 
     ClusterServiceRoleGroupConfig getRoleGroupConfigByServiceId(Integer id);
+
+    Result rename(Integer roleGroupId, String roleGroupName);
+
+    Result deleteRoleGroup(Integer roleGroupId);
 }
 

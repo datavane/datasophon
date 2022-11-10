@@ -69,22 +69,21 @@ public class ClusterServiceInstanceRoleGroupController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
-    public Result update(@RequestBody ClusterServiceInstanceRoleGroup clusterServiceInstanceRoleGroup){
+    @RequestMapping("/rename")
+    public Result update(Integer roleGroupId,String roleGroupName){
 
-        clusterServiceInstanceRoleGroupService.updateById(clusterServiceInstanceRoleGroup);
+        return clusterServiceInstanceRoleGroupService.rename(roleGroupId,roleGroupName);
         
-        return Result.success();
     }
 
     /**
      * 删除
      */
     @RequestMapping("/delete")
-    public Result delete(@RequestBody Integer[] ids){
-        clusterServiceInstanceRoleGroupService.removeByIds(Arrays.asList(ids));
+    public Result delete(Integer roleGroupId){
+//        clusterServiceInstanceRoleGroupService.removeByIds(Arrays.asList(ids));
 
-        return Result.success();
+        return clusterServiceInstanceRoleGroupService.deleteRoleGroup(roleGroupId);
     }
 
 }

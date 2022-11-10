@@ -17,5 +17,7 @@ public interface ClusterServiceRoleGroupConfigService extends IService<ClusterSe
     ClusterServiceRoleGroupConfig getConfigByRoleGroupId(Integer roleGroupId);
 
     ClusterServiceRoleGroupConfig getConfigByRoleGroupIdAndVersion(Integer roleGroupId, Integer version);
+
+    void removeAllByRoleGroupId(Integer roleGroupId);
 }
 

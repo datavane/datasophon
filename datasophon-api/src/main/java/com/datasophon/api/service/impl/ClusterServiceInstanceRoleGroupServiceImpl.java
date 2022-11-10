@@ -5,6 +5,7 @@ import com.datasophon.api.service.ClusterServiceInstanceService;
 import com.datasophon.api.service.ClusterServiceRoleGroupConfigService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.common.Constants;
+import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
@@ -20,6 +21,8 @@ import com.datasophon.dao.entity.ClusterServiceInstanceRoleGroup;
 import com.datasophon.api.service.ClusterServiceInstanceRoleGroupService;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 
 @Service("clusterServiceInstanceRoleGroupService")
@@ -42,8 +45,12 @@ public class ClusterServiceInstanceRoleGroupServiceImpl extends ServiceImpl<Clus
     }
 
     @Override
-    public void saveRoleGroup(Integer serviceInstanceId, Integer roleGroupId, String roleGroupName) {
+    public Result saveRoleGroup(Integer serviceInstanceId, Integer roleGroupId, String roleGroupName) {
         ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getById(serviceInstanceId);
+        //is repeat name
+        if(isRepeatRoleGroupName(serviceInstanceId,roleGroupName)){
+            return Result.error("repeat role group name");
+        }
         ClusterServiceInstanceRoleGroup roleGroup = new ClusterServiceInstanceRoleGroup();
         roleGroup.setRoleGroupType("custom");
         roleGroup.setRoleGroupName(roleGroupName);
@@ -58,6 +65,17 @@ public class ClusterServiceInstanceRoleGroupServiceImpl extends ServiceImpl<Clus
         roleGroupConfig.setId(null);
         roleGroupConfig.setRoleGroupId(roleGroup.getId());
         roleGroupConfigService.save(roleGroupConfig);
+        return Result.success();
+    }
+
+    private boolean isRepeatRoleGroupName(Integer serviceInstanceId, String roleGroupName) {
+        List<ClusterServiceInstanceRoleGroup> list = this.list(new QueryWrapper<ClusterServiceInstanceRoleGroup>()
+                .eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceId)
+                .eq(Constants.ROLE_GROUP_NAME, roleGroupName));
+        if(list.size() > 0){
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -91,5 +109,35 @@ public class ClusterServiceInstanceRoleGroupServiceImpl extends ServiceImpl<Clus
                 .eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceId)
                 .eq(Constants.ROLE_GROUP_TYPE, "default"));
         return roleGroupConfigService.getConfigByRoleGroupId(instanceRoleGroup.getId());
+    }
+
+    @Override
+    public Result rename(Integer roleGroupId, String roleGroupName) {
+        ClusterServiceInstanceRoleGroup roleGroup = this.getById(roleGroupId);
+        if(!roleGroup.getRoleGroupName().equals(roleGroupName) && isRepeatRoleGroupName(roleGroup.getServiceInstanceId(),roleGroupName)){
+            return Result.error("repeat role group name");
+        }
+        roleGroup.setRoleGroupName(roleGroupName);
+        this.updateById(roleGroup);
+        return Result.success();
+    }
+
+    @Override
+    public Result deleteRoleGroup(Integer roleGroupId) {
+        if(hasRoleInstanceUse(roleGroupId)){
+            return Result.error("当前角色组正在使用，请勿删除");
+        }
+        this.removeById(roleGroupId);
+        roleGroupConfigService.removeAllByRoleGroupId(roleGroupId);
+        return Result.success();
+    }
+
+    private boolean hasRoleInstanceUse(Integer roleGroupId) {
+        List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                .eq(Constants.ROLE_GROUP_ID, roleGroupId));
+        if(Objects.nonNull(list) && list.size() > 0){
+            return true;
+        }
+        return false;
     }
 }

@@ -2,11 +2,11 @@
   "name": "FLINK",
   "label": "Flink",
   "description": "实时计算引擎",
-  "version": "1.13.3",
+  "version": "1.15.2",
   "sortNum": 6,
   "dependencies":[],
-  "packageName": "flink-1.13.3.tar.gz",
-  "decompressPackageName": "flink-1.13.3",
+  "packageName": "flink-1.15.2.tar.gz",
+  "decompressPackageName": "flink-1.15.2",
   "runAs":"root",
   "roles": [
     {

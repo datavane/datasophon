@@ -101,6 +101,7 @@ public final class Constants {
     public static final String HOST_STATE = "host_state";
     public static final String FAILED = "failed";
     public static final String SERVICE_CATEGORY = "service_category";
+    public static final String ROLE_GROUP_NAME = "role_group_name";
 
     private Constants() {
         throw new IllegalStateException("Constants Exception");

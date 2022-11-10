@@ -25,4 +25,10 @@ public class ClusterServiceRoleGroupConfigServiceImpl extends ServiceImpl<Cluste
         return this.getOne(new QueryWrapper<ClusterServiceRoleGroupConfig>()
                 .eq(Constants.ROLE_GROUP_ID,roleGroupId).eq(Constants.CONFIG_VERSION,version));
     }
+
+    @Override
+    public void removeAllByRoleGroupId(Integer roleGroupId) {
+        this.remove(new QueryWrapper<ClusterServiceRoleGroupConfig>()
+                .eq(Constants.ROLE_GROUP_ID,roleGroupId));
+    }
 }

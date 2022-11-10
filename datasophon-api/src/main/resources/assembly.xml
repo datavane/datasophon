@@ -18,6 +18,7 @@
                 <include>**/*.properties</include>
             </includes>
             <outputDirectory>conf</outputDirectory>
+            <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../datasophon-common/src/main/resources</directory>
@@ -26,6 +27,7 @@
                 <include>**/*.xml</include>
             </includes>
             <outputDirectory>conf</outputDirectory>
+            <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../datasophon-dao/src/main/resources</directory>
@@ -34,6 +36,7 @@
                 <include>**/*.xml</include>
             </includes>
             <outputDirectory>conf</outputDirectory>
+            <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../datasophon-dao/src/main/resources/mapper</directory>
@@ -41,6 +44,7 @@
                 <include>**/*.xml</include>
             </includes>
             <outputDirectory>conf/mapper</outputDirectory>
+            <fileMode>0755</fileMode>
         </fileSet>
         <!--拷贝start.sh启动脚本文件到bin目录下面-->
         <fileSet>
@@ -51,6 +55,7 @@
             <fileMode>0755</fileMode>
             <filtered>true</filtered>
             <outputDirectory>bin</outputDirectory>
+            <lineEnding>unix</lineEnding>
         </fileSet>
 
 
@@ -70,7 +75,6 @@
             <!-- 打包需要包含的文件 -->
             <includes>
                 <include>*.jar</include>
-                <include>../datasophon-worker-1.0-SNAPSHOT.jar</include>
             </includes>
         </fileSet>
         <fileSet>
@@ -78,7 +82,7 @@
             <outputDirectory>lib</outputDirectory>
             <!-- 打包需要包含的文件 -->
             <includes>
-                <include>datasophon-api-1.0-SNAPSHOT.jar</include>
+                <include>datasophon-api-${project.version}.jar</include>
             </includes>
         </fileSet>
 

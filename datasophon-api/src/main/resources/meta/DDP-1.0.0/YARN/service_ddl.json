@@ -131,7 +131,6 @@
         "configFormat": "xml",
         "outputDirectory": "etc/hadoop/",
         "includeParams": [
-          "yarn.resourcemanager.hostname",
           "yarn.webapp.ui2.enable",
           "yarn.nodemanager.resource.cpu-vcores",
           "yarn.nodemanager.resource.memory-mb",
@@ -165,23 +164,18 @@
           "yarn.resourcemanager.recovery.enabled",
           "yarn.resourcemanager.store.class",
           "yarn.application.classpath",
+          "yarn.nodemanager.local-dirs",
+          "yarn.nodemanager.address",
+          "yarn.nodemanager.resource.count-logical-processors-as-cores",
+          "yarn.nodemanager.resource.detect-hardware-capabilities",
+          "yarn.nodemanager.resource.pcores-vcores-multiplier",
+          "yarn.resourcemanager.am.max-attempts",
           "custom.yarn.site.xml"
         ]
       }
     ]
   },
   "parameters": [
-    {
-      "name": "yarn.resourcemanager.hostname",
-      "label": "ResourceManager地址",
-      "description": "ResourceManager地址",
-      "required": true,
-      "type": "input",
-      "value": "${rmHost}",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": "localhost"
-    },
     {
       "name": "yarn.webapp.ui2.enable",
       "label": "启用webui2",
@@ -202,7 +196,51 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "16"
+      "defaultValue": "-1"
+    },
+    {
+      "name": "yarn.nodemanager.resource.count-logical-processors-as-cores",
+      "label": "是否将物理核数作为虚拟核数",
+      "description": "是否将物理核数作为虚拟核数",
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": true
+    },
+    {
+      "name": "yarn.nodemanager.resource.detect-hardware-capabilities",
+      "label": "是否让yarn自己检测硬件进行配置",
+      "description": "是否让yarn自己检测硬件进行配置",
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": true
+    },
+    {
+      "name": "yarn.nodemanager.resource.pcores-vcores-multiplier",
+      "label": "虚拟核数与物理核数比例",
+      "description": "",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "0.75"
+    },
+    {
+      "name": "yarn.resourcemanager.am.max-attempts",
+      "label": "AM重试次数",
+      "description": "",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "4"
     },
     {
       "name": "yarn.nodemanager.resource.memory-mb",
@@ -302,7 +340,8 @@
       "type": "select",
       "value":"",
       "selectValue": [
-        "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler"
+        "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler",
+        "org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler"
       ],
       "configurableInWizard": true,
       "hidden": false,
@@ -523,6 +562,17 @@
       "defaultValue": "org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore"
     },
     {
+      "name": "yarn.nodemanager.address",
+      "label": "nodemanager地址",
+      "description": "",
+      "required": true,
+      "type": "input",
+      "value":"",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "0.0.0.0:45454"
+    },
+    {
       "name": "yarn.log.server.url",
       "label": "historyserver地址",
       "description": "",
@@ -555,6 +605,20 @@
       "hidden": false,
       "defaultValue": "${fs.defaultFS}/user/yarn/yarn-logs/"
     },
+    {
+      "name": "yarn.nodemanager.local-dirs",
+      "label": "NodeManager本地存储目录",
+      "description": "NodeManager本地存储目录，可配置多个，按逗号分隔",
+      "required": true,
+      "type": "multiple",
+      "value": [
+        "/data/nm"
+      ],
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": ""
+    },
+
     {
       "name": "yarn.application.classpath",
       "label": "yarn应用程序加载的classpath",

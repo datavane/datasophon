@@ -5,7 +5,7 @@
     <parent>
         <artifactId>datasophon</artifactId>
         <groupId>com.datasophon</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -78,12 +78,12 @@
         <dependency>
             <groupId>com.datasophon</groupId>
             <artifactId>datasophon-dao</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.datasophon</groupId>
             <artifactId>datasophon-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
@@ -128,7 +128,7 @@
                     <!-- 打包后的包名是否包含assembly的id名 -->
                     <appendAssemblyId>false</appendAssemblyId>
                     <!-- 指定最后tar或者zip包的名字 -->
-                    <finalName>datasophon-manager</finalName>
+                    <finalName>datasophon-manager-${project.version}</finalName>
                     <!-- tar或者zip包的输出目录 -->
                     <outputDirectory>target/</outputDirectory>
                     <descriptors>
