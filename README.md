@@ -1,4 +1,5 @@
 # DataSophon
+https://gaodayu168.github.io/datasophon-website
 
 ## 愿景
 
@@ -20,6 +21,7 @@ DataSophon也是个类似的管理平台，只不过与智子不同的是，智�
 * 灵活便捷的告警服务，可实现用户自定义告警组和告警指标
 * 可扩展性强，用户可通过配置的方式集成或升级大数据组件
 
+![img](./dashboard.png)
 ## 整体架构
 
 ![img](./archive.png)
