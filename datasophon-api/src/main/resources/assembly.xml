@@ -21,6 +21,13 @@
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
+            <directory>${basedir}/../</directory>
+            <includes>
+                <include>LICENSE</include>
+                <include>README.md</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>${basedir}/../datasophon-common/src/main/resources</directory>
             <includes>
                 <include>**/*.properties</include>
