@@ -1,5 +1,5 @@
 # DataSophon
-https://gaodayu168.github.io/datasophon-website
+快速开始: https://gaodayu168.github.io/datasophon-website
 
 ## 愿景
 
