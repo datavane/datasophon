@@ -74,6 +74,10 @@
             <directory>${basedir}/src/main/resources/jmx</directory>
             <outputDirectory>jmx</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>${basedir}/../datasophon-api/src/main/resources/sql</directory>
+            <outputDirectory>sql</outputDirectory>
+        </fileSet>
 
         <!--拷贝lib包到jar包的外部lib下面-->
         <fileSet>
