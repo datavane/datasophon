@@ -29,7 +29,7 @@ public class ServiceHandler {
         ExecResult startResult = execRunner(startRunner, decompressPackageName,runAs);
         //检测是否启动成功
         if(startResult.getExecResult()){
-            int times = PropertyUtils.getInt("times");;
+            int times = PropertyUtils.getInt("times");
             int count = 0;
             while (count < times){
                 logger.info("check start result at times {}",count+1);
