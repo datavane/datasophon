@@ -103,7 +103,6 @@ public class InstallServiceImpl implements InstallService {
                                 map.put(hostInfo.getHostname(), hostInfo);
                                 if(!hostInfo.isManaged()){
                                     tellHostCheck( clusterCode, hostInfo);
-                                    ;
                                 }
                             }
                         }
