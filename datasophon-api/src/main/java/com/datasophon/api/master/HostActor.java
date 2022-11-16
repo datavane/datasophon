@@ -67,7 +67,6 @@ public class HostActor extends UntypedActor {
                 session.disconnect();
             }
             logger.info("end host check:{}", hostInfo.getHostname());
-
         } else {
             unhandled(message);
         }
