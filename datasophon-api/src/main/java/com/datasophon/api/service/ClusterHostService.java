@@ -31,5 +31,7 @@ public interface ClusterHostService extends IService<ClusterHostEntity> {
     void deleteHostByClusterId(Integer id);
 
     void updateBatchNodeLabel(String hostIds, String nodeLabel);
+
+    List<ClusterHostEntity> getHostListByIds(List<String> ids);
 }
 

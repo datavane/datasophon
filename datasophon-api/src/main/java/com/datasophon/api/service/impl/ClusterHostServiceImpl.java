@@ -125,4 +125,9 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     public void updateBatchNodeLabel(String hostIds, String nodeLabel) {
         hostMapper.updateBatchNodeLabel(hostIds,nodeLabel);
     }
+
+    @Override
+    public List<ClusterHostEntity> getHostListByIds(List<String> ids) {
+        return this.list(new QueryWrapper<ClusterHostEntity>().in(Constants.ID,ids));
+    }
 }
