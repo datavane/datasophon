@@ -102,6 +102,10 @@ public final class Constants {
     public static final String FAILED = "failed";
     public static final String SERVICE_CATEGORY = "service_category";
     public static final String ROLE_GROUP_NAME = "role_group_name";
+    public static final String NODE_LABEL = "node_label";
+    public static final String GROUP_ID = "group_id";
+    public static final String USER_ID = "user_id";
+    public static final String GROUP_NAME = "group_name";
 
     private Constants() {
         throw new IllegalStateException("Constants Exception");

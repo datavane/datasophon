@@ -16,4 +16,6 @@ import org.apache.ibatis.annotations.Param;
 public interface ClusterHostMapper extends BaseMapper<ClusterHostEntity> {
 
     ClusterHostEntity getClusterHostByHostname(@Param("hostname") String hostname);
+
+    void updateBatchNodeLabel(@Param("hostIds") String hostIds,@Param("nodeLabel") String nodeLabel);
 }
