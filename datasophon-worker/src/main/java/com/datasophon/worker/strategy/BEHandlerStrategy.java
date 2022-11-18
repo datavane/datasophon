@@ -23,15 +23,15 @@ public class BEHandlerStrategy implements ServiceRoleStrategy {
 //            bin/start_fe.sh --helper hadoop101:9010 --daemon
 
             ArrayList<String> commands = new ArrayList<>();
-            commands.add(command.getDecompressPackageName() + "fe/bin/start_fe.sh");
+            commands.add(command.getDecompressPackageName() + "fe/bin/start_be.sh");
             commands.add("--helper");
             commands.add(command.getMasterHost() + ":9010");
             commands.add("--daemon");
             startResult = ShellUtils.execWithStatus(command.getDecompressPackageName(), commands, 30L);
             if (startResult.getExecResult()) {
-                logger.info("slave fe start success");
+                logger.info("slave be start success");
             } else {
-                logger.info("slave fe start failed");
+                logger.info("slave be start failed");
             }
         }
         return startResult;
