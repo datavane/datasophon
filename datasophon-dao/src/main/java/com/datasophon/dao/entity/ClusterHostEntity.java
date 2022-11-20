@@ -85,6 +85,8 @@ public class ClusterHostEntity implements Serializable {
 
     private String cpuArchitecture;
 
+    private String nodeLabel;
+
     @TableField(exist = false)
     private Integer serviceRoleNum;
 

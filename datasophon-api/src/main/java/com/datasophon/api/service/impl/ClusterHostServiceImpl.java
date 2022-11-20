@@ -120,4 +120,14 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     public void deleteHostByClusterId(Integer clusterId) {
         this.remove(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID,clusterId));
     }
+
+    @Override
+    public void updateBatchNodeLabel(String hostIds, String nodeLabel) {
+        hostMapper.updateBatchNodeLabel(hostIds,nodeLabel);
+    }
+
+    @Override
+    public List<ClusterHostEntity> getHostListByIds(List<String> ids) {
+        return this.list(new QueryWrapper<ClusterHostEntity>().in(Constants.ID,ids));
+    }
 }

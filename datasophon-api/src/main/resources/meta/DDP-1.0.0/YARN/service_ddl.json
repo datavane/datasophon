@@ -170,6 +170,8 @@
           "yarn.nodemanager.resource.detect-hardware-capabilities",
           "yarn.nodemanager.resource.pcores-vcores-multiplier",
           "yarn.resourcemanager.am.max-attempts",
+          "yarn.node-labels.enabled",
+          "yarn.node-labels.fs-store.root-dir",
           "custom.yarn.site.xml"
         ]
       }
@@ -186,6 +188,28 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": true
+    },
+    {
+      "name": "yarn.node-labels.enabled",
+      "label": "启用YARN标签调度",
+      "description": "开启 YARN Node Labels",
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": true
+    },
+    {
+      "name": "yarn.node-labels.fs-store.root-dir",
+      "label": "Node Label存储目录",
+      "description": "Node Label存储目录",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "hdfs://nameservice1/user/yarn/nodeLabels"
     },
     {
       "name": "yarn.nodemanager.resource.cpu-vcores",

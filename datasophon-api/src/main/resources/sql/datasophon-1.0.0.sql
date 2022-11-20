@@ -1062,6 +1062,6 @@ CREATE TABLE `t_ddh_user_info`  (
 -- ----------------------------
 -- Records of t_ddh_user_info
 -- ----------------------------
-INSERT INTO `t_ddh_user_info` VALUES (1, 'admin', '0192023a7bbd73250516f069df18b500', 'gaodayu2022@163.com', '18656037925', '2022-05-10 16:05:18', 1);
+INSERT INTO `t_ddh_user_info` VALUES (1, 'admin', '0192023a7bbd73250516f069df18b500', 'xxx@163.com', '1865603xxxx', '2022-05-10 16:05:18', 1);
 
 SET FOREIGN_KEY_CHECKS = 1;

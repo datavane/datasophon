@@ -29,15 +29,7 @@ public class LogActor extends UntypedActor {
             paramMap.put("${user}", "root");
             paramMap.put("${host}", hostName);
             String logFileName = PlaceholderUtils.replacePlaceholders(command.getLogFile(), paramMap, Constants.REGEX_VARIABLE);
-
-            ArrayList<String> cmd = new ArrayList<>();
-//            cmd.add("tail");
-//            cmd.add("-f");
-//            cmd.add("-n");
-//            cmd.add("100");
-//            cmd.add(log);
-//            logger.info("execute cmd {}", String.join(" ",cmd));
-//            ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName(),cmd,60);
+            
             ExecResult execResult = new ExecResult();
             String logStr = "can not find log file";
             if (logFileName.startsWith("/") && FileUtil.exist(logFileName)) {

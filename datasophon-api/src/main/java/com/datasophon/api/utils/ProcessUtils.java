@@ -421,4 +421,10 @@ public class ProcessUtils {
         }
         return left;
     }
+
+    public static void syncUserGroupToHosts(List<ClusterHostEntity> hostList, String groupName, String groupadd) {
+    }
+
+    public static void syncUserToHosts(List<ClusterHostEntity> hostList, String username, String groupName, String otherGroup, String useradd) {
+    }
 }
