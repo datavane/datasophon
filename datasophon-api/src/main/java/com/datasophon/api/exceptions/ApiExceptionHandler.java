@@ -24,6 +24,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Exception Handler
@@ -44,6 +50,26 @@ public class ApiExceptionHandler {
         Status st = ce.value();
         logger.error(st.getMsg(), e);
         return Result.error(st.getCode(),st.getMsg());
+    }
+
+    /**
+     * 请求参数验证异常处理
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Result constraintViolationException(ConstraintViolationException e) {
+        Set<String> set = e.getConstraintViolations()
+                .stream()
+                .map(ConstraintViolation::getMessageTemplate)
+                .collect(Collectors.toSet());
+        return Result.error(String.join(",", set));
+    }
+
+    /**
+     * 请求参数转换异常处理
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public Result exceptionHandler(MethodArgumentTypeMismatchException e) {
+        return Result.error("参数类型错不匹配：" + e.getMessage());
     }
 
 }
