@@ -87,7 +87,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": ""
+      "defaultValue": "${apiHost}"
     },{
       "name": "database",
       "label": "数据库名",
