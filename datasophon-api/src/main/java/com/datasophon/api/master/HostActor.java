@@ -64,9 +64,9 @@ public class HostActor extends UntypedActor {
                 hostInfo.setCheckResult(new CheckResult(Status.CHECK_HOST_SUCCESS.getCode(), Status.CHECK_HOST_SUCCESS.getMsg()));
             } else {
                 hostInfo.setCheckResult(new CheckResult(Status.CONNECTION_FAILED.getCode(), Status.CONNECTION_FAILED.getMsg()));
+                session.disconnect();
             }
             logger.info("end host check:{}", hostInfo.getHostname());
-            session.disconnect();
         } else {
             unhandled(message);
         }

@@ -1,0 +1,243 @@
+{
+  "name": "DS",
+  "label": "DolphinScheduler",
+  "description": "调度系统",
+  "version": "3.1.1",
+  "sortNum": 4,
+  "dependencies":["ZOOKEEPER"],
+  "packageName": "dolphinscheduler-3.1.1.tar.gz",
+  "decompressPackageName": "dolphinscheduler-3.1.1",
+  "roles": [
+    {
+      "name": "ApiServer",
+      "label": "ApiServer",
+      "roleType": "master",
+      "cardinality": "1",
+      "logFile": "api-server/logs/dolphinscheduler-api.log",
+      "jmxPort": 12356,
+      "startRunner": {
+        "timeout": "60",
+        "program": "bin/dolphinscheduler-daemon.sh",
+        "args": [
+          "start",
+          "api-server"
+        ]
+      },
+      "stopRunner": {
+        "timeout": "600",
+        "program": "bin/dolphinscheduler-daemon.sh",
+        "args": [
+          "stop",
+          "api-server"
+        ]
+      },
+      "statusRunner": {
+        "timeout": "60",
+        "program": "bin/dolphinscheduler-daemon.sh",
+        "args": [
+          "status",
+          "api-server"
+        ]
+      },
+      "restartRunner": {
+        "timeout": "60",
+        "program": "control.sh",
+        "args": [
+          "restart",
+          "api-server"
+        ]
+      },
+      "externalLink": {
+        "name": "DolphinScheduler Ui",
+        "label": "NameNode Ui",
+        "url": "http://${host}:12345/dolphinscheduler/ui"
+      }
+    },
+    {
+      "name": "MasterServer",
+      "label": "MasterServer",
+      "roleType": "master",
+      "cardinality": "1+",
+      "logFile": "master-server/logs/dolphinscheduler-master.log",
+      "jmxPort": 12357,
+      "startRunner": {
+        "timeout": "60",
+        "program": "bin/dolphinscheduler-daemon.sh",
+        "args": [
+          "start",
+          "master-server"
+        ]
+      },
+      "stopRunner": {
+        "timeout": "600",
+        "program": "bin/dolphinscheduler-daemon.sh",
+        "args": [
+          "stop",
+          "master-server"
+        ]
+      },
+      "statusRunner": {
+        "timeout": "60",
+        "program": "bin/dolphinscheduler-daemon.sh",
+        "args": [
+          "status",
+          "master-server"
+        ]
+      },
+      "restartRunner": {
+        "timeout": "60",
+        "program": "control.sh",
+        "args": [
+          "restart",
+          "master-server"
+        ]
+      }
+    },
+    {
+      "name": "WorkerServer",
+      "label": "WorkerServer",
+      "roleType": "worker",
+      "cardinality": "1+",
+      "logFile": "worker-server/logs/dolphinscheduler-worker.log",
+      "jmxPort": 12358,
+      "startRunner": {
+        "timeout": "60",
+        "program": "bin/dolphinscheduler-daemon.sh",
+        "args": [
+          "start",
+          "worker-server"
+        ]
+      },
+      "stopRunner": {
+        "timeout": "600",
+        "program": "bin/dolphinscheduler-daemon.sh",
+        "args": [
+          "stop",
+          "worker-server"
+        ]
+      },
+      "statusRunner": {
+        "timeout": "60",
+        "program": "bin/dolphinscheduler-daemon.sh",
+        "args": [
+          "status",
+          "worker-server"
+        ]
+      },
+      "restartRunner": {
+        "timeout": "60",
+        "program": "control.sh",
+        "args": [
+          "restart",
+          "worker-server"
+        ]
+      }
+    },
+    {
+      "name": "AlertServer",
+      "label": "AlertServer",
+      "roleType": "master",
+      "cardinality": "1",
+      "logFile": "alert-server/logs/dolphinscheduler-alert.log",
+      "jmxPort": 12359,
+      "startRunner": {
+        "timeout": "60",
+        "program": "bin/dolphinscheduler-daemon.sh",
+        "args": [
+          "start",
+          "alert-server"
+        ]
+      },
+      "stopRunner": {
+        "timeout": "600",
+        "program": "bin/dolphinscheduler-daemon.sh",
+        "args": [
+          "stop",
+          "alert-server"
+        ]
+      },
+      "statusRunner": {
+        "timeout": "60",
+        "program": "bin/dolphinscheduler-daemon.sh",
+        "args": [
+          "status",
+          "alert-server"
+        ]
+      },
+      "restartRunner": {
+        "timeout": "60",
+        "program": "control.sh",
+        "args": [
+          "restart",
+          "alert-server"
+        ]
+      }
+    }
+  ],
+  "configWriter": {
+    "generators": [
+      {
+        "filename": "dolphinscheduler_env.sh",
+        "configFormat": "custom",
+        "outputDirectory": "bin/env/",
+        "templateName": "dolphinscheduler_env.ftl",
+        "includeParams": [
+          "databaseUrl",
+          "username",
+          "password",
+          "zkUrls"
+        ]
+      }
+    ]
+  },
+  "parameters": [
+    {
+      "name": "databaseUrl",
+      "label": "DolphinScheduler数据库地址",
+      "description": "",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "jdbc:mysql://${apiHost}:3306/dolphinscheduler?useUnicode=true&characterEncoding=UTF-8&useSSL=false"
+    },
+    {
+      "name": "username",
+      "label": "DolphinScheduler数据库用户名",
+      "description": "",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "dolphinscheduler"
+    },
+    {
+      "name": "password",
+      "label": "DolphinScheduler数据库密码",
+      "description": "",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "dolphinscheduler"
+    },
+    {
+      "name": "zkUrls",
+      "label": "ZK地址",
+      "description": "",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${zkUrls}"
+    }
+  ]
+}
