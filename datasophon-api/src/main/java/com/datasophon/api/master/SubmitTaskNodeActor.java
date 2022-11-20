@@ -61,13 +61,35 @@ public class SubmitTaskNodeActor extends UntypedActor {
                     List<ServiceRoleInfo> masterRoles = serviceNode.getMasterRoles();
 
                     activeTaskList.put(node, ServiceExecuteState.RUNNING);
-                    ActorRef serviceActor = ActorUtils.getLocalActor(ServiceActor.class, submitActiveTaskNodeCommand.getClusterCode() + "-serviceActor-" + node);
+
                     if (masterRoles.size() > 0) {
                         logger.info("start to submit {} master roles", node);
-                        ProcessUtils.buildExecuteServiceRoleCommand(submitActiveTaskNodeCommand.getClusterId(), submitActiveTaskNodeCommand.getCommandType(),submitActiveTaskNodeCommand.getClusterCode(), dag, activeTaskList, errorTaskList, readyToSubmitTaskList, completeTaskList, node, masterRoles, serviceActor, ServiceRoleType.MASTER);
+                        ProcessUtils.buildExecuteServiceRoleCommand(
+                                submitActiveTaskNodeCommand.getClusterId(),
+                                submitActiveTaskNodeCommand.getCommandType(),
+                                submitActiveTaskNodeCommand.getClusterCode(),
+                                dag,
+                                activeTaskList,
+                                errorTaskList,
+                                readyToSubmitTaskList,
+                                completeTaskList,
+                                node,
+                                masterRoles,
+                                ServiceRoleType.MASTER);
                     } else if (serviceNode.getElseRoles().size() > 0) {
                         logger.info("{} does not has master roles , start to submit worker or client roles", node);
-                        ProcessUtils.buildExecuteServiceRoleCommand(submitActiveTaskNodeCommand.getClusterId(), submitActiveTaskNodeCommand.getCommandType(), submitActiveTaskNodeCommand.getClusterCode(),dag, activeTaskList, errorTaskList, readyToSubmitTaskList, completeTaskList, node, serviceNode.getElseRoles(), serviceActor, ServiceRoleType.WORKER);
+                        ProcessUtils.buildExecuteServiceRoleCommand(
+                                submitActiveTaskNodeCommand.getClusterId(),
+                                submitActiveTaskNodeCommand.getCommandType(),
+                                submitActiveTaskNodeCommand.getClusterCode(),
+                                dag,
+                                activeTaskList,
+                                errorTaskList,
+                                readyToSubmitTaskList,
+                                completeTaskList,
+                                node,
+                                serviceNode.getElseRoles(),
+                                ServiceRoleType.WORKER);
                     } else {
                         continue;
                     }

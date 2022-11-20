@@ -54,8 +54,18 @@ public class ServiceExecuteResultActor extends UntypedActor {
                     List<ServiceRoleInfo> elseRoles = serviceNode.getElseRoles();
                     if (elseRoles.size() > 0) {
                         logger.info("start to submit worker/client roles");
-                        ActorRef serviceActor = ActorUtils.getLocalActor(ServiceActor.class,  result.getClusterCode() + "-serviceActor-" + node);
-                        ProcessUtils.buildExecuteServiceRoleCommand(result.getClusterId(),result.getCommandType(),result.getClusterCode(), dag, activeTaskList, errorTaskList, readyToSubmitTaskList, completeTaskList, node, elseRoles, serviceActor, ServiceRoleType.WORKER);
+                        ProcessUtils.buildExecuteServiceRoleCommand(
+                                result.getClusterId(),
+                                result.getCommandType(),
+                                result.getClusterCode(),
+                                dag,
+                                activeTaskList,
+                                errorTaskList,
+                                readyToSubmitTaskList,
+                                completeTaskList,
+                                node,
+                                elseRoles,
+                                ServiceRoleType.WORKER);
                     } else {
                         activeTaskList.remove(node);
                         readyToSubmitTaskList.remove(node);

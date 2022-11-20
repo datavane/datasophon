@@ -253,10 +253,10 @@ public class ProcessUtils {
             Map<String, String> readyToSubmitTaskList,
             Map<String, String> completeTaskList,
             String node,
-            List<ServiceRoleInfo> masterRoles,
-            ActorRef serviceActor,
+            List<ServiceRoleInfo> roles,
             ServiceRoleType serviceRoleType) {
-        ExecuteServiceRoleCommand executeServiceRoleCommand = new ExecuteServiceRoleCommand(clusterId, node, masterRoles);
+
+        ExecuteServiceRoleCommand executeServiceRoleCommand = new ExecuteServiceRoleCommand(clusterId, node, roles);
         executeServiceRoleCommand.setServiceRoleType(serviceRoleType);
         executeServiceRoleCommand.setCommandType(commandType);
         executeServiceRoleCommand.setDag(dag);
@@ -266,7 +266,15 @@ public class ProcessUtils {
         executeServiceRoleCommand.setErrorTaskList(errorTaskList);
         executeServiceRoleCommand.setReadyToSubmitTaskList(readyToSubmitTaskList);
         executeServiceRoleCommand.setCompleteTaskList(completeTaskList);
-        serviceActor.tell(executeServiceRoleCommand, ActorRef.noSender());
+        if(serviceRoleType != ServiceRoleType.MASTER){
+            for (ServiceRoleInfo role : roles) {
+                ActorRef serviceActor = ActorUtils.getLocalActor(ServiceActor.class, clusterCode + "-serviceActor-" + node+"-"+role.getHostname());
+                serviceActor.tell(executeServiceRoleCommand, ActorRef.noSender());
+            }
+        }else{
+            ActorRef serviceActor = ActorUtils.getLocalActor(ServiceActor.class, clusterCode + "-serviceActor-" + node);
+            serviceActor.tell(executeServiceRoleCommand, ActorRef.noSender());
+        }
     }
 
     public static ClusterServiceCommandEntity generateCommandEntity(Integer clusterId, CommandType commandType, String serviceName) {
