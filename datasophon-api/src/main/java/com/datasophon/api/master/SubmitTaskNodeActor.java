@@ -1,11 +1,8 @@
 package com.datasophon.api.master;
 
 import akka.actor.ActorRef;
-import akka.actor.ActorSelection;
-import akka.actor.ActorSystem;
 import akka.actor.UntypedActor;
 import com.datasophon.api.utils.ProcessUtils;
-import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.SubmitActiveTaskNodeCommand;
 import com.datasophon.common.enums.ServiceExecuteState;
 import com.datasophon.common.enums.ServiceRoleType;
@@ -61,13 +58,45 @@ public class SubmitTaskNodeActor extends UntypedActor {
                     List<ServiceRoleInfo> masterRoles = serviceNode.getMasterRoles();
 
                     activeTaskList.put(node, ServiceExecuteState.RUNNING);
-                    ActorRef serviceActor = ActorUtils.getLocalActor(ServiceActor.class, submitActiveTaskNodeCommand.getClusterCode() + "-serviceActor-" + node);
+
                     if (masterRoles.size() > 0) {
                         logger.info("start to submit {} master roles", node);
-                        ProcessUtils.buildExecuteServiceRoleCommand(submitActiveTaskNodeCommand.getClusterId(), submitActiveTaskNodeCommand.getCommandType(),submitActiveTaskNodeCommand.getClusterCode(), dag, activeTaskList, errorTaskList, readyToSubmitTaskList, completeTaskList, node, masterRoles, serviceActor, ServiceRoleType.MASTER);
+                        ActorRef serviceActor = ActorUtils.getLocalActor(MasterServiceActor.class, submitActiveTaskNodeCommand.getClusterCode() + "-serviceActor-" + node);
+                        ProcessUtils.buildExecuteServiceRoleCommand(
+                                submitActiveTaskNodeCommand.getClusterId(),
+                                submitActiveTaskNodeCommand.getCommandType(),
+                                submitActiveTaskNodeCommand.getClusterCode(),
+                                dag,
+                                activeTaskList,
+                                errorTaskList,
+                                readyToSubmitTaskList,
+                                completeTaskList,
+                                node,
+                                masterRoles,
+                                null,
+                                serviceActor,
+                                ServiceRoleType.MASTER);
+
                     } else if (serviceNode.getElseRoles().size() > 0) {
                         logger.info("{} does not has master roles , start to submit worker or client roles", node);
-                        ProcessUtils.buildExecuteServiceRoleCommand(submitActiveTaskNodeCommand.getClusterId(), submitActiveTaskNodeCommand.getCommandType(), submitActiveTaskNodeCommand.getClusterCode(),dag, activeTaskList, errorTaskList, readyToSubmitTaskList, completeTaskList, node, serviceNode.getElseRoles(), serviceActor, ServiceRoleType.WORKER);
+                        for (ServiceRoleInfo elseRole : serviceNode.getElseRoles()) {
+                            ActorRef serviceActor = ActorUtils.getLocalActor(WorkerServiceActor.class, submitActiveTaskNodeCommand.getClusterCode() + "-serviceActor-" + node+"-"+elseRole.getHostname());
+                            ProcessUtils.buildExecuteServiceRoleCommand(
+                                    submitActiveTaskNodeCommand.getClusterId(),
+                                    submitActiveTaskNodeCommand.getCommandType(),
+                                    submitActiveTaskNodeCommand.getClusterCode(),
+                                    dag,
+                                    activeTaskList,
+                                    errorTaskList,
+                                    readyToSubmitTaskList,
+                                    completeTaskList,
+                                    node,
+                                    serviceNode.getElseRoles(),
+                                    elseRole,
+                                    serviceActor,
+                                    ServiceRoleType.WORKER);
+                        }
+
                     } else {
                         continue;
                     }

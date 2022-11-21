@@ -6,6 +6,7 @@ import akka.dispatch.OnSuccess;
 import akka.util.Timeout;
 import com.datasophon.api.master.alert.HostCheckActor;
 import com.datasophon.api.master.alert.ServiceRoleCheckActor;
+import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
@@ -58,7 +59,7 @@ public class ActorUtils {
         try {
             actorRef = Await.result(future, Duration.create(3, "seconds"));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(ProcessUtils.getExceptionMessage(e));
         }
         if (Objects.isNull(actorRef)) {
             logger.info("create actor {}",actorName);

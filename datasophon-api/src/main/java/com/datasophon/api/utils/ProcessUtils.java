@@ -2,7 +2,6 @@ package com.datasophon.api.utils;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
-import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
@@ -10,15 +9,17 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.ServiceCommandActor;
+import com.datasophon.api.master.handler.service.*;
 import com.datasophon.api.service.*;
-import com.datasophon.api.master.ServiceActor;
+import com.datasophon.api.master.MasterServiceActor;
 import com.datasophon.common.model.*;
 import com.datasophon.dao.entity.*;
 import com.datasophon.dao.enums.*;
-import com.datasophon.api.service.*;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ExecuteCmdCommand;
@@ -37,6 +38,8 @@ import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -254,6 +257,7 @@ public class ProcessUtils {
             Map<String, String> completeTaskList,
             String node,
             List<ServiceRoleInfo> masterRoles,
+            ServiceRoleInfo workerRole,
             ActorRef serviceActor,
             ServiceRoleType serviceRoleType) {
         ExecuteServiceRoleCommand executeServiceRoleCommand = new ExecuteServiceRoleCommand(clusterId, node, masterRoles);
@@ -266,6 +270,7 @@ public class ProcessUtils {
         executeServiceRoleCommand.setErrorTaskList(errorTaskList);
         executeServiceRoleCommand.setReadyToSubmitTaskList(readyToSubmitTaskList);
         executeServiceRoleCommand.setCompleteTaskList(completeTaskList);
+        executeServiceRoleCommand.setWorkerRole(workerRole);
         serviceActor.tell(executeServiceRoleCommand, ActorRef.noSender());
     }
 
@@ -384,8 +389,67 @@ public class ProcessUtils {
         for (FrameServiceEntity frameServiceEntity : frameServiceList) {
             //创建服务actor
             logger.info("create {} actor", clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
-            ActorUtils.actorSystem.actorOf(Props.create(ServiceActor.class)
+            ActorUtils.actorSystem.actorOf(Props.create(MasterServiceActor.class)
                     .withDispatcher("my-forkjoin-dispatcher"), clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
+        }
+    }
+
+    public static String getExceptionMessage(Exception ex) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PrintStream pout = new PrintStream(out);
+        ex.printStackTrace(pout);
+        String ret = new String(out.toByteArray());
+        pout.close();
+        try {
+            out.close();
+        } catch (Exception e) {
+        }
+        return ret;
+    }
+
+    public static ExecResult restartService(ServiceRoleInfo serviceRoleInfo, boolean needReConfig) throws Exception {
+        ServiceHandler serviceStartHandler = new ServiceStartHandler();
+        ServiceHandler serviceStopHandler = new ServiceStopHandler();
+        if(needReConfig){
+            ServiceConfigureHandler serviceConfigureHandler = new ServiceConfigureHandler();
+            serviceStopHandler.setNext(serviceConfigureHandler);
+            serviceConfigureHandler.setNext(serviceStartHandler);
+        }else{
+            serviceStopHandler.setNext(serviceStartHandler);
+        }
+        return serviceStopHandler.handlerRequest(serviceRoleInfo);
+    }
+
+    public static ExecResult startService(ServiceRoleInfo serviceRoleInfo, boolean needReConfig) throws Exception {
+        ExecResult execResult = new ExecResult();
+        if(needReConfig){
+            ServiceConfigureHandler serviceHandler = new ServiceConfigureHandler();
+            ServiceHandler serviceStartHandler = new ServiceStartHandler();
+            serviceHandler.setNext(serviceStartHandler);
+            execResult = serviceHandler.handlerRequest(serviceRoleInfo);
+        }else{
+            ServiceHandler serviceStartHandler = new ServiceStartHandler();
+            execResult = serviceStartHandler.handlerRequest(serviceRoleInfo);
+        }
+        return execResult;
+    }
+
+    public static ExecResult startInstallService(ServiceRoleInfo serviceRoleInfo) throws Exception {
+        ServiceHandler serviceInstallHandler = new ServiceInstallHandler();
+        ServiceHandler serviceConfigureHandler = new ServiceConfigureHandler();
+        ServiceHandler serviceStartHandler = new ServiceStartHandler();
+        serviceInstallHandler.setNext(serviceConfigureHandler);
+        serviceConfigureHandler.setNext(serviceStartHandler);
+        ExecResult execResult = serviceInstallHandler.handlerRequest(serviceRoleInfo);
+        return execResult;
+    }
+    //生成configFileMap
+    public static void generateConfigFileMap(HashMap<Generators, List<ServiceConfig>> configFileMap,  ClusterServiceRoleGroupConfig config) {
+        Map<JSONObject, JSONArray> map = JSONObject.parseObject(config.getConfigFileJson(), Map.class);
+        for (JSONObject fileJson : map.keySet()) {
+            Generators generators = fileJson.toJavaObject(Generators.class);
+            List<ServiceConfig> serviceConfigs = map.get(fileJson).toJavaList(ServiceConfig.class);
+            configFileMap.put(generators, serviceConfigs);
         }
     }
 

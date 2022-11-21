@@ -4,10 +4,9 @@ import akka.actor.*;
 import com.datasophon.api.configuration.ConfigBean;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.ActorUtils;
-import com.datasophon.api.master.ServiceActor;
+import com.datasophon.api.master.MasterServiceActor;
 import com.datasophon.api.service.*;
 import com.datasophon.dao.entity.*;
-import com.datasophon.api.service.*;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SecurityUtils;
 import com.datasophon.common.Constants;
@@ -153,7 +152,7 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         List<FrameServiceEntity> frameServiceList = frameServiceService.getAllFrameServiceByFrameCode(clusterInfo.getClusterFrame());
         for (FrameServiceEntity frameServiceEntity : frameServiceList) {
             //创建服务actor
-            ActorRef actor = ActorUtils.getLocalActor(ServiceActor.class,clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
+            ActorRef actor = ActorUtils.getLocalActor(MasterServiceActor.class,clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
             actor.tell(PoisonPill.getInstance(), ActorRef.noSender());
         }
 
