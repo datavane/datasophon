@@ -37,10 +37,9 @@ public class SubmitTaskNodeActor extends UntypedActor {
             Map<String, String> errorTaskList = submitActiveTaskNodeCommand.getErrorTaskList();
             Map<String, String> readyToSubmitTaskList = submitActiveTaskNodeCommand.getReadyToSubmitTaskList();
             Map<String, String> completeTaskList = submitActiveTaskNodeCommand.getCompleteTaskList();
-            //遍历dag执行服务指令
+            //dag
             if (readyToSubmitTaskList.size() > 0) {
                 for (String node : readyToSubmitTaskList.keySet()) {
-                    //判断前置节点是否完成，若未完成，则取消执行并在待运行列表中移除该节点
                     Set<String> previousNodes = dag.getPreviousNodes(node);
                     for (String previousNode : previousNodes) {
                         if (errorTaskList.containsKey(previousNode)) {

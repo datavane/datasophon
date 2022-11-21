@@ -38,15 +38,18 @@ public class ServiceCommandActor extends UntypedActor {
     public void onReceive(Object msg) throws Throwable {
         if (msg instanceof UpdateCommandHostMessage) {
             UpdateCommandHostMessage message = (UpdateCommandHostMessage) msg;
-            ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
 
+            ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
             ClusterServiceCommandHostCommandService service = SpringTool.getApplicationContext().getBean(ClusterServiceCommandHostCommandService.class);
             ClusterServiceCommandHostService commandHostService = SpringTool.getApplicationContext().getBean(ClusterServiceCommandHostService.class);
+            ClusterServiceCommandService commandService = SpringTool.getApplicationContext().getBean(ClusterServiceCommandService.class);
+
             ClusterServiceCommandHostEntity commandHost = commandHostService.getOne(new QueryWrapper<ClusterServiceCommandHostEntity>().eq(Constants.COMMAND_HOST_ID, message.getCommandHostId()));
             Integer size = service.getHostCommandSizeByHostnameAndCommandHostId(message.getHostname(), message.getCommandHostId());
             Integer totalProgress = service.getHostCommandTotalProgressByHostnameAndCommandHostId(message.getHostname(), message.getCommandHostId());
             Integer progress = totalProgress / size;
             commandHost.setCommandProgress(progress);
+
             if (progress == 100) {
                 List<ClusterServiceCommandHostCommandEntity> list =  service.findFailedHostCommand(message.getHostname(),message.getCommandHostId());
                 if(list.size() >0){
@@ -57,8 +60,7 @@ public class ServiceCommandActor extends UntypedActor {
 
             }
             commandHostService.update(commandHost, new QueryWrapper<ClusterServiceCommandHostEntity>().eq(Constants.COMMAND_HOST_ID, message.getCommandHostId()));
-            //更新command
-            ClusterServiceCommandService commandService = SpringTool.getApplicationContext().getBean(ClusterServiceCommandService.class);
+
 
             Integer size1 = commandHostService.getCommandHostSizeByCommandId(message.getCommandId());
             Integer totalProgress1 = commandHostService.getCommandHostTotalProgressByCommandId(message.getCommandId());

@@ -73,10 +73,9 @@ public class ServiceExecuteResultActor extends UntypedActor {
                     } else {
                         activeTaskList.remove(node);
                         readyToSubmitTaskList.remove(node);
-                        //提交下一个节点
-                        logger.info("start to submit next node");
-                        tellToSubmitActiveTaskNode(result, dag, activeTaskList, errorTaskList, readyToSubmitTaskList, completeTaskList, submitTaskNodeActor,node);
                     }
+                    logger.info("start to submit next node");
+                    tellToSubmitActiveTaskNode(result, dag, activeTaskList, errorTaskList, readyToSubmitTaskList, completeTaskList, submitTaskNodeActor,node);
                 }
             }
         } else {
@@ -93,7 +92,7 @@ public class ServiceExecuteResultActor extends UntypedActor {
                                             ActorRef submitTaskNodeActor,
                                             String node) {
         Set<String> subsequentNodes = dag.getSubsequentNodes(node);
-        logger.info("the subsequent nodes is {}", subsequentNodes.toString());
+        logger.info("{}'s subsequent nodes is {}", node , subsequentNodes.toString());
         for (String subsequentNode : subsequentNodes) {
             readyToSubmitTaskList.put(subsequentNode, "");
         }
