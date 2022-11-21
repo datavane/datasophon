@@ -43,7 +43,6 @@ public class ServiceActor extends UntypedActor {
     public void onReceive(Object message) {
         if (message instanceof ExecuteServiceRoleCommand) {
             ExecuteServiceRoleCommand executeServiceRoleCommand = (ExecuteServiceRoleCommand) message;
-            ClusterServiceInstanceService serviceInstanceService = (ClusterServiceInstanceService) SpringTool.getBean("clusterServiceInstanceService");
             ClusterServiceRoleGroupConfigService roleGroupConfigService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleGroupConfigService.class);
             List<ServiceRoleInfo> serviceRoleInfoList = executeServiceRoleCommand.getServiceRoles();
             ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);

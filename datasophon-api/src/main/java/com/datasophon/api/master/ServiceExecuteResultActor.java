@@ -88,10 +88,6 @@ public class ServiceExecuteResultActor extends UntypedActor {
                     activeTaskList.remove(node);
                     readyToSubmitTaskList.remove(node);
                     completeTaskList.put(node, "");
-                    //更改指令执行状态，依赖该节点的下游服务指令状态改为取消
-                    logger.info("{} worker roles failed , cancel all next node by hostCommandId {}",node,servicNode.getElseRoles().get(0).getHostCommandId());
-                    String hostCommandId = servicNode.getElseRoles().get(0).getHostCommandId();
-                    ProcessUtils.updateCommandStateToFailed( hostCommandId);
                 }
             }
         } else {
