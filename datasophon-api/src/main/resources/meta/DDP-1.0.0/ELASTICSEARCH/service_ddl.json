@@ -254,11 +254,11 @@
       "description": "",
       "configType": "path",
       "required": true,
-      "type": "input",
-      "value": "",
+      "type": "multiple",
+      "value": ["/data/es"],
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "/data/es"
+      "defaultValue": ""
     },
     {
       "name": "heapSize",

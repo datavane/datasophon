@@ -160,6 +160,7 @@ public class ProcessUtils {
         ClusterServiceCommandHostCommandService service = SpringTool.getApplicationContext().getBean(ClusterServiceCommandHostCommandService.class);
         ClusterServiceCommandHostCommandEntity hostCommand = service.getByHostCommandId(hostCommandId);
         logger.info("hostCommandName is {}", hostCommand.getCommandName());
+        ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class, "commandActor");
         List<ClusterServiceCommandHostCommandEntity> hostCommandList = service.getHostCommandListByCommandId(hostCommand.getCommandId());
         for (ClusterServiceCommandHostCommandEntity hostCommandEntity : hostCommandList) {
             if (hostCommandEntity.getCommandState() == CommandState.RUNNING && hostCommandEntity.getHostCommandId() != hostCommandId) {
@@ -176,7 +177,6 @@ public class ProcessUtils {
                 } else {
                     message.setServiceRoleType(ServiceRoleType.WORKER);
                 }
-                ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class, "commandActor");
                 ActorUtils.actorSystem.scheduler().scheduleOnce(
                         FiniteDuration.apply(3L, TimeUnit.SECONDS),
                         commandActor,

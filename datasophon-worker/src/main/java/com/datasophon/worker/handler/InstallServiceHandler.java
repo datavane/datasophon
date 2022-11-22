@@ -69,7 +69,7 @@ public class InstallServiceHandler {
                     execResult.setExecResult(true);
                     execResult.setExecOut("install package " + packageName + "success");
                     ShellUtils.exceShell(" chmod -R 755 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
-                    if ("prometheus-2.17.2".equals(decompressPackageName)) {
+                    if (decompressPackageName.contains("prometheus")) {
                         String alertPath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "alert_rules";
                         ShellUtils.exceShell("sed -i \"s/clusterIdValue/" + PropertyUtils.getString("clusterId") + "/g\" `grep clusterIdValue -rl " + alertPath + "`");
                     }
