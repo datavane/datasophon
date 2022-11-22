@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 public class InstallServiceHandler {
     private static final Logger logger = LoggerFactory.getLogger(InstallServiceHandler.class);
 
-    public ExecResult install(String packageName, String decompressPackageName, String packageMd5) {
+    public ExecResult install(String packageName, String decompressPackageName, String packageMd5, String runAs) {
         ExecResult execResult = new ExecResult();
         try {
             //安装包校验
@@ -69,6 +69,9 @@ public class InstallServiceHandler {
                     execResult.setExecResult(true);
                     execResult.setExecOut("install package " + packageName + "success");
                     ShellUtils.exceShell(" chmod -R 755 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
+                    if (StringUtils.isNotBlank(runAs)) {
+                        ShellUtils.exceShell(" chown -R " + runAs + ":" + runAs + " " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
+                    }
                     if (decompressPackageName.contains("prometheus")) {
                         String alertPath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "alert_rules";
                         ShellUtils.exceShell("sed -i \"s/clusterIdValue/" + PropertyUtils.getString("clusterId") + "/g\" `grep clusterIdValue -rl " + alertPath + "`");
