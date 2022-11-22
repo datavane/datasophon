@@ -1,6 +1,6 @@
 <div align="center">
          <a href="https://github.com/gaodayu168/datasophon" target="_blank" rel="noopener noreferrer">
-           <img src="static/img/brand.png" width="20%" height="20%" alt="DataSophon Logo" />
+           <img src="website/static/img/logo.png" width="20%" height="20%" alt="DataSophon Logo" />
         </a>
  <h1>DataSophon</h1>
  <h3>Makes it easy to manage and monitor clusters</h3>
@@ -40,11 +40,11 @@ DataSophon is a similar management platform. Unlike the Sophon, which aims to li
 * Strong scalability, users can integrate or upgrade any components through configuration.
 
 
-![img](./dashboard.png)
+![img](website/static/img/dashboard.png)
 
 # Architecture
 
-![img](./archive.png)
+![img](website/static/img/archive.png)
 
 # Questions
 For questions, bugs and supports please open an [issue](https://github.com/gaodayu168/datasophon/issues/new/choose), we'll reply you in time.

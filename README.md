@@ -1,6 +1,6 @@
 <div align="center">
          <a href="https://github.com/gaodayu168/datasophon" target="_blank" rel="noopener noreferrer">
-           <img src="static/img/brand.png" width="20%" height="20%" alt="DataSophon Logo" />
+           <img src="website/static/img/logo.png" width="20%" height="20%" alt="DataSophon Logo" />
         </a>
  <h1>DataSophon</h1>
  <h3>帮助您更容易地管理和监控集群</h3>
@@ -40,11 +40,11 @@ DataSophon也是个类似的管理平台，只不过与智子不同的是，智�
 * 可扩展性强，用户可通过配置的方式集成或升级大数据组件
 
 
-![img](./dashboard.png)
+![img](website/static/img/dashboard.png)
 
 # 整体架构
 
-![img](./archive.png)
+![img](website/static/img/archive.png)
 
 
 # 提问
