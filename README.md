@@ -3,7 +3,7 @@
            <img src="website/static/img/logo.png" width="20%" height="20%" alt="DataSophon Logo" />
         </a>
  <h1>DataSophon</h1>
- <h3>帮助您更容易地管理和监控集群</h3>
+ <h3>Makes it easy to manage and monitor clusters</h3>
 </div>
 
 <p align="center">
@@ -14,39 +14,40 @@
    <img src="https://img.shields.io/badge/License-GPL%203-blue">
   </a>
   <p align="center">
-    <a href="https://gaodayu168.github.io/datasophon-website/">官网</a> |
-    <a href="https://github.com/gaodayu168/datasophon/blob/main/README_EN.md">English</a>
+    <a href="https://gaodayu168.github.io/datasophon-website/">Office Website</a> |
+    <a href="https://github.com/gaodayu168/datasophon/blob/main/README_CN.md">Chinese</a>
   </p>
 </p>
 
-# 愿景
+# Vision
 
-致力于快速实现部署、管理、监控以及自动化运维大数据服务组件和节点的能力，帮助您快速构建起稳定，高效的大数据集群服务。
+Aiming at quickly deploying,managing,monitoring and automating the operation and maintenance of Big Data service components and nodes,helping you quickly build stable, efficient Big Data cluster services.
 
-# DataSophon是什么
+# What is DataSophon?
 
-《三体》，这部获世界科幻文学最高奖项雨果奖的作品以惊艳的"硬科幻"风被大家所熟知，其作者刘慈欣更是被誉为"单枪匹马将中国科幻提高到世界级水平"。
+*The Three-Body Problem*, a Hugo Award-winning work of the world's highest science fiction literature, is known for its stunning "hard science fiction" style, and its author Liu Cixin is credited with "single-handedly raising Chinese science fiction to a world-class level".
 
-作为三体中非常重要的角色，智子(Sophon)是将九维的质子进行二维展开，通过电路蚀刻改造成超级计算机后，再转回到微观的十一维来监控人类的一举一动，并利用量子纠缠实现瞬时通信报告给4光年之外的三体文明。说白了智子是三体文明部署在地球的AI实时远程监控和管理平台。
+As a very important role in the Triad, the Sophon is a two-dimensional unfolding of the nine-dimensional proton, which is transformed into a supercomputer through circuit etching and then transferred back to the microscopic eleventh dimension to monitor every human movement and use quantum entanglement to achieve instantaneous communication to report to the Triad civilization four light years away. To put it bluntly, the Sophon is a AI real-time remote monitoring and management platform deployed by the Triad civilization on Earth.
 
-DataSophon也是个类似的管理平台，只不过与智子不同的是，智子的目的是锁死人类的基础科学阻碍人类技术爆炸，而DataSophon是致力于自动化监控、运维、管理大数据基础组件和节点的，帮助您快速构建起稳定，高效的大数据集群服务。
+DataSophon is a similar management platform. Unlike the Sophon, which aims to limit human's basic science and hinder human's technology development, DataSophon is dedicated to automatical monitoring, operation and management of Big Data infrastructure components and nodes, helping you to quickly build a stable, efficient Big Data cluster service.
 
-## 主要特性
+## Key Features
 
-* 极易部署,1小时可完成300节点的大数据集群部署
-* 国产化兼容,兼容arm服务器和常用国产化操作系统
-* 监控指标全面丰富，基于生产实践展示用户最关心的监控指标
-* 灵活便捷的告警服务，可实现用户自定义告警组和告警指标
-* 可扩展性强，用户可通过配置的方式集成或升级大数据组件
+* Easy to deploy, can quickly complete the deployment of about 300 nodes of big data clusters
+* Nationalization compatible, compatible with arm servers and common localized operating systems
+* Comprehensive and rich monitoring indicators, showing that the users care about most, based on production practice.
+* Flexible and convenient alarm service, which can realize user-defined alarm groups and alarm indicators
+* Strong scalability, users can integrate or upgrade any components through configuration.
 
 
 ![img](website/static/img/dashboard.png)
 
-# 整体架构
+# Architecture
 
 ![img](website/static/img/archive.png)
 
+# Questions
+For questions, bugs and supports please open an [issue](https://github.com/gaodayu168/datasophon/issues/new/choose), we'll reply you in time.
 
-# 提问
-如果您有任何的疑问或需要支持、报告漏洞，请点击 [issue](https://github.com/gaodayu168/datasophon/issues/new/choose) 并提交您的问题, 我们将及时回复您。
+
 
