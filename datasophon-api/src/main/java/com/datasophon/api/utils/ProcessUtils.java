@@ -111,18 +111,16 @@ public class ProcessUtils {
                 clusterZkService.save(clusterZk);
             }
 
-
             if (Objects.nonNull(serviceRoleInfo.getExternalLink())) {
-
                 ExternalLink externalLink = serviceRoleInfo.getExternalLink();
                 List<ClusterServiceRoleInstanceWebuis> list = webuisService.list(new QueryWrapper<ClusterServiceRoleInstanceWebuis>()
                         .eq(Constants.NAME, externalLink.getName() + "(" + serviceRoleInfo.getHostname() + ")"));
                 if (Objects.nonNull(list) && list.size() > 0) {
                     logger.info("web ui already exists");
                 } else {
-                    HashMap<String, String> map = new HashMap<>();
-                    map.put("${host}", serviceRoleInfo.getHostname());
-                    String url = PlaceholderUtils.replacePlaceholders(externalLink.getUrl(), map, Constants.REGEX_VARIABLE);
+                    HashMap<String, String> globalVariables = (HashMap<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterInfo.getId());
+                    globalVariables.put("${host}", serviceRoleInfo.getHostname());
+                    String url = PlaceholderUtils.replacePlaceholders(externalLink.getUrl(), globalVariables, Constants.REGEX_VARIABLE);
                     ClusterServiceRoleInstanceWebuis webuis = new ClusterServiceRoleInstanceWebuis();
                     webuis.setWebUrl(url);
                     webuis.setServiceInstanceId(clusterServiceInstance.getId());
@@ -130,14 +128,13 @@ public class ProcessUtils {
                     webuis.setName(externalLink.getName() + "(" + serviceRoleInfo.getHostname() + ")");
                     webuisService.save(webuis);
                 }
-
             }
         }
 
     }
 
     public static void saveHostInstallInfo(StartWorkerMessage message, String clusterCode, ClusterHostService clusterHostService) {
-        ClusterInfoService clusterInfoService = (ClusterInfoService) SpringTool.getBean("clusterInfoService");
+        ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
         ClusterHostEntity clusterHostEntity = new ClusterHostEntity();
         BeanUtil.copyProperties(message, clusterHostEntity);
         Map<String, String> hostIp = (Map<String, String>) CacheUtils.get(Constants.HOST_IP);
@@ -410,11 +407,11 @@ public class ProcessUtils {
     public static ExecResult restartService(ServiceRoleInfo serviceRoleInfo, boolean needReConfig) throws Exception {
         ServiceHandler serviceStartHandler = new ServiceStartHandler();
         ServiceHandler serviceStopHandler = new ServiceStopHandler();
-        if(needReConfig){
+        if (needReConfig) {
             ServiceConfigureHandler serviceConfigureHandler = new ServiceConfigureHandler();
             serviceStopHandler.setNext(serviceConfigureHandler);
             serviceConfigureHandler.setNext(serviceStartHandler);
-        }else{
+        } else {
             serviceStopHandler.setNext(serviceStartHandler);
         }
         return serviceStopHandler.handlerRequest(serviceRoleInfo);
@@ -422,12 +419,12 @@ public class ProcessUtils {
 
     public static ExecResult startService(ServiceRoleInfo serviceRoleInfo, boolean needReConfig) throws Exception {
         ExecResult execResult = new ExecResult();
-        if(needReConfig){
+        if (needReConfig) {
             ServiceConfigureHandler serviceHandler = new ServiceConfigureHandler();
             ServiceHandler serviceStartHandler = new ServiceStartHandler();
             serviceHandler.setNext(serviceStartHandler);
             execResult = serviceHandler.handlerRequest(serviceRoleInfo);
-        }else{
+        } else {
             ServiceHandler serviceStartHandler = new ServiceStartHandler();
             execResult = serviceStartHandler.handlerRequest(serviceRoleInfo);
         }
@@ -443,8 +440,9 @@ public class ProcessUtils {
         ExecResult execResult = serviceInstallHandler.handlerRequest(serviceRoleInfo);
         return execResult;
     }
+
     //生成configFileMap
-    public static void generateConfigFileMap(HashMap<Generators, List<ServiceConfig>> configFileMap,  ClusterServiceRoleGroupConfig config) {
+    public static void generateConfigFileMap(HashMap<Generators, List<ServiceConfig>> configFileMap, ClusterServiceRoleGroupConfig config) {
         Map<JSONObject, JSONArray> map = JSONObject.parseObject(config.getConfigFileJson(), Map.class);
         for (JSONObject fileJson : map.keySet()) {
             Generators generators = fileJson.toJavaObject(Generators.class);

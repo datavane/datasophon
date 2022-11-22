@@ -1,7 +1,7 @@
 {
   "name": "DS",
   "label": "DolphinScheduler",
-  "description": "调度系统",
+  "description": "分布式易扩展的可视化工作流任务调度平台",
   "version": "3.1.1",
   "sortNum": 4,
   "dependencies":["ZOOKEEPER"],
