@@ -158,5 +158,9 @@ scrape_configs:
     file_sd_configs:
      - files:
        - configs/alertserver.json
+  - job_name: 'streampark'
+    file_sd_configs:
+     - files:
+       - configs/streampark.json
 
 

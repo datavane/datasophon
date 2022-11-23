@@ -1,8 +1,6 @@
 package com.datasophon.api.master;
 
 import akka.actor.ActorRef;
-import akka.actor.ActorSelection;
-import akka.actor.ActorSystem;
 import akka.actor.UntypedActor;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.cache.CacheUtils;
@@ -54,40 +52,30 @@ public class ServiceExecuteResultActor extends UntypedActor {
                     List<ServiceRoleInfo> elseRoles = serviceNode.getElseRoles();
                     if (elseRoles.size() > 0) {
                         logger.info("start to submit worker/client roles");
-                        ProcessUtils.buildExecuteServiceRoleCommand(
-                                result.getClusterId(),
-                                result.getCommandType(),
-                                result.getClusterCode(),
-                                dag,
-                                activeTaskList,
-                                errorTaskList,
-                                readyToSubmitTaskList,
-                                completeTaskList,
-                                node,
-                                elseRoles,
-                                ServiceRoleType.WORKER);
+                        for (ServiceRoleInfo elseRole : serviceNode.getElseRoles()) {
+                            ActorRef serviceActor = ActorUtils.getLocalActor(WorkerServiceActor.class, result.getClusterCode() + "-serviceActor-" + node+"-"+elseRole.getHostname());
+                            ProcessUtils.buildExecuteServiceRoleCommand(
+                                    result.getClusterId(),
+                                    result.getCommandType(),
+                                    result.getClusterCode(),
+                                    dag,
+                                    activeTaskList,
+                                    errorTaskList,
+                                    readyToSubmitTaskList,
+                                    completeTaskList,
+                                    node,
+                                    serviceNode.getElseRoles(),
+                                    elseRole,
+                                    serviceActor,
+                                    ServiceRoleType.WORKER);
+                        }
+
                     } else {
                         activeTaskList.remove(node);
                         readyToSubmitTaskList.remove(node);
-                        //提交下一个节点
-                        logger.info("start to submit next node");
-                        tellToSubmitActiveTaskNode(result, dag, activeTaskList, errorTaskList, readyToSubmitTaskList, completeTaskList, submitTaskNodeActor,node);
                     }
-                }
-            }
-            if (result.getServiceRoleType().equals(ServiceRoleType.WORKER)) {
-                if (ServiceExecuteState.SUCCESS.equals(result.getServiceExecuteState())) {
-                    activeTaskList.remove(node);
-                    readyToSubmitTaskList.remove(node);
-                    completeTaskList.put(node, "");
-                    //master与worker都安装完成执行下一节点
-                    logger.info("master and worker node all submit success");
+                    logger.info("start to submit next node");
                     tellToSubmitActiveTaskNode(result, dag, activeTaskList, errorTaskList, readyToSubmitTaskList, completeTaskList, submitTaskNodeActor,node);
-                } else if (ServiceExecuteState.ERROR.equals(result.getServiceExecuteState())) {
-                    errorTaskList.put(node, "");
-                    activeTaskList.remove(node);
-                    readyToSubmitTaskList.remove(node);
-                    completeTaskList.put(node, "");
                 }
             }
         } else {
@@ -104,7 +92,7 @@ public class ServiceExecuteResultActor extends UntypedActor {
                                             ActorRef submitTaskNodeActor,
                                             String node) {
         Set<String> subsequentNodes = dag.getSubsequentNodes(node);
-        logger.info("the subsequent nodes is {}", subsequentNodes.toString());
+        logger.info("{}'s subsequent nodes is {}", node , subsequentNodes.toString());
         for (String subsequentNode : subsequentNodes) {
             readyToSubmitTaskList.put(subsequentNode, "");
         }

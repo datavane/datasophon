@@ -25,4 +25,7 @@ public class ServiceRoleOperateCommand extends BaseCommand implements Serializab
 
     private String runAs;
 
+    public ServiceRoleOperateCommand() {
+        this.enableRangerPlugin = false;
+    }
 }

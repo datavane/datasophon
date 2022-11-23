@@ -1,9 +1,13 @@
 package com.datasophon.api.master;
 
 import akka.actor.*;
+import akka.dispatch.OnFailure;
+import akka.dispatch.OnSuccess;
 import akka.util.Timeout;
 import com.datasophon.api.master.alert.HostCheckActor;
 import com.datasophon.api.master.alert.ServiceRoleCheckActor;
+import com.datasophon.api.utils.ProcessUtils;
+import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
 import com.typesafe.config.Config;
@@ -14,6 +18,7 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Objects;
@@ -54,7 +59,7 @@ public class ActorUtils {
         try {
             actorRef = Await.result(future, Duration.create(3, "seconds"));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("{} actor not found",actorName);
         }
         if (Objects.isNull(actorRef)) {
             logger.info("create actor {}",actorName);

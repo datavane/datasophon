@@ -7,7 +7,7 @@
     <groupId>com.datasophon</groupId>
     <artifactId>datasophon</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <modules>
         <module>datasophon-api</module>
         <module>datasophon-dao</module>
