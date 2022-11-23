@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/github/release/gaodayu168/datasophon.svg">
   <img src="https://img.shields.io/github/stars/gaodayu168/datasophon">
   <img src="https://img.shields.io/github/forks/gaodayu168/datasophon">
-  <a href="https://www.gnu.org/licenses/gpl-3.0.html">
+  <a href="https://www.apache.org/licenses/LICENSE-2.0.html">
    <img src="https://img.shields.io/badge/License-GPL%203-blue">
   </a>
   <p align="center">
