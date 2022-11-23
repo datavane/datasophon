@@ -611,17 +611,6 @@
       "defaultValue": true
     },
     {
-      "name": "enableRack",
-      "label": "开启机架感知",
-      "description": "开启机架感知",
-      "required": true,
-      "type": "switch",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": true
-    },
-    {
       "name": "dfs.client.failover.proxy.provider.nameservice1",
       "label": "容错实现类",
       "description": "容错实现类",
