@@ -10,9 +10,7 @@
   <img src="https://img.shields.io/github/release/gaodayu168/datasophon.svg">
   <img src="https://img.shields.io/github/stars/gaodayu168/datasophon">
   <img src="https://img.shields.io/github/forks/gaodayu168/datasophon">
-  <a href="https://www.gnu.org/licenses/gpl-3.0.html">
-   <img src="https://img.shields.io/badge/License-GPL%203-blue">
-  </a>
+  <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/badge/license-Apache%202-4EB1BA.svg"></a>
   <p align="center">
     <a href="https://gaodayu168.github.io/datasophon-website/">官网</a> |
     <a href="https://github.com/gaodayu168/datasophon/blob/main/README.md">English</a>
