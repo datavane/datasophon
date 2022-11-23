@@ -53,11 +53,11 @@ public class ActorUtils {
 
     public static ActorRef getLocalActor(Class actorClass, String actorName) {
         ActorSelection actorSelection = actorSystem.actorSelection("/user/" + actorName);
-        Timeout timeout = new Timeout(Duration.create(3, "seconds"));
+        Timeout timeout = new Timeout(Duration.create(30, "seconds"));
         Future<ActorRef> future = actorSelection.resolveOne(timeout);
         ActorRef actorRef = null;
         try {
-            actorRef = Await.result(future, Duration.create(3, "seconds"));
+            actorRef = Await.result(future, Duration.create(30, "seconds"));
         } catch (Exception e) {
             logger.error("{} actor not found",actorName);
         }

@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.configuration.ConfigBean;
 import com.datasophon.api.master.HostActor;
 import com.datasophon.api.service.*;
+import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.common.model.*;
 import com.datasophon.dao.entity.*;
 import com.datasophon.api.service.*;
@@ -140,6 +141,7 @@ public class LoadServiceMeta implements ApplicationRunner {
                             cofigMap.put(generator, list);
                         }
                     }
+                    PackageUtils.putServicePackageName(frameCode,serviceName,serviceInfo.getDecompressPackageName());
                     //服务信息及服务配置信息持久化到数据库
                     FrameServiceEntity serviceEntity = frameServiceService.getServiceByFrameIdAndServiceName(frameInfo.getId(), serviceName);
                     if (Objects.isNull(serviceEntity)) {

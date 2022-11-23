@@ -1,0 +1,14 @@
+#!/bin/bash
+
+SERVER_LIST_CONFIG=./rack.properties
+function read_config() {
+	cat $SERVER_LIST_CONFIG | while read LINE
+	do
+		ip=${LINE%=*}
+		rack=${LINE#*=}
+		if [ $ip -eq $1 ]; then
+			echo $rack
+			break
+	done
+}
+read_config

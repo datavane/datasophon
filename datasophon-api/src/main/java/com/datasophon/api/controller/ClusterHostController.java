@@ -60,6 +60,12 @@ public class ClusterHostController {
 
     }
 
+    @RequestMapping("/assignRack")
+    public Result assignRack(Integer clusterId){
+        return clusterHostService.getRack(clusterId);
+
+    }
+
 
     /**
      * 信息

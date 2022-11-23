@@ -155,39 +155,8 @@
           "zkfc"
         ]
       }
-    },{
-      "name": "ZKFC",
-      "label": "ZKFC",
-      "roleType": "master",
-      "cardinality": "1+",
-      "sortNum": 3,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-zkfc-${host}.log",
-      "jmxPort": 27004,
-      "startRunner": {
-        "timeout": "60",
-        "program": "control_hadoop.sh",
-        "args": [
-          "start",
-          "zkfc"
-        ]
-      },
-      "stopRunner": {
-        "timeout": "600",
-        "program": "control_hadoop.sh",
-        "args": [
-          "stop",
-          "zkfc"
-        ]
-      },
-      "statusRunner": {
-        "timeout": "60",
-        "program": "control_hadoop.sh",
-        "args": [
-          "status",
-          "zkfc"
-        ]
-      }
-    },{
+    },
+    {
       "name": "HdfsClient",
       "label": "HdfsClient",
       "roleType": "client",
@@ -207,6 +176,7 @@
           "hadoop.http.staticuser.user",
           "ha.zookeeper.quorum",
           "hadoop.tmp.dir",
+          "net.topology.script.file.name",
           "custom.core.site.xml"
         ]
       },
@@ -607,6 +577,17 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": true,
+      "defaultValue": true
+    },
+    {
+      "name": "enableRack",
+      "label": "开启机架感知",
+      "description": "开启机架感知",
+      "required": false,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
       "defaultValue": true
     },
     {
