@@ -1,22 +1,33 @@
 package com.datasophon.api.service.impl;
 
+import akka.actor.ActorRef;
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.master.RackActor;
+import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
+import com.datasophon.api.utils.PackageUtils;
+import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
+import com.datasophon.common.model.Generators;
+import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.common.model.ServiceRoleInfo;
+import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
+import com.datasophon.dao.entity.ClusterYarnQueue;
 import com.datasophon.dao.enums.RoleType;
 import com.datasophon.dao.enums.ServiceRoleState;
+import com.iflytek.ddh.common.command.GenerateRackPropCommand;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -26,9 +37,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.dao.mapper.ClusterHostMapper;
 import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.api.service.ClusterHostService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("clusterHostService")
+@Transactional
 public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, ClusterHostEntity> implements ClusterHostService {
 
     @Autowired
@@ -129,5 +142,21 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     @Override
     public List<ClusterHostEntity> getHostListByIds(List<String> ids) {
         return this.list(new QueryWrapper<ClusterHostEntity>().in(Constants.ID,ids));
+    }
+
+    @Override
+    public Result assignRack(Integer clusterId, String rack, String hostIds) {
+        List<String> ids = Arrays.asList(hostIds.split(","));
+        List<ClusterHostEntity> list = this.list(new QueryWrapper<ClusterHostEntity>().in(Constants.ID, ids));
+        for (ClusterHostEntity clusterHostEntity : list) {
+            clusterHostEntity.setRack(rack);
+        }
+        this.updateBatchById(list);
+        //tell rack actor
+        GenerateRackPropCommand command = new GenerateRackPropCommand();
+        command.setClusterId(clusterId);
+        ActorRef rackActor = ActorUtils.getLocalActor(RackActor.class, "rackActor");
+        rackActor.tell(command,ActorRef.noSender());
+        return Result.success();
     }
 }

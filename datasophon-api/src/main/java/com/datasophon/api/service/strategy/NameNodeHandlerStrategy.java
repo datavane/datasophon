@@ -49,26 +49,21 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
         ClusterInfoEntity clusterInfo = getClusterInfo(clusterId);
-
-        ServiceConfig serviceConfig = null;
         for (ServiceConfig config : list) {
             if ("enableRack".equals(config.getName()) && (Boolean)config.getValue()) {
-                serviceConfig = new ServiceConfig();
-                serviceConfig.setName("net.topology.script.file.name");
-                serviceConfig.setValue(
-                        Constants.INSTALL_PATH +
+                ServiceConfig serviceConfig = ProcessUtils.createServiceConfig("net.topology.table.file.name",Constants.INSTALL_PATH +
                         Constants.SLASH +
                         PackageUtils.getServiceDcPackageName(clusterInfo.getClusterFrame(), "HDFS")+
-                        "/etc/hadoop/rackaware.sh");
-                serviceConfig.setRequired(true);
-                serviceConfig.setHidden(false);
-                serviceConfig.setType("input");
+                        "/etc/hadoop/rack.properties","input");
+                ServiceConfig mapImplConfig = ProcessUtils.createServiceConfig("net.topology.node.switch.mapping.impl", "org.apache.hadoop.net.TableMapping","input");
+                list.add(serviceConfig);
+                list.add(mapImplConfig);
             }
         }
-        if (Objects.nonNull(serviceConfig)) {
-            list.add(serviceConfig);
-        }
+
     }
+
+
 
     private void updateServiceConfigToHA(FrameServiceService frameService, FrameServiceEntity frameServiceEntity, boolean b, boolean b2) {
         String serviceConfig = frameServiceEntity.getServiceConfig();
