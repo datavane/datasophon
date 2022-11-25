@@ -3,6 +3,7 @@ package com.datasophon.api.master;
 import akka.actor.UntypedActor;
 import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
 import com.datasophon.api.service.ClusterHostService;
+import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.api.utils.ProcessUtils;
@@ -11,10 +12,10 @@ import com.datasophon.common.model.Generators;
 import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.common.utils.ExecResult;
-import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterHostEntity;
+import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
-import com.iflytek.ddh.common.command.GenerateRackPropCommand;
+import com.datasophon.common.command.GenerateRackPropCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +34,10 @@ public class RackActor extends UntypedActor {
 
             ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
             ClusterHostService hostService = SpringTool.getApplicationContext().getBean(ClusterHostService.class);
+            ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
             //update rack table
             List<ClusterServiceRoleInstanceEntity> roleList = roleInstanceService.getServiceRoleInstanceListByClusterIdAndRoleName(command.getClusterId(), "NameNode");
-
+            ClusterInfoEntity clusterInfo = clusterInfoService.getById(command.getClusterId());
             //build config file map
             HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
             Generators generators = new Generators();
@@ -56,7 +58,7 @@ public class RackActor extends UntypedActor {
                 serviceRoleInfo.setName("NameNode");
                 serviceRoleInfo.setParentName("HDFS");
                 serviceRoleInfo.setConfigFileMap(configFileMap);
-                serviceRoleInfo.setDecompressPackageName(PackageUtils.getServiceDcPackageName("","HDFS"));
+                serviceRoleInfo.setDecompressPackageName(PackageUtils.getServiceDcPackageName(clusterInfo.getClusterFrame(),"HDFS"));
                 serviceRoleInfo.setHostname(roleInstanceEntity.getHostname());
                 ServiceConfigureHandler configureHandler = new ServiceConfigureHandler();
                 ExecResult execResult = configureHandler.handlerRequest(serviceRoleInfo);

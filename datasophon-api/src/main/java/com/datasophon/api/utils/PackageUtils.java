@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class PackageUtils {
 
-    static HashMap<String, String> map;
+    static HashMap<String, String> map = new HashMap<String,String>();
 
     public static void putServicePackageName(String frameCode, String serviceName, String dcPackageName) {
         map.put(frameCode + Constants.UNDERLINE + serviceName, dcPackageName);

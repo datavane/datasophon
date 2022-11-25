@@ -1,4 +1,4 @@
-package com.iflytek.ddh.common.command;
+package com.datasophon.common.command;
 
 import lombok.Data;
 

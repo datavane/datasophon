@@ -60,17 +60,7 @@ public class ClusterHostController {
 
     }
 
-    @RequestMapping("/addRack")
-    public Result addRack(Integer clusterId){
-        return clusterHostService.getRack(clusterId);
 
-    }
-
-    @RequestMapping("/deleteRack")
-    public Result deleteRack(Integer clusterId){
-        return clusterHostService.getRack(clusterId);
-
-    }
 
     @RequestMapping("/assignRack")
     public Result assignRack(Integer clusterId , String rack,String hostIds) {

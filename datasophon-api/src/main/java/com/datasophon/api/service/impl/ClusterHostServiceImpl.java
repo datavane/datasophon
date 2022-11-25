@@ -1,28 +1,19 @@
 package com.datasophon.api.service.impl;
 
 import akka.actor.ActorRef;
-import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.RackActor;
-import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
-import com.datasophon.api.utils.PackageUtils;
-import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
-import com.datasophon.common.model.Generators;
-import com.datasophon.common.model.ServiceConfig;
-import com.datasophon.common.model.ServiceRoleInfo;
-import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
-import com.datasophon.dao.entity.ClusterYarnQueue;
 import com.datasophon.dao.enums.RoleType;
 import com.datasophon.dao.enums.ServiceRoleState;
-import com.iflytek.ddh.common.command.GenerateRackPropCommand;
+import com.datasophon.common.command.GenerateRackPropCommand;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -135,8 +126,12 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     }
 
     @Override
-    public void updateBatchNodeLabel(String hostIds, String nodeLabel) {
-        hostMapper.updateBatchNodeLabel(hostIds,nodeLabel);
+    public void updateBatchNodeLabel(List<String> hostIds, String nodeLabel) {
+        List<ClusterHostEntity> list = this.list(new QueryWrapper<ClusterHostEntity>().in(Constants.ID, hostIds));
+        for (ClusterHostEntity clusterHostEntity : list) {
+            clusterHostEntity.setNodeLabel(nodeLabel);
+        }
+        this.updateBatchById(list);
     }
 
     @Override
@@ -158,5 +153,12 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
         ActorRef rackActor = ActorUtils.getLocalActor(RackActor.class, "rackActor");
         rackActor.tell(command,ActorRef.noSender());
         return Result.success();
+    }
+
+    @Override
+    public List<ClusterHostEntity> getClusterHostByRack(Integer clusterId ,String rack) {
+        return this.list(new QueryWrapper<ClusterHostEntity>()
+                .eq(Constants.CLUSTER_ID,clusterId)
+                .eq(Constants.RACK, rack));
     }
 }
