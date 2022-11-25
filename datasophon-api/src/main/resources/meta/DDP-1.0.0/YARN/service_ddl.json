@@ -198,7 +198,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": true
+      "defaultValue": false
     },
     {
       "name": "yarn.node-labels.fs-store.root-dir",

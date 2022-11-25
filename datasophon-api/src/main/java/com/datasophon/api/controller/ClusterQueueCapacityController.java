@@ -77,8 +77,8 @@ public class ClusterQueueCapacityController {
      * 删除
      */
     @RequestMapping("/delete")
-    public Result delete(@RequestBody Integer[] ids){
-        clusterQueueCapacityService.removeByIds(Arrays.asList(ids));
+    public Result delete( Integer id){
+        clusterQueueCapacityService.removeById(id);
 
         return Result.success();
     }

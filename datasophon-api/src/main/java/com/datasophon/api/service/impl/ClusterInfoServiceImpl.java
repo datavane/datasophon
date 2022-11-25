@@ -6,6 +6,7 @@ import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.MasterServiceActor;
 import com.datasophon.api.service.*;
+import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.dao.entity.*;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SecurityUtils;
@@ -85,7 +86,7 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         globalVariables.put("${INSTALL_PATH}",Constants.INSTALL_PATH);
         globalVariables.put("${apiHost}", CacheUtils.getString("hostname"));
         globalVariables.put("${apiPort}", configBean.getServerPort());
-        globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + "/hadoop-3.3.3");
+        globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + Constants.SLASH+ PackageUtils.getServiceDcPackageName(clusterInfo.getClusterFrame(),"HDFS"));
 
         CacheUtils.put("globalVariables" + Constants.UNDERLINE + clusterInfo.getId(), globalVariables);
         return Result.success();

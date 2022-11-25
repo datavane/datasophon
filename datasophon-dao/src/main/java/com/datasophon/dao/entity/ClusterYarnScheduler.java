@@ -12,11 +12,11 @@ import java.util.Date;
  * 
  * @author dygao2
  * @email dygao2@datasophon.com
- * @date 2022-11-25 14:30:11
+ * @date 2022-11-25 15:02:11
  */
 @Data
-@TableName("t_ddh_cluster_queue_capacity")
-public class ClusterQueueCapacity implements Serializable {
+@TableName("t_ddh_cluster_yarn_scheduler")
+public class ClusterYarnScheduler implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -24,25 +24,13 @@ public class ClusterQueueCapacity implements Serializable {
 	 */
 	@TableId
 	private Integer id;
-
+	/**
+	 * 
+	 */
 	private Integer clusterId;
 	/**
 	 * 
 	 */
-	private String queueName;
-	/**
-	 * 
-	 */
-	private String capacity;
-	/**
-	 * 
-	 */
-	private String nodeLabel;
-	/**
-	 * 
-	 */
-	private String aclUsers;
-
-	private String parent;
+	private String scheduler;
 
 }

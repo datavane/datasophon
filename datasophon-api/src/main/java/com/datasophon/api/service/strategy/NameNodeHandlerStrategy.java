@@ -22,7 +22,7 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
         FrameServiceService frameService = SpringTool.getApplicationContext().getBean(FrameServiceService.class);
-        ClusterInfoEntity clusterInfo = getClusterInfo(clusterId);
+        ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
 
         FrameServiceEntity frameServiceEntity = frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), "HDFS");
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
@@ -40,15 +40,11 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
 
     }
 
-    private ClusterInfoEntity getClusterInfo(Integer clusterId) {
-        ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
-        ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
-        return clusterInfo;
-    }
+
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
-        ClusterInfoEntity clusterInfo = getClusterInfo(clusterId);
+        ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
         for (ServiceConfig config : list) {
             if ("enableRack".equals(config.getName()) && (Boolean)config.getValue()) {
                 ServiceConfig serviceConfig = ProcessUtils.createServiceConfig("net.topology.table.file.name",Constants.INSTALL_PATH +

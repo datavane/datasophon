@@ -462,6 +462,12 @@ public class ProcessUtils {
         return serviceConfig;
     }
 
+    public static ClusterInfoEntity getClusterInfo(Integer clusterId) {
+        ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
+        ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
+        return clusterInfo;
+    }
+
     /**
      * 并集：左边集合与右边集合合并
      *
