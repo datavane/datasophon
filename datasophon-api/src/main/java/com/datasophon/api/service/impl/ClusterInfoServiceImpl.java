@@ -55,6 +55,9 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
     @Autowired
     private ClusterHostService clusterHostService;
 
+    @Autowired
+    private ClusterYarnSchedulerService yarnSchedulerService;
+
     @Override
     public ClusterInfoEntity getClusterByClusterCode(String clusterCode) {
         ClusterInfoEntity clusterInfoEntity = clusterInfoMapper.getClusterByClusterCode(clusterCode);
@@ -81,6 +84,8 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
             groupMapService.save(alertGroupMap);
         }
         ProcessUtils.createServiceActor(clusterInfo);
+
+        yarnSchedulerService.createYarnScheduler(clusterInfo.getId());
 
         HashMap<String, String> globalVariables = new HashMap<>();
         globalVariables.put("${INSTALL_PATH}",Constants.INSTALL_PATH);

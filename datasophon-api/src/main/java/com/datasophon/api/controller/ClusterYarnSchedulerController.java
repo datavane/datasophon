@@ -40,11 +40,11 @@ public class ClusterYarnSchedulerController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
-    public Result info(@PathVariable("id") Integer id){
-        ClusterYarnScheduler clusterYarnScheduler = clusterYarnSchedulerService.getById(id);
+    @RequestMapping("/info")
+    public Result info(Integer clusterId){
+        ClusterYarnScheduler clusterYarnScheduler = clusterYarnSchedulerService.getScheduler(clusterId);
 
-        return Result.success().put("clusterYarnScheduler", clusterYarnScheduler);
+        return Result.success(clusterYarnScheduler.getScheduler());
     }
 
     /**

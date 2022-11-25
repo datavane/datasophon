@@ -41,16 +41,24 @@ public class RMHandlerStrategy implements ServiceRoleStrategy{
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
-        ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
         ClusterYarnSchedulerService schedulerService = SpringTool.getApplicationContext().getBean(ClusterYarnSchedulerService.class);
         for (ServiceConfig config : list) {
-            if ("yarn.resourcemanager.scheduler.class".equals(config.getName()) &&
-                    "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler".equals(config.getValue())) {
+            if ("yarn.resourcemanager.scheduler.class".equals(config.getName())) {
                 ClusterYarnScheduler scheduler = schedulerService.getScheduler(clusterId);
-                if("capacity".equals(scheduler.getScheduler())){
-                    scheduler.setScheduler("fair");
-                    schedulerService.updateById(scheduler);
+                if("org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler".equals(config.getValue())){
+                    if("capacity".equals(scheduler.getScheduler())){
+                        scheduler.setScheduler("fair");
+                        schedulerService.updateById(scheduler);
+                    }
+                }else {
+                    if("fair".equals(scheduler.getScheduler())){
+                        scheduler.setScheduler("capacity");
+                        schedulerService.updateById(scheduler);
+                    }
                 }
+
+
+
             }
         }
     }

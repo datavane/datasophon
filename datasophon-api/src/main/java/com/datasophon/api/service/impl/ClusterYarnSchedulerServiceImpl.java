@@ -22,4 +22,12 @@ public class ClusterYarnSchedulerServiceImpl extends ServiceImpl<ClusterYarnSche
     public ClusterYarnScheduler getScheduler(Integer clusterId) {
         return this.getOne(new QueryWrapper<ClusterYarnScheduler>().eq(Constants.CLUSTER_ID,clusterId));
     }
+
+    @Override
+    public void createYarnScheduler(Integer clusterId) {
+        ClusterYarnScheduler scheduler = new ClusterYarnScheduler();
+        scheduler.setScheduler("capacity");
+        scheduler.setClusterId(clusterId);
+        this.save(scheduler);
+    }
 }
