@@ -29,9 +29,7 @@ public class UserPermissionHandler implements HandlerInterceptor {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         UserPermission annotation = handlerMethod.getMethod().getAnnotation(UserPermission.class);
         if (Objects.nonNull(annotation)) {
-            logger.info("step into user permission");
             UserInfoEntity authUser = (UserInfoEntity) request.getSession().getAttribute(Constants.SESSION_USER);
-//            UserInfoEntity authUser = SecurityUtils.getAuthUser();
             Map<String, String[]> parameterMap = request.getParameterMap();
             if (Objects.nonNull(authUser) && !SecurityUtils.isAdmin(authUser)) {
                 logger.info("step into authrization");
@@ -44,8 +42,6 @@ public class UserPermissionHandler implements HandlerInterceptor {
                     }
                 }
                 throw new ServiceException(Status.USER_NO_OPERATION_PERM);
-            }else{
-                logger.info("user is null or user is admin");
             }
         }
         return true;

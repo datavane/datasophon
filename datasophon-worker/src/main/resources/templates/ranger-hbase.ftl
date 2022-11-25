@@ -8,7 +8,7 @@ REPOSITORY_NAME=hbasedev
 # Example:
 # COMPONENT_INSTALL_DIR_NAME=/var/local/hbase-1.1.5
 #
-COMPONENT_INSTALL_DIR_NAME=/opt/datasophon/hbase-2.2.7
+COMPONENT_INSTALL_DIR_NAME=/opt/datasophon/hbase-2.0.2
 
 # AUDIT configuration with V3 properties
 

@@ -31,9 +31,8 @@ public class MasterServer extends UntypedActor {
 
     @Override
     public void preStart() throws Exception {
-        ActorRef serviceActor = getContext().actorOf(Props.create(ServiceActor.class).withDispatcher("my-pinned-dispatcher"), "serviceActor");
+        ActorRef serviceActor = getContext().actorOf(Props.create(MasterServiceActor.class).withDispatcher("my-pinned-dispatcher"), "serviceActor");
         ActorRef workerStartActor = getContext().actorOf(Props.create(WorkerStartActor.class).withDispatcher("my-pinned-dispatcher"), "workerStartActor");
-        ActorRef command = getContext().actorOf(Props.create(ServiceCommandActor.class).withDispatcher("my-pinned-dispatcher"), "commandActor");
 
         ActorRef dagBuildActor = getContext().actorOf(Props.create(DAGBuildActor.class).withDispatcher("my-pinned-dispatcher"), "dagBuildActor");
         ActorRef submitTaskNodeActor = getContext().actorOf(Props.create(SubmitTaskNodeActor.class).withDispatcher("my-pinned-dispatcher"), "submitTaskNodeActor");
@@ -43,7 +42,6 @@ public class MasterServer extends UntypedActor {
         ActorRef hdfsECActor = getContext().actorOf(Props.create(HdfsECActor.class).withDispatcher("my-pinned-dispatcher"), "hdfsECActor");
         getContext().watch(serviceActor);
         getContext().watch(workerStartActor);
-        getContext().watch(command);
         getContext().watch(dagBuildActor);
         getContext().watch(submitTaskNodeActor);
         getContext().watch(serviceExecuteResultActor);
@@ -51,7 +49,6 @@ public class MasterServer extends UntypedActor {
         getContext().watch(hdfsECActor);
         CacheUtils.put("hostActor",workerStartActor);
         CacheUtils.put("serviceActor",serviceActor);
-        CacheUtils.put("commandActor",command);
         CacheUtils.put("dagBuildActor",dagBuildActor);
         CacheUtils.put("submitTaskNodeActor",submitTaskNodeActor);
         CacheUtils.put("serviceExecuteResultActor",serviceExecuteResultActor);
