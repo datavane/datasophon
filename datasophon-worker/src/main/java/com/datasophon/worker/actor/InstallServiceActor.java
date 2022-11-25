@@ -16,7 +16,7 @@ public class InstallServiceActor extends UntypedActor {
             InstallServiceRoleCommand command = (InstallServiceRoleCommand) msg;
             InstallServiceHandler serviceHandler = new InstallServiceHandler();
             logger.info("start install package {}",command.getPackageName());
-            ExecResult installResult = serviceHandler.install(command.getPackageName(), command.getDecompressPackageName(), command.getPackageMd5());
+            ExecResult installResult = serviceHandler.install(command.getPackageName(), command.getDecompressPackageName(), command.getPackageMd5(),command.getRunAs());
             getSender().tell(installResult,getSelf());
             logger.info("install package {}",installResult.getExecResult()?"success":"failed");
         }else {

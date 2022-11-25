@@ -66,7 +66,6 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
             }
             userGroupService.save(clusterUserGroup);
         }
-        //同步到主机
 
         ClusterGroup mainGroup = groupService.getById(mainGroupId);
         ids.remove(0);
@@ -99,7 +98,7 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
     @Override
     public Result deleteClusterUser(Integer id) {
         ClusterUser clusterUser = this.getById(id);
-        //删除用户与用户组对应关系
+        //delete user and group
         userGroupService.deleteByUser(id);
         List<ClusterHostEntity> hostList = hostService.getHostListByClusterId(clusterUser.getClusterId());
         ProcessUtils.syncUserToHosts(hostList,clusterUser.getUsername(),"","","userdel");

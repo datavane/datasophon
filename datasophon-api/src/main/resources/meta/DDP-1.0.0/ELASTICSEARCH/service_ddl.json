@@ -13,7 +13,7 @@
       "label": "ElasticSearch",
       "roleType": "master",
       "cardinality": "1+",
-      "logFile": "logs/elasticsearch.log",
+      "logFile": "logs/ddp_es.log",
       "runAs": "elastic",
       "sortNum": 1,
       "startRunner": {
@@ -112,7 +112,8 @@
           "gateway.recover_after_nodes",
           "http.cors.enabled",
           "http.cors.allow-origin",
-          "path.data"
+          "path.data",
+          "custom.elasticsearch.yml"
         ]
       },
       {
@@ -254,11 +255,11 @@
       "description": "",
       "configType": "path",
       "required": true,
-      "type": "input",
-      "value": "",
+      "type": "multiple",
+      "value": ["/data/es"],
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "/data/es"
+      "defaultValue": ""
     },
     {
       "name": "heapSize",
