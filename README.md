@@ -21,7 +21,7 @@
 
 # Vision
 
-Aiming at quickly deploying,managing,monitoring and automating the operation and maintenance of Big Data service components and nodes,helping you quickly build stable, efficient Big Data cluster services.
+It is committed to rapidly implementing the deployment, management, monitoring and automatic operation and maintenance of the big data cloud native platform, helping you quickly build a stable, efficient, elastic and scalable big data cloud native platform.
 
 # What is DataSophon?
 
