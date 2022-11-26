@@ -10,9 +10,7 @@
   <img src="https://img.shields.io/github/release/gaodayu168/datasophon.svg">
   <img src="https://img.shields.io/github/stars/gaodayu168/datasophon">
   <img src="https://img.shields.io/github/forks/gaodayu168/datasophon">
-  <a href="https://www.gnu.org/licenses/gpl-3.0.html">
-   <img src="https://img.shields.io/badge/License-GPL%203-blue">
-  </a>
+  <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/badge/license-Apache%202-4EB1BA.svg"></a>
   <p align="center">
     <a href="https://gaodayu168.github.io/datasophon-website/">官网</a> |
     <a href="https://github.com/gaodayu168/datasophon/blob/main/README.md">English</a>
@@ -33,7 +31,7 @@ DataSophon也是个类似的管理平台，只不过与智子不同的是，智�
 
 ## 主要特性
 
-* 极易部署,1小时可完成300节点的大数据集群部署
+* 极易部署,可快速完成300节点的大数据集群部署
 * 国产化兼容,兼容arm服务器和常用国产化操作系统
 * 监控指标全面丰富，基于生产实践展示用户最关心的监控指标
 * 灵活便捷的告警服务，可实现用户自定义告警组和告警指标
