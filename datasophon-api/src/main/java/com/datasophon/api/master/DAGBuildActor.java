@@ -38,16 +38,14 @@ public class DAGBuildActor extends UntypedActor {
             StartExecuteCommandCommand executeCommandCommand = (StartExecuteCommandCommand) message;
             CommandType commandType = executeCommandCommand.getCommandType();
             logger.info("start execute command");
-            //查询指令表中待运行的指令
-            ClusterServiceCommandService commandService = (ClusterServiceCommandService) SpringTool.getBean("clusterServiceCommandService");
-            ClusterServiceCommandHostCommandService hostCommandService = (ClusterServiceCommandHostCommandService) SpringTool.getBean("clusterServiceCommandHostCommandService");
-            FrameServiceRoleService frameServiceRoleService = (FrameServiceRoleService) SpringTool.getBean("frameServiceRoleService");
-            FrameServiceService frameService = (FrameServiceService) SpringTool.getBean("frameServiceService");
-            ClusterInfoService clusterInfoService = (ClusterInfoService) SpringTool.getBean("clusterInfoService");
-//            ClusterServiceInstanceService serviceInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceInstanceService.class);
+
+            ClusterServiceCommandService commandService = SpringTool.getApplicationContext().getBean(ClusterServiceCommandService.class);
+            ClusterServiceCommandHostCommandService hostCommandService = SpringTool.getApplicationContext().getBean(ClusterServiceCommandHostCommandService.class);
+            FrameServiceRoleService frameServiceRoleService = SpringTool.getApplicationContext().getBean(FrameServiceRoleService.class);
+            FrameServiceService frameService = SpringTool.getApplicationContext().getBean(FrameServiceService.class);
+            ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
 
             ClusterInfoEntity clusterInfo = clusterInfoService.getById(executeCommandCommand.getClusterId());
-
             List<ClusterServiceCommandEntity> list = commandService.list(new QueryWrapper<ClusterServiceCommandEntity>().in(Constants.COMMAND_ID, executeCommandCommand.getCommandIds()));
 
             Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+executeCommandCommand.getClusterId());
@@ -63,11 +61,7 @@ public class DAGBuildActor extends UntypedActor {
                     FrameServiceEntity serviceEntity = frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), command.getServiceName());
                     frameServiceList.add(serviceEntity);
                     serviceNode.setCommandId(command.getCommandId());
-                    //查询服务实例
-//                    ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getById(command.getServiceInstanceId());
-//                    serviceNode.setServiceInstanceId(serviceInstance.getId());
                     for (ClusterServiceCommandHostCommandEntity hostCommand : hostCommandList) {
-
                         FrameServiceRoleEntity serviceRole = frameServiceRoleService.getServiceRoleByFrameCodeAndServiceRoleName(clusterInfo.getClusterFrame(), hostCommand.getServiceRoleName());
                         ServiceRoleInfo serviceRoleInfo = JSONObject.parseObject(serviceRole.getServiceRoleJson(), ServiceRoleInfo.class);
                         serviceRoleInfo.setHostname(hostCommand.getHostname());
@@ -110,6 +104,7 @@ public class DAGBuildActor extends UntypedActor {
                     serviceNode.setElseRoles(elseRoles);
                     dag.addNode(command.getServiceName(), serviceNode);
                 }
+                //build edge
                 for (FrameServiceEntity serviceEntity : frameServiceList) {
                     if (StringUtils.isNotBlank(serviceEntity.getDependencies())) {
                         for (String dependency : serviceEntity.getDependencies().split(",")) {

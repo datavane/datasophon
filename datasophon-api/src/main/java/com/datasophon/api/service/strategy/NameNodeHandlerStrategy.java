@@ -41,7 +41,18 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy{
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
-
+//        ServiceConfig serviceConfig = new ServiceConfig();
+//
+//        for (ServiceConfig config : list) {
+//            if("enableRack".equals(config.getName())){
+//                serviceConfig.setName("net.topology.script.file.name");
+//                serviceConfig.setValue("");
+//                serviceConfig.setRequired(true);
+//                serviceConfig.setHidden(false);
+//                serviceConfig.setType("input");
+//            }
+//        }
+//        list.add(serviceConfig);
     }
 
     private void updateServiceConfigToHA(FrameServiceService frameService, FrameServiceEntity frameServiceEntity, boolean b, boolean b2) {

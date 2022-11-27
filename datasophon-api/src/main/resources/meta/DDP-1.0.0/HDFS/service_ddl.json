@@ -600,7 +600,7 @@
     },
     {
       "name": "dfs.permissions.enabled",
-      "label": "是否开启权限检查",
+      "label": "开启权限检查",
       "description": "是否开启权限检查",
       "configType": "ha",
       "required": false,
