@@ -95,10 +95,8 @@ public class ClusterServiceInstanceController {
      * 删除
      */
     @RequestMapping("/delete")
-    public Result delete(@RequestBody Integer[] ids){
-        clusterServiceInstanceService.removeByIds(Arrays.asList(ids));
-
-        return Result.success();
+    public Result delete(Integer serviceInstanceIds){
+        return clusterServiceInstanceService.delServiceInstance(serviceInstanceIds);
     }
 
 }

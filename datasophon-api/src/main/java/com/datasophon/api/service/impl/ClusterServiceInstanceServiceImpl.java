@@ -24,9 +24,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 
 import com.datasophon.dao.mapper.ClusterServiceInstanceMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("clusterServiceInstanceService")
+@Transactional
 public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServiceInstanceMapper, ClusterServiceInstanceEntity> implements ClusterServiceInstanceService {
 
     @Autowired
@@ -49,9 +51,6 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
 
     @Autowired
     private FrameServiceRoleService frameServiceRoleService;
-
-    @Autowired
-    private ClusterServiceCommandService commandService;
 
     @Autowired
     private ClusterServiceRoleGroupConfigService roleGroupConfigService;
@@ -182,5 +181,26 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
             map.put("oldConfig",newSimpleServiceConfigs);
         }
         return Result.success(map);
+    }
+
+    @Override
+    public Result delServiceInstance(Integer serviceInstanceId) {
+        //has role instance?
+        if(hasRoleInstance(serviceInstanceId)){
+            return Result.error("has running role instance");
+        }
+        this.removeById(serviceInstanceId);
+        //remove role instance
+        roleInstanceService.reomveRoleInstance(serviceInstanceId);
+        return Result.success();
+    }
+
+    private boolean hasRoleInstance(Integer serviceInstanceId) {
+
+        List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.getRunningServiceRoleInstanceListByServiceId(serviceInstanceId);
+        if(list.size() > 0){
+            return true;
+        }
+        return false;
     }
 }
