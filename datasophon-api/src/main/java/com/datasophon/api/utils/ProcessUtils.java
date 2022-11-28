@@ -127,6 +127,7 @@ public class ProcessUtils {
                     webuis.setServiceRoleInstanceId(roleInstance.getId());
                     webuis.setName(externalLink.getName() + "(" + serviceRoleInfo.getHostname() + ")");
                     webuisService.save(webuis);
+                    globalVariables.remove("${host}");
                 }
             }
         }
