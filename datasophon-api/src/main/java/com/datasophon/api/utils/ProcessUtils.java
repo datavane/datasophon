@@ -234,7 +234,7 @@ public class ProcessUtils {
 
         ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class, "commandActor");
         ActorUtils.actorSystem.scheduler().scheduleOnce(FiniteDuration.apply(
-                3L, TimeUnit.SECONDS),
+                1L, TimeUnit.SECONDS),
                 commandActor, message,
                 ActorUtils.actorSystem.dispatcher(),
                 ActorRef.noSender());
