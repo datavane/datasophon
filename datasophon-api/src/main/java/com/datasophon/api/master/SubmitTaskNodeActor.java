@@ -44,6 +44,9 @@ public class SubmitTaskNodeActor extends UntypedActor {
                     for (String previousNode : previousNodes) {
                         if (errorTaskList.containsKey(previousNode)) {
                             readyToSubmitTaskList.remove(node);
+                        }
+                        if(!completeTaskList.containsKey(previousNode)){
+                            readyToSubmitTaskList.remove(node);
                             continue;
                         }
                     }
