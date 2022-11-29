@@ -24,7 +24,8 @@ public class HostsValidatorTest {
         Assert.assertEquals(false, hostsValidator.isValid("256.82.66.61", null));
         Assert.assertEquals(false, hostsValidator.isValid("255.832.66.61", null));
         Assert.assertEquals(true, hostsValidator.isValid("0.82.66.61", null));
-        Assert.assertEquals(false, hostsValidator.isValid("255.82.66.0", null));
+        Assert.assertEquals(true, hostsValidator.isValid("255.82.66.0", null));
+        Assert.assertEquals(false, hostsValidator.isValid("255.82.66.01", null));
         Assert.assertEquals(false, hostsValidator.isValid("255.004.66.61", null));
         Assert.assertEquals(false, hostsValidator.isValid("255.004.66.61,", null));
         Assert.assertEquals(true, hostsValidator.isValid(",,255.4.66.61,,", null));
@@ -33,6 +34,7 @@ public class HostsValidatorTest {
         Assert.assertEquals(true, hostsValidator.isValid(",,255.4.66.61[1-5],,", null));  // 带 [ - ] 任意符号的跳过，不处理
         Assert.assertEquals(false, hostsValidator.isValid(",,255.4-5.66.6,,", null));  // 带 [ - ] 任意符号的跳过，不处理
         Assert.assertEquals(false, hostsValidator.isValid(",,a.4-5.66.6,,", null));  // 带 [ - ] 任意符号的跳过，不处理
+        Assert.assertEquals(false, hostsValidator.isValid(",,a.4-$%5.66.6,,", null));  // 带 [ - ] 任意符号的跳过，不处理
     }
 
 }
