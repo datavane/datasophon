@@ -1,0 +1,25 @@
+name: Documentation Inprovement
+description: As a user, I want to make an enhancement for aiges docmument
+title: "[Enhancement]: "
+labels: [kind/enhancement]
+body:
+- type: markdown
+  attributes:
+    value: |
+      Thanks for taking the time to suggest an enhancement for aiges document! 
+- type: textarea
+  attributes:
+    label: Which chapter do you think needs improvement?
+    description: A concise description of what you're expecting/suggesting.
+    placeholder: |
+      For example 1, 2, ...
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: What information do you think needs to be added?
+    description: A concise description of the reason/motivation
+    placeholder: |
+      For example 1, 2, ...
+  validations:
+    required: false

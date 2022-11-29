@@ -406,7 +406,6 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         OutputStream out = null;
         //通过文件路径获得File对象
         File file = new File(Constants.MASTER_MANAGE_PACKAGE_PATH + Constants.SLASH + packageName);
-        ;
 
         inputStream = new FileInputStream(file);
 

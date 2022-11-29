@@ -2,11 +2,10 @@ package com.datasophon.api.master;
 
 import akka.actor.UntypedActor;
 import com.datasophon.api.master.handler.host.*;
-import com.datasophon.api.utils.JSchUtils;
+import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.DispatcherHostAgentCommand;
 import com.datasophon.common.model.HostInfo;
-import com.jcraft.jsch.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
@@ -28,7 +27,7 @@ public class DispatcherWorkerActor extends UntypedActor {
         HostInfo hostInfo = command.getHostInfo();
         logger.info("start dispatcher host agent :{}", hostInfo.getHostname());
         hostInfo.setMessage("开始分发主机管理agent安装包");
-        Session session = JSchUtils.getSession(
+        MinaUtils minaUtils = new  MinaUtils(
                 hostInfo.getHostname(),
                 hostInfo.getSshPort(),
                 hostInfo.getSshUser(),
@@ -38,7 +37,7 @@ public class DispatcherWorkerActor extends UntypedActor {
         handlerChain.addHandler(new CheckWorkerMd5Handler());
         handlerChain.addHandler(new DecompressWorkerHandler());
         handlerChain.addHandler(new InstallJDKHandler());
-        handlerChain.addHandler(new StartWorkerHandler(command.getClusterId(),command.getClusterFrame()));
-        handlerChain.handle(session,hostInfo);
+        handlerChain.addHandler(new StartWorkerHandler(command.getClusterId(), command.getClusterFrame()));
+        handlerChain.handle(minaUtils, hostInfo);
     }
 }
