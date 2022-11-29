@@ -37,6 +37,8 @@
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
         <hutool.version>5.8.9</hutool.version>
         <ganymed-ssh2.version>262</ganymed-ssh2.version>
+        <org.apache.sshd.version>2.6.0</org.apache.sshd.version>
+        <net.i2p.crypto.version>0.3.0</net.i2p.crypto.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -152,14 +154,19 @@
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-core</artifactId>
-                <version>2.6.0</version>
+                <version>${org.apache.sshd.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-sftp</artifactId>
-                <version>2.6.0</version>
+                <version>${org.apache.sshd.version}</version>
             </dependency>
-       </dependencies>
+            <dependency>
+                <groupId>net.i2p.crypto</groupId>
+                <artifactId>eddsa</artifactId>
+                <version>${net.i2p.crypto}</version>
+            </dependency>
+        </dependencies>
   </dependencyManagement>
 
   <build>

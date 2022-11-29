@@ -2,13 +2,11 @@ package com.datasophon.api.master.handler.host;
 
 import com.datasophon.api.configuration.ConfigBean;
 import com.datasophon.api.utils.CommonUtils;
-import com.datasophon.api.utils.JSchUtils;
+import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.Constants;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.common.model.HostInfo;
-import com.datasophon.common.utils.PropertyUtils;
-import com.jcraft.jsch.Session;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +29,11 @@ public class StartWorkerHandler implements DispatcherWorkerHandler{
     }
 
     @Override
-    public boolean handle(Session session, HostInfo hostInfo) throws UnknownHostException {
+    public boolean handle(MinaUtils minaUtils, HostInfo hostInfo) throws UnknownHostException {
         ConfigBean configBean = SpringTool.getApplicationContext().getBean(ConfigBean.class);
         String installPath = Constants.INSTALL_PATH;
         String localHostName = InetAddress.getLocalHost().getHostName();
-        String updateCommonPropertiesResult = JSchUtils.execCmdWithResult(
-                session,
+        String updateCommonPropertiesResult = minaUtils.execCmdWithResult(
                 Constants.UPDATE_COMMON_CMD +
                         localHostName +
                         Constants.SPACE +
@@ -52,19 +49,18 @@ public class StartWorkerHandler implements DispatcherWorkerHandler{
             CommonUtils.updateInstallState(InstallState.FAILED, hostInfo);
         } else {
             //设置开机自动启动
-            JSchUtils.execCmdWithResult(session, "\\cp "+installPath+"/datasophon-worker/script/datasophon-worker /etc/rc.d/init.d/");
-            JSchUtils.execCmdWithResult(session, "chmod +x /etc/rc.d/init.d/datasophon-worker");
-            JSchUtils.execCmdWithResult(session, "chkconfig --add datasophon-worker");
-            JSchUtils.execCmdWithResult(session,"\\cp "+installPath+"/datasophon-worker/script/profile /etc/");
-            JSchUtils.execCmdWithResult(session,"source /etc/profile");
+            minaUtils.execCmdWithResult( "\\cp "+installPath+"/datasophon-worker/script/datasophon-worker /etc/rc.d/init.d/");
+            minaUtils.execCmdWithResult( "chmod +x /etc/rc.d/init.d/datasophon-worker");
+            minaUtils.execCmdWithResult("chkconfig --add datasophon-worker");
+            minaUtils.execCmdWithResult("\\cp "+installPath+"/datasophon-worker/script/profile /etc/");
+            minaUtils.execCmdWithResult("source /etc/profile");
             hostInfo.setMessage("启动主机管理agent");
-            JSchUtils.execCmdWithResult(session, "service datasophon-worker restart");
+            minaUtils.execCmdWithResult( "service datasophon-worker restart");
             hostInfo.setProgress(75);
             hostInfo.setCreateTime(new Date());
         }
 
         logger.info("end dispatcher host agent :{}", hostInfo.getHostname());
-        session.disconnect();
         return true;
     }
 }

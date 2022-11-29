@@ -2,17 +2,22 @@ package com.datasophon.api.master.handler.host;
 
 import com.datasophon.api.utils.CommonUtils;
 import com.datasophon.api.utils.JSchUtils;
+import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.common.model.HostInfo;
 import com.jcraft.jsch.Session;
+import org.apache.sshd.client.session.ClientSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UploadWorkerHandler implements DispatcherWorkerHandler {
+    private static final Logger logger = LoggerFactory.getLogger(StartWorkerHandler.class);
+
 
     @Override
-    public boolean handle(Session session, HostInfo hostInfo) {
-        boolean uploadFile = JSchUtils.uploadFile(
-                session,
+    public boolean handle(MinaUtils minaUtils, HostInfo hostInfo) {
+        boolean uploadFile = minaUtils.uploadFile(
                 Constants.INSTALL_PATH,
                 Constants.MASTER_MANAGE_PACKAGE_PATH +
                         Constants.SLASH +

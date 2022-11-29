@@ -1,7 +1,7 @@
 package com.datasophon.api.master.handler.host;
 
+import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.model.HostInfo;
-import com.jcraft.jsch.Session;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -15,9 +15,9 @@ public class DispatcherWorkerHandlerChain {
         this.handlers.add(handler);
     }
 
-    public void handle(Session session, HostInfo hostInfo) throws UnknownHostException {
+    public void handle(MinaUtils minaUtils, HostInfo hostInfo) throws UnknownHostException {
         for (DispatcherWorkerHandler handler : handlers) {
-            boolean handled = handler.handle(session, hostInfo);
+            boolean handled = handler.handle(minaUtils, hostInfo);
             if (!handled) {
                 break;
             }

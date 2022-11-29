@@ -1,12 +1,10 @@
 package com.datasophon.api.master.handler.host;
 
 import com.datasophon.api.utils.CommonUtils;
-import com.datasophon.api.utils.JSchUtils;
+import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.common.model.HostInfo;
-import com.jcraft.jsch.Session;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +13,8 @@ public class DecompressWorkerHandler implements DispatcherWorkerHandler {
     private static final Logger logger = LoggerFactory.getLogger(DecompressWorkerHandler.class);
 
     @Override
-    public boolean handle(Session session, HostInfo hostInfo) {
-        String decompressResult = JSchUtils.execCmdWithResult(session, Constants.UNZIP_DDH_WORKER_CMD);
+    public boolean handle(MinaUtils minaUtils, HostInfo hostInfo) {
+        String decompressResult = minaUtils.execCmdWithResult(Constants.UNZIP_DDH_WORKER_CMD);
         if (Constants.FAILED.equals(decompressResult)) {
             logger.error("tar -zxvf datasophon-worker.tar.gz failed");
             hostInfo.setErrMsg("tar -zxvf datasophon-worker.tar.gz failed");
