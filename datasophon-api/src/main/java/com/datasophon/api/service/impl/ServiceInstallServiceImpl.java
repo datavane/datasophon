@@ -142,9 +142,6 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         //更新config-file
         HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
         FrameServiceEntity frameService = this.frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);
-        HashMap<String, List<String>> roleMap = (HashMap<String, List<String>>) CacheUtils.get(clusterInfo.getClusterCode() + Constants.UNDERLINE + Constants.SERVICE_ROLE_HOST_MAPPING);
-        String jmxKey = clusterInfo.getClusterFrame() + Constants.UNDERLINE + Constants.SERVICE_ROLE_JMX_MAP;
-        HashMap<String, String> jmxMap = (HashMap<String, String>) CacheUtils.get(jmxKey);
         if (StringUtils.isNotBlank(frameService.getConfigFileJson())) {
             Map<JSONObject, JSONArray> configMap = JSONObject.parseObject(frameService.getConfigFileJson(), Map.class);
             for (JSONObject fileJson : configMap.keySet()) {

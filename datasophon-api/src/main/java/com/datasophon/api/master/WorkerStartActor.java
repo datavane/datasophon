@@ -37,23 +37,21 @@ public class WorkerStartActor extends UntypedActor {
         if (message instanceof StartWorkerMessage) {
             StartWorkerMessage msg = (StartWorkerMessage) message;
             logger.info("receive message when worker first start :{}", msg.getHostname());
+
             ClusterHostService clusterHostService = SpringTool.getApplicationContext().getBean(ClusterHostService.class);
             ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
-            ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().
-                    getBean(ClusterServiceRoleInstanceService.class);
-            ClusterServiceCommandService serviceCommandService = SpringTool.getApplicationContext().
-                    getBean(ClusterServiceCommandService.class);
-            //启动该节点上停止的服务
+            ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
+            ClusterServiceCommandService serviceCommandService = SpringTool.getApplicationContext().getBean(ClusterServiceCommandService.class);
+            //start stopped service
             List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.getStoppedRoleInstanceOnHost(msg.getClusterId(),msg.getHostname(),ServiceRoleState.STOP);
             if (Objects.nonNull(list) && list.size() > 0) {
                 Integer serviceId = list.get(0).getServiceId();
                 List<String> idList = list.stream().map(e -> e.getId().toString()).collect(Collectors.toList());
                 serviceCommandService.generateServiceRoleCommand(msg.getClusterId(), CommandType.START_SERVICE, serviceId, idList);
             }
-            //判断当前主机是否已受管
+            //is managed?
             ClusterHostEntity hostEntity = clusterHostService.getClusterHostByHostname(msg.getHostname());
             ClusterInfoEntity cluster = clusterInfoService.getById(msg.getClusterId());
-            //主机管理安装进度设为100%
             logger.info("host install set to 100%");
             if (CacheUtils.constainsKey(cluster.getClusterCode() + Constants.HOST_MAP)) {
                 HashMap<String, HostInfo> map = (HashMap<String, HostInfo>) CacheUtils.get(cluster.getClusterCode() + Constants.HOST_MAP);
@@ -66,7 +64,7 @@ public class WorkerStartActor extends UntypedActor {
                 }
             }
             if (ObjectUtil.isNull(hostEntity)) {
-                //主机信息持久化到数据库
+                //save to db
                 ProcessUtils.saveHostInstallInfo(msg, cluster.getClusterCode(), clusterHostService);
                 logger.info("host install save to database");
             } else {
@@ -74,7 +72,7 @@ public class WorkerStartActor extends UntypedActor {
                 hostEntity.setManaged(MANAGED.YES);
                 clusterHostService.updateById(hostEntity);
             }
-            //添加主机监控到prometheus
+            //add to prometheus
             ActorRef prometheusActor = (ActorRef) CacheUtils.get("prometheusActor");
             GenerateHostPrometheusConfig prometheusConfigCommand = new GenerateHostPrometheusConfig();
             prometheusConfigCommand.setClusterId(cluster.getId());

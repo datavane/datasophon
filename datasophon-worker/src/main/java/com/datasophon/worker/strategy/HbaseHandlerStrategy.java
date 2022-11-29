@@ -23,11 +23,11 @@ public class HbaseHandlerStrategy implements ServiceRoleStrategy {
             ArrayList<String> commands = new ArrayList<>();
             commands.add("sh");
             commands.add("./enable-hbase-plugin.sh");
-            if (!FileUtil.exist(Constants.INSTALL_PATH + "/hbase-2.2.7/ranger-hbase-plugin/success.id")) {
-                ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH + "/hbase-2.2.7/ranger-hbase-plugin", commands, 30L);
+            if (!FileUtil.exist(Constants.INSTALL_PATH + "/hbase-2.0.2/ranger-hbase-plugin/success.id")) {
+                ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH + "/hbase-2.0.2/ranger-hbase-plugin", commands, 30L);
                 if (execResult.getExecResult()) {
                     logger.info("enable ranger hbase plugin success");
-                    FileUtil.writeUtf8String("success", Constants.INSTALL_PATH + "/hbase-2.2.7/ranger-hbase-plugin/success.id");
+                    FileUtil.writeUtf8String("success", Constants.INSTALL_PATH + "/hbase-2.0.2/ranger-hbase-plugin/success.id");
                     startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
                 } else {
                     logger.info("enable ranger hbase plugin failed");

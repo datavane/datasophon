@@ -61,6 +61,14 @@ public class ClusterHostController {
     }
 
 
+
+    @RequestMapping("/assignRack")
+    public Result assignRack(Integer clusterId , String rack,String hostIds) {
+        return clusterHostService.assignRack(clusterId,rack,hostIds);
+
+    }
+
+
     /**
      * 信息
      */

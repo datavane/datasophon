@@ -19,7 +19,9 @@ public class ExecuteServiceRoleCommand {
 
     private String serviceName;
 
-    private List<ServiceRoleInfo> serviceRoles;
+    private List<ServiceRoleInfo> masterRoles;
+
+    private ServiceRoleInfo workerRole;
 
     private ServiceRoleType serviceRoleType;
 
@@ -35,7 +37,7 @@ public class ExecuteServiceRoleCommand {
     public ExecuteServiceRoleCommand(Integer clusterId, String serviceName, List<ServiceRoleInfo> serviceRoles) {
         this.clusterId = clusterId;
         this.serviceName = serviceName;
-        this.serviceRoles = serviceRoles;
+        this.masterRoles = serviceRoles;
     }
 
     public ExecuteServiceRoleCommand() {

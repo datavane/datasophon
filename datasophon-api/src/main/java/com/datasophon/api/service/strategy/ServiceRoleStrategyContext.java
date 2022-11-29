@@ -23,6 +23,8 @@ public class ServiceRoleStrategyContext {
         map.put("ElasticSearch",new ElasticSearchHandlerStrategy());
         map.put("RANGER",new RangerAdminHandlerStrategy());
         map.put("ZOOKEEPER",new ZkServerHandlerStrategy());
+        map.put("YARN",new RMHandlerStrategy());
+        map.put("HDFS",new NameNodeHandlerStrategy());
     }
 
     public static ServiceRoleStrategy getServiceRoleHandler(String type){
