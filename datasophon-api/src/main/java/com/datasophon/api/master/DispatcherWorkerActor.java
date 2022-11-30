@@ -1,11 +1,14 @@
 package com.datasophon.api.master;
 
 import akka.actor.UntypedActor;
+import cn.hutool.core.util.ObjectUtil;
 import com.datasophon.api.master.handler.host.*;
 import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.DispatcherHostAgentCommand;
 import com.datasophon.common.model.HostInfo;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.sshd.client.session.ClientSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
@@ -27,7 +30,7 @@ public class DispatcherWorkerActor extends UntypedActor {
         HostInfo hostInfo = command.getHostInfo();
         logger.info("start dispatcher host agent :{}", hostInfo.getHostname());
         hostInfo.setMessage("开始分发主机管理agent安装包");
-        MinaUtils minaUtils = new  MinaUtils(
+        ClientSession session = MinaUtils.openConnection(
                 hostInfo.getHostname(),
                 hostInfo.getSshPort(),
                 hostInfo.getSshUser(),
@@ -38,6 +41,9 @@ public class DispatcherWorkerActor extends UntypedActor {
         handlerChain.addHandler(new DecompressWorkerHandler());
         handlerChain.addHandler(new InstallJDKHandler());
         handlerChain.addHandler(new StartWorkerHandler(command.getClusterId(), command.getClusterFrame()));
-        handlerChain.handle(minaUtils, hostInfo);
+        handlerChain.handle(session, hostInfo);
+        if (ObjectUtil.isNotEmpty(session)) {
+            session.close();
+        }
     }
 }

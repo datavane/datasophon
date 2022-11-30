@@ -164,7 +164,7 @@
             <dependency>
                 <groupId>net.i2p.crypto</groupId>
                 <artifactId>eddsa</artifactId>
-                <version>${net.i2p.crypto}</version>
+                <version>${net.i2p.crypto.version}</version>
             </dependency>
         </dependencies>
   </dependencyManagement>
