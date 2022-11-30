@@ -16,8 +16,8 @@ public class UploadWorkerHandler implements DispatcherWorkerHandler {
 
 
     @Override
-    public boolean handle(MinaUtils minaUtils, HostInfo hostInfo) {
-        boolean uploadFile = minaUtils.uploadFile(
+    public boolean handle(ClientSession session, HostInfo hostInfo) {
+        boolean uploadFile = MinaUtils.uploadFile(session,
                 Constants.INSTALL_PATH,
                 Constants.MASTER_MANAGE_PACKAGE_PATH +
                         Constants.SLASH +

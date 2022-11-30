@@ -6,6 +6,7 @@ import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.common.model.HostInfo;
+import org.apache.sshd.client.session.ClientSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +15,8 @@ import java.nio.charset.Charset;
 public class CheckWorkerMd5Handler implements DispatcherWorkerHandler{
     private static final Logger logger = LoggerFactory.getLogger(CheckWorkerMd5Handler.class);
     @Override
-    public boolean handle(MinaUtils minaUtils, HostInfo hostInfo) {
-        String checkWorkerMd5Result = minaUtils.execCmdWithResult(Constants.CHECK_WORKER_MD5_CMD).trim();
+    public boolean handle(ClientSession session, HostInfo hostInfo) {
+        String checkWorkerMd5Result = MinaUtils.execCmdWithResult(session,Constants.CHECK_WORKER_MD5_CMD).trim();
         String md5 = FileUtil.readString(
                 Constants.MASTER_MANAGE_PACKAGE_PATH +
                         Constants.SLASH +

@@ -1,10 +1,10 @@
 package com.datasophon.api.master.handler.host;
 
-import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.model.HostInfo;
+import org.apache.sshd.client.session.ClientSession;
 
 import java.net.UnknownHostException;
 
 public interface DispatcherWorkerHandler {
-    boolean handle(MinaUtils minaUtils, HostInfo hostInfo) throws UnknownHostException;
+    boolean handle(ClientSession session, HostInfo hostInfo) throws UnknownHostException;
 }
