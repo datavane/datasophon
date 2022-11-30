@@ -36,9 +36,7 @@
         <maven-compiler-plugin.version>3.10.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
         <hutool.version>5.8.9</hutool.version>
-        <ganymed-ssh2.version>262</ganymed-ssh2.version>
-        <org.apache.sshd.version>2.6.0</org.apache.sshd.version>
-        <net.i2p.crypto.version>0.3.0</net.i2p.crypto.version>
+        <org.apache.sshd.version>2.9.2</org.apache.sshd.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -147,11 +145,6 @@
                 <version>${hutool.version}</version>
             </dependency>
             <dependency>
-                <groupId>ch.ethz.ganymed</groupId>
-                <artifactId>ganymed-ssh2</artifactId>
-                <version>${ganymed-ssh2.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-core</artifactId>
                 <version>${org.apache.sshd.version}</version>
@@ -160,11 +153,6 @@
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-sftp</artifactId>
                 <version>${org.apache.sshd.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.i2p.crypto</groupId>
-                <artifactId>eddsa</artifactId>
-                <version>${net.i2p.crypto}</version>
             </dependency>
         </dependencies>
   </dependencyManagement>
