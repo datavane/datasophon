@@ -39,9 +39,13 @@ public class HostCheckActor extends UntypedActor {
                 for (ClusterHostEntity clusterHostEntity : list) {
                     try{
                         String hostname = clusterHostEntity.getHostname();
-                        //查询cpu使用率
-//                        String cpuUsedPromQl = "(1 - avg(irate(node_cpu_seconds_total{job=~\"node\",mode=\"idle\",instance= \""+hostname+":9100\"}[5m])) ) * 100";
-//                        String cpuUsed = PromInfoUtils.getSinglePrometheusMetric(promUrl, cpuUsedPromQl);
+                        //查询内存总量
+                        String totalMemPromQl = "node_memory_MemTotal_bytes{job=~\"node\",instance=\""+hostname+":9100\"}/1024/1024/1024";
+                        String totalMemStr = PromInfoUtils.getSinglePrometheusMetric(promUrl, totalMemPromQl);
+                        if(StringUtils.isNotBlank(totalMemStr)){
+                            int totalMem = Double.valueOf(totalMemStr).intValue();
+                            clusterHostEntity.setTotalMem(totalMem);
+                        }
                         //查询内存使用量
                         String memAvailablePromQl = "node_memory_MemAvailable_bytes{job=~\"node\",instance=\""+hostname+":9100\"}/1024/1024/1024";
                         String memAvailableStr = PromInfoUtils.getSinglePrometheusMetric(promUrl, memAvailablePromQl);
@@ -49,6 +53,13 @@ public class HostCheckActor extends UntypedActor {
                             int memAvailable = Double.valueOf(memAvailableStr).intValue();
                             Integer memUsed = clusterHostEntity.getTotalMem() - memAvailable;
                             clusterHostEntity.setUsedMem(memUsed);
+                        }
+                        //总磁盘容量
+                        String totalDistPromQl = "sum(node_filesystem_size_bytes{instance=\""+hostname+":9100\",fstype=~\"ext4|xfs\",mountpoint !~\".*pod.*\"})/1024/1024/1024";
+                        String totalDiskStr = PromInfoUtils.getSinglePrometheusMetric(promUrl, totalDistPromQl);
+                        if(StringUtils.isNotBlank(totalDiskStr)){
+                            int totalDisk = Double.valueOf(totalDiskStr).intValue();
+                            clusterHostEntity.setTotalDisk(totalDisk);
                         }
                         //查询磁盘使用量
                         String diskUsedPromQl ="sum(node_filesystem_size_bytes{instance=\""+hostname+":9100\",fstype=~\"ext.*|xfs\",mountpoint !~\".*pod.*\"}-node_filesystem_free_bytes{instance=\""+hostname+":9100\",fstype=~\"ext.*|xfs\",mountpoint !~\".*pod.*\"})/1024/1024/1024";

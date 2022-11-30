@@ -4,10 +4,10 @@ import akka.actor.*;
 import com.datasophon.api.configuration.ConfigBean;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.ActorUtils;
-import com.datasophon.api.master.ServiceActor;
+import com.datasophon.api.master.MasterServiceActor;
 import com.datasophon.api.service.*;
+import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.dao.entity.*;
-import com.datasophon.api.service.*;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SecurityUtils;
 import com.datasophon.common.Constants;
@@ -55,6 +55,9 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
     @Autowired
     private ClusterHostService clusterHostService;
 
+    @Autowired
+    private ClusterYarnSchedulerService yarnSchedulerService;
+
     @Override
     public ClusterInfoEntity getClusterByClusterCode(String clusterCode) {
         ClusterInfoEntity clusterInfoEntity = clusterInfoMapper.getClusterByClusterCode(clusterCode);
@@ -82,11 +85,13 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         }
         ProcessUtils.createServiceActor(clusterInfo);
 
+        yarnSchedulerService.createYarnScheduler(clusterInfo.getId());
+
         HashMap<String, String> globalVariables = new HashMap<>();
         globalVariables.put("${INSTALL_PATH}",Constants.INSTALL_PATH);
         globalVariables.put("${apiHost}", CacheUtils.getString("hostname"));
         globalVariables.put("${apiPort}", configBean.getServerPort());
-        globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + "/hadoop-3.3.3");
+        globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + Constants.SLASH+ PackageUtils.getServiceDcPackageName(clusterInfo.getClusterFrame(),"HDFS"));
 
         CacheUtils.put("globalVariables" + Constants.UNDERLINE + clusterInfo.getId(), globalVariables);
         return Result.success();
@@ -153,7 +158,7 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         List<FrameServiceEntity> frameServiceList = frameServiceService.getAllFrameServiceByFrameCode(clusterInfo.getClusterFrame());
         for (FrameServiceEntity frameServiceEntity : frameServiceList) {
             //创建服务actor
-            ActorRef actor = ActorUtils.getLocalActor(ServiceActor.class,clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
+            ActorRef actor = ActorUtils.getLocalActor(MasterServiceActor.class,clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
             actor.tell(PoisonPill.getInstance(), ActorRef.noSender());
         }
 

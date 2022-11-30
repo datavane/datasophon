@@ -1,9 +1,11 @@
 package com.datasophon.common.utils;
 
+import com.datasophon.common.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -201,5 +203,14 @@ public class ShellUtils {
         if (process != null) {
             process.destroyForcibly();
         }
+    }
+
+    public static void addChmod(String path, String chmod) {
+        ArrayList<String> command = new ArrayList<>();
+        command.add("chmod");
+        command.add("-R");
+        command.add(chmod);
+        command.add(path);
+        execWithStatus(Constants.INSTALL_PATH,command,60);
     }
 }

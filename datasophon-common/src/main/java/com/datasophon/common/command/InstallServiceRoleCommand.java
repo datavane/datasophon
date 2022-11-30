@@ -23,4 +23,6 @@ public class InstallServiceRoleCommand  extends BaseCommand implements Serializa
 
     private String decompressPackageName;
 
+    private String runAs;
+
 }

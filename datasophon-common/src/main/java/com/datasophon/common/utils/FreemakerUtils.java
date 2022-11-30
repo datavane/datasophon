@@ -1,5 +1,6 @@
 package com.datasophon.common.utils;
 
+import com.datasophon.common.Constants;
 import com.datasophon.common.model.AlertItem;
 import com.datasophon.common.model.Generators;
 import com.datasophon.common.model.ServiceConfig;
@@ -85,8 +86,18 @@ public class FreemakerUtils {
 
     private static void processOut(Generators generators, Template template, Map<String, Object> data, String decompressPackageName) throws IOException, TemplateException {
 //        String packagePath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH;
-        FileWriter out = new FileWriter(new File( generators.getOutputDirectory() + generators.getFilename()));
-        template.process(data, out);
-        out.close();
+        if(generators.getOutputDirectory().contains(Constants.COMMA)){
+            for (String outPutDir : generators.getOutputDirectory().split(",")) {
+                FileWriter out = new FileWriter(new File( outPutDir + generators.getFilename()));
+                template.process(data, out);
+                out.close();
+            }
+        }else{
+            FileWriter out = new FileWriter(new File( generators.getOutputDirectory() + generators.getFilename()));
+            template.process(data, out);
+            out.close();
+        }
+
+
     }
 }

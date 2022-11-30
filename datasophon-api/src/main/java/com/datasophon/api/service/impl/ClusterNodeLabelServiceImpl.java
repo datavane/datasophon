@@ -8,13 +8,16 @@ import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.ClusterHostService;
+import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterNodeLabelService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
+import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.ExecuteCmdCommand;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterHostEntity;
+import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterNodeLabelEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.mapper.ClusterNodeLabelMapper;
@@ -49,13 +52,16 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
     private ClusterServiceRoleInstanceService roleInstanceService;
 
     @Autowired
-    DataSourceTransactionManager dataSourceTransactionManager;
-    @Autowired
-    TransactionDefinition transactionDefinition;
+    private ClusterInfoService clusterInfoService;
+
+//    @Autowired
+//    DataSourceTransactionManager dataSourceTransactionManager;
+//    @Autowired
+//    TransactionDefinition transactionDefinition;
 
     @Override
     public Result saveNodeLabel(Integer clusterId, String nodeLabel) {
-        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
+//        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
 
         if (repeatNodeLable(clusterId, nodeLabel)) {
             return Result.error("repeat node label");
@@ -66,14 +72,15 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
         this.save(nodeLabelEntity);
         //refresh to yarn
         if(!refreshToYarn(clusterId,"-addToClusterNodeLabels",nodeLabel)){
-            dataSourceTransactionManager.rollback(transactionStatus);
+//            dataSourceTransactionManager.rollback(transactionStatus);
             return Result.error("add yarn node label failed");
         }
-        dataSourceTransactionManager.commit(transactionStatus);
+//        dataSourceTransactionManager.commit(transactionStatus);
         return Result.success();
     }
 
     private boolean refreshToYarn(Integer clusterId,String type, String nodeLabel) {
+        ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         List<ClusterServiceRoleInstanceEntity> roleList = roleInstanceService.getServiceRoleInstanceListByClusterIdAndRoleName(clusterId, "ResourceManager");
         if (roleList.size() > 0) {
             String hostname = roleList.get(0).getHostname();
@@ -81,7 +88,7 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
             ExecuteCmdCommand command = new ExecuteCmdCommand();
             Timeout timeout = new Timeout(Duration.create(180, "seconds"));
             ArrayList<String> commands = new ArrayList<>();
-            commands.add(Constants.INSTALL_PATH + "/hadoop-3.3.3/bin/yarn");
+            commands.add(Constants.INSTALL_PATH +Constants.SLASH+ PackageUtils.getServiceDcPackageName(clusterInfo.getClusterFrame(),"YARN") +"/bin/yarn");
             commands.add("rmadmin");
             commands.add(type);
             commands.add("\"" + nodeLabel + "\"");
@@ -104,7 +111,7 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
 
     @Override
     public Result deleteNodeLabel(Integer nodeLabelId) {
-        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
+//        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
         ClusterNodeLabelEntity nodeLabelEntity = this.getById(nodeLabelId);
 
         if (nodeLabelInUse(nodeLabelEntity.getNodeLabel())) {
@@ -112,30 +119,36 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
         }
         this.removeById(nodeLabelId);
         if(!refreshToYarn(nodeLabelEntity.getClusterId(),"-removeFromClusterNodeLabels",nodeLabelEntity.getNodeLabel())){
-            dataSourceTransactionManager.rollback(transactionStatus);
+//            dataSourceTransactionManager.rollback(transactionStatus);
             return Result.error("add yarn node label failed");
         }
-        dataSourceTransactionManager.commit(transactionStatus);
+//        dataSourceTransactionManager.commit(transactionStatus);
         return Result.success();
     }
 
     @Override
     public Result assignNodeLabel(Integer nodeLabelId, String hostIds) {
-        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
+//        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
         ClusterNodeLabelEntity nodeLabelEntity = this.getById(nodeLabelId);
         List<String> ids = Arrays.asList(hostIds.split(","));
-        hostService.updateBatchNodeLabel(hostIds, nodeLabelEntity.getNodeLabel());
+        hostService.updateBatchNodeLabel(ids, nodeLabelEntity.getNodeLabel());
 
         List<ClusterHostEntity> list = hostService.getHostListByIds(ids);
         String assignNodeLabel = list.stream().map(e -> e.getHostname() + "=" + nodeLabelEntity.getNodeLabel()).collect(Collectors.joining(" "));
+        logger.info("assign node label {}",assignNodeLabel);
         //sync to yarn
         //refresh to yarn
         if(!refreshToYarn(nodeLabelEntity.getClusterId(),"-replaceLabelsOnNode",assignNodeLabel)){
-            dataSourceTransactionManager.rollback(transactionStatus);
+//            dataSourceTransactionManager.rollback(transactionStatus);
             return Result.error("add yarn node label failed");
         }
-        dataSourceTransactionManager.commit(transactionStatus);
+//        dataSourceTransactionManager.commit(transactionStatus);
         return Result.success();
+    }
+
+    @Override
+    public List<ClusterNodeLabelEntity> queryClusterNodeLabel(Integer clusterId) {
+        return this.list(new QueryWrapper<ClusterNodeLabelEntity>().eq(Constants.CLUSTER_ID,clusterId));
     }
 
     private boolean nodeLabelInUse(String nodeLabel) {

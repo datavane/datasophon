@@ -1,18 +1,20 @@
-package com.datasophon.common.test;
+package com.datasophon.common.utils;
 
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
-import com.datasophon.common.utils.HostUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Map;
 
 /**
+ *
+ *
  * @author rwj
- * @since 2022/11/11
+ * @date 2022/11/22
  */
-public class HostUtilsTest {
+public class HostutilsTest {
+
 
     @Test
     public void testReadHotsFile() {
@@ -23,8 +25,10 @@ public class HostUtilsTest {
 
     @Test
     public void testFindIp() {
-        String ip = HostUtils.findIp("ddh1.test.cn");
-        Assert.assertEquals("192.168.2.101", ip);
+        HostUtils.read();
+        String ip = HostUtils.findIp("ddp1.test.cn");
+        Assert.assertEquals("192.168.31.231", ip);
     }
+
 
 }

@@ -121,7 +121,7 @@ scrape_configs:
     file_sd_configs:
      - files:
        - configs/trinoworker.json
-  - job_name: 'StarRocks' # 可以在Prometheus中监控多个StarRocks集群
+  - job_name: 'StarRocks'
     metrics_path: '/metrics'
     file_sd_configs:
      - files:
@@ -142,5 +142,25 @@ scrape_configs:
     file_sd_configs:
      - files:
        - configs/esexporter.json
+  - job_name: 'apiserver'
+    file_sd_configs:
+     - files:
+       - configs/apiserver.json
+  - job_name: 'masterserver'
+    file_sd_configs:
+     - files:
+       - configs/masterserver.json
+  - job_name: 'workerserver'
+    file_sd_configs:
+     - files:
+       - configs/workerserver.json
+  - job_name: 'alertserver'
+    file_sd_configs:
+     - files:
+       - configs/alertserver.json
+  - job_name: 'streampark'
+    file_sd_configs:
+     - files:
+       - configs/streampark.json
 
 

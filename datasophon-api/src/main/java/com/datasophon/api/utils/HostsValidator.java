@@ -1,6 +1,7 @@
 package com.datasophon.api.utils;
 
 import com.datasophon.api.annotation.Hosts;
+import com.datasophon.common.utils.HostUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -16,7 +17,7 @@ public class HostsValidator implements ConstraintValidator<Hosts, String> {
 
     private static final Pattern ALPHABET_AND_NUMBER = Pattern.compile("[a-zA_Z0-9,]+");
     private static final Pattern BASIC = Pattern.compile("[a-zA-Z0-9_.\\[\\-\\],]+");
-    private static final Pattern ALPHABET = Pattern.compile(".*[a-zA-Z].*");
+    private static final Pattern ALPHABET = Pattern.compile(".*[a-zA-Z].*+");
     private static final Pattern IP = Pattern.compile("[0-9.\\[\\]\\-]+");
 
     @Override
@@ -40,11 +41,14 @@ public class HostsValidator implements ConstraintValidator<Hosts, String> {
         if (left > mid || left > right || mid > right) {
             return false;
         }
-        //5.如果是数值类型ip地址
-        String[] ipStrs = value.split(",");
-        for (String ipStr : ipStrs) {
-            if (IP.matcher(ipStr).matches()) { //IP
-                String[] ipItems = ipStr.split("\\.");
+        //5.
+        String[] items = value.split(",");
+        for (String item : items) {
+            if (HostUtils.checkIP(item)) {//如果是标准ip
+                continue;
+            }
+            if (IP.matcher(item).matches()) { //*[*-*]* 类型的ip
+                String[] ipItems = item.split("\\.");
                 int splitLen = ipItems.length;
                 if (splitLen != 4) {    //每个ip地址 .splitLength == 4
                     return false;
@@ -67,6 +71,8 @@ public class HostsValidator implements ConstraintValidator<Hosts, String> {
                     }
                 }
             }
+            //否则按主机名处理
+            HostUtils.checkHostname(item);
         }
         return true;
     }
