@@ -8,6 +8,7 @@ import com.datasophon.common.Constants;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.common.model.HostInfo;
 import org.apache.commons.lang.StringUtils;
+import org.apache.sshd.client.session.ClientSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,11 +30,11 @@ public class StartWorkerHandler implements DispatcherWorkerHandler{
     }
 
     @Override
-    public boolean handle(MinaUtils minaUtils, HostInfo hostInfo) throws UnknownHostException {
+    public boolean handle(ClientSession session, HostInfo hostInfo) throws UnknownHostException {
         ConfigBean configBean = SpringTool.getApplicationContext().getBean(ConfigBean.class);
         String installPath = Constants.INSTALL_PATH;
         String localHostName = InetAddress.getLocalHost().getHostName();
-        String updateCommonPropertiesResult = minaUtils.execCmdWithResult(
+        String updateCommonPropertiesResult = MinaUtils.execCmdWithResult(session,
                 Constants.UPDATE_COMMON_CMD +
                         localHostName +
                         Constants.SPACE +
@@ -49,13 +50,13 @@ public class StartWorkerHandler implements DispatcherWorkerHandler{
             CommonUtils.updateInstallState(InstallState.FAILED, hostInfo);
         } else {
             //设置开机自动启动
-            minaUtils.execCmdWithResult( "\\cp "+installPath+"/datasophon-worker/script/datasophon-worker /etc/rc.d/init.d/");
-            minaUtils.execCmdWithResult( "chmod +x /etc/rc.d/init.d/datasophon-worker");
-            minaUtils.execCmdWithResult("chkconfig --add datasophon-worker");
-            minaUtils.execCmdWithResult("\\cp "+installPath+"/datasophon-worker/script/profile /etc/");
-            minaUtils.execCmdWithResult("source /etc/profile");
+            MinaUtils.execCmdWithResult( session,"\\cp "+installPath+"/datasophon-worker/script/datasophon-worker /etc/rc.d/init.d/");
+            MinaUtils.execCmdWithResult( session,"chmod +x /etc/rc.d/init.d/datasophon-worker");
+            MinaUtils.execCmdWithResult(session,"chkconfig --add datasophon-worker");
+            MinaUtils.execCmdWithResult(session,"\\cp "+installPath+"/datasophon-worker/script/profile /etc/");
+            MinaUtils.execCmdWithResult(session,"source /etc/profile");
             hostInfo.setMessage("启动主机管理agent");
-            minaUtils.execCmdWithResult( "service datasophon-worker restart");
+            MinaUtils.execCmdWithResult( session,"service datasophon-worker restart");
             hostInfo.setProgress(75);
             hostInfo.setCreateTime(new Date());
         }

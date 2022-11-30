@@ -28,17 +28,16 @@ public class HostActor extends UntypedActor {
             HostCheckCommand hostCheckCommand = (HostCheckCommand) message;
             HostInfo hostInfo = hostCheckCommand.getHostInfo();
             logger.info("start host check:{}", hostInfo.getHostname());
-            MinaUtils minaUtils = new MinaUtils(
+            ClientSession session =  MinaUtils.openConnection(
                     hostInfo.getHostname(),
                     hostInfo.getSshPort(),
                     hostInfo.getSshUser(),
                     Constants.SLASH + hostInfo.getSshUser() + Constants.ID_RSA);
-            ClientSession session = minaUtils.openConnection();
             if (ObjectUtil.isNotNull(session)) {
                 hostInfo.setCheckResult(new CheckResult(Status.CHECK_HOST_SUCCESS.getCode(), Status.CHECK_HOST_SUCCESS.getMsg()));
             } else {
                 hostInfo.setCheckResult(new CheckResult(Status.CONNECTION_FAILED.getCode(), Status.CONNECTION_FAILED.getMsg()));
-                minaUtils.closeConnection();
+                MinaUtils.closeConnection(session);
             }
             logger.info("end host check:{}", hostInfo.getHostname());
         } else {

@@ -21,53 +21,36 @@ import java.util.concurrent.TimeUnit;
 public class MinaUtils {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MinaUtils.class);
 
-    private String sshHost;
-    private Integer sshPort;
-    private String sshUser;
-    private String privateKey;
-
-    private SshClient sshClient;
-    private ClientSession session;
-    private SftpFileSystem sftp;
-
-    public MinaUtils(String sshHost, Integer sshPort, String sshUser, String privateKey) {
-        this.sshHost = sshHost;
-        this.sshPort = sshPort;
-        this.sshUser = sshUser;
-        this.privateKey = privateKey;
-    }
-
 
     /**
      * 打开远程会话
      */
-    public ClientSession openConnection() {
+    public static ClientSession openConnection(String sshHost, Integer sshPort, String sshUser, String privateKey) {
 
-        this.sshClient = SshClient.setUpDefaultClient();
-        this.sshClient.start();
+        SshClient sshClient = SshClient.setUpDefaultClient();
+        sshClient.start();
+        ClientSession session = null;
         try {
-            this.session = this.sshClient.connect(sshUser, sshHost, sshPort).verify().getClientSession();
-            this.session.addPublicKeyIdentity(getKeyPairFromString(privateKey));
-            if (this.session.auth().verify().isFailure()) {
+            session = sshClient.connect(sshUser, sshHost, sshPort).verify().getClientSession();
+            session.addPublicKeyIdentity(getKeyPairFromString(privateKey));
+            if (session.auth().verify().isFailure()) {
                 LOG.info("验证失败");
                 return null;
             }
-            this.sftp = SftpClientFactory.instance().createSftpFileSystem(this.session);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         LOG.info(sshHost + " 连接成功");
-        return this.session;
+        return session;
     }
+
 
     /**
      * 关闭远程会话
      */
-    public void closeConnection() {
+    public static void closeConnection(ClientSession session) {
         try {
-            this.session.close();
-            this.sftp.close();
-            this.sshClient.stop();
+            session.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -95,11 +78,12 @@ public class MinaUtils {
     /**
      * 同步执行,需要获取执行完的结果
      *
+     * @param session 连接
      * @param command 命令
      * @return 结果
      */
-    public String execCmdWithResult(String command) {
-        this.openConnection();
+    public static String execCmdWithResult(ClientSession session, String command) {
+        session.resetAuthTimeout();
         LOG.info("exe cmd: {}", command);
         // 命令返回的结果
         ChannelExec ce = null;
@@ -108,18 +92,17 @@ public class MinaUtils {
         // 错误信息
         ByteArrayOutputStream err = new ByteArrayOutputStream();
         try {
-            ce = this.session.createExecChannel(command);
+            ce = session.createExecChannel(command);
             ce.setOut(out);
             ce.setErr(err);
             // 执行并等待
             ce.open();
             Set<ClientChannelEvent> events =
-                    ce.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), TimeUnit.SECONDS.toMillis(10000));
+                    ce.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), TimeUnit.SECONDS.toMillis(100000));
             //  检查请求是否超时
             if (events.contains(ClientChannelEvent.TIMEOUT)) {
                 throw new Exception("mina 连接超时");
             }
-            this.session.close(false);
             int exitStatus = ce.getExitStatus();
             LOG.info("mina result {}", exitStatus);
             if (exitStatus == 1) {
@@ -144,34 +127,32 @@ public class MinaUtils {
     /**
      * 上传文件,相同路径ui覆盖
      *
+     * @param session    连接
      * @param remotePath 远程目录地址
      * @param inputFile  文件 File
      */
-    public boolean uploadFile(String remotePath, String inputFile) {
-        this.openConnection();
+    public static boolean uploadFile(ClientSession session, String remotePath, String inputFile) {
         File uploadFile = new File(inputFile);
         InputStream input = null;
+        SftpFileSystem sftp = null;
         try {
-            Path path = this.sftp.getDefaultDir().resolve(remotePath);
+            sftp = SftpClientFactory.instance().createSftpFileSystem(session);
+            Path path = sftp.getDefaultDir().resolve(remotePath);
             if (!Files.exists(path)) {
                 LOG.info("create pathHome {} ", path);
                 Files.createDirectories(path);
             }
             input = Files.newInputStream(uploadFile.toPath());
             Path file = path.resolve(uploadFile.getName());
-            if (Files.exists(file)){
+            if (Files.exists(file)) {
+                LOG.info("delete file  {}", file);
                 Files.deleteIfExists(file);
             }
             Files.copy(input, file);
+            LOG.info("file copy success");
             return true;
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            try {
-                this.sftp.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 
@@ -181,10 +162,11 @@ public class MinaUtils {
      * @param path
      * @return
      */
-    public boolean createDir(String path) {
-        this.openConnection();
+    public static boolean createDir(ClientSession session, String path) {
+        SftpFileSystem sftp = null;
         try {
-            Path remoteRoot = this.sftp.getDefaultDir().resolve(path);
+            sftp = SftpClientFactory.instance().createSftpFileSystem(session);
+            Path remoteRoot = sftp.getDefaultDir().resolve(path);
             if (!Files.exists(remoteRoot)) {
                 Files.createDirectories(remoteRoot);
                 return true;
@@ -197,14 +179,15 @@ public class MinaUtils {
 
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        MinaUtils minaUtils = new MinaUtils("localhost", 22, "liuxin",
+        ClientSession session = MinaUtils.openConnection("localhost", 22, "liuxin",
                 "/Users/liuxin/.ssh/id_rsa");
-            String ls = minaUtils.execCmdWithResult("arch");
+        for (int i = 0; i < 10; i++) {
+            String ls = MinaUtils.execCmdWithResult(session, "arch");
             System.out.println(ls);
-//        minaUtils.closeConnection();
-//        boolean dir = minaUtils.createDir("/home/shinow/test/");
+        }
+//        boolean dir = MinaUtils.createDir(session,"/home/shinow/test/");
 //        System.out.println(dir);
-//        boolean uploadFile = minaUtils.uploadFile("/Users/liuxin/opt/test", "/Users/liuxin/Downloads/yarn-default.xml");
+//        boolean uploadFile = MinaUtils.uploadFile(session, "/Users/liuxin/opt/test", "/Users/liuxin/Downloads/yarn-default.xml");
 //        System.out.println(uploadFile);
     }
 
