@@ -2,6 +2,7 @@ package com.datasophon.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterQueueCapacity;
 
 import java.util.Map;
@@ -16,5 +17,6 @@ import java.util.Map;
 public interface ClusterQueueCapacityService extends IService<ClusterQueueCapacity> {
 
 
+    Result refreshToYarn(Integer clusterId) throws Exception;
 }
 

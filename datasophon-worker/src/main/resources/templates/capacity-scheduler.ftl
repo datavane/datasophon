@@ -54,14 +54,25 @@
     <name>yarn.scheduler.capacity.root.${queue.queueName}.acl_submit_applications</name>
     <value>${queue.aclUsers}</value>
   </property>
+  <#if queue.nodeLabel != "default">
   <property>
     <name>yarn.scheduler.capacity.root.${queue.queueName}.accessible-node-labels</name>
     <value>${queue.nodeLabel}</value>
   </property>
   <property>
-    <name>yarn.scheduler.capacity.root.${queue.queueName}.default-node-label-expression</name>
-    <value>>${queue.nodeLabel}</value>
+    <name>yarn.scheduler.capacity.root.${queue.queueName}.accessible-node-labels.${queue.nodeLabel}.capacity</name>
+    <value>100</value>
   </property>
+  <property>
+    <name>yarn.scheduler.capacity.root.accessible-node-labels.${queue.nodeLabel}.capacity</name>
+    <value>100</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.capacity.root.${queue.queueName}.default-node-label-expression</name>
+    <value>${queue.nodeLabel}</value>
+  </property>
+  </#if>
+
   <property>
     <name>yarn.scheduler.capacity.root.${queue.queueName}.acl_administer_queue</name>
     <value>*</value>
