@@ -36,11 +36,7 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
             ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${fs.defaultFS}", "nameservice1");
             updateServiceConfigToHA(frameService, frameServiceEntity, true, false);
         }
-
-
     }
-
-
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {

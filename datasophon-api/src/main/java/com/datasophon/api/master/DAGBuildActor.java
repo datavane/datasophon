@@ -53,7 +53,7 @@ public class DAGBuildActor extends UntypedActor {
             ArrayList<FrameServiceEntity> frameServiceList = new ArrayList<>();
             if (Objects.nonNull(list) && list.size() > 0) {
                 for (ClusterServiceCommandEntity command : list) {
-                    //构建服务安装dag
+                    //build dag
                     List<ClusterServiceCommandHostCommandEntity> hostCommandList = hostCommandService.getHostCommandListByCommandId(command.getCommandId());
                     List<ServiceRoleInfo> masterRoles = new ArrayList<>();
                     List<ServiceRoleInfo> elseRoles = new ArrayList<>();
@@ -81,6 +81,10 @@ public class DAGBuildActor extends UntypedActor {
                             logger.info("set to slave zkfc");
                             serviceRoleInfo.setSlave(true);
                             serviceRoleInfo.setSortNum(6);
+                        }
+                        if("HiveServer2".equals(serviceRoleInfo.getName()) && !hostCommand.getHostname().equals(globalVariables.get("${masterHiveServer2}"))){
+                            logger.info("set to slave hiveserver2");
+                            serviceRoleInfo.setSlave(true);
                         }
                         if("FE".equals(serviceRoleInfo.getName()) ){
                             String feMaster = globalVariables.get("${feMaster}");

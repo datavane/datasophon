@@ -93,7 +93,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
 
             list = JSONArray.parseArray(serviceConfig, ServiceConfig.class);
         }
-        if ("zookeeper".equals(serviceName.toLowerCase())) {
+        if ("zookeeper".equals(serviceName.toLowerCase()) || "hive".equals(serviceName.toLowerCase())) {
             ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceName);
             if (Objects.nonNull(serviceRoleHandler)) {
                 serviceRoleHandler.handlerConfig(clusterId, list);

@@ -67,14 +67,15 @@ public class ClusterServiceCommandServiceImpl extends ServiceImpl<ClusterService
     @Override
     @Transactional
     public Result generateCommand(Integer clusterId, CommandType commandType,List<String> serviceNames) {
-//        Collection<FrameServiceEntity> serviceList = frameServiceService.listByIds(serviceIds);
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
+
         List<ClusterServiceCommandEntity> list = new ArrayList<>();
         List<ClusterServiceCommandHostEntity> commandHostList = new ArrayList<>();
         List<ClusterServiceCommandHostCommandEntity> hostCommandList = new ArrayList<>();
-        List<ClusterServiceInstanceEntity> serviceInstanceList = new ArrayList<>();
         List<String> commandIds = new ArrayList<String>();
+
         Map<String, List<String>> serviceRoleHostMap = (Map<String, List<String>>) CacheUtils.get(clusterInfo.getClusterCode() +Constants.UNDERLINE+ Constants.SERVICE_ROLE_HOST_MAPPING);
+
         for (String  serviceName : serviceNames) {
             //1、生成操作指令
             ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceName);

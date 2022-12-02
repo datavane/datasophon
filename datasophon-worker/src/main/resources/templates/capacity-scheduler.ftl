@@ -72,7 +72,6 @@
     <value>${queue.nodeLabel}</value>
   </property>
   </#if>
-
   <property>
     <name>yarn.scheduler.capacity.root.${queue.queueName}.acl_administer_queue</name>
     <value>*</value>

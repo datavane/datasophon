@@ -36,7 +36,7 @@ public class HiveServer2HandlerStrategy implements ServiceRoleStrategy {
             } else {
                 startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(),command.getRunAs());
             }
-        } else if (command.getCommandType() == CommandType.INSTALL_SERVICE) {
+        } else if (command.getCommandType() == CommandType.INSTALL_SERVICE && !command.isSlave()) {
             //初始化数据库
             ArrayList<String> commands = new ArrayList<>();
             commands.add("bin/schematool");
