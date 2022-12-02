@@ -21,4 +21,9 @@ public class HiveMetaStroreHandlerStrategy implements ServiceRoleStrategy{
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
 
     }
+
+    @Override
+    public void getConfig(Integer clusterId, List<ServiceConfig> list) {
+
+    }
 }

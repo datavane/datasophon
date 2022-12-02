@@ -55,6 +55,10 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
 
     }
 
+    @Override
+    public void getConfig(Integer clusterId, List<ServiceConfig> list) {
+
+    }
 
 
     private void updateServiceConfigToHA(FrameServiceService frameService, FrameServiceEntity frameServiceEntity, boolean b, boolean b2) {
