@@ -25,7 +25,9 @@ public class ActorUtils {
 
     public static ActorSystem actorSystem;
 
-    private ActorUtils() {}
+    private ActorUtils() {
+
+    }
 
     public static void init() throws UnknownHostException {
         String hostname = InetAddress.getLocalHost().getHostName();
