@@ -53,11 +53,11 @@ public class ActorUtils {
 
     public static ActorRef getLocalActor(Class actorClass, String actorName) {
         ActorSelection actorSelection = actorSystem.actorSelection("/user/" + actorName);
-        Timeout timeout = new Timeout(Duration.create(30, "seconds"));
+        Timeout timeout = new Timeout(Duration.create(30, TimeUnit.SECONDS));
         Future<ActorRef> future = actorSelection.resolveOne(timeout);
         ActorRef actorRef = null;
         try {
-            actorRef = Await.result(future, Duration.create(30, "seconds"));
+            actorRef = Await.result(future, Duration.create(30, TimeUnit.SECONDS));
         } catch (Exception e) {
             logger.error("{} actor not found",actorName);
         }
@@ -73,11 +73,11 @@ public class ActorUtils {
     public static ActorRef getRemoteActor(String hostname, String actorName) {
         String actorPath = "akka.tcp://datasophon@" + hostname + ":2552/user/worker/"+actorName;
         ActorSelection actorSelection = actorSystem.actorSelection(actorPath);
-        Timeout timeout = new Timeout(Duration.create(3, "seconds"));
+        Timeout timeout = new Timeout(Duration.create(30, TimeUnit.SECONDS));
         Future<ActorRef> future = actorSelection.resolveOne(timeout);
         ActorRef actorRef = null;
         try {
-            actorRef = Await.result(future, Duration.create(3, "seconds"));
+            actorRef = Await.result(future, Duration.create(30, TimeUnit.SECONDS));
         } catch (Exception e) {
             e.printStackTrace();
         }
