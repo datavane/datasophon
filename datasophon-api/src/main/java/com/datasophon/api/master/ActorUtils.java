@@ -26,7 +26,6 @@ public class ActorUtils {
     public static ActorSystem actorSystem;
 
     private ActorUtils() {
-
     }
 
     public static void init() throws UnknownHostException {
