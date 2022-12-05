@@ -15,6 +15,7 @@ import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class ServiceStartHandler extends ServiceHandler{
     private static final Logger logger = LoggerFactory.getLogger(ServiceStartHandler.class);
@@ -41,7 +42,7 @@ public class ServiceStartHandler extends ServiceHandler{
             return execResult;
         }
         ActorSelection startActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + serviceRoleInfo.getHostname() + ":2552/user/worker/startServiceActor");
-        Timeout timeout = new Timeout(Duration.create(180, "seconds"));
+        Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
         Future<Object> startFuture = Patterns.ask(startActor, serviceRoleOperateCommand, timeout);
         ExecResult startResult = (ExecResult) Await.result(startFuture, timeout.duration());
         if (Objects.nonNull(startResult) && startResult.getExecResult()) {
