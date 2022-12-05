@@ -59,7 +59,7 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
             clusterUserGroup.setUserId(clusterUser.getId());
             clusterUserGroup.setGroupId(id);
             clusterUserGroup.setClusterId(clusterId);
-            if(id == mainGroupId){
+            if(id.equals(mainGroupId)){
                 clusterUserGroup.setUserGroupType(1);
             }else {
                 clusterUserGroup.setUserGroupType(2);

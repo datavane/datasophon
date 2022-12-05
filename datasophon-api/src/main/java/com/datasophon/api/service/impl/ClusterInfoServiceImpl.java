@@ -136,7 +136,7 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         List<ClusterInfoEntity> list = this.list(new QueryWrapper<ClusterInfoEntity>().eq(Constants.CLUSTER_CODE, clusterInfo.getClusterCode()));
         if (Objects.nonNull(list) && list.size() >= 1) {
             ClusterInfoEntity clusterInfoEntity = list.get(0);
-            if (clusterInfoEntity.getId() != clusterInfo.getId()) {
+            if (!clusterInfoEntity.getId().equals(clusterInfo.getId())) {
                 return Result.error(Status.CLUSTER_CODE_EXISTS.getMsg());
             }
         }

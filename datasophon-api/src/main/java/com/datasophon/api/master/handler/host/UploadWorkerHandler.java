@@ -1,12 +1,10 @@
 package com.datasophon.api.master.handler.host;
 
 import com.datasophon.api.utils.CommonUtils;
-import com.datasophon.api.utils.JSchUtils;
 import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.common.model.HostInfo;
-import com.jcraft.jsch.Session;
 import org.apache.sshd.client.session.ClientSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
