@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -137,7 +138,7 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
         logger.info("start to get {} log from {}", serviceRole.getServiceRoleName(), roleInstance.getHostname());
 
         ActorSelection configActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + roleInstance.getHostname() + ":2552/user/worker/logActor");
-        Timeout timeout = new Timeout(Duration.create(60, "seconds"));
+        Timeout timeout = new Timeout(Duration.create(60, TimeUnit.SECONDS));
         Future<Object> logFuture = Patterns.ask(configActor, command, timeout);
         ExecResult logResult = (ExecResult) Await.result(logFuture, timeout.duration());
         if (Objects.nonNull(logResult) && logResult.getExecResult()) {

@@ -20,6 +20,7 @@ import scala.concurrent.duration.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class HadoopUtils {
 
@@ -39,7 +40,7 @@ public class HadoopUtils {
     public static ExecResult refreshQueuePropToYarn(ClusterInfoEntity clusterInfo, String hostname) throws Exception {
         ActorSelection execCmdActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + hostname + ":2552/user/worker/executeCmdActor");
         ExecuteCmdCommand command = new ExecuteCmdCommand();
-        Timeout timeout = new Timeout(Duration.create(180, "seconds"));
+        Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
         ArrayList<String> commands = new ArrayList<>();
         commands.add(Constants.INSTALL_PATH + Constants.SLASH + PackageUtils.getServiceDcPackageName(clusterInfo.getClusterFrame(), "YARN") + "/bin/yarn");
         commands.add("rmadmin");

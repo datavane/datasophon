@@ -356,7 +356,7 @@ public class ProcessUtils {
         for (ClusterServiceRoleInstanceEntity namenode : namenodes) {
             ActorSelection actorSelection = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + namenode.getHostname() + ":2552/user/worker/fileOperateActor");
             ActorSelection execCmdActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + namenode.getHostname() + ":2552/user/worker/executeCmdActor");
-            Timeout timeout = new Timeout(Duration.create(180, "seconds"));
+            Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
             FileOperateCommand fileOperateCommand = new FileOperateCommand();
             fileOperateCommand.setLines(list);
             fileOperateCommand.setPath(Constants.INSTALL_PATH + "/hadoop-3.3.3/etc/hadoop/" + type);
