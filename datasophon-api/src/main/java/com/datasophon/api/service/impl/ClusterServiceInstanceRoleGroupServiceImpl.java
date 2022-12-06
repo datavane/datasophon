@@ -132,6 +132,12 @@ public class ClusterServiceInstanceRoleGroupServiceImpl extends ServiceImpl<Clus
         return Result.success();
     }
 
+    @Override
+    public List<ClusterServiceInstanceRoleGroup> listRoleGroupByServiceInstanceId(Integer serviceInstanceId) {
+
+        return this.list(new QueryWrapper<ClusterServiceInstanceRoleGroup>().eq(Constants.SERVICE_INSTANCE_ID,serviceInstanceId));
+    }
+
     private boolean hasRoleInstanceUse(Integer roleGroupId) {
         List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                 .eq(Constants.ROLE_GROUP_ID, roleGroupId));
