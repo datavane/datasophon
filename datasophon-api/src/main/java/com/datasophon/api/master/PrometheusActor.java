@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class PrometheusActor extends UntypedActor {
     private static final Logger logger = LoggerFactory.getLogger(PrometheusActor.class);
@@ -155,7 +156,7 @@ public class PrometheusActor extends UntypedActor {
             ClusterServiceRoleInstanceEntity prometheusInstance = roleInstanceService.getOneServiceRole("Prometheus", null, command.getClusterId());
 
             ActorSelection alertConfigActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + prometheusInstance.getHostname() + ":2552/user/worker/alertConfigActor");
-            Timeout timeout = new Timeout(Duration.create(180, "seconds"));
+            Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
             Future<Object> configureFuture = Patterns.ask(alertConfigActor, command, timeout);
             ExecResult configResult = (ExecResult) Await.result(configureFuture, timeout.duration());
             if(configResult.getExecResult()){

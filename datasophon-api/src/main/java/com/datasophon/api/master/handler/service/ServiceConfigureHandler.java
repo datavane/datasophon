@@ -13,6 +13,7 @@ import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class ServiceConfigureHandler extends ServiceHandler{
     @Override
@@ -32,7 +33,7 @@ public class ServiceConfigureHandler extends ServiceHandler{
 //            execResult.setExecResult(true);
 //            return execResult;
 //        }
-        Timeout timeout = new Timeout(Duration.create(180, "seconds"));
+        Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
         Future<Object> configureFuture = Patterns.ask(configActor, generateServiceConfigCommand, timeout);
         ExecResult configResult = (ExecResult) Await.result(configureFuture, timeout.duration());
         if(Objects.nonNull(configResult) && configResult.getExecResult()){
