@@ -1,22 +1,21 @@
 package com.datasophon.api.controller;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.service.ClusterHostService;
 import com.datasophon.common.Constants;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterHostEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.ClusterHostEntity;
-import com.datasophon.api.service.ClusterHostService;
-import com.datasophon.common.utils.Result;
+import java.util.List;
 
 
 /**
- * 集群主机表 
+ * 集群主机表
  *
  * @author gaodayu
  * @email gaodayu2022@163.com
@@ -48,12 +47,23 @@ public class ClusterHostController {
 
     }
 
+    /**
+     * 依据主机名查询主机信息
+     * @param clusterId
+     * @param hostname
+     * @return
+     */
     @RequestMapping("/getRoleListByHostname")
     public Result getRoleListByHostname(Integer clusterId,String hostname){
         return clusterHostService.getRoleListByHostname(clusterId,hostname);
 
     }
 
+    /**
+     * 查询集群机架
+     * @param clusterId
+     * @return
+     */
     @RequestMapping("/getRack")
     public Result getRack(Integer clusterId){
         return clusterHostService.getRack(clusterId);
@@ -87,7 +97,7 @@ public class ClusterHostController {
     @RequestMapping("/update")
     public Result update(@RequestBody ClusterHostEntity clusterHost){
         clusterHostService.updateById(clusterHost);
-        
+
         return Result.success();
     }
 

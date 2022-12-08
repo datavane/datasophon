@@ -1,15 +1,14 @@
 package com.datasophon.api.controller;
 
-import java.util.Arrays;
-
+import com.datasophon.api.service.ClusterServiceInstanceConfigService;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterServiceInstanceConfigEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.ClusterServiceInstanceConfigEntity;
-import com.datasophon.api.service.ClusterServiceInstanceConfigService;
-import com.datasophon.common.utils.Result;
+import java.util.Arrays;
 
 
 
@@ -59,7 +58,7 @@ public class ClusterServiceInstanceConfigController {
     @RequestMapping("/update")
     public Result update(@RequestBody ClusterServiceInstanceConfigEntity clusterServiceInstanceConfig){
         clusterServiceInstanceConfigService.updateById(clusterServiceInstanceConfig);
-        
+
         return Result.success();
     }
 

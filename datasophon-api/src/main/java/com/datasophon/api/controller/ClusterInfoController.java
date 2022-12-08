@@ -1,18 +1,17 @@
 package com.datasophon.api.controller;
 
-import java.util.Arrays;
-
-import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.security.UserPermission;
+import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.common.Constants;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterInfoEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.ClusterInfoEntity;
-import com.datasophon.common.utils.Result;
+import java.util.Arrays;
 
 
 /**
@@ -63,6 +62,12 @@ public class ClusterInfoController {
         return clusterInfoService.saveCluster(clusterInfo);
     }
 
+    /**
+     * 更新集群状态
+     * @param clusterId
+     * @param clusterState
+     * @return
+     */
     @RequestMapping("/updateClusterState")
     public Result updateClusterState(Integer clusterId,Integer clusterState) {
 

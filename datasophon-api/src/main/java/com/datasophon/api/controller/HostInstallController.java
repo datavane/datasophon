@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
+/**
+ * 集群部署操作
+ */
 @RestController
 @RequestMapping("host/install")
 public class HostInstallController {
@@ -68,6 +71,11 @@ public class HostInstallController {
         return installService.dispatcherHostAgentList(clusterId,installStateCode,page,pageSize);
     }
 
+    /**
+     * Agent节点分发
+     * @param clusterId
+     * @return
+     */
     @PostMapping("/dispatcherHostAgentCompleted")
     public Result dispatcherHostAgentCompleted(Integer clusterId) {
         return installService.dispatcherHostAgentCompleted(clusterId);

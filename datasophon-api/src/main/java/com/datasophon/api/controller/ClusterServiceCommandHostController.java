@@ -1,16 +1,15 @@
 package com.datasophon.api.controller;
 
-import java.util.Arrays;
-
 import com.datasophon.api.service.ClusterServiceCommandHostService;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterServiceCommandHostEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.ClusterServiceCommandHostEntity;
-import com.datasophon.common.utils.Result;
+import java.util.Arrays;
 
 
 
@@ -62,7 +61,7 @@ public class ClusterServiceCommandHostController {
     @RequestMapping("/update")
     public Result update(@RequestBody ClusterServiceCommandHostEntity clusterServiceCommandHost){
         clusterServiceCommandHostService.updateById(clusterServiceCommandHost);
-        
+
         return Result.success();
     }
 

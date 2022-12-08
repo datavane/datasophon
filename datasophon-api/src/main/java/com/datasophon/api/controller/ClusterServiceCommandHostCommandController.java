@@ -1,16 +1,15 @@
 package com.datasophon.api.controller;
 
-import java.util.Arrays;
-
+import com.datasophon.api.service.ClusterServiceCommandHostCommandService;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
-import com.datasophon.api.service.ClusterServiceCommandHostCommandService;
-import com.datasophon.common.utils.Result;
+import java.util.Arrays;
 
 
 /**
@@ -36,6 +35,13 @@ public class ClusterServiceCommandHostCommandController {
         return clusterServiceCommandHostCommandService.getHostCommandList(hostname, commandHostId, page, pageSize);
     }
 
+    /**
+     * 查询主机命令执行日志
+     * @param clusterId
+     * @param hostCommandId
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("/getHostCommandLog")
     public Result getHostCommandLog(Integer clusterId, String hostCommandId) throws Exception {
         return clusterServiceCommandHostCommandService.getHostCommandLog(clusterId, hostCommandId);

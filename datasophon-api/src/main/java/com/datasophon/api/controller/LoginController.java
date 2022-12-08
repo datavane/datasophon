@@ -1,15 +1,14 @@
 package com.datasophon.api.controller;
 
 
-import com.datasophon.api.utils.HttpUtils;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.security.Authenticator;
 import com.datasophon.api.service.SessionService;
+import com.datasophon.api.utils.HttpUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.UserInfoEntity;
 import org.apache.commons.httpclient.HttpStatus;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,9 @@ import java.util.Map;
 
 import static com.datasophon.api.enums.Status.IP_IS_EMPTY;
 
-
+/**
+ * 登录/下线操作
+ */
 @RestController
 @RequestMapping("")
 public class LoginController{
@@ -39,7 +40,7 @@ public class LoginController{
 
 
     /**
-     * login
+     * login登录操作
      *
      * @param userName     user name
      * @param userPassword user password
@@ -85,7 +86,7 @@ public class LoginController{
     }
 
     /**
-     * sign out
+     * sign out 下线操作
      *
      * @param loginUser login user
      * @param request   request

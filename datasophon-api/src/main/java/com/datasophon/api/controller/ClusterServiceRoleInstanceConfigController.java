@@ -1,18 +1,13 @@
 package com.datasophon.api.controller;
 
+import com.datasophon.api.service.ClusterServiceRoleInstanceConfigService;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceConfigEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Arrays;
 import java.util.Map;
-
-import com.datasophon.api.service.ClusterServiceRoleInstanceConfigService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.datasophon.dao.entity.ClusterServiceRoleInstanceConfigEntity;
-import com.datasophon.common.utils.Result;
 
 
 
@@ -66,7 +61,7 @@ public class ClusterServiceRoleInstanceConfigController {
     @RequestMapping("/update")
     public Result update(@RequestBody ClusterServiceRoleInstanceConfigEntity clusterServiceRoleInstanceConfig){
         clusterServiceRoleInstanceConfigService.updateById(clusterServiceRoleInstanceConfig);
-        
+
         return Result.success();
     }
 

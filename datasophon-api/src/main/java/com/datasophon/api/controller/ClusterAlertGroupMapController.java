@@ -12,7 +12,7 @@ import com.datasophon.dao.entity.ClusterAlertGroupMap;
 import com.datasophon.api.service.ClusterAlertGroupMapService;
 
 /**
- * 
+ * 集群告警分组管理
  *
  * @author gaodayu
  * @email gaodayu2022@163.com
@@ -36,6 +36,8 @@ public class ClusterAlertGroupMapController {
 
     /**
      * 信息
+     * @param id
+     * @return
      */
     @RequestMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
@@ -61,7 +63,7 @@ public class ClusterAlertGroupMapController {
     public Result update(@RequestBody ClusterAlertGroupMap clusterAlertGroupMap){
 
         clusterAlertGroupMapService.updateById(clusterAlertGroupMap);
-        
+
         return Result.success();
     }
 

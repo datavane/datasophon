@@ -1,18 +1,18 @@
 package com.datasophon.api.controller;
 
-import java.util.Arrays;
-
 import com.datasophon.api.service.ClusterServiceRoleGroupConfigService;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
+
+import java.util.Arrays;
 
 /**
- * 
+ * 集群用户组配置
  *
  * @author gaodayu
  * @email gaodayu2022@163.com
@@ -62,7 +62,7 @@ public class ClusterServiceRoleGroupConfigController {
     public Result update(@RequestBody ClusterServiceRoleGroupConfig clusterServiceRoleGroupConfig){
 
         clusterServiceRoleGroupConfigService.updateById(clusterServiceRoleGroupConfig);
-        
+
         return Result.success();
     }
 

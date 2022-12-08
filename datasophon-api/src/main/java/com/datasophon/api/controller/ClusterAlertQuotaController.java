@@ -1,15 +1,17 @@
 package com.datasophon.api.controller;
 
-import java.util.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.datasophon.api.service.ClusterAlertQuotaService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterAlertQuota;
-import com.datasophon.api.service.ClusterAlertQuotaService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
 
 /**
- * 集群告警指标表 
+ * 集群告警指标表
  *
  * @author gaodayu
  * @email gaodayu2022@163.com
@@ -64,7 +66,7 @@ public class ClusterAlertQuotaController {
     public Result update(@RequestBody ClusterAlertQuota clusterAlertQuota){
 
         clusterAlertQuotaService.updateById(clusterAlertQuota);
-        
+
         return Result.success();
     }
 

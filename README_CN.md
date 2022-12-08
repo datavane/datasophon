@@ -44,7 +44,25 @@ DataSophon也是个类似的管理平台，只不过与智子不同的是，智�
 
 ![img](website/static/img/archive.png)
 
+# 开发
+##How to use datasophon-api?
+### Find the controller
+
+You can find controller in 'com.datasophon.api.controller.*',here is the api interact with the website.
+follow with this [API](website/doc/datasophon-api-v1.0.2.html.md);
+
+if you want to read api with html style,you need see [how to use smart-doc](https://smart-doc-group.github.io/#/zh-cn/start/quickstart)
+
+![img](website/doc/api-demo.png)
+
+### Read the source code
+If you want to Participate with us,you need to understanding the coding thinking!
+
+###  Flow diagram
+
+    todo
 
 # 提问
 如果您有任何的疑问或需要支持、报告漏洞，请点击 [issue](https://github.com/gaodayu168/datasophon/issues/new/choose) 并提交您的问题, 我们将及时回复您。
+
 

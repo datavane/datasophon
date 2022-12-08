@@ -1,19 +1,14 @@
 package com.datasophon.api.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
 import com.datasophon.api.security.UserPermission;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.datasophon.dao.entity.ClusterRoleUserEntity;
 import com.datasophon.api.service.ClusterRoleUserService;
 import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterRoleUserEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -58,7 +53,7 @@ public class ClusterRoleUserController {
     public Result saveClusterManager(Integer clusterId, String userIds){
         return clusterRoleUserService.saveClusterManager(clusterId,userIds);
     }
-    
+
 
     /**
      * 修改
@@ -66,7 +61,7 @@ public class ClusterRoleUserController {
     @RequestMapping("/update")
     public Result update(@RequestBody ClusterRoleUserEntity clusterRoleUser){
         clusterRoleUserService.updateById(clusterRoleUser);
-        
+
         return Result.success();
     }
 

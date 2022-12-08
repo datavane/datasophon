@@ -1,8 +1,8 @@
 package com.datasophon.api.controller;
 
 import com.alibaba.fastjson.JSONArray;
-import com.datasophon.api.service.ServiceInstallService;
 import com.datasophon.api.security.UserPermission;
+import com.datasophon.api.service.ServiceInstallService;
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.model.HostServiceRoleMapping;
 import com.datasophon.common.model.ServiceConfig;
@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * 个性化安装服务
+ */
 @RestController
 @RequestMapping("service/install")
 public class ServiceInstallController {

@@ -1,0 +1,29 @@
+{
+
+  "serverUrl": "http://localhost:8081",
+  "outPath": "src/main/resources/static/doc",
+  "isStrict": false,
+  "allInOne": true,
+  "createDebugPage": true,
+  "packageFilters": "com.datasophon.api.controller.*",
+  "style":"xt256",
+  "projectName": "DataSophon Doc",
+  "showAuthor":true,
+  "inlineEnum": true,
+  "requestFieldToUnderline":false,
+  "responseFieldToUnderline":false,
+  "allInOneDocFileName":"datasophon-api-v1.0.2.html",
+  "revisionLogs": [{
+    "version": "文档版本号",
+    "version": "1.0",
+    "_revisionTime": "文档修订时间",
+    "revisionTime": "2020-12-31 10:30",
+    "_status": "update,create可选",
+    "status": "update",
+    "author": "author",
+    "_remarks": "变更描述",
+    "remarks": "desc"
+  }]
+
+}
+

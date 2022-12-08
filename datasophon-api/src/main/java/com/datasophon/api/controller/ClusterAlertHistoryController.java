@@ -1,19 +1,18 @@
 package com.datasophon.api.controller;
 
-import java.util.Arrays;
-
 import com.datasophon.api.service.ClusterAlertHistoryService;
 import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterAlertHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.ClusterAlertHistory;
+import java.util.Arrays;
 
 /**
- * 集群告警历史表 
+ * 集群告警历史表
  *
  * @author dygao2
  * @email gaodayu2022@163.com
@@ -71,7 +70,7 @@ public class ClusterAlertHistoryController {
     public Result update(@RequestBody ClusterAlertHistory clusterAlertHistory){
 
         clusterAlertHistoryService.updateById(clusterAlertHistory);
-        
+
         return Result.success();
     }
 

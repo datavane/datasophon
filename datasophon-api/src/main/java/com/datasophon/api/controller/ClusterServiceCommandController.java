@@ -1,12 +1,11 @@
 package com.datasophon.api.controller;
 
-import java.util.Arrays;
-import java.util.List;
-
 import cn.hutool.core.util.EnumUtil;
-import com.datasophon.api.service.ClusterServiceCommandService;
 import com.datasophon.api.security.UserPermission;
+import com.datasophon.api.service.ClusterServiceCommandService;
 import com.datasophon.common.enums.CommandType;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterServiceCommandEntity;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.ClusterServiceCommandEntity;
-import com.datasophon.common.utils.Result;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -90,6 +89,11 @@ public class ClusterServiceCommandController {
         return Result.success();
     }
 
+    /**
+     * 取消命令
+     * @param commandId
+     * @return
+     */
     @RequestMapping("/cancelCommand")
     public Result cancelCommand(String commandId) {
         clusterServiceCommandService.cancelCommand(commandId);

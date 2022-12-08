@@ -1,22 +1,20 @@
 package com.datasophon.api.controller;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.service.ClusterServiceInstanceRoleGroupService;
 import com.datasophon.common.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceInstanceRoleGroup;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
- * 
  *
+ * 集群与用户组管理
  * @author gaodayu
  * @email gaodayu2022@163.com
  * @date 2022-08-16 16:56:00
@@ -73,7 +71,7 @@ public class ClusterServiceInstanceRoleGroupController {
     public Result update(Integer roleGroupId,String roleGroupName){
 
         return clusterServiceInstanceRoleGroupService.rename(roleGroupId,roleGroupName);
-        
+
     }
 
     /**

@@ -1,18 +1,18 @@
 package com.datasophon.api.controller;
 
-import java.util.Arrays;
-
 import com.datasophon.api.service.ClusterServiceRoleInstanceWebuisService;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceWebuis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterServiceRoleInstanceWebuis;
+
+import java.util.Arrays;
 
 /**
- * 集群服务角色对应web ui表 
+ * 集群服务角色对应web ui表
  *
  * @author gaodayu
  * @email gaodayu2022@163.com
@@ -61,7 +61,7 @@ public class ClusterServiceRoleInstanceWebuisController {
     public Result update(@RequestBody ClusterServiceRoleInstanceWebuis clusterServiceRoleInstanceWebuis){
 
         clusterServiceRoleInstanceWebuisService.updateById(clusterServiceRoleInstanceWebuis);
-        
+
         return Result.success();
     }
 

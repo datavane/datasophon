@@ -1,18 +1,17 @@
 package com.datasophon.api.controller;
 
-import java.util.Arrays;
-
 import com.datasophon.api.service.AlertGroupService;
 import com.datasophon.api.service.FrameServiceRoleService;
+import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.AlertGroupEntity;
+import com.datasophon.dao.entity.FrameServiceRoleEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.FrameServiceRoleEntity;
-import com.datasophon.common.utils.Result;
+import java.util.Arrays;
 
 
 /**
@@ -44,6 +43,12 @@ public class FrameServiceRoleController {
         return frameServiceRoleService.getNonMasterRoleList(clusterId,serviceIds);
     }
 
+    /**
+     * 依据服务查询对应的服务角色信息
+     * @param clusterId
+     * @param alertGroupId
+     * @return
+     */
     @RequestMapping("/getServiceRoleByServiceName")
     public Result getServiceRoleByServiceName(Integer clusterId,Integer alertGroupId){
         AlertGroupEntity alertGroupEntity = alertGroupService.getById(alertGroupId);
@@ -76,7 +81,7 @@ public class FrameServiceRoleController {
     @RequestMapping("/update")
     public Result update(@RequestBody FrameServiceRoleEntity frameServiceRole){
         frameServiceRoleService.updateById(frameServiceRole);
-        
+
         return Result.success();
     }
 
