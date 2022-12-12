@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.ServiceCommandActor;
 import com.datasophon.api.master.handler.service.*;
@@ -67,7 +68,7 @@ public class ProcessUtils {
             clusterServiceInstance.setUpdateTime(new Date());
             serviceInstanceService.save(clusterServiceInstance);
             //保存服务实例配置
-            List<ServiceConfig> list = (List<ServiceConfig>) CacheUtils.get(clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceRoleInfo.getParentName() + Constants.CONFIG);
+            List<ServiceConfig> list =  ServiceConfigMap.get(clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceRoleInfo.getParentName() + Constants.CONFIG);
             String config = JSON.toJSONString(list);
             ClusterServiceInstanceConfigEntity clusterServiceInstanceConfig = new ClusterServiceInstanceConfigEntity();
             clusterServiceInstanceConfig.setClusterId(serviceRoleInfo.getClusterId());

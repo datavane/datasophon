@@ -92,21 +92,13 @@ public class ServiceInstallController {
         serviceInstallService.downloadPackage(packageName,response);
     }
 
-    /**
-     * 服务处理
-     */
-    @RequestMapping("/serviceHandle")
-    public Result serviceHandle(Integer serviceInstanceId, CommandType commandType) {
-        return serviceInstallService.serviceHandle(serviceInstanceId,commandType);
-    }
 
     /**
-     * 服务角色处理
+     * 服务部署总览
      */
-    @RequestMapping("/serviceRoleHandle")
-    public Result serviceRoleHandle(Integer serviceRoleInstanceId, CommandType commandType) {
-        return serviceInstallService.serviceRoleHandle(serviceRoleInstanceId,commandType);
+    @RequestMapping("/checkServiceDependency")
+    public Result checkServiceDependency(Integer clusterId,String services) {
+        return serviceInstallService.getServiceRoleDeployOverview(clusterId);
     }
-
 
 }
