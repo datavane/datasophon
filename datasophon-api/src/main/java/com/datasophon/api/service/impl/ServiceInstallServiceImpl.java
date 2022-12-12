@@ -12,7 +12,6 @@ import com.datasophon.api.service.strategy.ServiceRoleStrategy;
 import com.datasophon.api.service.strategy.ServiceRoleStrategyContext;
 import com.datasophon.common.model.*;
 import com.datasophon.dao.entity.*;
-import com.datasophon.api.service.*;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.enums.CommandType;
@@ -73,8 +72,6 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     @Autowired
     private ClusterServiceRoleInstanceService roleInstanceService;
 
-    @Autowired
-    private ClusterZkService clusterZkService;
 
     @Override
     public Result getServiceConfigOption(Integer clusterId, String serviceName) {

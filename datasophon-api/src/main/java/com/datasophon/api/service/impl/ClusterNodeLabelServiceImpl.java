@@ -152,6 +152,14 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
         return this.list(new QueryWrapper<ClusterNodeLabelEntity>().eq(Constants.CLUSTER_ID,clusterId));
     }
 
+    @Override
+    public void createDefaultNodeLabel(Integer clusterId) {
+        ClusterNodeLabelEntity nodeLabelEntity = new ClusterNodeLabelEntity();
+        nodeLabelEntity.setNodeLabel("default");
+        nodeLabelEntity.setClusterId(clusterId);
+        this.save(nodeLabelEntity);
+    }
+
     private boolean nodeLabelInUse(String nodeLabel) {
         List<ClusterHostEntity> list = hostService.list(new QueryWrapper<ClusterHostEntity>()
                 .eq(Constants.NODE_LABEL, nodeLabel));

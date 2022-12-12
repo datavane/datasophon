@@ -428,11 +428,11 @@
       "label": "集群名称",
       "description": "集群名称",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "nameservice1"
     },
     {
@@ -440,11 +440,11 @@
       "label": "zk地址",
       "description": "zk地址",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${zkUrls}"
     },
     {
@@ -452,11 +452,11 @@
       "label": "是否开启自动故障转移",
       "description": "是否开启自动故障转移",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "true"
     },
     {
@@ -464,11 +464,11 @@
       "label": "NameNode节点",
       "description": "NameNode节点",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "nn1,nn2"
     },
     {
@@ -476,11 +476,11 @@
       "label": "nn1的rpc通信地址",
       "description": "nn1的rpc通信地址",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${nn1}:8020"
     },
     {
@@ -488,11 +488,11 @@
       "label": "nn2的rpc通信地址",
       "description": "nn2的rpc通信地址",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${nn2}:8020"
     },
     {
@@ -500,11 +500,11 @@
       "label": "nn1的http通信地址",
       "description": "nn1的rpc通信地址",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${nn1}:9870"
     },
     {
@@ -512,23 +512,23 @@
       "label": "nn2的http通信地址",
       "description": "nn2的rpc通信地址",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${nn2}:9870"
     },
     {
       "name": "dfs.namenode.shared.edits.dir",
       "label": "NameNode元数据在JournalNode存放位置",
       "description": "NameNode元数据在JournalNode存放位置",
-      "required": false,
+      "required": true,
       "configType": "ha",
       "type": "input",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "qjournal://${journalNode1}:8485;${journalNode2}:8485;${journalNode3}:8485/nameservice1"
     },
     {
@@ -536,11 +536,11 @@
       "label": "隔离机制",
       "description": "隔离机制",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "shell(/bin/true)"
     },
     {
@@ -548,11 +548,11 @@
       "label": "隔离机制所需的ssh密钥",
       "description": "隔离机制所需的ssh密钥",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "/root/.ssh/id_rsa"
     },
     {
@@ -560,11 +560,11 @@
       "label": "journalnode存储目录",
       "description": "journalnode存储目录",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "/data/dfs/jn"
     },
     {
@@ -572,11 +572,11 @@
       "label": "开启权限检查",
       "description": "是否开启权限检查",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "switch",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": true
     },
     {
@@ -595,11 +595,11 @@
       "label": "容错实现类",
       "description": "容错实现类",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider"
     },
 

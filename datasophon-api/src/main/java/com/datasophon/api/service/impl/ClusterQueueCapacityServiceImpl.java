@@ -106,7 +106,17 @@ public class ClusterQueueCapacityServiceImpl extends ServiceImpl<ClusterQueueCap
         return Result.success();
     }
 
-
+    @Override
+    public void createDefaultQueue(Integer clusterId) {
+        ClusterQueueCapacity queueCapacity = new ClusterQueueCapacity();
+        queueCapacity.setCapacity("100");
+        queueCapacity.setClusterId(clusterId);
+        queueCapacity.setQueueName("default");
+        queueCapacity.setNodeLabel("*");
+        queueCapacity.setAclUsers("*");
+        queueCapacity.setParent("root");
+        this.save(queueCapacity);
+    }
 
 
 }

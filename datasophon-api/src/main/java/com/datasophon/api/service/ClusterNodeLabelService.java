@@ -14,4 +14,6 @@ public interface ClusterNodeLabelService extends IService<ClusterNodeLabelEntity
     Result assignNodeLabel(Integer nodeLabelId, String hostIds);
 
     List<ClusterNodeLabelEntity> queryClusterNodeLabel(Integer clusterId);
+
+    void createDefaultNodeLabel(Integer id);
 }

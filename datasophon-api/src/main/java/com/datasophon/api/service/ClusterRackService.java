@@ -23,5 +23,7 @@ public interface ClusterRackService extends IService<ClusterRack> {
     void saveRack(Integer clusterId, String rack);
 
     Result deleteRack(Integer rackId);
+
+    void createDefaultRack(Integer id);
 }
 

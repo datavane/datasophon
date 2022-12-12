@@ -18,5 +18,7 @@ public interface ClusterQueueCapacityService extends IService<ClusterQueueCapaci
 
 
     Result refreshToYarn(Integer clusterId) throws Exception;
+
+    void createDefaultQueue(Integer id);
 }
 

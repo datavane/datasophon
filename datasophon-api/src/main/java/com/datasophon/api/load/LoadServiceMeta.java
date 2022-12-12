@@ -101,21 +101,21 @@ public class LoadServiceMeta implements ApplicationRunner {
 
                     buildConfigFileMap(serviceInfo, map, configFileMap);
 
-                    PackageUtils.putServicePackageName(frameCode,serviceName,serviceInfo.getDecompressPackageName());
+                    PackageUtils.putServicePackageName(frameCode, serviceName, serviceInfo.getDecompressPackageName());
 
-                    if(HDFS.equals(serviceName)){
-                        putHadoopHomeToVariable(globalVariables,serviceInfo.getDecompressPackageName());
+                    if (HDFS.equals(serviceName)) {
+                        putHadoopHomeToVariable(globalVariables, serviceInfo.getDecompressPackageName());
                     }
                     //save service and service config
                     FrameServiceEntity serviceEntity = saveFrameService(frameCode, frameInfo, serviceName, serviceDdl, serviceInfo, serviceInfoMd5, allParameters, configFileMap);
                     //save frame service role
-                    saveFrameServiceRole(jmxMap, frameCode, serviceName, serviceInfo, serviceEntity);
+                    saveFrameServiceRole(frameCode, serviceName, serviceInfo, serviceEntity);
                 }
             }
         }
     }
 
-    private void saveFrameServiceRole(HashMap<String, String> jmxMap, String frameCode, String serviceName, ServiceInfo serviceInfo, FrameServiceEntity serviceEntity) {
+    private void saveFrameServiceRole(String frameCode, String serviceName, ServiceInfo serviceInfo, FrameServiceEntity serviceEntity) {
         List<ServiceRoleInfo> serviceRoles = serviceInfo.getRoles();
 
         for (ServiceRoleInfo serviceRole : serviceRoles) {
@@ -196,8 +196,8 @@ public class LoadServiceMeta implements ApplicationRunner {
         return frameInfo;
     }
 
-    private void putHadoopHomeToVariable(HashMap<String, String> globalVariables,String packageName) {
-        globalVariables.put("${HADOOP_HOME}",Constants.INSTALL_PATH + Constants.SLASH + packageName);
+    private void putHadoopHomeToVariable(HashMap<String, String> globalVariables, String packageName) {
+        globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + Constants.SLASH + packageName);
     }
 
     private void loadGlobalVariables(HashMap<String, String> globalVariables) throws UnknownHostException {
@@ -210,7 +210,7 @@ public class LoadServiceMeta implements ApplicationRunner {
                 }
                 globalVariables.put("${apiHost}", InetAddress.getLocalHost().getHostName());
                 globalVariables.put("${apiPort}", configBean.getServerPort());
-                globalVariables.put("${INSTALL_PATH}",Constants.INSTALL_PATH);
+                globalVariables.put("${INSTALL_PATH}", Constants.INSTALL_PATH);
                 CacheUtils.put("globalVariables" + Constants.UNDERLINE + cluster.getId(), globalVariables);
                 ProcessUtils.createServiceActor(cluster);
             }

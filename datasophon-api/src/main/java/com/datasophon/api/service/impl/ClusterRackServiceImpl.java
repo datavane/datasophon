@@ -48,6 +48,14 @@ public class ClusterRackServiceImpl extends ServiceImpl<ClusterRackMapper, Clust
         return Result.success();
     }
 
+    @Override
+    public void createDefaultRack(Integer clusterId) {
+        ClusterRack clusterRack = new ClusterRack();
+        clusterRack.setRack("default");
+        clusterRack.setClusterId(clusterId);
+        this.save(clusterRack);
+    }
+
     private boolean rackInUse(ClusterRack clusterRack) {
         List<ClusterHostEntity> list = hostService.getClusterHostByRack(clusterRack.getClusterId(),clusterRack.getRack());
         if(list.size() > 0){

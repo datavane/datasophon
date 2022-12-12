@@ -21,21 +21,14 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
 
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
-        FrameServiceService frameService = SpringTool.getApplicationContext().getBean(FrameServiceService.class);
-        ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
 
-        FrameServiceEntity frameServiceEntity = frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), "HDFS");
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
-        if (hosts.size() == 1) {
-            ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${fs.defaultFS}", hosts.get(0) + ":8020");
-            updateServiceConfigToHA(frameService, frameServiceEntity, false, true);
-        } else {
-            //查询hdfs配置，更改高可用配置为require : true, hidden : false
-            ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${nn1}", hosts.get(0));
-            ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${nn2}", hosts.get(1));
-            ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${fs.defaultFS}", "nameservice1");
-            updateServiceConfigToHA(frameService, frameServiceEntity, true, false);
-        }
+
+        ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${nn1}", hosts.get(0));
+        ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${nn2}", hosts.get(1));
+        ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${fs.defaultFS}", "nameservice1");
+
+
     }
 
     @Override
@@ -61,17 +54,4 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
     }
 
 
-    private void updateServiceConfigToHA(FrameServiceService frameService, FrameServiceEntity frameServiceEntity, boolean b, boolean b2) {
-        String serviceConfig = frameServiceEntity.getServiceConfig();
-        List<ServiceConfig> serviceConfigs = JSONArray.parseArray(serviceConfig, ServiceConfig.class);
-        for (ServiceConfig config : serviceConfigs) {
-            if ("ha".equals(config.getConfigType())) {
-                config.setRequired(b);
-                config.setHidden(b2);
-            }
-        }
-        String newConfigs = JSONArray.toJSONString(serviceConfigs);
-        frameServiceEntity.setServiceConfig(newConfigs);
-        frameService.updateById(frameServiceEntity);
-    }
 }
