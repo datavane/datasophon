@@ -16,7 +16,7 @@ import com.datasophon.common.utils.Result;
 
 
 /**
- * 集群主机表 
+ * 集群主机表
  *
  * @author gaodayu
  * @email gaodayu2022@163.com
@@ -32,9 +32,9 @@ public class ClusterHostController {
      * 查询集群所有主机
      */
     @RequestMapping("/all")
-    public Result all(Integer clusterId){
+    public Result all(Integer clusterId) {
         List<ClusterHostEntity> list = clusterHostService.list(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID, clusterId)
-                .eq(Constants.MANAGED,1)
+                .eq(Constants.MANAGED, 1)
                 .orderByAsc(Constants.HOSTNAME));
         return Result.success(list);
     }
@@ -43,28 +43,26 @@ public class ClusterHostController {
      * 查询集群所有主机
      */
     @RequestMapping("/list")
-    public Result list(Integer clusterId,String hostname,String cpuArchitecture,Integer hostState,String orderField,String orderType, Integer page,Integer pageSize){
-        return clusterHostService.listByPage(clusterId,hostname,cpuArchitecture,hostState,orderField,orderType,page,pageSize);
+    public Result list(Integer clusterId, String hostname, String cpuArchitecture, Integer hostState, String orderField, String orderType, Integer page, Integer pageSize) {
+        return clusterHostService.listByPage(clusterId, hostname, cpuArchitecture, hostState, orderField, orderType, page, pageSize);
 
     }
 
     @RequestMapping("/getRoleListByHostname")
-    public Result getRoleListByHostname(Integer clusterId,String hostname){
-        return clusterHostService.getRoleListByHostname(clusterId,hostname);
+    public Result getRoleListByHostname(Integer clusterId, String hostname) {
+        return clusterHostService.getRoleListByHostname(clusterId, hostname);
 
     }
 
     @RequestMapping("/getRack")
-    public Result getRack(Integer clusterId){
+    public Result getRack(Integer clusterId) {
         return clusterHostService.getRack(clusterId);
 
     }
 
-
-
     @RequestMapping("/assignRack")
-    public Result assignRack(Integer clusterId , String rack,String hostIds) {
-        return clusterHostService.assignRack(clusterId,rack,hostIds);
+    public Result assignRack(Integer clusterId, String rack, String hostIds) {
+        return clusterHostService.assignRack(clusterId, rack, hostIds);
 
     }
 
@@ -73,7 +71,7 @@ public class ClusterHostController {
      * 信息
      */
     @RequestMapping("/info/{id}")
-    public Result info(@PathVariable("id") Integer id){
+    public Result info(@PathVariable("id") Integer id) {
         ClusterHostEntity clusterHost = clusterHostService.getById(id);
 
         return Result.success().put(Constants.DATA, clusterHost);
@@ -83,7 +81,7 @@ public class ClusterHostController {
      * 保存
      */
     @RequestMapping("/save")
-    public Result save(@RequestBody ClusterHostEntity clusterHost){
+    public Result save(@RequestBody ClusterHostEntity clusterHost) {
         clusterHostService.save(clusterHost);
 
         return Result.success();
@@ -93,9 +91,9 @@ public class ClusterHostController {
      * 修改
      */
     @RequestMapping("/update")
-    public Result update(@RequestBody ClusterHostEntity clusterHost){
+    public Result update(@RequestBody ClusterHostEntity clusterHost) {
         clusterHostService.updateById(clusterHost);
-        
+
         return Result.success();
     }
 
@@ -103,7 +101,7 @@ public class ClusterHostController {
      * 删除
      */
     @RequestMapping("/delete")
-    public Result delete(Integer hostId){
+    public Result delete(Integer hostId) {
 
         return clusterHostService.deleteHost(hostId);
 
