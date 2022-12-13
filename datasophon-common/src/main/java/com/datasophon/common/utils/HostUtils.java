@@ -1,16 +1,15 @@
 package com.datasophon.common.utils;
 
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileReader;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
+import com.google.common.net.InetAddresses;
 
+import java.util.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -18,58 +17,104 @@ import java.util.stream.Collectors;
  *
  * @author gaodayu
  */
-public final class HostUtils {
+public enum HostUtils {;
+
     private static final String HOSTS_PATH = "/etc/hosts";
 
-    private static final String ENDL = "\r?\n";
+    private static final String ENDL = "\r*\n";
 
-    private static final String ONE_OR_MORE_SPACE = "\\s+";
-    private static final String COMMENT_OR_BLANK_LINE = "(^#.*)|(\\s*)";
-    private static final String COMMENT = "#.*";
-    private static final String TABS = "\t";
+    public static final Pattern HOST_NAME_STR = Pattern.compile("[0-9a-zA-Z-.]{1,64}");
+
+    public static boolean checkIP(String ipStr) {
+        return InetAddresses.isInetAddress(ipStr);
+    }
+
+    private static void checkIPThrow(String ipStr, Map<String, String> ipHost) {
+        if (!checkIP(ipStr)) {
+            throw new RuntimeException("Invalid IP in file /etc/hosts, IP：" + ipStr);
+        }
+        if (ipHost.containsKey(ipStr)) {
+            throw new RuntimeException("Duplicate ip in file /etc/hosts, IP：" + ipStr);
+        }
+    }
+
+    private static void checkLine(int splitLength, String line) {
+        if (splitLength < 2) {
+            throw new RuntimeException("Wrong config in file /etc/hosts:" + line);
+        }
+    }
+
+    public static boolean checkHostname(String hostname) {
+        if (!HOST_NAME_STR.matcher(hostname).matches()) {
+            return false;
+        }
+        return !hostname.startsWith("-") && !hostname.endsWith("-");
+    }
+
+    private static void validHostname(String hostname) {
+        if (!checkHostname(hostname)) {
+            throw new RuntimeException("Invalid hostname in file /etc/hosts, hostname：" + hostname);
+        }
+    }
+
+    private static void checkHostnameThrow(String hostname, HashMap<String, String> hostIp) {
+        validHostname(hostname);
+        if (hostIp.containsKey(hostname)) {
+            throw new RuntimeException("Duplicate hostname in file /etc/hosts, hostname:" + hostname);
+        }
+    }
+
+    private static List<String> parse2List() {
+        if (!FileUtil.exist(HOSTS_PATH)) {
+            throw new RuntimeException("File /etc/hosts not found：" + HOSTS_PATH);
+        }
+
+        List<String> lines = Arrays.stream(new FileReader(HOSTS_PATH).readString().split(ENDL))
+                .filter(it -> !it.trim().matches("(^#.*)|(\\s*)"))
+                .map(it -> it.replaceAll("#.*", "").trim().replaceAll("\\s+", "\t"))
+                .collect(Collectors.toList());
+        return lines;
+    }
 
     public static void read() {
         List<String> ipHostNameList = parse2List();
 
         HashMap<String, String> ipHost = new HashMap<>();
         HashMap<String, String> hostIp = new HashMap<>();
-        for (String str : ipHostNameList) {
-            String[] split = str.split(ONE_OR_MORE_SPACE);
+        for (String line : ipHostNameList) {
+            String[] split = line.split("\\s+");
             int splitLength = split.length;
-            if (splitLength < 2) {
-                continue;
-            }
-            ipHost.put(split[0], split[splitLength - 1]);
-            hostIp.put(split[splitLength - 1], split[0]);
-        }
+            checkLine(splitLength, line);
 
+            String ipStr = split[0];
+            checkIPThrow(ipStr, ipHost);
+            String hostname = split[splitLength - 1];
+            checkHostnameThrow(hostname, hostIp);
+
+            ipHost.put(ipStr, hostname);
+            hostIp.put(hostname, ipStr);
+        }
         CacheUtils.put(Constants.IP_HOST, ipHost);
         CacheUtils.put(Constants.HOST_IP, hostIp);
     }
 
     public static String findIp(String hostname) {
-        List<String> ipHostNameList = parse2List();
+        validHostname(hostname);
 
         String ip = "";
-        for (String str : ipHostNameList) {
-            String[] split = str.split(ONE_OR_MORE_SPACE);
-            if (split.length < 2) {
-                continue;
-            }
-            if (Objects.equals(split[split.length - 1], hostname)) {
+        List<String> ipHostNameList = parse2List();
+        for (String line : ipHostNameList) {
+            String[] split = line.split("\\s+");
+            int splitLength = split.length;
+            checkLine(splitLength, line);
+
+            if(Objects.equals(split[split.length - 1], hostname)) {
                 ip = split[0];
                 break;
             }
         }
-        return ip;
-    }
 
-    private static List<String> parse2List() {
-        List<String> list = Arrays.stream(new FileReader(HOSTS_PATH).readString().split(ENDL))
-                .filter(it -> !it.trim().matches(COMMENT_OR_BLANK_LINE))
-                .map(it -> it.replaceAll(COMMENT, "").trim().replaceAll(ONE_OR_MORE_SPACE, TABS))
-                .collect(Collectors.toList());
-        return list;
+        return ip;
     }
 
 }

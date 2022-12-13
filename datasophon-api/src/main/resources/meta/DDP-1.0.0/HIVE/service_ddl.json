@@ -12,7 +12,7 @@
       "name": "HiveServer2",
       "label": "HiveServer2",
       "roleType": "master",
-      "cardinality": "1",
+      "cardinality": "1+",
       "logFile": "logs/hiveserver2.out",
       "jmxPort": 11000,
       "startRunner": {
@@ -250,6 +250,74 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": "false"
+    },
+    {
+      "name": "hive.server2.support.dynamic.service.discovery",
+      "label": "开启HiveServer2动态发现",
+      "configType": "ha",
+      "description": "",
+      "required": false,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": true
+    },
+    {
+      "name": "hive.server2.zookeeper.namespace",
+      "label": "HiveServer2在zk命名空间",
+      "configType": "ha",
+      "description": "",
+      "required": false,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "hiveserver2"
+    },{
+      "name": "hive.zookeeper.quorum",
+      "label": "zk地址",
+      "configType": "ha",
+      "description": "",
+      "required": false,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "${zkUrls}"
+    },{
+      "name": "hive.zookeeper.client.port",
+      "label": "zk端口",
+      "configType": "ha",
+      "description": "",
+      "required": false,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "2181"
+    },{
+      "name": "hive.server2.thrift.bind.host",
+      "label": "hive.server2.thrift.bind.host",
+      "configType": "ha",
+      "description": "",
+      "required": false,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "0.0.0.0"
+    },{
+      "name": "hive.server2.thrift.port",
+      "label": "hiveserver2 thrift端口",
+      "configType": "ha",
+      "description": "",
+      "required": false,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "10000"
     },
     {
       "name": "hiveHeapSize",

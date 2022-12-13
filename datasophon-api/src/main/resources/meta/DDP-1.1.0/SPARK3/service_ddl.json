@@ -61,7 +61,7 @@
         "timeout": "60",
         "program": "sbin/start-slave.sh",
         "args": [
-          "spark:/015:7077,ddp1016:7077"
+          "spark://ddp1:7077,ddp2:7077"
         ]
       },
       "stopRunner": {

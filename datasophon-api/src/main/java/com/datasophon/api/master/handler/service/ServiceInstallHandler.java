@@ -24,6 +24,7 @@ import scala.concurrent.duration.Duration;
 
 import java.nio.charset.Charset;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class ServiceInstallHandler extends ServiceHandler{
     private static final Logger logger = LoggerFactory.getLogger(ServiceInstallHandler.class);
@@ -55,7 +56,7 @@ public class ServiceInstallHandler extends ServiceHandler{
             installServiceRoleCommand.setPackageMd5(armMd5);
         }
         ActorSelection actorSelection = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + serviceRoleInfo.getHostname() + ":2552/user/worker/installServiceActor");
-        Timeout timeout = new Timeout(Duration.create(180, "seconds"));
+        Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
         Future<Object> future = Patterns.ask(actorSelection, installServiceRoleCommand, timeout);
         ExecResult installResult = (ExecResult) Await.result(future, timeout.duration());
         if(Objects.nonNull(installResult) && installResult.getExecResult()){

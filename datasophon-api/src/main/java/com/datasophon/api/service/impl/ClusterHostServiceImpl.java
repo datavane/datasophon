@@ -1,6 +1,9 @@
 package com.datasophon.api.service.impl;
 
+import akka.actor.ActorRef;
 import com.alibaba.fastjson.JSONObject;
+import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.master.RackActor;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.common.Constants;
@@ -10,13 +13,12 @@ import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.enums.RoleType;
 import com.datasophon.dao.enums.ServiceRoleState;
+import com.datasophon.common.command.GenerateRackPropCommand;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -26,9 +28,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.dao.mapper.ClusterHostMapper;
 import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.api.service.ClusterHostService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("clusterHostService")
+@Transactional
 public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, ClusterHostEntity> implements ClusterHostService {
 
     @Autowired
@@ -119,5 +123,42 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     @Override
     public void deleteHostByClusterId(Integer clusterId) {
         this.remove(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID,clusterId));
+    }
+
+    @Override
+    public void updateBatchNodeLabel(List<String> hostIds, String nodeLabel) {
+        List<ClusterHostEntity> list = this.list(new QueryWrapper<ClusterHostEntity>().in(Constants.ID, hostIds));
+        for (ClusterHostEntity clusterHostEntity : list) {
+            clusterHostEntity.setNodeLabel(nodeLabel);
+        }
+        this.updateBatchById(list);
+    }
+
+    @Override
+    public List<ClusterHostEntity> getHostListByIds(List<String> ids) {
+        return this.list(new QueryWrapper<ClusterHostEntity>().in(Constants.ID,ids));
+    }
+
+    @Override
+    public Result assignRack(Integer clusterId, String rack, String hostIds) {
+        List<String> ids = Arrays.asList(hostIds.split(","));
+        List<ClusterHostEntity> list = this.list(new QueryWrapper<ClusterHostEntity>().in(Constants.ID, ids));
+        for (ClusterHostEntity clusterHostEntity : list) {
+            clusterHostEntity.setRack(rack);
+        }
+        this.updateBatchById(list);
+        //tell rack actor
+        GenerateRackPropCommand command = new GenerateRackPropCommand();
+        command.setClusterId(clusterId);
+        ActorRef rackActor = ActorUtils.getLocalActor(RackActor.class, "rackActor");
+        rackActor.tell(command,ActorRef.noSender());
+        return Result.success();
+    }
+
+    @Override
+    public List<ClusterHostEntity> getClusterHostByRack(Integer clusterId ,String rack) {
+        return this.list(new QueryWrapper<ClusterHostEntity>()
+                .eq(Constants.CLUSTER_ID,clusterId)
+                .eq(Constants.RACK, rack));
     }
 }

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 
+import java.util.List;
+
 /**
  * 
  *
@@ -19,5 +21,7 @@ public interface ClusterServiceRoleGroupConfigService extends IService<ClusterSe
     ClusterServiceRoleGroupConfig getConfigByRoleGroupIdAndVersion(Integer roleGroupId, Integer version);
 
     void removeAllByRoleGroupId(Integer roleGroupId);
+
+    List<ClusterServiceRoleGroupConfig> listRoleGroupConfigsByRoleGroupIds(List<Integer> roleGroupIds);
 }
 

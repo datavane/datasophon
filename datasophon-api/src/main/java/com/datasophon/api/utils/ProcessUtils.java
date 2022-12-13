@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.ServiceCommandActor;
 import com.datasophon.api.master.handler.service.*;
@@ -67,7 +68,7 @@ public class ProcessUtils {
             clusterServiceInstance.setUpdateTime(new Date());
             serviceInstanceService.save(clusterServiceInstance);
             //保存服务实例配置
-            List<ServiceConfig> list = (List<ServiceConfig>) CacheUtils.get(clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceRoleInfo.getParentName() + Constants.CONFIG);
+            List<ServiceConfig> list =  ServiceConfigMap.get(clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceRoleInfo.getParentName() + Constants.CONFIG);
             String config = JSON.toJSONString(list);
             ClusterServiceInstanceConfigEntity clusterServiceInstanceConfig = new ClusterServiceInstanceConfigEntity();
             clusterServiceInstanceConfig.setClusterId(serviceRoleInfo.getClusterId());
@@ -129,6 +130,7 @@ public class ProcessUtils {
                     webuisService.save(webuis);
                     globalVariables.remove("${host}");
                 }
+
             }
         }
 
@@ -331,7 +333,7 @@ public class ProcessUtils {
     public static void generateClusterVariable(Map<String, String> globalVariables, Integer clusterId, String variableName, String value) {
         ClusterVariableService variableService = SpringTool.getApplicationContext().getBean(ClusterVariableService.class);
         ClusterVariable clusterVariable = variableService.getVariableByVariableName(variableName, clusterId);
-        if (globalVariables.containsKey(variableName) && Objects.nonNull(clusterVariable) && !value.equals(clusterVariable.getVariableValue())) {
+        if (Objects.nonNull(clusterVariable)) {
             logger.info("update variable {} value {} to {}", variableName, clusterVariable.getVariableValue(), value);
             clusterVariable.setVariableValue(value);
             variableService.updateById(clusterVariable);
@@ -355,7 +357,7 @@ public class ProcessUtils {
         for (ClusterServiceRoleInstanceEntity namenode : namenodes) {
             ActorSelection actorSelection = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + namenode.getHostname() + ":2552/user/worker/fileOperateActor");
             ActorSelection execCmdActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + namenode.getHostname() + ":2552/user/worker/executeCmdActor");
-            Timeout timeout = new Timeout(Duration.create(180, "seconds"));
+            Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
             FileOperateCommand fileOperateCommand = new FileOperateCommand();
             fileOperateCommand.setLines(list);
             fileOperateCommand.setPath(Constants.INSTALL_PATH + "/hadoop-3.3.3/etc/hadoop/" + type);
@@ -451,6 +453,22 @@ public class ProcessUtils {
         }
     }
 
+    public static ServiceConfig createServiceConfig(String configName,Object configValue,String type) {
+        ServiceConfig serviceConfig = new ServiceConfig();
+        serviceConfig.setName(configName);
+        serviceConfig.setValue(configValue);
+        serviceConfig.setRequired(true);
+        serviceConfig.setHidden(false);
+        serviceConfig.setType("input");
+        return serviceConfig;
+    }
+
+    public static ClusterInfoEntity getClusterInfo(Integer clusterId) {
+        ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
+        ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
+        return clusterInfo;
+    }
+
     /**
      * 并集：左边集合与右边集合合并
      *
@@ -482,5 +500,11 @@ public class ProcessUtils {
             }
         }
         return left;
+    }
+
+    public static void syncUserGroupToHosts(List<ClusterHostEntity> hostList, String groupName, String groupadd) {
+    }
+
+    public static void syncUserToHosts(List<ClusterHostEntity> hostList, String username, String groupName, String otherGroup, String useradd) {
     }
 }

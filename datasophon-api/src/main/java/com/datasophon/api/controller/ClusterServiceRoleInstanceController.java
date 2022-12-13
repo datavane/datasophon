@@ -84,8 +84,7 @@ public class ClusterServiceRoleInstanceController {
     @RequestMapping("/delete")
     public Result delete(String serviceRoleInstancesIds) {
         List<String> idList = Arrays.asList(serviceRoleInstancesIds.split(","));
-        clusterServiceRoleInstanceService.deleteServiceRole(idList);
-        return Result.success();
+        return clusterServiceRoleInstanceService.deleteServiceRole(idList);
     }
 
 }

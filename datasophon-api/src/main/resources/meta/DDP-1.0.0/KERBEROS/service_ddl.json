@@ -1,0 +1,74 @@
+{
+  "name": "KERBEROS",
+  "label": "Kerberos",
+  "description": "计算机网络认证协议",
+  "version": "1.15.1",
+  "sortNum": 4,
+  "dependencies":[],
+  "packageName": "kerberos-1.15.1.tar.gz",
+  "decompressPackageName": "kerberos-1.15.1",
+  "roles": [
+    {
+      "name": "Krb5Server",
+      "label": "Krb5Server",
+      "roleType": "master",
+      "cardinality": "1+",
+      "logFile": "/var/log/krb5kdc.log",
+      "startRunner": {
+        "timeout": "60",
+        "program": "kerberos.sh",
+        "args": [
+          "start",
+          "krb5server"
+        ]
+      },
+      "stopRunner": {
+        "timeout": "600",
+        "program": "kerberos.sh",
+        "args": [
+          "stop",
+          "krb5server"
+        ]
+      },
+      "statusRunner": {
+        "timeout": "60",
+        "program": "kerberos.sh",
+        "args": [
+          "status",
+          "krb5server"
+        ]
+      },
+      "restartRunner": {
+        "timeout": "60",
+        "program": "control.sh",
+        "args": [
+        ]
+      }
+    }
+  ],
+  "configWriter": {
+    "generators": [
+      {
+        "filename": "krb5.conf",
+        "configFormat": "properties",
+        "outputDirectory": "config",
+        "includeParams": [
+          "log.dirs"
+        ]
+      }
+    ]
+  },
+  "parameters": [
+    {
+      "name": "log.dirs",
+      "label": "kafka数据存储目录",
+      "description": "",
+      "required": true,
+      "type": "multiple",
+      "value": ["/data/kafka-logs"],
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": ""
+    }
+  ]
+}

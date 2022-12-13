@@ -7,6 +7,7 @@ import akka.pattern.Patterns;
 import akka.util.Timeout;
 import cn.hutool.http.HttpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.load.ServiceRoleJmxMap;
 import com.datasophon.api.service.ClusterServiceInstanceService;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class PrometheusActor extends UntypedActor {
     private static final Logger logger = LoggerFactory.getLogger(PrometheusActor.class);
@@ -53,8 +55,7 @@ public class PrometheusActor extends UntypedActor {
 
             logger.info("start to genetate {} prometheus config",serviceInstance.getServiceName());
             HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
-            String jmxKey = command.getClusterFrame() + Constants.UNDERLINE + Constants.SERVICE_ROLE_JMX_MAP;
-            HashMap<String, String> jmxMap = (HashMap<String, String>) CacheUtils.get(jmxKey);
+
             HashMap<String, List<String>> roleMap = new HashMap<>();
             for (ClusterServiceRoleInstanceEntity roleInstanceEntity : roleInstanceList) {
                 if (roleMap.containsKey(roleInstanceEntity.getServiceRoleName())) {
@@ -75,10 +76,10 @@ public class PrometheusActor extends UntypedActor {
                 List<String> value = roleEntry.getValue();
                 ArrayList<ServiceConfig> serviceConfigs = new ArrayList<>();
                 for (String hostname : value) {
-                    if (jmxMap.containsKey(roleEntry.getKey())) {
+                    if (ServiceRoleJmxMap.exists(roleEntry.getKey())) {
                         ServiceConfig serviceConfig = new ServiceConfig();
                         serviceConfig.setName(roleEntry.getKey() + Constants.UNDERLINE + hostname);
-                        serviceConfig.setValue(hostname + ":" + jmxMap.get(roleEntry.getKey()));
+                        serviceConfig.setValue(hostname + ":" + ServiceRoleJmxMap.get(roleEntry.getKey()));
                         serviceConfig.setRequired(true);
                         serviceConfigs.add(serviceConfig);
                     }
@@ -155,7 +156,7 @@ public class PrometheusActor extends UntypedActor {
             ClusterServiceRoleInstanceEntity prometheusInstance = roleInstanceService.getOneServiceRole("Prometheus", null, command.getClusterId());
 
             ActorSelection alertConfigActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + prometheusInstance.getHostname() + ":2552/user/worker/alertConfigActor");
-            Timeout timeout = new Timeout(Duration.create(180, "seconds"));
+            Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
             Future<Object> configureFuture = Patterns.ask(alertConfigActor, command, timeout);
             ExecResult configResult = (ExecResult) Await.result(configureFuture, timeout.duration());
             if(configResult.getExecResult()){
@@ -173,16 +174,15 @@ public class PrometheusActor extends UntypedActor {
 
             logger.info("start to genetate {} prometheus config",serviceInstance.getServiceName());
             HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
-            String jmxKey = command.getClusterFrame() + Constants.UNDERLINE + Constants.SERVICE_ROLE_JMX_MAP;
-            HashMap<String, String> jmxMap = (HashMap<String, String>) CacheUtils.get(jmxKey);
+
 
             ArrayList<String> feList = new ArrayList<>();
             ArrayList<String> beList = new ArrayList<>();
             for (ClusterServiceRoleInstanceEntity roleInstanceEntity : roleInstanceList) {
                 if ("FE".equals(roleInstanceEntity.getServiceRoleName())) {
-                    feList.add(roleInstanceEntity.getHostname() + ":" + jmxMap.get(roleInstanceEntity.getServiceRoleName()));
+                    feList.add(roleInstanceEntity.getHostname() + ":" + ServiceRoleJmxMap.get(roleInstanceEntity.getServiceRoleName()));
                 } else {
-                    beList.add(roleInstanceEntity.getHostname() + ":" + jmxMap.get(roleInstanceEntity.getServiceRoleName()));
+                    beList.add(roleInstanceEntity.getHostname() + ":" + ServiceRoleJmxMap.get(roleInstanceEntity.getServiceRoleName()));
                 }
             }
             ArrayList<ServiceConfig> serviceConfigs = new ArrayList<>();

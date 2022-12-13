@@ -55,6 +55,11 @@ public class RangerAdminHandlerStrategy implements ServiceRoleStrategy {
         }
     }
 
+    @Override
+    public void getConfig(Integer clusterId, List<ServiceConfig> list) {
+
+    }
+
     private void enableRangerPlugin(Integer clusterId, String serviceName, String serviceRoleName) {
         ClusterServiceInstanceService serviceInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceInstanceService.class);
         ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);

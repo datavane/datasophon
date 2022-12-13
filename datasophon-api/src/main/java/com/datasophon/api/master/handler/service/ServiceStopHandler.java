@@ -13,6 +13,7 @@ import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class ServiceStopHandler extends ServiceHandler{
     @Override
@@ -32,7 +33,7 @@ public class ServiceStopHandler extends ServiceHandler{
             return execResult;
         }
         ActorSelection stopActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + serviceRoleInfo.getHostname() + ":2552/user/worker/stopServiceActor");
-        Timeout timeout = new Timeout(Duration.create(180, "seconds"));
+        Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
         Future<Object> startFuture = Patterns.ask(stopActor, serviceRoleOperateCommand, timeout);
         ExecResult execResult = (ExecResult) Await.result(startFuture, timeout.duration());
         if (Objects.nonNull(execResult) && execResult.getExecResult()) {

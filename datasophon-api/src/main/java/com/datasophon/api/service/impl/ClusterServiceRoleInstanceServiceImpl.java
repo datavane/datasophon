@@ -1,13 +1,11 @@
 package com.datasophon.api.service.impl;
 
 import akka.actor.ActorSelection;
-import akka.actor.ActorSystem;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.*;
 import com.datasophon.dao.entity.*;
-import com.datasophon.api.service.*;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
@@ -26,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -139,7 +138,7 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
         logger.info("start to get {} log from {}", serviceRole.getServiceRoleName(), roleInstance.getHostname());
 
         ActorSelection configActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + roleInstance.getHostname() + ":2552/user/worker/logActor");
-        Timeout timeout = new Timeout(Duration.create(60, "seconds"));
+        Timeout timeout = new Timeout(Duration.create(60, TimeUnit.SECONDS));
         Future<Object> logFuture = Patterns.ask(configActor, command, timeout);
         ExecResult logResult = (ExecResult) Await.result(logFuture, timeout.duration());
         if (Objects.nonNull(logResult) && logResult.getExecResult()) {
@@ -155,19 +154,20 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
     }
 
     @Override
-    public void deleteServiceRole(List<String> idList) {
-        for (String idStr : idList) {
-            int id = Integer.parseInt(idStr);
-            ClusterServiceRoleInstanceEntity roleInstanceEntity = this.getById(id);
-            if (roleInstanceEntity.getServiceRoleState().equals(ServiceRoleState.RUNNING)) {
-                continue;
+    public Result deleteServiceRole(List<String> idList) {
+        Collection<ClusterServiceRoleInstanceEntity> list = this.listByIds(idList);
+        // is there a running instance
+        boolean flag = false;
+        for (ClusterServiceRoleInstanceEntity instance : list) {
+            if (instance.getServiceRoleState() == ServiceRoleState.RUNNING) {
+                flag = true;
             } else {
                 //删除对应的告警
-                alertHistoryService.removeAlertByRoleInstanceId(id);
-                this.removeById(id);
+                alertHistoryService.removeAlertByRoleInstanceId(instance.getId());
+                this.removeById(instance.getId());
             }
         }
-
+        return flag ? Result.error("There are running instances and ignore it when delete.") : Result.success();
     }
 
     @Override

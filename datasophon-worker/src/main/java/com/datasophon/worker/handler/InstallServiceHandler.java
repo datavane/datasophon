@@ -49,8 +49,9 @@ public class InstallServiceHandler {
                         Console.log("开始下载。。。。");
                     }
 
+
                     @Override
-                    public void progress(long progressSize) {
+                    public void progress(long progressSize, long l1) {
                         Console.log("已下载：{}", FileUtil.readableFileSize(progressSize));
                     }
 

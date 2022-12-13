@@ -9,4 +9,10 @@
         from t_ddh_cluster_host
         where hostname = #{hostname}
     </select>
+
+    <!--    updateBatchNodeLabel-->
+    <update id="updateBatchNodeLabel">
+        update t_ddh_cluster_host set node_label = #{nodeLabel}
+        where id in concat('(', #{hostIds},')')
+    </update>
 </mapper>

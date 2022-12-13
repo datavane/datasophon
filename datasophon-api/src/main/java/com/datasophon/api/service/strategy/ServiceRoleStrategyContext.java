@@ -12,6 +12,7 @@ public class ServiceRoleStrategyContext {
         map.put("NameNode",new NameNodeHandlerStrategy());
         map.put("ResourceManager",new RMHandlerStrategy());
         map.put("HiveMetaStore",new HiveMetaStroreHandlerStrategy());
+        map.put("HiveServer2",new HiveServer2HandlerStrategy());
         map.put("Grafana",new GrafanaHandlerStrategy());
         map.put("ZkServer",new ZkServerHandlerStrategy());
         map.put("HistoryServer",new HistoryServerHandlerStrategy());
@@ -23,6 +24,9 @@ public class ServiceRoleStrategyContext {
         map.put("ElasticSearch",new ElasticSearchHandlerStrategy());
         map.put("RANGER",new RangerAdminHandlerStrategy());
         map.put("ZOOKEEPER",new ZkServerHandlerStrategy());
+        map.put("YARN",new RMHandlerStrategy());
+        map.put("HDFS",new NameNodeHandlerStrategy());
+        map.put("HIVE",new HiveServer2HandlerStrategy());
     }
 
     public static ServiceRoleStrategy getServiceRoleHandler(String type){

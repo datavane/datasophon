@@ -12,14 +12,14 @@
   <img src="https://img.shields.io/github/forks/gaodayu168/datasophon">
   <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/badge/license-Apache%202-4EB1BA.svg"></a>
   <p align="center">
-    <a href="https://gaodayu168.github.io/datasophon-website/">官网</a> |
+    <a href="https://datasophon.github.io/datasophon-website/">官网</a> |
     <a href="https://github.com/gaodayu168/datasophon/blob/main/README.md">English</a>
   </p>
 </p>
 
 # 愿景
 
-致力于快速实现部署、管理、监控以及自动化运维大数据云原生平台，帮助您快速构建起稳定、高效、可弹性伸缩的大数据云原生平台。
+致力于快速实现部署、管理、监控以及自动化运维大数据服务组件和节点的能力，帮助您快速构建起稳定，高效的大数据集群服务。
 
 # DataSophon是什么
 

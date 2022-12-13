@@ -4,12 +4,14 @@ import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.load.ServiceConfigMap;
+import com.datasophon.api.load.ServiceInfoMap;
+import com.datasophon.api.load.ServiceRoleMap;
 import com.datasophon.api.service.*;
 import com.datasophon.api.service.strategy.ServiceRoleStrategy;
 import com.datasophon.api.service.strategy.ServiceRoleStrategyContext;
 import com.datasophon.common.model.*;
 import com.datasophon.dao.entity.*;
-import com.datasophon.api.service.*;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.enums.CommandType;
@@ -70,8 +72,6 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     @Autowired
     private ClusterServiceRoleInstanceService roleInstanceService;
 
-    @Autowired
-    private ClusterZkService clusterZkService;
 
     @Override
     public Result getServiceConfigOption(Integer clusterId, String serviceName) {
@@ -93,19 +93,19 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
 
             list = JSONArray.parseArray(serviceConfig, ServiceConfig.class);
         }
-        if ("zookeeper".equals(serviceName.toLowerCase())) {
-            ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceName);
-            if (Objects.nonNull(serviceRoleHandler)) {
-                serviceRoleHandler.handlerConfig(clusterId, list);
-            }
+
+        ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceName);
+        if (Objects.nonNull(serviceRoleHandler)) {
+            serviceRoleHandler.getConfig(clusterId, list);
         }
+
         return Result.success(list);
     }
 
     @Override
     public Result saveServiceConfig(Integer clusterId, String serviceName, List<ServiceConfig> list, Integer roleGroupId) {
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
-        CacheUtils.put(clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceName + Constants.CONFIG, list);
+        ServiceConfigMap.put(clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceName + Constants.CONFIG, list);
         HashMap<String, ServiceConfig> map = new HashMap<>();
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
 
@@ -373,10 +373,10 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             List<ServiceRoleInfo> elseRoles = new ArrayList<>();
             ServiceNode serviceNode = new ServiceNode();
             String serviceKey = clusterInfo.getClusterFrame() + Constants.UNDERLINE + command.getServiceName();
-            ServiceInfo serviceInfo = (ServiceInfo) CacheUtils.get(serviceKey);
+            ServiceInfo serviceInfo =  ServiceInfoMap.get(serviceKey);
             for (ClusterServiceCommandHostCommandEntity hostCommand : commandHostList) {
                 String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + command.getServiceName() + Constants.UNDERLINE + hostCommand.getServiceRoleName();
-                ServiceRoleInfo serviceRoleInfo = (ServiceRoleInfo) CacheUtils.get(key);
+                ServiceRoleInfo serviceRoleInfo = ServiceRoleMap.get(key);
                 serviceRoleInfo.setHostname(hostCommand.getHostname());
                 serviceRoleInfo.setHostCommandId(hostCommand.getHostCommandId());
                 serviceRoleInfo.setClusterId(clusterId);
@@ -396,7 +396,6 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
                 }
             }
         }
-        //遍历dag执行服务安装
         return Result.success();
     }
 

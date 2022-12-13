@@ -32,6 +32,12 @@ public class ZkServerHandlerStrategy implements ServiceRoleStrategy {
 
     }
 
+
+
+    @Override
+    public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
+
+    }
     /**
      * 查询现有的zkserver
      * 比较获取新增的zkserver
@@ -40,9 +46,8 @@ public class ZkServerHandlerStrategy implements ServiceRoleStrategy {
      * @param clusterId
      * @param list
      */
-
     @Override
-    public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
+    public void getConfig(Integer clusterId, List<ServiceConfig> list) {
         //添加server.x配置
         ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);

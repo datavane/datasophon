@@ -128,6 +128,7 @@ public class SessionServiceImpl extends ServiceImpl<SessionMapper, SessionEntity
      * @param ip        no use
      * @param loginUser login user
      */
+    @Override
     public void signOut(String ip, UserInfoEntity loginUser) {
         try {
             /**

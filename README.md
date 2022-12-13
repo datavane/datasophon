@@ -12,14 +12,14 @@
   <img src="https://img.shields.io/github/forks/gaodayu168/datasophon">
   <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/badge/license-Apache%202-4EB1BA.svg"></a>
   <p align="center">
-    <a href="https://gaodayu168.github.io/datasophon-website/">Office Website</a> |
+    <a href="https://datasophon.github.io/datasophon-website/">Office Website</a> |
     <a href="https://github.com/gaodayu168/datasophon/blob/main/README_CN.md">Chinese</a>
   </p>
 </p>
 
 # Vision
 
-It is committed to rapidly implementing the deployment, management, monitoring and automatic operation and maintenance of the big data cloud native platform, helping you quickly build a stable, efficient, elastic and scalable big data cloud native platform.
+Aiming at quickly deploying,managing,monitoring and automating the operation and maintenance of Big Data service components and nodes,helping you quickly build stable, efficient Big Data cluster services.
 
 # What is DataSophon?
 

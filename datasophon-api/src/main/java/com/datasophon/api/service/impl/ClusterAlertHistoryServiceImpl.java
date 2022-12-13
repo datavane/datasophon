@@ -75,7 +75,7 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
                         clusterAlertHistory.setAlertTargetName(labels.getAlertname());
                         clusterAlertHistory.setCreateTime(new Date());
                         clusterAlertHistory.setUpdateTime(new Date());
-                        if (labels.getSeverity().equals("warning")) {
+                        if ("warning".equals(labels.getSeverity())) {
                             clusterAlertHistory.setAlertLevel(AlertLevel.WARN);
                             clusterHost.setHostState(3);
                         }
@@ -84,14 +84,14 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
                         clusterAlertHistory.setHostname(hostname);
                         clusterAlertHistory.setIsEnabled(1);
 
-                        if (labels.getSeverity().equals("exception")) {
+                        if ("exception".equals(labels.getSeverity())) {
                             clusterAlertHistory.setAlertLevel(AlertLevel.EXCEPTION);
                             clusterHost.setHostState(2);
                         }
                         this.save(clusterAlertHistory);
                     } else {
                         clusterHost.setHostState(3);
-                        if (labels.getSeverity().equals("exception")) {
+                        if ("exception".equals(labels.getSeverity())) {
                             clusterHost.setHostState(2);
                         }
                     }
@@ -108,7 +108,7 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
                             clusterAlertHistory.setCreateTime(new Date());
                             clusterAlertHistory.setUpdateTime(new Date());
                             clusterAlertHistory.setServiceRoleInstanceId(roleInstance.getId());
-                            if (labels.getSeverity().equals("warning")) {
+                            if ("warning".equals(labels.getSeverity())) {
                                 clusterAlertHistory.setAlertLevel(AlertLevel.WARN);
                             }
                             clusterAlertHistory.setAlertInfo(alertInfo.getAnnotations().getDescription());
@@ -120,7 +120,7 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
                             serviceInstance.setServiceState(ServiceState.EXISTS_ALARM);
                             roleInstance.setServiceRoleState(ServiceRoleState.EXISTS_ALARM);
                             clusterAlertHistory.setServiceInstanceId(serviceInstance.getId());
-                            if (labels.getSeverity().equals("exception")) {
+                            if ("exception".equals(labels.getSeverity())) {
                                 clusterAlertHistory.setAlertLevel(AlertLevel.EXCEPTION);
                                 serviceInstance.setServiceState(ServiceState.EXISTS_EXCEPTION);
                                 //查询服务角色实例
@@ -130,7 +130,7 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
                         } else {
                             serviceInstance.setServiceState(ServiceState.EXISTS_ALARM);
                             roleInstance.setServiceRoleState(ServiceRoleState.EXISTS_ALARM);
-                            if (labels.getSeverity().equals("exception")) {
+                            if ("exception".equals(labels.getSeverity())) {
                                 serviceInstance.setServiceState(ServiceState.EXISTS_EXCEPTION);
                                 //查询服务角色实例
                                 roleInstance.setServiceRoleState(ServiceRoleState.STOP);
@@ -151,7 +151,7 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
                             .eq(Constants.IS_ENABLED, 1)
                             .eq(Constants.ALERT_LEVEL, AlertLevel.WARN)
                             .ne(Constants.ID,clusterAlertHistory.getId()));
-                    if(labels.getSeverity().equals("exception")){//异常告警处理
+                    if("exception".equals(labels.getSeverity())){//异常告警处理
                         if("node".equals(serviceRoleName)){
                             //置为正常
                             ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);

@@ -6,6 +6,7 @@ import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.MasterServiceActor;
 import com.datasophon.api.service.*;
+import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.dao.entity.*;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SecurityUtils;
@@ -54,6 +55,18 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
     @Autowired
     private ClusterHostService clusterHostService;
 
+    @Autowired
+    private ClusterYarnSchedulerService yarnSchedulerService;
+
+    @Autowired
+    private ClusterNodeLabelService nodeLabelService;
+
+    @Autowired
+    private ClusterQueueCapacityService queueCapacityService;
+
+    @Autowired
+    private ClusterRackService rackService;
+
     @Override
     public ClusterInfoEntity getClusterByClusterCode(String clusterCode) {
         ClusterInfoEntity clusterInfoEntity = clusterInfoMapper.getClusterByClusterCode(clusterCode);
@@ -81,11 +94,19 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         }
         ProcessUtils.createServiceActor(clusterInfo);
 
+        yarnSchedulerService.createYarnScheduler(clusterInfo.getId());
+
+        nodeLabelService.createDefaultNodeLabel(clusterInfo.getId());
+
+        queueCapacityService.createDefaultQueue(clusterInfo.getId());
+
+        rackService.createDefaultRack(clusterInfo.getId());
+
         HashMap<String, String> globalVariables = new HashMap<>();
         globalVariables.put("${INSTALL_PATH}",Constants.INSTALL_PATH);
         globalVariables.put("${apiHost}", CacheUtils.getString("hostname"));
         globalVariables.put("${apiPort}", configBean.getServerPort());
-        globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + "/hadoop-3.3.3");
+        globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + Constants.SLASH+ PackageUtils.getServiceDcPackageName(clusterInfo.getClusterFrame(),"HDFS"));
 
         CacheUtils.put("globalVariables" + Constants.UNDERLINE + clusterInfo.getId(), globalVariables);
         return Result.success();
@@ -130,7 +151,7 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         List<ClusterInfoEntity> list = this.list(new QueryWrapper<ClusterInfoEntity>().eq(Constants.CLUSTER_CODE, clusterInfo.getClusterCode()));
         if (Objects.nonNull(list) && list.size() >= 1) {
             ClusterInfoEntity clusterInfoEntity = list.get(0);
-            if (clusterInfoEntity.getId() != clusterInfo.getId()) {
+            if (!clusterInfoEntity.getId().equals(clusterInfo.getId())) {
                 return Result.error(Status.CLUSTER_CODE_EXISTS.getMsg());
             }
         }

@@ -170,6 +170,8 @@
           "yarn.nodemanager.resource.detect-hardware-capabilities",
           "yarn.nodemanager.resource.pcores-vcores-multiplier",
           "yarn.resourcemanager.am.max-attempts",
+          "yarn.node-labels.enabled",
+          "yarn.node-labels.fs-store.root-dir",
           "custom.yarn.site.xml"
         ]
       }
@@ -186,6 +188,28 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": true
+    },
+    {
+      "name": "yarn.node-labels.enabled",
+      "label": "启用YARN标签调度",
+      "description": "开启 YARN Node Labels",
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
+    },
+    {
+      "name": "yarn.node-labels.fs-store.root-dir",
+      "label": "Node Label存储目录",
+      "description": "Node Label存储目录",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "hdfs://nameservice1/user/yarn/nodeLabels"
     },
     {
       "name": "yarn.nodemanager.resource.cpu-vcores",
@@ -340,12 +364,12 @@
       "type": "select",
       "value":"",
       "selectValue": [
-        "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler",
-        "org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler"
+        "org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler",
+        "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler"
       ],
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler"
+      "defaultValue": "org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler"
     },
     {
       "name": "yarn.scheduler.fair.allocation.file",
@@ -374,23 +398,23 @@
       "label": "是否启用resourcemanager ha",
       "description": "是否启用resourcemanager ha",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "switch",
       "value":"",
       "configurableInWizard": true,
       "hidden": true,
-      "defaultValue": true
+      "defaultValue": false
     },
     {
       "name": "yarn.resourcemanager.cluster-id",
       "label": "resourcemanager高可用集群id",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "cluster-yarn1"
     },
     {
@@ -398,11 +422,11 @@
       "label": "resourcemanager高可用节点",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "rm1,rm2"
     },
     {
@@ -410,11 +434,11 @@
       "label": "rm1主机名",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${rm1}"
     },
     {
@@ -422,11 +446,11 @@
       "label": "rm2主机名",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${rm2}"
     },
     {
@@ -434,11 +458,11 @@
       "label": "rm1 web地址",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${rm1}:8088"
     },
     {
@@ -446,11 +470,11 @@
       "label": "rm2 web地址",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${rm2}:8088"
     },
     {
@@ -458,11 +482,11 @@
       "label": "ResourceManager对客户端暴露的地址rm1",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${rm1}:8032"
     },
     {
@@ -470,11 +494,11 @@
       "label": "ResourceManager对客户端暴露的地址rm2",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${rm2}:8032"
     },
     {
@@ -482,11 +506,11 @@
       "label": "ResourceManager对ApplicationMaster暴露的访问地址rm1",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${rm1}:8030"
     },
     {
@@ -494,11 +518,11 @@
       "label": "ResourceManager对ApplicationMaster暴露的访问地址rm2",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${rm2}:8030"
     },
     {
@@ -506,11 +530,11 @@
       "label": "ResourceManager对NodeManager暴露的地址rm1",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${rm1}:8031"
     },
     {
@@ -518,11 +542,11 @@
       "label": "ResourceManager对NodeManager暴露的地址rm2",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${rm2}:8031"
     },
     {
@@ -530,11 +554,11 @@
       "label": "zk地址",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "${zkUrls}"
     },
     {
@@ -542,11 +566,11 @@
       "label": "启用自动恢复",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": true
     },
     {
@@ -554,11 +578,11 @@
       "label": "yarn状态信息存储类",
       "description": "",
       "configType": "ha",
-      "required": false,
+      "required": true,
       "type": "input",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
+      "hidden": false,
       "defaultValue": "org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore"
     },
     {

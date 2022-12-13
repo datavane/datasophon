@@ -1,13 +1,9 @@
 package com.datasophon.api.master;
 
 import akka.actor.*;
-import akka.dispatch.OnFailure;
-import akka.dispatch.OnSuccess;
 import akka.util.Timeout;
 import com.datasophon.api.master.alert.HostCheckActor;
 import com.datasophon.api.master.alert.ServiceRoleCheckActor;
-import com.datasophon.api.utils.ProcessUtils;
-import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
 import com.typesafe.config.Config;
@@ -28,6 +24,9 @@ public class ActorUtils {
     private static final Logger logger = LoggerFactory.getLogger(ActorUtils.class);
 
     public static ActorSystem actorSystem;
+
+    private ActorUtils() {
+    }
 
     public static void init() throws UnknownHostException {
         String hostname = InetAddress.getLocalHost().getHostName();
@@ -53,11 +52,11 @@ public class ActorUtils {
 
     public static ActorRef getLocalActor(Class actorClass, String actorName) {
         ActorSelection actorSelection = actorSystem.actorSelection("/user/" + actorName);
-        Timeout timeout = new Timeout(Duration.create(3, "seconds"));
+        Timeout timeout = new Timeout(Duration.create(30, TimeUnit.SECONDS));
         Future<ActorRef> future = actorSelection.resolveOne(timeout);
         ActorRef actorRef = null;
         try {
-            actorRef = Await.result(future, Duration.create(3, "seconds"));
+            actorRef = Await.result(future, Duration.create(30, TimeUnit.SECONDS));
         } catch (Exception e) {
             logger.error("{} actor not found",actorName);
         }
@@ -73,11 +72,11 @@ public class ActorUtils {
     public static ActorRef getRemoteActor(String hostname, String actorName) {
         String actorPath = "akka.tcp://datasophon@" + hostname + ":2552/user/worker/"+actorName;
         ActorSelection actorSelection = actorSystem.actorSelection(actorPath);
-        Timeout timeout = new Timeout(Duration.create(3, "seconds"));
+        Timeout timeout = new Timeout(Duration.create(30, TimeUnit.SECONDS));
         Future<ActorRef> future = actorSelection.resolveOne(timeout);
         ActorRef actorRef = null;
         try {
-            actorRef = Await.result(future, Duration.create(3, "seconds"));
+            actorRef = Await.result(future, Duration.create(30, TimeUnit.SECONDS));
         } catch (Exception e) {
             e.printStackTrace();
         }

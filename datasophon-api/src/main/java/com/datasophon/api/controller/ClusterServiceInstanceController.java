@@ -95,8 +95,8 @@ public class ClusterServiceInstanceController {
      * 删除
      */
     @RequestMapping("/delete")
-    public Result delete(Integer serviceInstanceIds){
-        return clusterServiceInstanceService.delServiceInstance(serviceInstanceIds);
+    public Result delete(Integer serviceInstanceId){
+        return clusterServiceInstanceService.delServiceInstance(serviceInstanceId);
     }
 
 }
