@@ -1,12 +1,12 @@
 {
-  "name": "StarRocks",
+  "name": "STARROCKS",
   "label": "StarRocks",
   "description": "新一代极速全场景MPP数据库",
-  "version": "2.2.2",
+  "version": "2.4.1",
   "sortNum": 5,
   "dependencies":[],
-  "packageName": "StarRocks-2.2.2.tar.gz",
-  "decompressPackageName": "StarRocks-2.2.2",
+  "packageName": "StarRocks-2.4.1.tar.gz",
+  "decompressPackageName": "StarRocks-2.4.1",
   "roles": [
     {
       "name": "FE",
@@ -48,7 +48,7 @@
       "label": "BE",
       "roleType": "worker",
       "cardinality": "1+",
-      "logFile": "be/log/be.log",
+      "logFile": "be/log/be.INFO",
       "jmxPort": 18040,
       "startRunner": {
         "timeout": "60",
@@ -97,7 +97,6 @@
         "outputDirectory": "fe/conf",
         "templateName": "fe.ftl",
         "includeParams": [
-          "meta_dir",
           "cluster_id",
           "custom.fe.conf"
         ]
@@ -188,18 +187,6 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": "beta"
-    },
-    {
-      "name": "meta_dir",
-      "label": "FE元数据目录",
-      "description": "配置FE元数据目录",
-      "configType": "map",
-      "required": true,
-      "type": "input",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": "${INSTALL_PATH}/StarRocks-2.2.2/fe/meta"
     },
     {
       "name": "cluster_id",

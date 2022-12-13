@@ -33,9 +33,8 @@ public class ClusterQueueCapacityController {
     @RequestMapping("/list")
     public Result list(Integer clusterId){
 
-        List<ClusterQueueCapacity> list = clusterQueueCapacityService.list(new QueryWrapper<ClusterQueueCapacity>().eq(Constants.CLUSTER_ID, clusterId));
+        return clusterQueueCapacityService.listCapacityQueue(clusterId);
 
-        return Result.success(list);
     }
 
 

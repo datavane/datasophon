@@ -197,7 +197,9 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
         //del role group config
         roleGroupConfigService.removeByIds(roleGroupConfigList.stream().map(e -> e.getId()).collect(Collectors.toList()));
         //del service role instance
-        roleInstanceService.removeByIds(roleInstanceList.stream().map(e->e.getId()).collect(Collectors.toList()));
+        if(roleInstanceList.size() > 0){
+            roleInstanceService.removeByIds(roleInstanceList.stream().map(e->e.getId()).collect(Collectors.toList()));
+        }
         //del service instance
         this.removeById(serviceInstanceId);
         return Result.success();
