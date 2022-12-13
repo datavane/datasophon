@@ -76,10 +76,11 @@ public class PrometheusActor extends UntypedActor {
                 List<String> value = roleEntry.getValue();
                 ArrayList<ServiceConfig> serviceConfigs = new ArrayList<>();
                 for (String hostname : value) {
-                    if (ServiceRoleJmxMap.exists(roleEntry.getKey())) {
+                    String jmxKey = command.getClusterFrame() + Constants.UNDERLINE + serviceInstance.getServiceName() + Constants.UNDERLINE + roleEntry.getKey();
+                    if (ServiceRoleJmxMap.exists(jmxKey)) {
                         ServiceConfig serviceConfig = new ServiceConfig();
                         serviceConfig.setName(roleEntry.getKey() + Constants.UNDERLINE + hostname);
-                        serviceConfig.setValue(hostname + ":" + ServiceRoleJmxMap.get(roleEntry.getKey()));
+                        serviceConfig.setValue(hostname + ":" + ServiceRoleJmxMap.get(jmxKey));
                         serviceConfig.setRequired(true);
                         serviceConfigs.add(serviceConfig);
                     }
@@ -178,11 +179,15 @@ public class PrometheusActor extends UntypedActor {
 
             ArrayList<String> feList = new ArrayList<>();
             ArrayList<String> beList = new ArrayList<>();
+
             for (ClusterServiceRoleInstanceEntity roleInstanceEntity : roleInstanceList) {
+                String jmxKey = command.getClusterFrame() + Constants.UNDERLINE + serviceInstance.getServiceName()+ Constants.UNDERLINE + roleInstanceEntity.getServiceRoleName();
+                logger.info("jmxKey is {}",jmxKey);
                 if ("FE".equals(roleInstanceEntity.getServiceRoleName())) {
-                    feList.add(roleInstanceEntity.getHostname() + ":" + ServiceRoleJmxMap.get(roleInstanceEntity.getServiceRoleName()));
+                    logger.info(ServiceRoleJmxMap.get(jmxKey));
+                    feList.add(roleInstanceEntity.getHostname() + ":" + ServiceRoleJmxMap.get(jmxKey));
                 } else {
-                    beList.add(roleInstanceEntity.getHostname() + ":" + ServiceRoleJmxMap.get(roleInstanceEntity.getServiceRoleName()));
+                    beList.add(roleInstanceEntity.getHostname() + ":" + ServiceRoleJmxMap.get(jmxKey));
                 }
             }
             ArrayList<ServiceConfig> serviceConfigs = new ArrayList<>();

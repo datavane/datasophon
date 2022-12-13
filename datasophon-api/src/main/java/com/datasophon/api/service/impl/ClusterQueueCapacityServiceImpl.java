@@ -1,26 +1,19 @@
 package com.datasophon.api.service.impl;
 
-import akka.actor.ActorSelection;
-import akka.pattern.Patterns;
-import akka.util.Timeout;
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.datasophon.api.master.ActorUtils;
-import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.api.utils.HadoopUtils;
-import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
-import com.datasophon.common.command.ExecuteCmdCommand;
 import com.datasophon.common.model.Generators;
 import com.datasophon.common.model.ServiceConfig;
-import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
-import com.datasophon.dao.entity.ClusterYarnQueue;
+import com.datasophon.dao.model.ClusterQueueCapacityList;
+import com.datasophon.dao.model.Links;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,19 +23,14 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 
 import com.datasophon.dao.mapper.ClusterQueueCapacityMapper;
 import com.datasophon.dao.entity.ClusterQueueCapacity;
 import com.datasophon.api.service.ClusterQueueCapacityService;
-import scala.concurrent.Await;
-import scala.concurrent.Future;
-import scala.concurrent.duration.Duration;
 
 
 @Service("clusterQueueCapacityService")
@@ -116,6 +104,26 @@ public class ClusterQueueCapacityServiceImpl extends ServiceImpl<ClusterQueueCap
         queueCapacity.setAclUsers("*");
         queueCapacity.setParent("root");
         this.save(queueCapacity);
+    }
+
+    @Override
+    public Result listCapacityQueue(Integer clusterId) {
+        List<ClusterQueueCapacity> list = this.list(new QueryWrapper<ClusterQueueCapacity>()
+                .eq(Constants.CLUSTER_ID, clusterId));
+
+        ClusterQueueCapacityList clusterQueueCapacityList = new ClusterQueueCapacityList();
+        clusterQueueCapacityList.setRootId("root");
+        clusterQueueCapacityList.setNodes(list);
+
+        ArrayList<Links> linksList = new ArrayList<>();
+        for (ClusterQueueCapacity clusterQueueCapacity : list) {
+            Links links = new Links();
+            links.setFrom(clusterQueueCapacity.getParent());
+            links.setTo(clusterQueueCapacity.getQueueName());
+            linksList.add(links);
+        }
+        clusterQueueCapacityList.setLinks(linksList);
+        return Result.success(clusterQueueCapacityList);
     }
 
 

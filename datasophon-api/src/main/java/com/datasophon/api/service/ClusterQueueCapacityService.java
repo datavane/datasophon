@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterQueueCapacity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,5 +21,7 @@ public interface ClusterQueueCapacityService extends IService<ClusterQueueCapaci
     Result refreshToYarn(Integer clusterId) throws Exception;
 
     void createDefaultQueue(Integer id);
+
+    Result listCapacityQueue(Integer clusterId);
 }
 

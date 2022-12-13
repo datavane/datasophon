@@ -122,7 +122,8 @@ public class LoadServiceMeta implements ApplicationRunner {
             String key = frameCode + Constants.UNDERLINE + serviceInfo.getName() + Constants.UNDERLINE + serviceRole.getName();
             logger.info("put {} {} {} service role info into cache", frameCode, serviceName, serviceRole.getName());
             if (StringUtils.isNotBlank(serviceRole.getJmxPort())) {
-                ServiceRoleJmxMap.put(serviceRole.getName(), serviceRole.getJmxPort());
+                logger.info("{} jmx port is :{} and the jmx key is: {}",serviceRole.getName(),serviceRole.getJmxPort(),key);
+                ServiceRoleJmxMap.put(key, serviceRole.getJmxPort());
             }
             ServiceRoleMap.put(key, serviceRole);
             String serviceRoleJson = JSONObject.toJSONString(serviceRole);

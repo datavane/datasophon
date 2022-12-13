@@ -20,8 +20,6 @@
 ## To see all Frontend configurations,
 ## see fe/src/com/starrocks/common/Config.java
 
-# the output dir of stderr and stdout 
-LOG_DIR = /opt/datasophon/StarRocks-2.2.2/fe/log
 
 DATE = "$(date +%Y%m%d-%H%M%S)"
 JAVA_OPTS="-Dlog4j2.formatMsgNoLookups=true -Xmx8192m -XX:+UseMembar -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=7 -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -XX:-CMSParallelRemarkEnabled -XX:CMSInitiatingOccupancyFraction=80 -XX:SoftRefLRUPolicyMSPerMB=0 -Xloggc:$STARROCKS_HOME/log/fe.gc.log.$DATE"
@@ -37,8 +35,7 @@ JAVA_OPTS_FOR_JDK_9="-Dlog4j2.formatMsgNoLookups=true -Xmx8192m -XX:SurvivorRati
 sys_log_level = INFO
 
 # store metadata, create it if it is not exist.
-# Default value is /opt/datasophon/StarRocks-2.2.2/fe/meta
-meta_dir = ${meta_dir}
+# Default value is
 cluster_id = ${cluster_id}
 http_port = 18030
 rpc_port = 9020
@@ -55,9 +52,7 @@ mysql_service_nio_enabled = true
 
 # Advanced configurations
 log_roll_size_mb = 1024
-sys_log_dir = /opt/datasophon/StarRocks-2.2.2/fe/log
 sys_log_roll_num = 10
-audit_log_dir = /opt/datasophon/StarRocks-2.2.2/fe/log
 audit_log_modules = slow_query, query
 audit_log_roll_num = 10
 meta_delay_toleration_second = 10
