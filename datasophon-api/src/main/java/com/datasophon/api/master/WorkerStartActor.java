@@ -44,8 +44,8 @@ public class WorkerStartActor extends UntypedActor {
             ClusterServiceCommandService serviceCommandService = SpringTool.getApplicationContext().getBean(ClusterServiceCommandService.class);
             //start stopped service
             List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.getStoppedRoleInstanceOnHost(msg.getClusterId(),msg.getHostname(),ServiceRoleState.STOP);
-            if (Objects.nonNull(list) && list.size() > 0) {
-                Integer serviceId = list.get(0).getServiceId();
+            for (ClusterServiceRoleInstanceEntity roleInstanceEntity : list) {
+                Integer serviceId = roleInstanceEntity.getServiceId();
                 List<String> idList = list.stream().map(e -> e.getId().toString()).collect(Collectors.toList());
                 serviceCommandService.generateServiceRoleCommand(msg.getClusterId(), CommandType.START_SERVICE, serviceId, idList);
             }
