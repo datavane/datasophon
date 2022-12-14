@@ -14,5 +14,7 @@ import com.datasophon.dao.entity.ClusterServiceRoleInstanceWebuis;
 public interface ClusterServiceRoleInstanceWebuisService extends IService<ClusterServiceRoleInstanceWebuis> {
 
     Result getWebUis(Integer serviceInstanceId);
+
+    void removeByServiceInsId(Integer serviceInstanceId);
 }
 

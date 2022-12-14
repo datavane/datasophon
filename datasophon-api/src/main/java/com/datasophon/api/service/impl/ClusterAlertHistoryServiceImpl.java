@@ -221,12 +221,12 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
     }
 
     @Override
-    public void removeAlertByRoleInstanceId(int id) {
-        ClusterServiceRoleInstanceEntity roleInstanceEntity = roleInstanceService.getById(id);
+    public void removeAlertByRoleInstanceIds(List<Integer> ids) {
+        ClusterServiceRoleInstanceEntity roleInstanceEntity = roleInstanceService.getById(ids.get(0));
         ClusterInfoEntity clusterInfoEntity = clusterInfoService.getById(roleInstanceEntity.getClusterId());
         this.remove(new QueryWrapper<ClusterAlertHistory>()
-                .eq(Constants.SERVICE_ROLE_INSTANCE_ID,id)
-                .eq(Constants.IS_ENABLED,1));
+                .eq(Constants.IS_ENABLED,1)
+                .in(Constants.SERVICE_ROLE_INSTANCE_ID,ids));
         //重新配置prometheus
         ActorRef prometheusActor = (ActorRef) CacheUtils.get("prometheusActor");
         GeneratePrometheusConfigCommand prometheusConfigCommand = new GeneratePrometheusConfigCommand();

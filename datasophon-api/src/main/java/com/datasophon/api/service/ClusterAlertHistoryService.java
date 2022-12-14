@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterAlertHistory;
 
+import java.util.List;
+
 /**
  * 集群告警历史表 
  *
@@ -21,6 +23,6 @@ public interface ClusterAlertHistoryService extends IService<ClusterAlertHistory
 
     Result getAllAlertList(Integer clusterId, Integer page, Integer pageSize);
 
-    void removeAlertByRoleInstanceId(int id);
+    void removeAlertByRoleInstanceIds(List<Integer> ids);
 }
 

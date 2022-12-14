@@ -439,21 +439,23 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         //
         List<ClusterServiceInstanceEntity> serviceInstanceList = serviceInstanceService.listRunningServiceInstance(clusterId);
         Map<String, ClusterServiceInstanceEntity> instanceMap = serviceInstanceList.stream().collect(Collectors.toMap(ClusterServiceInstanceEntity::getServiceName, e -> e, (v1, v2) -> v1));
-        if(!instanceMap.containsKey("ALERTMANAGER") ){
-            return Result.error("service install depends on alertmanager ,please make sure that alertmanager is normal and running");
-        }
-        if(!instanceMap.containsKey("GRAFANA") ){
-            return Result.error("service install depends on grafana ,please make sure that grafana is normal and running");
-        }
-        if(!instanceMap.containsKey("PROMETHEUS")){
-            return Result.error("service install depends on prometheus ,please make sure that prometheus is normal and running");
-        }
+
         List<FrameServiceEntity>  list = frameService.listServices(serviceIds);
+        Map<String, FrameServiceEntity> serviceMap = list.stream().collect(Collectors.toMap(FrameServiceEntity::getServiceName, e -> e, (v1, v2) -> v1));
+        if(!instanceMap.containsKey("ALERTMANAGER") && !serviceMap.containsKey("ALERTMANAGER")){
+            return Result.error("service install depends on alertmanager ,please make sure you have selected it or that alertmanager is normal and running");
+        }
+        if(!instanceMap.containsKey("GRAFANA") && !serviceMap.containsKey("GRAFANA")){
+            return Result.error("service install depends on grafana ,please make sure you have selected it or that grafana is normal and running");
+        }
+        if(!instanceMap.containsKey("PROMETHEUS") && !serviceMap.containsKey("PROMETHEUS")){
+            return Result.error("service install depends on prometheus ,please make sure you have selected it or that prometheus is normal and running");
+        }
+
         for (FrameServiceEntity frameServiceEntity : list) {
             for (String dependService : frameServiceEntity.getDependencies().split(",")) {
-                if(!instanceMap.containsKey(dependService)){
-                    logger.error("{} install depends on {},please make sure that {} is normal and running",frameServiceEntity.getServiceName(),dependService,dependService);
-                    return Result.error(""+frameServiceEntity.getServiceName()+" install depends on "+dependService+",please make sure that "+dependService+" is normal and running");
+                if(!instanceMap.containsKey(dependService) && !serviceMap.containsKey(dependService)){
+                    return Result.error(""+frameServiceEntity.getServiceName()+" install depends on "+dependService+",please make sure that you have selected it or that "+dependService+" is normal and running");
                 }
             }
 

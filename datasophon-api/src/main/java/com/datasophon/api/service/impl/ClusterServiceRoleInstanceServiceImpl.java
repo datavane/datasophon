@@ -158,14 +158,17 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
         Collection<ClusterServiceRoleInstanceEntity> list = this.listByIds(idList);
         // is there a running instance
         boolean flag = false;
+        ArrayList<Integer> needRemoveList = new ArrayList<>();
         for (ClusterServiceRoleInstanceEntity instance : list) {
             if (instance.getServiceRoleState() == ServiceRoleState.RUNNING) {
                 flag = true;
             } else {
-                //删除对应的告警
-                alertHistoryService.removeAlertByRoleInstanceId(instance.getId());
-                this.removeById(instance.getId());
+                needRemoveList.add(instance.getId());
             }
+        }
+        if(needRemoveList.size() > 0){
+            alertHistoryService.removeAlertByRoleInstanceIds(needRemoveList);
+            this.removeByIds(needRemoveList);
         }
         return flag ? Result.error("There are running instances and ignore it when delete.") : Result.success();
     }

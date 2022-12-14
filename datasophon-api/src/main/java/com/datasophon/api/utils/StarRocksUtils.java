@@ -1,5 +1,6 @@
 package com.datasophon.api.utils;
 
+import com.alibaba.fastjson.JSONArray;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
@@ -15,14 +16,23 @@ public class StarRocksUtils {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         String username="root";
         String password = "";
-        String url = "jdbc:mysql://172.30.34.187:9030";
+        String url = "jdbc:mysql://ddp2:9030";
         //加载驱动
         Class.forName("com.mysql.jdbc.Driver");
         Connection connection = DriverManager.getConnection(url, username, password);
         Statement statement = connection.createStatement();
-        String sql = "ALTER SYSTEM ADD FOLLOWER \"yc2:9010\";";
+        String sql = "show proc '/frontends'";
         //执行sql，返回结果集
-        statement.executeUpdate(sql);
+        ResultSet resultSet = statement.executeQuery(sql);
+        int columnCount = resultSet.getMetaData().getColumnCount();
+
+        //结果封装
+        while (resultSet.next()){
+            for (int i = 1; i <= columnCount; i++) {
+                System.out.println(resultSet.getString(i));
+            }
+
+        }
     }
     private static final Logger logger = LoggerFactory.getLogger(SSHTools.class);
 
