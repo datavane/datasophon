@@ -97,8 +97,8 @@ public class ServiceInstallController {
      * 服务部署总览
      */
     @RequestMapping("/checkServiceDependency")
-    public Result checkServiceDependency(Integer clusterId,String services) {
-        return serviceInstallService.getServiceRoleDeployOverview(clusterId);
+    public Result checkServiceDependency(Integer clusterId,String serviceIds) {
+        return serviceInstallService.checkServiceDependency(clusterId,serviceIds);
     }
 
 }

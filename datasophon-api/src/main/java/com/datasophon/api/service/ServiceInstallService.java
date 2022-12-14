@@ -25,9 +25,7 @@ public interface ServiceInstallService {
 
     void downloadPackage(String packageName,HttpServletResponse response) throws IOException;
 
-    Result serviceHandle(Integer serviceInstanceId, CommandType commandType);
-
-    Result serviceRoleHandle(Integer serviceRoleInstanceId, CommandType commandType);
-
     Result getServiceRoleHostMapping(Integer clusterId);
+
+    Result checkServiceDependency(Integer clusterId, String serviceIds);
 }

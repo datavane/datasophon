@@ -25,5 +25,7 @@ public interface FrameServiceService extends IService<FrameServiceEntity> {
     FrameServiceEntity getServiceByFrameCodeAndServiceName(String clusterFrame, String serviceName);
 
     List<FrameServiceEntity> getAllFrameServiceByFrameCode(String clusterFrame);
+
+    List<FrameServiceEntity> listServices(String serviceIds);
 }
 

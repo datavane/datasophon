@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("serviceInstallService")
 @Transactional
@@ -429,19 +430,32 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     }
 
     @Override
-    public Result serviceHandle(Integer serviceInstanceId, CommandType commandType) {
-
-        return null;
-    }
-
-    @Override
-    public Result serviceRoleHandle(Integer serviceRoleInstanceId, CommandType commandType) {
-        return null;
-    }
-
-    @Override
     public Result getServiceRoleHostMapping(Integer clusterId) {
         return null;
+    }
+
+    @Override
+    public Result checkServiceDependency(Integer clusterId, String serviceIds) {
+        //
+        List<ClusterServiceInstanceEntity> serviceInstanceList = serviceInstanceService.listRunningServiceInstance(clusterId);
+        Map<String, ClusterServiceInstanceEntity> instanceMap = serviceInstanceList.stream().collect(Collectors.toMap(ClusterServiceInstanceEntity::getServiceName, e -> e, (v1, v2) -> v1));
+        if(!instanceMap.containsKey("ALERTMANAGER") ){
+            return Result.error("service install depends on alertmanager ,please make sure is normal and running");
+        }
+        if(!instanceMap.containsKey("GRAFANA") ){
+            return Result.error("service install depends on grafana ,please make sure is normal and running");
+        }
+        if(!instanceMap.containsKey("PROMETHEUS")){
+            return Result.error("service install depends on prometheus ,please make sure is normal and running");
+        }
+        List<FrameServiceEntity>  list = frameService.listServices(serviceIds);
+        for (FrameServiceEntity frameServiceEntity : list) {
+            if(!instanceMap.containsKey(frameServiceEntity.getDependencies())){
+                logger.error("{} install depends on {}",frameServiceEntity.getServiceName(),frameServiceEntity.getDependencies());
+                return Result.error(""+frameServiceEntity.getServiceName()+" install depends on "+frameServiceEntity.getDependencies()+"");
+            }
+        }
+        return Result.success();
     }
 
 
