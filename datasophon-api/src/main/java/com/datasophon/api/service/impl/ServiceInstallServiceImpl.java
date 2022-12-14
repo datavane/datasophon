@@ -440,20 +440,23 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         List<ClusterServiceInstanceEntity> serviceInstanceList = serviceInstanceService.listRunningServiceInstance(clusterId);
         Map<String, ClusterServiceInstanceEntity> instanceMap = serviceInstanceList.stream().collect(Collectors.toMap(ClusterServiceInstanceEntity::getServiceName, e -> e, (v1, v2) -> v1));
         if(!instanceMap.containsKey("ALERTMANAGER") ){
-            return Result.error("service install depends on alertmanager ,please make sure is normal and running");
+            return Result.error("service install depends on alertmanager ,please make sure that alertmanager is normal and running");
         }
         if(!instanceMap.containsKey("GRAFANA") ){
-            return Result.error("service install depends on grafana ,please make sure is normal and running");
+            return Result.error("service install depends on grafana ,please make sure that grafana is normal and running");
         }
         if(!instanceMap.containsKey("PROMETHEUS")){
-            return Result.error("service install depends on prometheus ,please make sure is normal and running");
+            return Result.error("service install depends on prometheus ,please make sure that prometheus is normal and running");
         }
         List<FrameServiceEntity>  list = frameService.listServices(serviceIds);
         for (FrameServiceEntity frameServiceEntity : list) {
-            if(!instanceMap.containsKey(frameServiceEntity.getDependencies())){
-                logger.error("{} install depends on {}",frameServiceEntity.getServiceName(),frameServiceEntity.getDependencies());
-                return Result.error(""+frameServiceEntity.getServiceName()+" install depends on "+frameServiceEntity.getDependencies()+"");
+            for (String dependService : frameServiceEntity.getDependencies().split(",")) {
+                if(!instanceMap.containsKey(dependService)){
+                    logger.error("{} install depends on {},please make sure that {} is normal and running",frameServiceEntity.getServiceName(),dependService,dependService);
+                    return Result.error(""+frameServiceEntity.getServiceName()+" install depends on "+dependService+",please make sure that "+dependService+" is normal and running");
+                }
             }
+
         }
         return Result.success();
     }
