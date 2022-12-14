@@ -21,15 +21,15 @@ public class WorkerActor extends UntypedActor {
 
     @Override
     public void preStart() throws IOException {
-        ActorRef installServiceActor = getContext().actorOf(Props.create(InstallServiceActor.class), uncapitalize(InstallServiceActor.class));
-        ActorRef configureServiceActor = getContext().actorOf(Props.create(ConfigureServiceActor.class), uncapitalize(ConfigureServiceActor.class));
-        ActorRef startServiceActor = getContext().actorOf(Props.create(StartServiceActor.class), uncapitalize(StartServiceActor.class));
-        ActorRef stopServiceActor = getContext().actorOf(Props.create(StopServiceActor.class), uncapitalize(StopServiceActor.class));
-        ActorRef restartServiceActor = getContext().actorOf(Props.create(RestartServiceActor.class), uncapitalize(RestartServiceActor.class));
-        ActorRef logActor = getContext().actorOf(Props.create(LogActor.class), uncapitalize(LogActor.class));
-        ActorRef executeCmdActor = getContext().actorOf(Props.create(ExecuteCmdActor.class), uncapitalize(ExecuteCmdActor.class));
-        ActorRef fileOperateActor = getContext().actorOf(Props.create(FileOperateActor.class), uncapitalize(FileOperateActor.class));
-        ActorRef alertConfigActor = getContext().actorOf(Props.create(AlertConfigActor.class), uncapitalize(AlertConfigActor.class));
+        ActorRef installServiceActor = getContext().actorOf(Props.create(InstallServiceActor.class), getActorRefName(InstallServiceActor.class));
+        ActorRef configureServiceActor = getContext().actorOf(Props.create(ConfigureServiceActor.class), getActorRefName(ConfigureServiceActor.class));
+        ActorRef startServiceActor = getContext().actorOf(Props.create(StartServiceActor.class), getActorRefName(StartServiceActor.class));
+        ActorRef stopServiceActor = getContext().actorOf(Props.create(StopServiceActor.class), getActorRefName(StopServiceActor.class));
+        ActorRef restartServiceActor = getContext().actorOf(Props.create(RestartServiceActor.class), getActorRefName(RestartServiceActor.class));
+        ActorRef logActor = getContext().actorOf(Props.create(LogActor.class), getActorRefName(LogActor.class));
+        ActorRef executeCmdActor = getContext().actorOf(Props.create(ExecuteCmdActor.class), getActorRefName(ExecuteCmdActor.class));
+        ActorRef fileOperateActor = getContext().actorOf(Props.create(FileOperateActor.class), getActorRefName(FileOperateActor.class));
+        ActorRef alertConfigActor = getContext().actorOf(Props.create(AlertConfigActor.class), getActorRefName(AlertConfigActor.class));
         getContext().watch(installServiceActor);
         getContext().watch(configureServiceActor);
         getContext().watch(startServiceActor);
@@ -41,7 +41,8 @@ public class WorkerActor extends UntypedActor {
         getContext().watch(alertConfigActor);
     }
 
-    private String uncapitalize(Class clazz) {
+    /** Get ActorRef name from Class name. */
+    private String getActorRefName(Class clazz) {
         return StringUtils.uncapitalize(clazz.getSimpleName());
     }
 
