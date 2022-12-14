@@ -3,15 +3,12 @@ package com.datasophon.worker.actor;
 import akka.actor.*;
 import com.alibaba.fastjson.JSONObject;
 import com.datasophon.common.model.StartWorkerMessage;
-import com.datasophon.common.utils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 
 public class WorkerActor extends UntypedActor {
     private static final Logger logger = LoggerFactory.getLogger(WorkerActor.class);
@@ -24,15 +21,15 @@ public class WorkerActor extends UntypedActor {
 
     @Override
     public void preStart() throws IOException {
-        ActorRef installServiceActor = getContext().actorOf(Props.create(InstallServiceActor.class), "installServiceActor");
-        ActorRef configureServiceActor = getContext().actorOf(Props.create(ConfigureServiceActor.class), "configureServiceActor");
-        ActorRef startServiceActor = getContext().actorOf(Props.create(StartServiceActor.class), "startServiceActor");
-        ActorRef stopServiceActor = getContext().actorOf(Props.create(StopServiceActor.class), "stopServiceActor");
-        ActorRef restartServiceActor = getContext().actorOf(Props.create(RestartServiceActor.class), "restartServiceActor");
-        ActorRef logActor = getContext().actorOf(Props.create(LogActor.class), "logActor");
-        ActorRef executeCmdActor = getContext().actorOf(Props.create(ExecuteCmdActor.class), "executeCmdActor");
-        ActorRef fileOperateActor = getContext().actorOf(Props.create(FileOperateActor.class), "fileOperateActor");
-        ActorRef alertConfigActor = getContext().actorOf(Props.create(AlertConfigActor.class), "alertConfigActor");
+        ActorRef installServiceActor = getContext().actorOf(Props.create(InstallServiceActor.class), uncapitalize(InstallServiceActor.class));
+        ActorRef configureServiceActor = getContext().actorOf(Props.create(ConfigureServiceActor.class), uncapitalize(ConfigureServiceActor.class));
+        ActorRef startServiceActor = getContext().actorOf(Props.create(StartServiceActor.class), uncapitalize(StartServiceActor.class));
+        ActorRef stopServiceActor = getContext().actorOf(Props.create(StopServiceActor.class), uncapitalize(StopServiceActor.class));
+        ActorRef restartServiceActor = getContext().actorOf(Props.create(RestartServiceActor.class), uncapitalize(RestartServiceActor.class));
+        ActorRef logActor = getContext().actorOf(Props.create(LogActor.class), uncapitalize(LogActor.class));
+        ActorRef executeCmdActor = getContext().actorOf(Props.create(ExecuteCmdActor.class), uncapitalize(ExecuteCmdActor.class));
+        ActorRef fileOperateActor = getContext().actorOf(Props.create(FileOperateActor.class), uncapitalize(FileOperateActor.class));
+        ActorRef alertConfigActor = getContext().actorOf(Props.create(AlertConfigActor.class), uncapitalize(AlertConfigActor.class));
         getContext().watch(installServiceActor);
         getContext().watch(configureServiceActor);
         getContext().watch(startServiceActor);
@@ -44,6 +41,9 @@ public class WorkerActor extends UntypedActor {
         getContext().watch(alertConfigActor);
     }
 
+    private String uncapitalize(Class clazz) {
+        return StringUtils.uncapitalize(clazz.getSimpleName());
+    }
 
 
     @Override
