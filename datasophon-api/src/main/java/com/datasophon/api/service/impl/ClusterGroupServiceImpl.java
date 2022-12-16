@@ -37,7 +37,7 @@ public class ClusterGroupServiceImpl extends ServiceImpl<ClusterGroupMapper, Clu
         clusterGroup.setClusterId(clusterId);
         clusterGroup.setGroupName(groupName);
         List<ClusterHostEntity> hostList = hostService.getHostListByClusterId(clusterId);
-        ProcessUtils.syncUserGroupToHosts(hostList, clusterGroup.getGroupName(),"groupadd");
+//        ProcessUtils.syncUserGroupToHosts(hostList, clusterGroup.getGroupName(),"groupadd");
         this.save(clusterGroup);
         return Result.success();
     }

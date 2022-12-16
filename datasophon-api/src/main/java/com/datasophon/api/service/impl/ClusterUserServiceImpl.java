@@ -17,6 +17,7 @@ import com.datasophon.dao.entity.ClusterUserGroup;
 import com.datasophon.dao.mapper.ClusterUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 
 
 @Service("clusterUserService")
+@Transactional
 public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, ClusterUser> implements ClusterUserService {
 
     @Autowired
@@ -45,7 +47,6 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
         if(hasRepeatUserName(clusterId,username)){
             return Result.error("用户名重复");
         }
-        List<ClusterHostEntity> hostList = hostService.getHostListByClusterId(clusterId);
 
         ClusterUser clusterUser = new ClusterUser();
         clusterUser.setUsername(username);
@@ -69,10 +70,12 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
 
         ClusterGroup mainGroup = groupService.getById(mainGroupId);
         ids.remove(0);
-        Collection<ClusterGroup> clusterGroups = groupService.listByIds(ids);
-        String otherGroup = clusterGroups.stream().map(e -> e.getGroupName()).collect(Collectors.joining(","));
-        ProcessUtils.syncUserToHosts(hostList,username,mainGroup.getGroupName(),otherGroup,"useradd");
-
+        String otherGroup = null;
+        if(ids.size() > 1){
+            Collection<ClusterGroup> clusterGroups = groupService.listByIds(ids);
+            otherGroup = clusterGroups.stream().map(e -> e.getGroupName()).collect(Collectors.joining(","));
+        }
+//        ProcessUtils.syncUserToHosts(hostList,username,mainGroup.getGroupName(),otherGroup,"useradd");
         return Result.success();
     }
 
