@@ -30,7 +30,7 @@ public class HdfsECActor extends UntypedActor {
             //获取datanode列表
             List<ClusterServiceRoleInstanceEntity> datanodes = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>().eq(Constants.SERVICE_ID, hdfsEcCommand.getServiceInstanceId()).eq(Constants.SERVICE_ROLE_NAME, "DataNode"));
             TreeSet<String> list = datanodes.stream().map(e -> e.getHostname()).collect(Collectors.toCollection(TreeSet::new));
-            ProcessUtils.hdfsECMethond(hdfsEcCommand.getServiceInstanceId(),roleInstanceService,list,"whitelist","NameNode");
+            ProcessUtils.hdfsEcMethond(hdfsEcCommand.getServiceInstanceId(),roleInstanceService,list,"whitelist","NameNode");
 
         }else {
             unhandled(msg);

@@ -15,11 +15,16 @@ import java.nio.charset.Charset;
 import java.util.Objects;
 
 /**
- * ssh 连接工具类
+ *
+ *
+ * @author zhangqiao
+ * @email 13707421712@163.com
+ * @date 2022-12-17 12:33
+ * @Description: SshTools工具类
  */
-public class SSHTools {
+public class SshTools {
 
-    private static final Logger logger = LoggerFactory.getLogger(SSHTools.class);
+    private static final Logger logger = LoggerFactory.getLogger(SshTools.class);
 
     private static final String SFTP = "sftp";
 
@@ -29,8 +34,8 @@ public class SSHTools {
      *
      * @return 实例
      */
-    public static SSHTools getInstance() {
-        return new SSHTools();
+    public static SshTools getInstance() {
+        return new SshTools();
     }
 
     /**
@@ -192,10 +197,10 @@ public class SSHTools {
     public static void main(String[] args) throws JSchException, IOException, SftpException {
         Session session = null;
         try {
-            session = SSHTools.createSession("172.31.96.16", 22, "root", "D:\\360Downloads\\id_rsa");
-            String exec = SSHTools.exec(session, "tar -zxvf /opt/datasophon/ddh/ddh-worker.tar.gz");
+            session = SshTools.createSession("172.31.96.16", 22, "root", "D:\\360Downloads\\id_rsa");
+            String exec = SshTools.exec(session, "tar -zxvf /opt/datasophon/ddh/ddh-worker.tar.gz");
         }finally {
-            SSHTools.close(session);
+            SshTools.close(session);
         }
     }
 

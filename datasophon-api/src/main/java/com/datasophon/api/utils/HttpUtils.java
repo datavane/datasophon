@@ -5,6 +5,14 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ *
+ *
+ * @author zhangqiao
+ * @email 13707421712@163.com
+ * @date 2022-12-17 12:33
+ * @Description: HadoopUtils工具类
+ */
 public class HttpUtils {
 
     public static String getClientIpAddress(HttpServletRequest request) {

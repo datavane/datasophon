@@ -30,7 +30,12 @@ import java.util.regex.Pattern;
 
 
 /**
- * check utils
+ *
+ *
+ * @author zhangqiao
+ * @email 13707421712@163.com
+ * @date 2022-12-17 12:33
+ * @Description: CheckUtils工具类
  */
 public class CheckUtils {
 
@@ -68,8 +73,8 @@ public class CheckUtils {
    * @return true if description regex valid, otherwise return false
    */
   public static Map<String, Object> checkDesc(String desc) {
-    Map<String, Object> result = new HashMap<>();
-    if (StringUtils.isNotEmpty(desc) && desc.length() > 200) {
+    Map<String, Object> result = new HashMap<>(16);
+    if (StringUtils.isNotEmpty(desc) && desc.length() > Constants.TWO_HUNDRRD) {
         result.put(Constants.STATUS, Status.REQUEST_PARAMS_NOT_VALID_ERROR);
         result.put(Constants.MSG, MessageFormat.format(Status.REQUEST_PARAMS_NOT_VALID_ERROR.getMsg(), "desc length"));
     }else{
