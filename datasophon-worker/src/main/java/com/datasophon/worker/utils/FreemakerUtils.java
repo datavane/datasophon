@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import cn.hutool.core.util.StrUtil;
 import com.datasophon.common.Constants;
 import com.datasophon.common.model.AlertItem;
 import com.datasophon.common.model.Generators;
@@ -16,6 +17,13 @@ import freemarker.template.TemplateException;
 
 
 public class FreemakerUtils {
+    private static final String XML = "xml";
+    private static final String PROPERTIES = "properties";
+    private static final String PROPERTIES2 = "properties2";
+    private static final String PROPERTIES3 = "properties3";
+    private static final String PROMETHEUS = "prometheus";
+    private static final String CUSTOM = "custom";
+
 
     public static void generateConfigFile(Generators generators, List<ServiceConfig> configs, String decompressPackageName) throws IOException, TemplateException {
         // 1.加载模板
@@ -28,22 +36,22 @@ public class FreemakerUtils {
         // 得到模板对象
         String configFormat = generators.getConfigFormat();
         Template template = null;
-        if ("xml".equals(configFormat)) {
+        if (XML.equals(configFormat)) {
             template = config.getTemplate("xml.ftl");
         }
-        if ("properties".equals(configFormat)) {
+        if (PROPERTIES.equals(configFormat)) {
             template = config.getTemplate("properties.ftl");
         }
-        if ("properties2".equals(configFormat)) {
+        if (PROPERTIES2.equals(configFormat)) {
             template = config.getTemplate("properties2.ftl");
         }
-        if ("properties3".equals(configFormat)) {
+        if (PROPERTIES3.equals(configFormat)) {
             template = config.getTemplate("properties3.ftl");
         }
-        if ("prometheus".equals(configFormat)) {
+        if (PROMETHEUS.equals(configFormat)) {
             template = config.getTemplate("alert.yml");
         }
-        if ("custom".equals(configFormat)) {
+        if (CUSTOM.equals(configFormat)) {
             template = config.getTemplate(generators.getTemplateName());
             data = configs.stream().filter(e -> "map".equals(e.getConfigType())).collect(Collectors.toMap(key -> key.getName(), value -> value.getValue()));
             configs = configs.stream().filter(e -> !"map".equals(e.getConfigType())).collect(Collectors.toList());
@@ -65,19 +73,19 @@ public class FreemakerUtils {
         // 得到模板对象
         String configFormat = generators.getConfigFormat();
         Template template = null;
-        if ("xml".equals(configFormat)) {
+        if (XML.equals(configFormat)) {
             template = config.getTemplate("xml.ftl");
         }
-        if ("properties".equals(configFormat)) {
+        if (PROPERTIES.equals(configFormat)) {
             template = config.getTemplate("properties.ftl");
         }
-        if ("properties2".equals(configFormat)) {
+        if (PROPERTIES2.equals(configFormat)) {
             template = config.getTemplate("properties2.ftl");
         }
-        if ("prometheus".equals(configFormat)) {
+        if (PROMETHEUS.equals(configFormat)) {
             template = config.getTemplate("alert.yml");
         }
-        if ("custom".equals(configFormat)) {
+        if (CUSTOM.equals(configFormat)) {
             template = config.getTemplate(generators.getTemplateName());
             data = configs.stream().filter(e -> "map".equals(e.getConfigType())).collect(Collectors.toMap(key -> key.getName(), value -> value.getValue()));
             configs = configs.stream().filter(e -> !"map".equals(e.getConfigType())).collect(Collectors.toList());
@@ -97,7 +105,7 @@ public class FreemakerUtils {
         String configFormat = generators.getConfigFormat();
         Template template = null;
 
-        if ("prometheus".equals(configFormat)) {
+        if (PROMETHEUS.equals(configFormat)) {
             template = config.getTemplate("alert.yml");
         }
 
@@ -126,7 +134,7 @@ public class FreemakerUtils {
     private static void processOut(Generators generators, Template template, Map<String, Object> data, String decompressPackageName) throws IOException, TemplateException {
         String packagePath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH;
         if(generators.getOutputDirectory().contains(Constants.COMMA)){
-            for (String outPutDir : generators.getOutputDirectory().split(",")) {
+            for (String outPutDir : generators.getOutputDirectory().split(StrUtil.COMMA)) {
                 FileWriter out = new FileWriter(new File(packagePath + outPutDir + Constants.SLASH + generators.getFilename()));
                 template.process(data, out);
                 out.close();
