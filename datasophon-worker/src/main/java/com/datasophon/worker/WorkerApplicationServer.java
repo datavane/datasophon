@@ -64,7 +64,7 @@ public class WorkerApplicationServer {
 
         ArrayList<String> commands = new ArrayList<>();
         commands.add("sh");
-        if ("x86_64".equals(cpuArchitecture)) {
+        if (Constants.x86_64.equals(cpuArchitecture)) {
             commands.add(workDir + "/node/x86/control.sh");
         } else {
             commands.add(workDir + "/node/arm/control.sh");
@@ -77,10 +77,10 @@ public class WorkerApplicationServer {
         workerStartActor.tell(startWorkerMessage, ActorRef.noSender());
         logger.info("start worker");
 
-        MBeanServer platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
+        MBeanServer platformBeanServer = ManagementFactory.getPlatformMBeanServer();
         EsMetrics esMetrics = new EsMetrics();
         ObjectName objectName = new ObjectName("com.datasophon.ddh.worker.metrics:type=esMetrics");
-        platformMBeanServer.registerMBean(esMetrics, objectName);
+        platformBeanServer.registerMBean(esMetrics, objectName);
 
     }
 }

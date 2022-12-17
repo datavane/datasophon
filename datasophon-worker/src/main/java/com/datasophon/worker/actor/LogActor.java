@@ -2,6 +2,7 @@ package com.datasophon.worker.actor;
 
 import akka.actor.UntypedActor;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.GetLogCommand;
 import com.datasophon.common.utils.ExecResult;
@@ -32,7 +33,7 @@ public class LogActor extends UntypedActor {
             
             ExecResult execResult = new ExecResult();
             String logStr = "can not find log file";
-            if (logFileName.startsWith("/") && FileUtil.exist(logFileName)) {
+            if (logFileName.startsWith(StrUtil.SLASH) && FileUtil.exist(logFileName)) {
                 logStr = FileUtils.readLastRows(logFileName, Charset.defaultCharset(), PropertyUtils.getInt("rows"));
             } else if (FileUtil.exist(Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName() + Constants.SLASH + logFileName)) {
                 logStr = FileUtils.readLastRows(Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName() + Constants.SLASH + logFileName, Charset.defaultCharset(), PropertyUtils.getInt("rows"));

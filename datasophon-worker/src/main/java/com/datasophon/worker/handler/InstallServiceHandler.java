@@ -73,7 +73,7 @@ public class InstallServiceHandler {
                     if (StringUtils.isNotBlank(runAs)) {
                         ShellUtils.exceShell(" chown -R " + runAs + ":" + runAs + " " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
                     }
-                    if (decompressPackageName.contains("prometheus")) {
+                    if (decompressPackageName.contains(Constants.PROMETHEUS)) {
                         String alertPath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "alert_rules";
                         ShellUtils.exceShell("sed -i \"s/clusterIdValue/" + PropertyUtils.getString("clusterId") + "/g\" `grep clusterIdValue -rl " + alertPath + "`");
                     }
