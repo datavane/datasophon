@@ -81,6 +81,7 @@
         "configFormat": "properties",
         "outputDirectory": "be/conf",
         "includeParams": [
+          "be_priority_networks",
           "sys_log_level",
           "be_port",
           "webserver_port",
@@ -98,12 +99,35 @@
         "templateName": "fe.ftl",
         "includeParams": [
           "cluster_id",
+          "fe_priority_networks",
           "custom.fe.conf"
         ]
       }
     ]
   },
   "parameters": [
+    {
+      "name": "fe_priority_networks",
+      "label": "FE优先网段",
+      "description": "为那些有多个 IP 地址的服务器声明一个选择策略。\n请注意，最多应该有一个 IP 地址与此列表匹配。这是一个以分号分隔格式的列表，用 CIDR 表示法，例如 10.10.10.0/24。 如果没有匹配这条规则的ip，会随机选择一个。",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "0.0.0.0/24"
+    },
+    {
+      "name": "be_priority_networks",
+      "label": "BE优先网段",
+      "description": "为那些有多个 IP 地址的服务器声明一个选择策略。\n请注意，最多应该有一个 IP 地址与此列表匹配。这是一个以分号分隔格式的列表，用 CIDR 表示法，例如 10.10.10.0/24。 如果没有匹配这条规则的ip，会随机选择一个。",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "0.0.0.0/24"
+    },
     {
       "name": "sys_log_level",
       "label": "BE服务日志级别",
