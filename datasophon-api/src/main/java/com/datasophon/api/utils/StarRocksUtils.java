@@ -1,6 +1,5 @@
 package com.datasophon.api.utils;
 
-import com.alibaba.fastjson.JSONArray;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
@@ -12,6 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ *
+ *
+ * @author zhangqiao
+ * @email 13707421712@163.com
+ * @date 2022-12-17 12:33
+ * @Description: StarRocksUtils工具类
+ */
 public class StarRocksUtils {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         String username="root";
@@ -34,9 +41,9 @@ public class StarRocksUtils {
 
         }
     }
-    private static final Logger logger = LoggerFactory.getLogger(SSHTools.class);
+    private static final Logger logger = LoggerFactory.getLogger(SshTools.class);
 
-    public static void generateStarRocksHA( List<ClusterServiceRoleInstanceEntity> roleInstanceList,Integer clusterId) throws ClassNotFoundException, SQLException {
+    public static void generateStarRocksHa( List<ClusterServiceRoleInstanceEntity> roleInstanceList,Integer clusterId) throws ClassNotFoundException, SQLException {
         Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+clusterId);
         String feMaster = globalVariables.get("${feMaster}");
         logger.info("fe master is {}",feMaster);
