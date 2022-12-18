@@ -1,12 +1,12 @@
 {
-  "name": "STARROCKS",
-  "label": "StarRocks",
-  "description": "新一代极速全场景MPP数据库",
-  "version": "2.4.1",
+  "name": "DORIS",
+  "label": "Doris",
+  "description": "简单易用、高性能和统一的分析数据库",
+  "version": "1.1.5",
   "sortNum": 5,
   "dependencies":[],
-  "packageName": "StarRocks-2.4.1.tar.gz",
-  "decompressPackageName": "StarRocks-2.4.1",
+  "packageName": "doris-1.1.5.tar.gz",
+  "decompressPackageName": "doris-1.1.5",
   "roles": [
     {
       "name": "FE",
@@ -87,6 +87,7 @@
           "heartbeat_service_port",
           "brpc_port",
           "storage_root_path",
+          "default_rowset_type",
           "custom.be.conf"
         ]
       },
@@ -97,29 +98,12 @@
         "templateName": "fe.ftl",
         "includeParams": [
           "cluster_id",
-          "meta_dir",
-          "http_port",
-          "rpc_port",
-          "query_port",
-          "edit_log_port",
           "custom.fe.conf"
         ]
       }
     ]
   },
   "parameters": [
-    {
-      "name": "cluster_id",
-      "label": "集群ID",
-      "description": "相同集群ID的FE/BE节点属于同一个集群",
-      "configType": "map",
-      "required": true,
-      "type": "input",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": "1"
-    },
     {
       "name": "sys_log_level",
       "label": "BE服务日志级别",
@@ -193,7 +177,29 @@
       "hidden": false,
       "defaultValue": "${STARROCKS_HOME}/storage"
     },
-
+    {
+      "name": "default_rowset_type",
+      "label": "默认行数据类型",
+      "description": "默认行数据类型",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "beta"
+    },
+    {
+      "name": "cluster_id",
+      "label": "集群ID",
+      "description": "相同集群ID的FE/BE节点属于同一个集群",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "1"
+    },
     {
       "name": "custom.fe.conf",
       "label": "自定义配置fe.conf",
