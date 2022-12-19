@@ -233,7 +233,7 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
             roleName = "ResourceManager";
         }
         if(hosts.size() > 0){
-            ProcessUtils.hdfsECMethond(serviceInstanceId,this,hosts,"blacklist",roleName);
+            ProcessUtils.hdfsEcMethond(serviceInstanceId,this,hosts,"blacklist",roleName);
         }
         return Result.success();
     }

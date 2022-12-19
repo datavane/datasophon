@@ -22,6 +22,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ *
+ *
+ * @author zhangqiao
+ * @email 13707421712@163.com
+ * @date 2022-12-17 12:33
+ * @Description: HadoopUtils工具类
+ */
 public class HadoopUtils {
 
 

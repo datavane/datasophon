@@ -6,6 +6,14 @@ import com.datasophon.dao.enums.RoleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ *
+ *
+ * @author zhangqiao
+ * @email 13707421712@163.com
+ * @date 2022-12-17 12:33
+ * @Description: CommonUtils工具类
+ */
 public class CommonUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonUtils.class);
@@ -18,7 +26,7 @@ public class CommonUtils {
     }
 
     public static RoleType convertRoleType(String roleType) {
-        if (roleType == null || roleType.trim().equals("")) {
+        if (roleType == null || "".equals(roleType.trim())) {
             logger.error("Convert role type failed, roleType is null.");
             return null;
         }

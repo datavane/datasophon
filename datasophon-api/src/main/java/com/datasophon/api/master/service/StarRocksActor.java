@@ -16,7 +16,7 @@ public class StarRocksActor extends UntypedActor {
             GenerateStarRocksHAMessage message = (GenerateStarRocksHAMessage) msg;
             ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
             List<ClusterServiceRoleInstanceEntity> roleInstanceList = roleInstanceService.getRunningServiceRoleInstanceListByServiceId(message.getServiceInstanceId());
-            StarRocksUtils.generateStarRocksHA(roleInstanceList,message.getClusterId());
+            StarRocksUtils.generateStarRocksHa(roleInstanceList,message.getClusterId());
         }else {
             unhandled(msg);
         }

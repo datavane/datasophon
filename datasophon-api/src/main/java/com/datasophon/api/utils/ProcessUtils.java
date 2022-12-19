@@ -44,6 +44,14 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+/**
+ *
+ *
+ * @author zhangqiao
+ * @email 13707421712@163.com
+ * @date 2022-12-17 12:33
+ * @Description: ProcessUtils工具类
+ */
 public class ProcessUtils {
     private static final Logger logger = LoggerFactory.getLogger(ProcessUtils.class);
 
@@ -103,7 +111,7 @@ public class ProcessUtils {
             roleInstance.setRoleGroupId(roleGroup.getId());
             roleInstance.setNeedRestart(NeedRestart.NO);
             serviceRoleInstanceService.save(roleInstance);
-            if ("zkserver".equals(roleInstance.getServiceRoleName().toLowerCase())) {
+            if (Constants.ZKSERVER.equals(roleInstance.getServiceRoleName().toLowerCase())) {
                 ClusterZkService clusterZkService = SpringTool.getApplicationContext().getBean(ClusterZkService.class);
                 ClusterZk clusterZk = new ClusterZk();
                 clusterZk.setMyid((Integer) CacheUtils.get("zkserver_" + serviceRoleInfo.getHostname()));
@@ -283,7 +291,6 @@ public class ProcessUtils {
         commandEntity.setCommandState(CommandState.RUNNING);
         commandEntity.setCommandType(commandType.getValue());
         commandEntity.setCreateTime(new Date());
-//        commandEntity.setCreateBy(SecurityUtils.getUsername());
         commandEntity.setCreateBy("admin");
         commandEntity.setServiceName(serviceName);
         return commandEntity;
@@ -347,7 +354,7 @@ public class ProcessUtils {
         globalVariables.put(variableName, value);
     }
 
-    public static void hdfsECMethond(Integer serviceInstanceId, ClusterServiceRoleInstanceService roleInstanceService, TreeSet<String> list, String type, String roleName) throws Exception {
+    public static void hdfsEcMethond(Integer serviceInstanceId, ClusterServiceRoleInstanceService roleInstanceService, TreeSet<String> list, String type, String roleName) throws Exception {
 
         List<ClusterServiceRoleInstanceEntity> namenodes = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                 .eq(Constants.SERVICE_ID, serviceInstanceId)
@@ -443,7 +450,13 @@ public class ProcessUtils {
         return execResult;
     }
 
-    //生成configFileMap
+
+
+    /**
+     *@Description: 生成configFileMap
+     * @param configFileMap
+     * @param config
+     */
     public static void generateConfigFileMap(HashMap<Generators, List<ServiceConfig>> configFileMap, ClusterServiceRoleGroupConfig config) {
         Map<JSONObject, JSONArray> map = JSONObject.parseObject(config.getConfigFileJson(), Map.class);
         for (JSONObject fileJson : map.keySet()) {
