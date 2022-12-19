@@ -22,21 +22,13 @@ package com.datasophon.api.utils;
 import com.datasophon.api.enums.Status;
 import com.datasophon.common.Constants;
 import org.apache.commons.lang.StringUtils;
-
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 
-/**
- *
- *
- * @author zhangqiao
- * @email 13707421712@163.com
- * @date 2022-12-17 12:33
- * @Description: CheckUtils工具类
- */
+
 public class CheckUtils {
 
   private CheckUtils() {

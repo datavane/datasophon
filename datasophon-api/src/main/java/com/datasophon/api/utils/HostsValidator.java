@@ -3,17 +3,11 @@ package com.datasophon.api.utils;
 import com.datasophon.api.annotation.Hosts;
 import com.datasophon.common.Constants;
 import com.datasophon.common.utils.HostUtils;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
-/**
- * Check host list roughly.
- *
- * @author rwj
- * @date 2022/11/20
- */
+
 public class HostsValidator implements ConstraintValidator<Hosts, String> {
 
     private static final Pattern ALPHABET_AND_NUMBER = Pattern.compile("[a-zA_Z0-9,]+");
