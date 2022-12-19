@@ -6,15 +6,10 @@ import com.datasophon.common.Constants;
 import com.datasophon.dao.entity.UserInfoEntity;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-/**
- * 权限获取工具类
- *
- * @author dolphinman
- */
+
 public class SecurityUtils {
 
     public static HttpServletRequest getRequest() {
