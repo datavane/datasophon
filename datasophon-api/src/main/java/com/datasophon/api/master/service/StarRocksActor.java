@@ -3,7 +3,6 @@ package com.datasophon.api.master.service;
 import akka.actor.UntypedActor;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.api.utils.SpringTool;
-import com.datasophon.api.utils.StarRocksUtils;
 import com.datasophon.common.command.GenerateStarRocksHAMessage;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 
@@ -16,7 +15,6 @@ public class StarRocksActor extends UntypedActor {
             GenerateStarRocksHAMessage message = (GenerateStarRocksHAMessage) msg;
             ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
             List<ClusterServiceRoleInstanceEntity> roleInstanceList = roleInstanceService.getRunningServiceRoleInstanceListByServiceId(message.getServiceInstanceId());
-//            StarRocksUtils.generateStarRocksHA(roleInstanceList,message.getClusterId());
         }else {
             unhandled(msg);
         }

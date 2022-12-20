@@ -38,20 +38,12 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-/**
- *
- *
- * @author zhangqiao
- * @email 13707421712@163.com
- * @date 2022-12-17 12:33
- * @Description: ProcessUtils工具类
- */
+
 public class ProcessUtils {
     private static final Logger logger = LoggerFactory.getLogger(ProcessUtils.class);
 
