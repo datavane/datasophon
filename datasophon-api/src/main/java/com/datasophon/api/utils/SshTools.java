@@ -5,21 +5,16 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.ssh.ChannelType;
 import com.jcraft.jsch.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
-/**
- * ssh 连接工具类
- */
-public class SSHTools {
 
-    private static final Logger logger = LoggerFactory.getLogger(SSHTools.class);
+public class SshTools {
+
+    private static final Logger logger = LoggerFactory.getLogger(SshTools.class);
 
     private static final String SFTP = "sftp";
 
@@ -29,8 +24,8 @@ public class SSHTools {
      *
      * @return 实例
      */
-    public static SSHTools getInstance() {
-        return new SSHTools();
+    public static SshTools getInstance() {
+        return new SshTools();
     }
 
     /**
@@ -192,10 +187,10 @@ public class SSHTools {
     public static void main(String[] args) throws JSchException, IOException, SftpException {
         Session session = null;
         try {
-            session = SSHTools.createSession("172.31.96.16", 22, "root", "D:\\360Downloads\\id_rsa");
-            String exec = SSHTools.exec(session, "tar -zxvf /opt/datasophon/ddh/ddh-worker.tar.gz");
+            session = SshTools.createSession("172.31.96.16", 22, "root", "D:\\360Downloads\\id_rsa");
+            String exec = SshTools.exec(session, "tar -zxvf /opt/datasophon/ddh/ddh-worker.tar.gz");
         }finally {
-            SSHTools.close(session);
+            SshTools.close(session);
         }
     }
 

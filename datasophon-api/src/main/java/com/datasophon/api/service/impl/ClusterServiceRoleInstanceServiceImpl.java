@@ -233,7 +233,7 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
             roleName = "ResourceManager";
         }
         if(hosts.size() > 0){
-            ProcessUtils.hdfsECMethond(serviceInstanceId,this,hosts,"blacklist",roleName);
+            ProcessUtils.hdfsEcMethond(serviceInstanceId,this,hosts,"blacklist",roleName);
         }
         return Result.success();
     }
@@ -256,5 +256,12 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
                 .eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.HOSTNAME, hostname)
                 .eq(Constants.SERVICE_ROLE_STATE, state));
+    }
+
+    @Override
+    public void reomveRoleInstance(Integer serviceInstanceId) {
+        this.remove(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                .eq(Constants.SERVICE_ID,serviceInstanceId)
+                .eq(Constants.SERVICE_ROLE_STATE,ServiceRoleState.STOP));
     }
 }

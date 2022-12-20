@@ -1,18 +1,13 @@
 package com.datasophon.api.utils;
 
 import com.datasophon.api.annotation.Hosts;
+import com.datasophon.common.Constants;
 import com.datasophon.common.utils.HostUtils;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
-/**
- * Check host list roughly.
- *
- * @author rwj
- * @date 2022/11/20
- */
+
 public class HostsValidator implements ConstraintValidator<Hosts, String> {
 
     private static final Pattern ALPHABET_AND_NUMBER = Pattern.compile("[a-zA_Z0-9,]+");
@@ -31,7 +26,13 @@ public class HostsValidator implements ConstraintValidator<Hosts, String> {
             return false;
         }
         //3.字母和[-]任一字符不能同时出现
-        if (ALPHABET.matcher(value).matches() && (value.contains("[") || value.contains("]") || value.contains("-"))) {
+        boolean flagOne = ALPHABET.matcher(value).matches();
+        boolean flagTwo=value.contains(Constants.CENTER_BRACKET_LEFT);
+        boolean flagThree=value.contains(Constants.CENTER_BRACKET_RIGHT);
+        boolean flagFour=value.contains(Constants.HYPHEN);
+        boolean flagFive=flagTwo|| flagThree || flagFour;
+        //if (ALPHABET.matcher(value).matches() && (value.contains(Constants.CENTER_BRACKET_LEFT) || value.contains(Constants.CENTER_BRACKET_RIGHT) || value.contains(Constants.HYPHEN))) {
+        if (flagOne && flagFive) {
             return false;
         }
         //4. [ - ] 三个字符顺序不能颠倒
@@ -44,29 +45,38 @@ public class HostsValidator implements ConstraintValidator<Hosts, String> {
         //5.
         String[] items = value.split(",");
         for (String item : items) {
-            if (HostUtils.checkIP(item)) {//如果是标准ip
+            //如果是标准ip
+            if (HostUtils.checkIP(item)) {
                 continue;
             }
-            if (IP.matcher(item).matches()) { //*[*-*]* 类型的ip
+            //*[*-*]* 类型的ip
+            if (IP.matcher(item).matches()) {
                 String[] ipItems = item.split("\\.");
                 int splitLen = ipItems.length;
-                if (splitLen != 4) {    //每个ip地址 .splitLength == 4
+                //每个ip地址 .splitLength == 4
+                if (splitLen != 4) {
                     return false;
                 }
                 for (int i = 0; i < splitLen; i++) {
                     String curNumStr = ipItems[i];
-                    if (curNumStr.contains("[") || curNumStr.contains("-") || curNumStr.contains("]")) {  //粗筛，这里直接不判断这种
+                    //粗筛，这里直接不判断这种
+                    if (curNumStr.contains("[") || curNumStr.contains("-") || curNumStr.contains("]")) {
                         continue;
                     }
                     if (ALPHABET.matcher(curNumStr).matches()) {
                         return false;
                     }
                     int curLen = ipItems[i].length();
-                    if ((i != 0 && ipItems[i].startsWith("0")) || (curLen > 1 && ipItems[i].startsWith("0"))) {   //不是第一个不能以0开头 || 以 0 开头却大于0
+                    //不是第一个不能以0开头 || 以 0 开头却大于0
+                    boolean conditionOne=i != 0 && ipItems[i].startsWith("0");
+                    boolean conditionTwo=curLen > 1 && ipItems[i].startsWith("0");
+                    //if ((i != 0 && ipItems[i].startsWith("0")) || (curLen > 1 && ipItems[i].startsWith("0"))) {
+                    if (conditionOne|| conditionTwo) {
                         return false;
                     }
                     int splitInt = Integer.parseInt(ipItems[i]);
-                    if (curLen < 1 || curLen > 3 || splitInt > 255 || splitInt < 0) {   //1 < 位数 <= 3 , 0 < 值 < 255
+                    //1 < 位数 <= 3 , 0 < 值 < 255
+                    if (curLen < 1 || curLen > 3 || splitInt > 255 || splitInt < 0) {
                         return false;
                     }
                 }

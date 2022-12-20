@@ -110,7 +110,7 @@ public class ServiceHandler {
             command.add("-u");
             command.add(runAs);
         }
-        if(runner.getProgram().contains("taskmanager") || runner.getProgram().contains("jobmanager")){
+        if(runner.getProgram().contains(Constants.TASK_MANAGER) || runner.getProgram().contains(Constants.JOB_MANAGER)){
             logger.info("do not use sh");
         }else {
             command.add("sh");

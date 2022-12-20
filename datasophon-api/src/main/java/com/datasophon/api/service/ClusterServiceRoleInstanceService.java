@@ -44,5 +44,7 @@ public interface ClusterServiceRoleInstanceService extends IService<ClusterServi
     List<ClusterServiceRoleInstanceEntity> getObsoleteService(Integer id);
 
     List<ClusterServiceRoleInstanceEntity> getStoppedRoleInstanceOnHost(Integer clusterId, String hostname, ServiceRoleState state);
+
+    void reomveRoleInstance(Integer serviceInstanceId);
 }
 

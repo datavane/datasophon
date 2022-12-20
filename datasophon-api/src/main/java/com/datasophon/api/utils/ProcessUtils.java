@@ -39,11 +39,11 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
 
 public class ProcessUtils {
     private static final Logger logger = LoggerFactory.getLogger(ProcessUtils.class);
@@ -104,7 +104,7 @@ public class ProcessUtils {
             roleInstance.setRoleGroupId(roleGroup.getId());
             roleInstance.setNeedRestart(NeedRestart.NO);
             serviceRoleInstanceService.save(roleInstance);
-            if ("zkserver".equals(roleInstance.getServiceRoleName().toLowerCase())) {
+            if (Constants.ZKSERVER.equals(roleInstance.getServiceRoleName().toLowerCase())) {
                 ClusterZkService clusterZkService = SpringTool.getApplicationContext().getBean(ClusterZkService.class);
                 ClusterZk clusterZk = new ClusterZk();
                 clusterZk.setMyid((Integer) CacheUtils.get("zkserver_" + serviceRoleInfo.getHostname()));
@@ -129,6 +129,7 @@ public class ProcessUtils {
                     webuis.setServiceRoleInstanceId(roleInstance.getId());
                     webuis.setName(externalLink.getName() + "(" + serviceRoleInfo.getHostname() + ")");
                     webuisService.save(webuis);
+                    globalVariables.remove("${host}");
                 }
 
             }
@@ -154,38 +155,37 @@ public class ProcessUtils {
         clusterHostService.save(clusterHostEntity);
     }
 
-    public static void updateCommandStateToFailed(String hostCommandId) {
-        logger.info("hostCommandId is {}", hostCommandId);
-        //worker以及下游节点全部取消
-        ClusterServiceCommandHostCommandService service = SpringTool.getApplicationContext().getBean(ClusterServiceCommandHostCommandService.class);
-        ClusterServiceCommandHostCommandEntity hostCommand = service.getByHostCommandId(hostCommandId);
-        logger.info("hostCommandName is {}", hostCommand.getCommandName());
-        ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class, "commandActor");
-        List<ClusterServiceCommandHostCommandEntity> hostCommandList = service.getHostCommandListByCommandId(hostCommand.getCommandId());
-        for (ClusterServiceCommandHostCommandEntity hostCommandEntity : hostCommandList) {
-            if (hostCommandEntity.getCommandState() == CommandState.RUNNING && hostCommandEntity.getHostCommandId() != hostCommandId) {
-                logger.info("{} host command  set to failed", hostCommandEntity.getCommandName());
-                hostCommandEntity.setCommandState(CommandState.FAILED);
-                hostCommandEntity.setCommandProgress(100);
-                service.updateByHostCommandId(hostCommandEntity);
-                UpdateCommandHostMessage message = new UpdateCommandHostMessage();
-                message.setCommandId(hostCommand.getCommandId());
-                message.setCommandHostId(hostCommandEntity.getCommandHostId());
-                message.setHostname(hostCommandEntity.getHostname());
-                if (hostCommand.getServiceRoleType() == RoleType.MASTER) {
-                    message.setServiceRoleType(ServiceRoleType.MASTER);
-                } else {
-                    message.setServiceRoleType(ServiceRoleType.WORKER);
+    public static void updateCommandStateToFailed(List<String> commandIds) {
+        for (String commandId : commandIds) {
+            logger.info("command id is {}", commandId);
+            //cancel worker and sub node
+            ClusterServiceCommandHostCommandService service = SpringTool.getApplicationContext().getBean(ClusterServiceCommandHostCommandService.class);
+            ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class, "commandActor");
+            List<ClusterServiceCommandHostCommandEntity> hostCommandList = service.getHostCommandListByCommandId(commandId);
+            for (ClusterServiceCommandHostCommandEntity hostCommandEntity : hostCommandList) {
+                if (hostCommandEntity.getCommandState() == CommandState.RUNNING) {
+                    logger.info("{} host command  set to failed", hostCommandEntity.getCommandName());
+                    hostCommandEntity.setCommandState(CommandState.FAILED);
+                    hostCommandEntity.setCommandProgress(100);
+                    service.updateByHostCommandId(hostCommandEntity);
+                    UpdateCommandHostMessage message = new UpdateCommandHostMessage();
+                    message.setCommandId(commandId);
+                    message.setCommandHostId(hostCommandEntity.getCommandHostId());
+                    message.setHostname(hostCommandEntity.getHostname());
+                    if (hostCommandEntity.getServiceRoleType() == RoleType.MASTER) {
+                        message.setServiceRoleType(ServiceRoleType.MASTER);
+                    } else {
+                        message.setServiceRoleType(ServiceRoleType.WORKER);
+                    }
+                    ActorUtils.actorSystem.scheduler().scheduleOnce(
+                            FiniteDuration.apply(3L, TimeUnit.SECONDS),
+                            commandActor,
+                            message,
+                            ActorUtils.actorSystem.dispatcher(),
+                            ActorRef.noSender());
                 }
-                ActorUtils.actorSystem.scheduler().scheduleOnce(
-                        FiniteDuration.apply(3L, TimeUnit.SECONDS),
-                        commandActor,
-                        message,
-                        ActorUtils.actorSystem.dispatcher(),
-                        ActorRef.noSender());
             }
         }
-
     }
 
     public static void tellCommandActorResult(String serviceName, ExecuteServiceRoleCommand executeServiceRoleCommand, ServiceExecuteState state) {
@@ -238,7 +238,7 @@ public class ProcessUtils {
 
         ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class, "commandActor");
         ActorUtils.actorSystem.scheduler().scheduleOnce(FiniteDuration.apply(
-                3L, TimeUnit.SECONDS),
+                1L, TimeUnit.SECONDS),
                 commandActor, message,
                 ActorUtils.actorSystem.dispatcher(),
                 ActorRef.noSender());
@@ -284,7 +284,6 @@ public class ProcessUtils {
         commandEntity.setCommandState(CommandState.RUNNING);
         commandEntity.setCommandType(commandType.getValue());
         commandEntity.setCreateTime(new Date());
-//        commandEntity.setCreateBy(SecurityUtils.getUsername());
         commandEntity.setCreateBy("admin");
         commandEntity.setServiceName(serviceName);
         return commandEntity;
@@ -348,7 +347,7 @@ public class ProcessUtils {
         globalVariables.put(variableName, value);
     }
 
-    public static void hdfsECMethond(Integer serviceInstanceId, ClusterServiceRoleInstanceService roleInstanceService, TreeSet<String> list, String type, String roleName) throws Exception {
+    public static void hdfsEcMethond(Integer serviceInstanceId, ClusterServiceRoleInstanceService roleInstanceService, TreeSet<String> list, String type, String roleName) throws Exception {
 
         List<ClusterServiceRoleInstanceEntity> namenodes = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                 .eq(Constants.SERVICE_ID, serviceInstanceId)
@@ -444,7 +443,13 @@ public class ProcessUtils {
         return execResult;
     }
 
-    //生成configFileMap
+
+
+    /**
+     *@Description: 生成configFileMap
+     * @param configFileMap
+     * @param config
+     */
     public static void generateConfigFileMap(HashMap<Generators, List<ServiceConfig>> configFileMap, ClusterServiceRoleGroupConfig config) {
         Map<JSONObject, JSONArray> map = JSONObject.parseObject(config.getConfigFileJson(), Map.class);
         for (JSONObject fileJson : map.keySet()) {

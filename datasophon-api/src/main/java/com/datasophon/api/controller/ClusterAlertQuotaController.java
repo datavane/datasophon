@@ -1,15 +1,7 @@
 package com.datasophon.api.controller;
 
-import java.io.IOException;
 import java.util.*;
 
-import com.datasophon.api.service.FrameServiceService;
-import com.datasophon.common.model.AlertItem;
-import com.datasophon.common.model.Generators;
-import com.datasophon.common.utils.FreemakerUtils;
-import com.datasophon.dao.entity.FrameServiceEntity;
-import freemarker.template.TemplateException;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.datasophon.common.utils.Result;
@@ -28,44 +20,6 @@ import com.datasophon.api.service.ClusterAlertQuotaService;
 public class ClusterAlertQuotaController {
     @Autowired
     private ClusterAlertQuotaService clusterAlertQuotaService;
-
-    @Autowired
-    private FrameServiceService service;
-
-
-    /**
-     * 列表
-     */
-    @RequestMapping("/generateAlertYml")
-    public Result list(Integer clusterId) throws IOException, TemplateException {
-        List<ClusterAlertQuota> list = clusterAlertQuotaService.list();
-        List<FrameServiceEntity> serviceList = service.list();
-        for (FrameServiceEntity serviceEntity : serviceList) {
-            Generators generators = new Generators();
-            generators.setFilename(serviceEntity.getServiceName().toLowerCase()+".yml");
-            generators.setConfigFormat("prometheus");
-            generators.setOutputDirectory("D:\\360downloads\\test\\");
-            ArrayList<AlertItem> alertItems = new ArrayList<>();
-            for (ClusterAlertQuota clusterAlertQuota : list) {
-                if(clusterAlertQuota.getServiceCategory().equals(serviceEntity.getServiceName()) && StringUtils.isNotBlank(clusterAlertQuota.getServiceRoleName())){
-                    AlertItem alertItem = new AlertItem();
-                    alertItem.setAlertName(clusterAlertQuota.getAlertQuotaName());
-                    alertItem.setAlertExpr(clusterAlertQuota.getAlertExpr()+" "+ clusterAlertQuota.getCompareMethod()+" "+clusterAlertQuota.getAlertThreshold());
-                    alertItem.setClusterId(clusterId);
-                    alertItem.setServiceRoleName(clusterAlertQuota.getServiceRoleName());
-                    alertItem.setAlertLevel(clusterAlertQuota.getAlertLevel().getDesc());
-                    alertItem.setAlertAdvice(clusterAlertQuota.getAlertAdvice());
-                    alertItem.setTriggerDuration(clusterAlertQuota.getTriggerDuration());
-                    alertItems.add(alertItem);
-                }
-            }
-            if(alertItems.size() > 0){
-                FreemakerUtils.generatePromAlertFile(generators,alertItems,serviceEntity.getServiceName());
-            }
-        }
-
-        return Result.success();
-    }
 
 
     /**

@@ -10,6 +10,7 @@ import akka.remote.AssociationErrorEvent;
 import akka.remote.DisassociatedEvent;
 import com.alibaba.fastjson.JSONObject;
 import com.datasophon.common.Constants;
+import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.StartWorkerMessage;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.PropertyUtils;
@@ -35,6 +36,7 @@ public class WorkerApplicationServer {
     public static void main(String[] args) throws UnknownHostException, NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException, MalformedObjectNameException {
         //启动actorsystem
         String hostname = InetAddress.getLocalHost().getHostName();
+        CacheUtils.put("hostname",hostname);
         Config config = ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" + hostname);
         ActorSystem system = ActorSystem.create("datasophon", config.withFallback(ConfigFactory.load()));
         //初始化actor
@@ -64,7 +66,7 @@ public class WorkerApplicationServer {
 
         ArrayList<String> commands = new ArrayList<>();
         commands.add("sh");
-        if ("x86_64".equals(cpuArchitecture)) {
+        if (Constants.x86_64.equals(cpuArchitecture)) {
             commands.add(workDir + "/node/x86/control.sh");
         } else {
             commands.add(workDir + "/node/arm/control.sh");
@@ -77,10 +79,10 @@ public class WorkerApplicationServer {
         workerStartActor.tell(startWorkerMessage, ActorRef.noSender());
         logger.info("start worker");
 
-        MBeanServer platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
+        MBeanServer platformBeanServer = ManagementFactory.getPlatformMBeanServer();
         EsMetrics esMetrics = new EsMetrics();
         ObjectName objectName = new ObjectName("com.datasophon.ddh.worker.metrics:type=esMetrics");
-        platformMBeanServer.registerMBean(esMetrics, objectName);
+        platformBeanServer.registerMBean(esMetrics, objectName);
 
     }
 }

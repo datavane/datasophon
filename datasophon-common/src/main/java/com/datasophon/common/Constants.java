@@ -189,5 +189,38 @@ public final class Constants {
      */
     public static final Pattern REGEX_MAIL_NAME = Pattern.compile("^([a-z0-9A-Z]+[_|\\-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$");
 
+    /**
+     * 常量-数值200
+     */
+    public static final int TWO_HUNDRRD = 200;
+
+    /**
+     * 常量-数值10
+     */
+    public static final int TEN= 10;
+
+    /**
+     * 常量-zkserver
+     */
+    public static final String ZKSERVER= "zkserver";
+
+    public static final String  CENTER_BRACKET_LEFT= "[";
+
+    public static final String   CENTER_BRACKET_RIGHT= "]";
+    /**
+     * 常量-连接号
+     */
+    public static final String   HYPHEN= "-";
+
+    public static final String TASK_MANAGER = "taskmanager";
+    public static final String JOB_MANAGER = "jobmanager";
+    public static final String x86_64 = "x86_64";
+    public static final String PROMETHEUS = "prometheus";
+
+    public static final String XML = "xml";
+    public static final String PROPERTIES = "properties";
+    public static final String PROPERTIES2 = "properties2";
+    public static final String PROPERTIES3 = "properties3";
+
 
 }
