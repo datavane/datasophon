@@ -81,7 +81,6 @@ public class LoadServiceMeta implements ApplicationRunner {
         HashMap<String, String> globalVariables = new HashMap<>();
         loadGlobalVariables(globalVariables);
 
-        HashMap<String, String> jmxMap = new HashMap<>();
         for (File path : ddps) {
             List<File> files = FileUtil.loopFiles(path);
             String frameCode = path.getName();

@@ -78,6 +78,9 @@ public class ConfigureServiceHandler {
                         serviceConfig.setValue("false");
                         customConfList.add(serviceConfig);
                     }
+                    if("fe_priority_networks".equals(config.getName()) || "be_priority_networks".equals(config.getName())){
+                        config.setName("priority_networks");
+                    }
 
                 }
 

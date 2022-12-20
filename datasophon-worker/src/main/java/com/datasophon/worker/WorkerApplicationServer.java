@@ -10,6 +10,7 @@ import akka.remote.AssociationErrorEvent;
 import akka.remote.DisassociatedEvent;
 import com.alibaba.fastjson.JSONObject;
 import com.datasophon.common.Constants;
+import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.StartWorkerMessage;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.PropertyUtils;
@@ -35,6 +36,7 @@ public class WorkerApplicationServer {
     public static void main(String[] args) throws UnknownHostException, NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException, MalformedObjectNameException {
         //启动actorsystem
         String hostname = InetAddress.getLocalHost().getHostName();
+        CacheUtils.put("hostname",hostname);
         Config config = ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" + hostname);
         ActorSystem system = ActorSystem.create("datasophon", config.withFallback(ConfigFactory.load()));
         //初始化actor
