@@ -59,16 +59,6 @@
     ]
   },
   "parameters": [
-    {
-      "name": "log.dirs",
-      "label": "kafka数据存储目录",
-      "description": "",
-      "required": true,
-      "type": "multiple",
-      "value": ["/data/kafka-logs"],
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": ""
-    }
+
   ]
 }

@@ -1,12 +1,12 @@
 {
-  "name": "STARROCKS",
-  "label": "StarRocks",
-  "description": "新一代极速全场景MPP数据库",
-  "version": "2.2.2",
+  "name": "DORIS",
+  "label": "Doris",
+  "description": "简单易用、高性能和统一的分析数据库",
+  "version": "1.1.5",
   "sortNum": 5,
   "dependencies":[],
-  "packageName": "StarRocks-2.2.2.tar.gz",
-  "decompressPackageName": "StarRocks-2.2.2",
+  "packageName": "doris-1.1.5.tar.gz",
+  "decompressPackageName": "doris-1.1.5",
   "roles": [
     {
       "name": "FE",
@@ -14,7 +14,7 @@
       "roleType": "master",
       "cardinality": "1+",
       "logFile": "fe/log/fe.log",
-      "jmxPort": 8030,
+      "jmxPort": 18030,
       "startRunner": {
         "timeout": "60",
         "program": "fe/bin/start_fe.sh",
@@ -40,7 +40,7 @@
       "externalLink": {
         "name": "FE UI",
         "label": "FE UI",
-        "url": "http://${host}:8030"
+        "url": "http://${host}:18030"
       }
     },
     {
@@ -48,8 +48,8 @@
       "label": "BE",
       "roleType": "worker",
       "cardinality": "1+",
-      "logFile": "be/log/be.log",
-      "jmxPort": 8040,
+      "logFile": "be/log/be.INFO",
+      "jmxPort": 18040,
       "startRunner": {
         "timeout": "60",
         "program": "be/bin/start_be.sh",
@@ -81,13 +81,13 @@
         "configFormat": "properties",
         "outputDirectory": "be/conf",
         "includeParams": [
+          "be_priority_networks",
           "sys_log_level",
           "be_port",
           "webserver_port",
           "heartbeat_service_port",
           "brpc_port",
           "storage_root_path",
-          "default_rowset_type",
           "custom.be.conf"
         ]
       },
@@ -97,14 +97,101 @@
         "outputDirectory": "fe/conf",
         "templateName": "fe.ftl",
         "includeParams": [
-          "meta_dir",
           "cluster_id",
+          "meta_dir",
+          "rpc_port",
+          "query_port",
+          "edit_log_port",
+          "fe_priority_networks",
           "custom.fe.conf"
         ]
       }
     ]
   },
   "parameters": [
+    {
+      "name": "cluster_id",
+      "label": "集群ID",
+      "description": "相同集群ID的FE/BE节点属于同一个集群",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "1"
+    },
+    {
+      "name": "meta_dir",
+      "label": "FE元数据的保存目录",
+      "description": "FE元数据的保存目录",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "StarRocksFE.STARROCKS_HOME_DIR + \"/meta\""
+    },
+    {
+      "name": "rpc_port",
+      "label": "FE节点上Thrift服务器的端口",
+      "description": "FE 节点上 Thrift 服务器的端口。",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "9020"
+    },
+    {
+      "name": "query_port",
+      "label": "FE节点上MySQL服务器的端口",
+      "description": "FE 节点上 MySQL 服务器的端口",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "9030"
+    },
+    {
+      "name": "edit_log_port",
+      "label": "FE集群通信端口",
+      "description": "FE 所在 StarRocks 集群中各 Leader FE、Follower FE、Observer FE 之间通信用的端口。",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "9010"
+    },
+    {
+      "name": "fe_priority_networks",
+      "label": "FE优先网段",
+      "description": "为那些有多个 IP 地址的服务器声明一个选择策略。\n请注意，最多应该有一个 IP 地址与此列表匹配。这是一个以分号分隔格式的列表，用 CIDR 表示法，例如 10.10.10.0/24。 如果没有匹配这条规则的ip，会随机选择一个。",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "0.0.0.0/24"
+    },
+    {
+      "name": "be_priority_networks",
+      "label": "BE优先网段",
+      "description": "为那些有多个 IP 地址的服务器声明一个选择策略。\n请注意，最多应该有一个 IP 地址与此列表匹配。这是一个以分号分隔格式的列表，用 CIDR 表示法，例如 10.10.10.0/24。 如果没有匹配这条规则的ip，会随机选择一个。",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "0.0.0.0/24"
+    },
     {
       "name": "sys_log_level",
       "label": "BE服务日志级别",
@@ -142,7 +229,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "8040"
+      "defaultValue": "18040"
     },
     {
       "name": "heartbeat_service_port",
@@ -178,41 +265,7 @@
       "hidden": false,
       "defaultValue": "${STARROCKS_HOME}/storage"
     },
-    {
-      "name": "default_rowset_type",
-      "label": "默认行数据类型",
-      "description": "默认行数据类型",
-      "required": true,
-      "type": "input",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": "beta"
-    },
-    {
-      "name": "meta_dir",
-      "label": "FE元数据目录",
-      "description": "配置FE元数据目录",
-      "configType": "map",
-      "required": true,
-      "type": "input",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": "${INSTALL_PATH}/StarRocks-2.2.2/fe/meta"
-    },
-    {
-      "name": "cluster_id",
-      "label": "集群ID",
-      "description": "相同集群ID的FE/BE节点属于同一个集群",
-      "configType": "map",
-      "required": true,
-      "type": "input",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": "1"
-    },
+
     {
       "name": "custom.fe.conf",
       "label": "自定义配置fe.conf",

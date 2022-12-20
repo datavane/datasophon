@@ -13,26 +13,28 @@ import java.util.ArrayList;
 
 public class ZKFCHandlerStrategy implements ServiceRoleStrategy {
     private static final Logger logger = LoggerFactory.getLogger(ZKFCHandlerStrategy.class);
+
     @Override
     public ExecResult handler(ServiceRoleOperateCommand command) {
         ExecResult startResult = new ExecResult();
         ServiceHandler serviceHandler = new ServiceHandler();
-        if(!command.isSlave()  && command.getCommandType().equals(CommandType.INSTALL_SERVICE)){
+        String workPath = Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName();
+        if (!command.isSlave() && command.getCommandType().equals(CommandType.INSTALL_SERVICE)) {
             logger.info("start to execute hdfs zkfc -formatZK");
 
             ArrayList<String> commands = new ArrayList<>();
-            commands.add(Constants.INSTALL_PATH+ "/hadoop-3.3.3/bin/hdfs");
+            commands.add(workPath + "/bin/hdfs");
             commands.add("zkfc");
             commands.add("-formatZK");
-            ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH+ "/hadoop-3.3.3", commands, 30L);
-            if (execResult.getExecResult()){
+            ExecResult execResult = ShellUtils.execWithStatus(workPath, commands, 300L);
+            if (execResult.getExecResult()) {
                 logger.info("zkfc format success");
-                startResult = serviceHandler.start(command.getStartRunner(),command.getStatusRunner(),command.getDecompressPackageName(),command.getRunAs());
-            }else{
+                startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
+            } else {
                 logger.info("zkfc format failed");
             }
-        }else{
-            startResult = serviceHandler.start(command.getStartRunner(),command.getStatusRunner(),command.getDecompressPackageName(),command.getRunAs());
+        } else {
+            startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
         }
         return startResult;
     }
