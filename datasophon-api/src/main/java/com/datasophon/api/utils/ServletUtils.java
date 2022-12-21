@@ -5,7 +5,6 @@ import com.datasophon.common.Constants;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -17,11 +16,7 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * 客户端工具类
- *
- * @author dolphinman
- */
+
 public class ServletUtils {
     /**
      * 获取String参数

@@ -8,7 +8,6 @@ import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.sftp.client.SftpClientFactory;
 import org.apache.sshd.sftp.client.fs.SftpFileSystem;
 import org.slf4j.LoggerFactory;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,14 +18,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-/**
- *
- *
- * @author zhangqiao
- * @email 13707421712@163.com
- * @date 2022-12-17 12:33
- * @Description: MinaUtils工具类
- */
+
 public class MinaUtils {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MinaUtils.class);
 
