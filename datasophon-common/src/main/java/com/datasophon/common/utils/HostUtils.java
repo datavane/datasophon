@@ -11,6 +11,9 @@ import java.util.*;
 
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import static com.datasophon.common.Constants.OSNAME_PROPERTIES;
+import static com.datasophon.common.Constants.OSNAME_WINDOWS;
+import static com.datasophon.common.Constants.WINDOWS_HOST_DIR;
 
 /**
  * 读取hosts文件
@@ -19,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public enum HostUtils {;
 
-    private static final String HOSTS_PATH = "/etc/hosts";
+    private static String HOSTS_PATH = "/etc/hosts";
 
     private static final String ENDL = "\r*\n";
 
@@ -65,6 +68,10 @@ public enum HostUtils {;
     }
 
     private static List<String> parse2List() {
+        String osName = System.getProperty(OSNAME_PROPERTIES);
+        if (osName.startsWith(OSNAME_WINDOWS)){
+            HOSTS_PATH = WINDOWS_HOST_DIR + HOSTS_PATH;
+        }
         if (!FileUtil.exist(HOSTS_PATH)) {
             throw new RuntimeException("File /etc/hosts not found：" + HOSTS_PATH);
         }
