@@ -1,0 +1,120 @@
+{
+  "name": "DLINKY",
+  "label": "dlink",
+  "description": "流处理极速开发框架,流批一体&湖仓一体的云原生平台,一站式流处理计算平台",
+  "version": "0.7.0",
+  "sortNum": 13,
+  "dependencies":[],
+  "packageName": "dlink-0.7.0.tar.gz",
+  "decompressPackageName": "dlink-release-0.7.0",
+  "roles": [
+    {
+      "name": "dlink",
+      "label": "dlink",
+      "roleType": "master",
+      "cardinality": "1",
+      "logFile": "logs/dlink.log",
+      "jmxPort": 10087,
+      "startRunner": {
+        "timeout": "60",
+        "program": "auto.sh",
+        "args": [
+          "start"
+        ]
+      },
+      "stopRunner": {
+        "timeout": "600",
+        "program": "auto.sh",
+        "args": [
+          "stop"
+        ]
+      },
+      "statusRunner": {
+        "timeout": "60",
+        "program": "auto.sh",
+        "args": [
+          "start"
+        ]
+      },
+      "restartRunner": {
+        "timeout": "60",
+        "program": "auto.sh",
+        "args": [
+          "restart"
+        ]
+      },
+      "externalLink": {
+        "name": "dlink Ui",
+        "label": "dlink Ui",
+        "url": "http://${host}:${serverPort}"
+      }
+    }
+  ],
+  "configWriter": {
+    "generators": [
+      {
+        "filename": "application.yml",
+        "configFormat": "custom",
+        "outputDirectory": "config",
+        "templateName": "dlink.ftl",
+        "includeParams": [
+          "databaseUrl",
+          "username",
+          "password",
+          "serverPort"
+        ]
+      }
+    ]
+  },
+  "parameters": [
+    {
+      "name": "databaseUrl",
+      "label": "dlink数据库地址",
+      "description": "",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "jdbc:mysql://${apiHost}:3306/dlink?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true"
+    },
+    {
+      "name": "username",
+      "label": "dlink数据库用户名",
+      "description": "",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "root"
+    },
+    {
+      "name": "password",
+      "label": "dlink数据库密码",
+      "description": "",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "root"
+    },
+    {
+      "name": "serverPort",
+      "label": "dlink服务端口",
+      "description": "",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "8888"
+    }
+
+  ]
+}
