@@ -20,6 +20,7 @@ import com.datasophon.common.utils.HostUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -175,7 +176,9 @@ public class LoadServiceMeta implements ApplicationRunner {
             for (String includeParam : includeParams) {
                 if (map.containsKey(includeParam)) {
                     ServiceConfig serviceConfig = map.get(includeParam);
-                    list.add(serviceConfig);
+                    ServiceConfig newConfig = new ServiceConfig();
+                    BeanUtils.copyProperties(serviceConfig,newConfig);
+                    list.add(newConfig);
                 }
             }
             if (configFileMap.containsKey(generator)) {

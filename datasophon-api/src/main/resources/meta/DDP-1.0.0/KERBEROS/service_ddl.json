@@ -9,17 +9,18 @@
   "decompressPackageName": "kerberos-1.15.1",
   "roles": [
     {
-      "name": "Krb5Server",
-      "label": "Krb5Server",
+      "name": "Krb5Kdc",
+      "label": "Krb5Kdc",
       "roleType": "master",
-      "cardinality": "1+",
+      "sortNum": 1,
+      "cardinality": "1",
       "logFile": "/var/log/krb5kdc.log",
       "startRunner": {
         "timeout": "60",
         "program": "kerberos.sh",
         "args": [
           "start",
-          "krb5server"
+          "krb5kdc"
         ]
       },
       "stopRunner": {
@@ -27,7 +28,7 @@
         "program": "kerberos.sh",
         "args": [
           "stop",
-          "krb5server"
+          "krb5kdc"
         ]
       },
       "statusRunner": {
@@ -35,7 +36,7 @@
         "program": "kerberos.sh",
         "args": [
           "status",
-          "krb5server"
+          "krb5kdc"
         ]
       },
       "restartRunner": {
@@ -44,21 +45,159 @@
         "args": [
         ]
       }
+    },
+    {
+      "name": "KAdmin",
+      "label": "KAdmin",
+      "roleType": "master",
+      "sortNum": 2,
+      "cardinality": "1",
+      "logFile": "/var/log/kadmind.log",
+      "startRunner": {
+        "timeout": "60",
+        "program": "kerberos.sh",
+        "args": [
+          "start",
+          "kadmin"
+        ]
+      },
+      "stopRunner": {
+        "timeout": "600",
+        "program": "kerberos.sh",
+        "args": [
+          "stop",
+          "kadmin"
+        ]
+      },
+      "statusRunner": {
+        "timeout": "60",
+        "program": "kerberos.sh",
+        "args": [
+          "status",
+          "kadmin"
+        ]
+      },
+      "restartRunner": {
+        "timeout": "60",
+        "program": "control.sh",
+        "args": [
+        ]
+      }
+    },
+    {
+      "name": "Krb5Client",
+      "label": "Krb5Client",
+      "roleType": "client",
+      "cardinality": "1+"
     }
   ],
   "configWriter": {
     "generators": [
       {
         "filename": "krb5.conf",
-        "configFormat": "properties",
-        "outputDirectory": "config",
+        "configFormat": "custom",
+        "outputDirectory": "/etc",
+        "templateName": "krb5.ftl",
         "includeParams": [
-          "log.dirs"
+          "realm",
+          "kdcHost",
+          "kadminHost",
+          "ticketLifetime",
+          "renewLifetime"
+        ]
+      },
+      {
+        "filename": "kdc.conf",
+        "configFormat": "custom",
+        "outputDirectory": "/var/kerberos/krb5kdc",
+        "templateName": "kdc.ftl",
+        "includeParams": [
+          "realm"
+        ]
+      },
+      {
+        "filename": "kadm5.acl",
+        "configFormat": "custom",
+        "outputDirectory": "/var/kerberos/krb5kdc",
+        "templateName": "kadm5.ftl",
+        "includeParams": [
+          "realm"
         ]
       }
     ]
   },
   "parameters": [
-
+    {
+      "name": "realm",
+      "label": "域名",
+      "description": "",
+      "required": true,
+      "configType": "map",
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "HADOOP.COM"
+    },
+    {
+      "name": "kdcHost",
+      "label": "Kdc主机",
+      "description": "",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${kdcHost}"
+    },
+    {
+      "name": "kadminHost",
+      "label": "Kadmin主机",
+      "configType": "map",
+      "description": "",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${kadminHost}"
+    },
+    {
+      "name": "kadminHost",
+      "label": "Kadmin主机",
+      "description": "",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${kadminHost}"
+    },
+    {
+      "name": "ticketLifetime",
+      "label": "票据有效时长",
+      "description": "",
+      "required": true,
+      "configType": "map",
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "24h"
+    },
+    {
+      "name": "renewLifetime",
+      "label": "续约有效时长",
+      "description": "",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "7d"
+    }
   ]
 }
