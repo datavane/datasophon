@@ -1,6 +1,6 @@
 {
-  "name": "DLINK",
-  "label": "Dlink",
+  "name": "DINKY",
+  "label": "Dinky",
   "description": "流处理极速开发框架,流批一体&湖仓一体的云原生平台,一站式计算平台",
   "version": "0.7.0",
   "sortNum": 13,
@@ -9,8 +9,8 @@
   "decompressPackageName": "dlink-release-0.7.0",
   "roles": [
     {
-      "name": "Dlink",
-      "label": "Dlink",
+      "name": "Dinky",
+      "label": "Dinky",
       "roleType": "master",
       "cardinality": "1",
       "logFile": "logs/dlink.log",
@@ -44,8 +44,8 @@
         ]
       },
       "externalLink": {
-        "name": "Dlink Ui",
-        "label": "Dlink Ui",
+        "name": "Dinky Ui",
+        "label": "Dinky Ui",
         "url": "http://${host}:${serverPort}"
       }
     }
@@ -56,7 +56,7 @@
         "filename": "application.yml",
         "configFormat": "custom",
         "outputDirectory": "config",
-        "templateName": "dlink.ftl",
+        "templateName": "dinky.ftl",
         "includeParams": [
           "databaseUrl",
           "username",
@@ -69,7 +69,7 @@
   "parameters": [
     {
       "name": "databaseUrl",
-      "label": "Dlink数据库地址",
+      "label": "Dinky数据库地址",
       "description": "",
       "configType": "map",
       "required": true,
@@ -81,7 +81,7 @@
     },
     {
       "name": "username",
-      "label": "Dlink数据库用户名",
+      "label": "Dinky数据库用户名",
       "description": "",
       "configType": "map",
       "required": true,
@@ -93,7 +93,7 @@
     },
     {
       "name": "password",
-      "label": "Dlink数据库密码",
+      "label": "Dinky数据库密码",
       "description": "",
       "configType": "map",
       "required": true,
@@ -105,7 +105,7 @@
     },
     {
       "name": "serverPort",
-      "label": "Dlink服务端口",
+      "label": "Dinky服务端口",
       "description": "",
       "configType": "map",
       "required": true,

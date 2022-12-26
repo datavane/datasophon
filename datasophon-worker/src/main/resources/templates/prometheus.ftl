@@ -162,9 +162,9 @@ scrape_configs:
     file_sd_configs:
      - files:
        - configs/streampark.json
-  - job_name: 'dlink'
+  - job_name: 'dinky'
     file_sd_configs:
      - files:
-       - configs/dlink.json
+       - configs/dinky.json
 
 
