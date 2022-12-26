@@ -19,7 +19,7 @@
         "timeout": "60",
         "program": "auto.sh",
         "args": [
-          "start"
+          "startWithJmx"
         ]
       },
       "stopRunner": {
