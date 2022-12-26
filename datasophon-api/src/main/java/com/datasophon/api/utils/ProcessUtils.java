@@ -32,6 +32,7 @@ import com.datasophon.common.enums.ServiceRoleType;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.common.utils.PropertyUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.concurrent.Await;
@@ -507,9 +508,35 @@ public class ProcessUtils {
         return left;
     }
 
-    public static void syncUserGroupToHosts(List<ClusterHostEntity> hostList, String groupName, String groupadd) {
+    public static void syncUserGroupToHosts(List<ClusterHostEntity> hostList, String groupName,String operate) {
+        for (ClusterHostEntity hostEntity : hostList) {
+            ActorRef execCmdActor = ActorUtils.getRemoteActor(hostEntity.getHostname(), "executeCmdActor");
+            ExecuteCmdCommand command = new ExecuteCmdCommand();
+            ArrayList<String> commands = new ArrayList<>();
+            commands.add(operate);
+            commands.add(groupName);
+            command.setCommands(commands);
+            execCmdActor.tell(command,ActorRef.noSender());
+        }
     }
 
-    public static void syncUserToHosts(List<ClusterHostEntity> hostList, String username, String groupName, String otherGroup, String useradd) {
+    public static void syncUserToHosts(List<ClusterHostEntity> hostList, String username,String mainGroup,String otherGroup,String operate) {
+        for (ClusterHostEntity hostEntity : hostList) {
+            ActorRef execCmdActor = ActorUtils.getRemoteActor(hostEntity.getHostname(), "executeCmdActor");
+            ExecuteCmdCommand command = new ExecuteCmdCommand();
+            ArrayList<String> commands = new ArrayList<>();
+            commands.add(operate);
+            commands.add(username);
+            if(StringUtils.isNotBlank(mainGroup)){
+                commands.add("-g");
+                commands.add(mainGroup);
+            }
+            if(StringUtils.isNotBlank(otherGroup)){
+                commands.add("-G");
+                commands.add(otherGroup);
+            }
+            command.setCommands(commands);
+            execCmdActor.tell(command,ActorRef.noSender());
+        }
     }
 }

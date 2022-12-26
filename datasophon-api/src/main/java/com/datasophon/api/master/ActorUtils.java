@@ -43,7 +43,7 @@ public class ActorUtils {
                 ActorRef.noSender());
 
         actorSystem.scheduler().schedule(FiniteDuration.apply(15L, TimeUnit.SECONDS),
-                FiniteDuration.apply(1L, TimeUnit.MINUTES),
+                FiniteDuration.apply(15L, TimeUnit.SECONDS),
                 serviceRoleCheckActor,
                 new ServiceRoleCheckCommand(),
                 actorSystem.dispatcher(),

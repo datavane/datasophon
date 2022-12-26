@@ -47,6 +47,7 @@ public class ServiceInstallHandler extends ServiceHandler{
         installServiceRoleCommand.setPackageName(serviceRoleInfo.getPackageName());
         installServiceRoleCommand.setDecompressPackageName(serviceRoleInfo.getDecompressPackageName());
         installServiceRoleCommand.setRunAs(serviceRoleInfo.getRunAs());
+        installServiceRoleCommand.setServiceRoleType(serviceRoleInfo.getRoleType());
         String md5 = FileUtil.readString(Constants.MASTER_MANAGE_PACKAGE_PATH+Constants.SLASH + serviceRoleInfo.getPackageName() + ".md5", Charset.defaultCharset());
         installServiceRoleCommand.setPackageMd5(md5);
         if("aarch64".equals(hostEntity.getCpuArchitecture()) && FileUtil.exist(Constants.MASTER_MANAGE_PACKAGE_PATH+Constants.SLASH +serviceRoleInfo.getDecompressPackageName()+"-arm.tar.gz")){

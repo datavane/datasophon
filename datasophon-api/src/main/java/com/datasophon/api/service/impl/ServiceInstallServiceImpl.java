@@ -149,6 +149,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
                 Generators generators = fileJson.toJavaObject(Generators.class);
                 List<ServiceConfig> serviceConfigs = configMap.get(fileJson).toJavaList(ServiceConfig.class);
                 for (ServiceConfig config : serviceConfigs) {
+                    logger.info(config.getName());
                     if (map.containsKey(config.getName())) {
                         ServiceConfig newConfig = map.get(config.getName());
                         config.setValue(map.get(config.getName()).getValue());
@@ -454,7 +455,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
 
         for (FrameServiceEntity frameServiceEntity : list) {
             for (String dependService : frameServiceEntity.getDependencies().split(",")) {
-                if(!instanceMap.containsKey(dependService) && !serviceMap.containsKey(dependService)){
+                if(StringUtils.isNotBlank(dependService) && !instanceMap.containsKey(dependService) && !serviceMap.containsKey(dependService)){
                     return Result.error(""+frameServiceEntity.getServiceName()+" install depends on "+dependService+",please make sure that you have selected it or that "+dependService+" is normal and running");
                 }
             }

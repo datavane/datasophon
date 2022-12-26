@@ -19,13 +19,10 @@ public class InstallServiceHandler {
     public ExecResult install(String packageName, String decompressPackageName, String packageMd5, String runAs) {
         ExecResult execResult = new ExecResult();
         try {
-            //安装包校验
             String destDir = Constants.INSTALL_PATH + Constants.SLASH + "DDP/packages" + Constants.SLASH;
-
             Boolean needDownLoad = true;
-
-            if (FileUtil.exist(destDir + packageName)) {
-                //文件存在，校验md5
+            if (FileUtil.exist(destDir + packageName)) {//check install package
+                //check md5
                 String md5cmd = "sh " + Constants.WORKER_SCRIPT_PATH + "md5.sh " + destDir + packageName;
                 String md5 = ShellUtils.getPackageMd5(md5cmd);
                 logger.info("packageMd5 is {}", packageMd5);
@@ -46,25 +43,22 @@ public class InstallServiceHandler {
                 HttpUtil.downloadFile(downloadUrl, FileUtil.file(dest), new StreamProgress() {
                     @Override
                     public void start() {
-                        Console.log("开始下载。。。。");
+                        Console.log("start to install。。。。");
                     }
-
 
                     @Override
                     public void progress(long progressSize, long l1) {
-                        Console.log("已下载：{}", FileUtil.readableFileSize(progressSize));
+                        Console.log("installed：{}", FileUtil.readableFileSize(progressSize));
                     }
-
                     @Override
                     public void finish() {
-                        Console.log("下载完成！");
+                        Console.log("install success！");
                     }
                 });
-                //校验md5
                 execResult.setExecOut("download package " + packageName + "success");
                 logger.info("download package {} success", packageName);
             }
-            //解压安装包
+            //decompress tar.gz
             if (!FileUtil.exist(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName)) {
                 if (CompressUtils.decompressTarGz(dest, Constants.INSTALL_PATH)) {
                     execResult.setExecResult(true);
