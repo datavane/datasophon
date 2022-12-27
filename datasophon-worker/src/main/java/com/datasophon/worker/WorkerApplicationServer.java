@@ -79,10 +79,10 @@ public class WorkerApplicationServer {
         workerStartActor.tell(startWorkerMessage, ActorRef.noSender());
         logger.info("start worker");
 
-        MBeanServer platformBeanServer = ManagementFactory.getPlatformMBeanServer();
-        EsMetrics esMetrics = new EsMetrics();
-        ObjectName objectName = new ObjectName("com.datasophon.ddh.worker.metrics:type=esMetrics");
-        platformBeanServer.registerMBean(esMetrics, objectName);
+//        MBeanServer platformBeanServer = ManagementFactory.getPlatformMBeanServer();
+//        EsMetrics esMetrics = new EsMetrics();
+//        ObjectName objectName = new ObjectName("com.datasophon.ddh.worker.metrics:type=esMetrics");
+//        platformBeanServer.registerMBean(esMetrics, objectName);
 
     }
 }

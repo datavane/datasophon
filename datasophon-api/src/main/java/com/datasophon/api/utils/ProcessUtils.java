@@ -510,7 +510,7 @@ public class ProcessUtils {
 
     public static void syncUserGroupToHosts(List<ClusterHostEntity> hostList, String groupName,String operate) {
         for (ClusterHostEntity hostEntity : hostList) {
-            ActorRef execCmdActor = ActorUtils.getRemoteActor(hostEntity.getHostname(), "executeCmdActor");
+            ActorRef execCmdActor = ActorUtils.getRemoteActor(hostEntity.getHostname(), "unixGroupActor");
             ExecuteCmdCommand command = new ExecuteCmdCommand();
             ArrayList<String> commands = new ArrayList<>();
             commands.add(operate);
