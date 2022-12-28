@@ -264,4 +264,11 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
                 .eq(Constants.SERVICE_ID,serviceInstanceId)
                 .eq(Constants.SERVICE_ROLE_STATE,ServiceRoleState.STOP));
     }
+
+    @Override
+    public ClusterServiceRoleInstanceEntity getKAdminRoleIns(Integer clusterId) {
+        return this.getOne(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                .eq(Constants.CLUSTER_ID,clusterId)
+                .eq(Constants.SERVICE_ROLE_NAME,"KAdmin"));
+    }
 }

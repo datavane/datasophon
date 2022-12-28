@@ -462,10 +462,11 @@ public class ProcessUtils {
     public static ServiceConfig createServiceConfig(String configName,Object configValue,String type) {
         ServiceConfig serviceConfig = new ServiceConfig();
         serviceConfig.setName(configName);
+        serviceConfig.setLabel(configName);
         serviceConfig.setValue(configValue);
         serviceConfig.setRequired(true);
         serviceConfig.setHidden(false);
-        serviceConfig.setType("input");
+        serviceConfig.setType(type);
         return serviceConfig;
     }
 

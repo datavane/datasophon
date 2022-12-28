@@ -32,6 +32,7 @@ public class WorkerActor extends UntypedActor {
         ActorRef alertConfigActor = getContext().actorOf(Props.create(AlertConfigActor.class), getActorRefName(AlertConfigActor.class));
         ActorRef unixUserActor = getContext().actorOf(Props.create(UnixUserActor.class), getActorRefName(UnixUserActor.class));
         ActorRef unixGroupActor = getContext().actorOf(Props.create(UnixGroupActor.class), getActorRefName(UnixGroupActor.class));
+        ActorRef kerberosActor = getContext().actorOf(Props.create(KerberosActor.class), getActorRefName(KerberosActor.class));
 
         getContext().watch(installServiceActor);
         getContext().watch(configureServiceActor);
@@ -44,6 +45,7 @@ public class WorkerActor extends UntypedActor {
         getContext().watch(alertConfigActor);
         getContext().watch(unixUserActor);
         getContext().watch(unixGroupActor);
+        getContext().watch(kerberosActor);
     }
 
     /** Get ActorRef name from Class name. */

@@ -14,7 +14,10 @@
       "name": "JournalNode",
       "label": "JournalNode",
       "roleType": "master",
-      "runAs": "hdfs",
+      "runAs": {
+        "user": "hdfs",
+        "group": "hadoop"
+      },
       "cardinality": "1+",
       "sortNum": 1,
       "logFile": "${hadoopLogDir}/hadoop-${user}-journalnode-${host}.log",
@@ -48,7 +51,10 @@
       "name": "NameNode",
       "label": "NameNode",
       "roleType": "master",
-      "runAs": "hdfs",
+      "runAs": {
+        "user": "hdfs",
+        "group": "hadoop"
+      },
       "cardinality": "1+",
       "sortNum": 2,
       "logFile": "${hadoopLogDir}/hadoop-${user}-namenode-${host}.log",
@@ -95,7 +101,10 @@
       "name": "DataNode",
       "label": "DataNode",
       "roleType": "worker",
-      "runAs": "hdfs",
+      "runAs": {
+        "user": "hdfs",
+        "group": "hadoop"
+      },
       "cardinality": "1+",
       "sortNum": 4,
       "logFile": "${hadoopLogDir}/hadoop-${user}-datanode-${host}.log",
@@ -129,7 +138,10 @@
       "name": "ZKFC",
       "label": "ZKFC",
       "roleType": "master",
-      "runAs": "hdfs",
+      "runAs": {
+        "user": "hdfs",
+        "group": "hadoop"
+      },
       "cardinality": "1+",
       "sortNum": 3,
       "logFile": "${hadoopLogDir}/hadoop-${user}-zkfc-${host}.log",
@@ -591,7 +603,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": true
+      "defaultValue": false
     },
     {
       "name": "dfs.client.failover.proxy.provider.nameservice1",
