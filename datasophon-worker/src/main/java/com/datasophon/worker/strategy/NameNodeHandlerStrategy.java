@@ -1,12 +1,18 @@
 package com.datasophon.worker.strategy;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.StreamProgress;
+import cn.hutool.core.lang.Console;
+import cn.hutool.http.HttpUtil;
 import com.datasophon.common.Constants;
+import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.utils.ExecResult;
+import com.datasophon.common.utils.PropertyUtils;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.handler.ServiceHandler;
+import com.datasophon.worker.utils.KerberosUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,12 +77,16 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
             } else {
                 startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
             }
-        }else if(command.getEnableKerberos()){
-            //get kerberos keytab
-
+        } else if (command.getEnableKerberos()) {
+            String hostname = CacheUtils.getString(Constants.HOSTNAME);
+            KerberosUtils.downloadKeytabFromMaster("nn/" + hostname, "nn.service.keytab");
+            KerberosUtils.downloadKeytabFromMaster("HTTP/" + hostname, "spnego.service.keytab");
+            startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
         } else {
             startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
         }
         return startResult;
     }
+
+
 }

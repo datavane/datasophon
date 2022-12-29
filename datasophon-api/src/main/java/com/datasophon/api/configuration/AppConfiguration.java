@@ -73,7 +73,11 @@ public class AppConfiguration implements WebMvcConfigurer {
     registry.addInterceptor(userPermissionHandler());
     // login
     registry.addInterceptor(loginInterceptor())
-            .addPathPatterns("/**").excludePathPatterns("/login","/error","/service/install/downloadPackage","/cluster/alert/history/save");
+            .addPathPatterns("/**").excludePathPatterns("/login","/error",
+            "/service/install/downloadPackage",
+            "/cluster/alert/history/save",
+            "/cluster/kerberos/downloadKeytab"
+    );
   }
 
   @Override

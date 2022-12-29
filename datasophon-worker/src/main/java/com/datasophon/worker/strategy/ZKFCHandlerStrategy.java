@@ -1,11 +1,13 @@
 package com.datasophon.worker.strategy;
 
 import com.datasophon.common.Constants;
+import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.handler.ServiceHandler;
+import com.datasophon.worker.utils.KerberosUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +35,7 @@ public class ZKFCHandlerStrategy implements ServiceRoleStrategy {
             } else {
                 logger.info("zkfc format failed");
             }
-        } else {
+        }else {
             startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
         }
         return startResult;

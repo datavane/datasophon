@@ -1,6 +1,7 @@
 package com.datasophon.api.service.strategy;
 
 import com.alibaba.fastjson.JSONArray;
+import com.datasophon.api.load.ServiceInfoMap;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.FrameServiceService;
 import com.datasophon.api.utils.PackageUtils;
@@ -9,6 +10,7 @@ import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.common.model.ServiceInfo;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.FrameServiceEntity;
 
@@ -38,6 +40,7 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
         List<ServiceConfig> serviceConfigs = new ArrayList<>();
         boolean enableRack = false;
+        boolean enableKerberos = false;
         Map<String, ServiceConfig> map = translateToMap(list);
 
         for (ServiceConfig config : list) {
@@ -53,6 +56,11 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
                     enableRack = true;
                 }
             }
+            if("enableKerberos".equals(config.getName())){
+                if( (Boolean)config.getValue()){
+                    enableKerberos = true;
+                }
+            }
         }
         list.addAll(serviceConfigs);
         if(!enableRack){
@@ -61,6 +69,21 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
             }
             if(map.containsKey("net.topology.node.switch.mapping.impl")){
                 list.remove(map.get("net.topology.node.switch.mapping.impl"));
+            }
+        }
+        if(enableKerberos){
+            for (ServiceConfig serviceConfig : list) {
+                if("kb".equals(serviceConfig.getConfigType())){
+                    serviceConfig.setRequired(true);
+                    serviceConfig.setHidden(false);
+                }
+            }
+        }else{
+            for (ServiceConfig serviceConfig : list) {
+                if("kb".equals(serviceConfig.getConfigType())){
+                    serviceConfig.setRequired(false);
+                    serviceConfig.setHidden(true);
+                }
             }
         }
     }
