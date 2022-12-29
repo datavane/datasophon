@@ -23,6 +23,7 @@ public class ServiceStopHandler extends ServiceHandler{
         serviceRoleOperateCommand.setServiceRoleName(serviceRoleInfo.getName());
         serviceRoleOperateCommand.setStopRunner(serviceRoleInfo.getStopRunner());
         serviceRoleOperateCommand.setStatusRunner(serviceRoleInfo.getStatusRunner());
+        serviceRoleOperateCommand.setRunAs(serviceRoleInfo.getRunAs());
         serviceRoleOperateCommand.setDecompressPackageName(serviceRoleInfo.getDecompressPackageName());
         if(serviceRoleInfo.getRoleType() == ServiceRoleType.CLIENT){
             ExecResult execResult = new ExecResult();

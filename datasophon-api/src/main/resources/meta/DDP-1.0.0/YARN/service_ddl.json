@@ -13,6 +13,10 @@
       "label": "ResourceManager",
       "roleType": "master",
       "cardinality": "1+",
+      "runAs": {
+        "user": "yarn",
+        "group": "hadoop"
+      },
       "sortNum": 1,
       "logFile": "${hadoopLogDir}/hadoop-${user}-resourcemanager-${host}.log",
       "jmxPort": 9323,
@@ -59,6 +63,10 @@
       "label": "NodeManager",
       "roleType": "worker",
       "cardinality": "1+",
+      "runAs": {
+        "user": "yarn",
+        "group": "hadoop"
+      },
       "sortNum": 3,
       "logFile": "${hadoopLogDir}/hadoop-${user}-nodemanager-${host}.log",
       "jmxPort": 9324,
@@ -91,6 +99,10 @@
       "label": "HistoryServer",
       "roleType": "master",
       "cardinality": "1",
+      "runAs": {
+        "user": "yarn",
+        "group": "hadoop"
+      },
       "sortNum": 2,
       "logFile": "${hadoopLogDir}/hadoop-${user}-historyserver-${host}.log",
       "jmxPort": 9325,

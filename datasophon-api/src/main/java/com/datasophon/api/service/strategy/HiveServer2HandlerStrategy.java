@@ -37,6 +37,13 @@ public class HiveServer2HandlerStrategy implements ServiceRoleStrategy {
                     serviceConfig.setHidden(false);
                 }
             }
+        }else{
+            for (ServiceConfig serviceConfig : list) {
+                if("ha".equals(serviceConfig.getConfigType())){
+                    serviceConfig.setRequired(false);
+                    serviceConfig.setHidden(true);
+                }
+            }
         }
     }
 }

@@ -9,12 +9,15 @@
   ],
   "packageName": "hadoop-3.3.3.tar.gz",
   "decompressPackageName": "hadoop-3.3.3",
-  "runAs": "root",
   "roles": [
     {
       "name": "JournalNode",
       "label": "JournalNode",
       "roleType": "master",
+      "runAs": {
+        "user": "hdfs",
+        "group": "hadoop"
+      },
       "cardinality": "1+",
       "sortNum": 1,
       "logFile": "${hadoopLogDir}/hadoop-${user}-journalnode-${host}.log",
@@ -48,6 +51,10 @@
       "name": "NameNode",
       "label": "NameNode",
       "roleType": "master",
+      "runAs": {
+        "user": "hdfs",
+        "group": "hadoop"
+      },
       "cardinality": "1+",
       "sortNum": 2,
       "logFile": "${hadoopLogDir}/hadoop-${user}-namenode-${host}.log",
@@ -94,6 +101,10 @@
       "name": "DataNode",
       "label": "DataNode",
       "roleType": "worker",
+      "runAs": {
+        "user": "hdfs",
+        "group": "hadoop"
+      },
       "cardinality": "1+",
       "sortNum": 4,
       "logFile": "${hadoopLogDir}/hadoop-${user}-datanode-${host}.log",
@@ -127,6 +138,10 @@
       "name": "ZKFC",
       "label": "ZKFC",
       "roleType": "master",
+      "runAs": {
+        "user": "hdfs",
+        "group": "hadoop"
+      },
       "cardinality": "1+",
       "sortNum": 3,
       "logFile": "${hadoopLogDir}/hadoop-${user}-zkfc-${host}.log",
@@ -368,18 +383,14 @@
     },
     {
       "name": "hadoop.security.authentication",
-      "label": "Hadoop安全认证",
-      "description": "Hadoop安全认证",
+      "label": "开启Kerberos",
+      "description": "",
       "required": true,
-      "type": "select",
+      "type": "switch",
       "value": "",
       "configurableInWizard": true,
-      "selectValue": [
-        "simple",
-        "kerberos"
-      ],
       "hidden": false,
-      "defaultValue": "simple"
+      "defaultValue": false
     },
     {
       "name": "namenodeHeapSize",
@@ -588,7 +599,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": true
+      "defaultValue": false
     },
     {
       "name": "dfs.client.failover.proxy.provider.nameservice1",

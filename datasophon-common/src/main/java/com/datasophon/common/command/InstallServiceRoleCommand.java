@@ -2,6 +2,7 @@ package com.datasophon.common.command;
 
 import com.datasophon.common.enums.ServiceRoleType;
 import com.datasophon.common.model.Generators;
+import com.datasophon.common.model.RunAs;
 import com.datasophon.common.model.ServiceConfig;
 import lombok.Data;
 
@@ -24,7 +25,7 @@ public class InstallServiceRoleCommand  extends BaseCommand implements Serializa
 
     private String decompressPackageName;
 
-    private String runAs;
+    private RunAs runAs;
 
     private ServiceRoleType serviceRoleType;
 

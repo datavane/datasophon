@@ -1,6 +1,7 @@
 package com.datasophon.common.command;
 
 import com.datasophon.common.enums.CommandType;
+import com.datasophon.common.model.RunAs;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -23,7 +24,9 @@ public class ServiceRoleOperateCommand extends BaseCommand implements Serializab
 
     private Boolean enableRangerPlugin;
 
-    private String runAs;
+    private RunAs runAs;
+
+    private Boolean enableKerberos;
 
     public ServiceRoleOperateCommand() {
         this.enableRangerPlugin = false;

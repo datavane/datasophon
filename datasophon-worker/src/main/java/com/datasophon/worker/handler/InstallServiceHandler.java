@@ -5,6 +5,7 @@ import cn.hutool.core.io.StreamProgress;
 import cn.hutool.core.lang.Console;
 import cn.hutool.http.HttpUtil;
 import com.datasophon.common.Constants;
+import com.datasophon.common.model.RunAs;
 import com.datasophon.common.utils.CompressUtils;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.PropertyUtils;
@@ -13,10 +14,12 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 public class InstallServiceHandler {
     private static final Logger logger = LoggerFactory.getLogger(InstallServiceHandler.class);
 
-    public ExecResult install(String packageName, String decompressPackageName, String packageMd5, String runAs) {
+    public ExecResult install(String packageName, String decompressPackageName, String packageMd5, RunAs runAs) {
         ExecResult execResult = new ExecResult();
         try {
             String destDir = Constants.INSTALL_PATH + Constants.SLASH + "DDP/packages" + Constants.SLASH;
@@ -58,15 +61,20 @@ public class InstallServiceHandler {
                 execResult.setExecOut("download package " + packageName + "success");
                 logger.info("download package {} success", packageName);
             }
+            if(!FileUtil.exist("/etc/security/keytab")){
+                FileUtil.mkdir("/etc/security/keytab");
+                ShellUtils.exceShell("chown -R root:hadoop /etc/security/keytab/");
+                ShellUtils.exceShell("chmod 770 /etc/security/keytab/");
+            }
             //decompress tar.gz
             if (!FileUtil.exist(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName)) {
                 if (CompressUtils.decompressTarGz(dest, Constants.INSTALL_PATH)) {
                     execResult.setExecResult(true);
                     execResult.setExecOut("install package " + packageName + "success");
-                    ShellUtils.exceShell(" chmod -R 755 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
-                    if (StringUtils.isNotBlank(runAs)) {
-                        ShellUtils.exceShell(" chown -R " + runAs + ":" + runAs + " " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
+                    if (Objects.nonNull(runAs)) {
+                        ShellUtils.exceShell(" chown -R " + runAs.getUser() + ":" + runAs.getGroup() + " " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
                     }
+                    ShellUtils.exceShell(" chmod -R 755 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
                     if (decompressPackageName.contains(Constants.PROMETHEUS)) {
                         String alertPath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "alert_rules";
                         ShellUtils.exceShell("sed -i \"s/clusterIdValue/" + PropertyUtils.getString("clusterId") + "/g\" `grep clusterIdValue -rl " + alertPath + "`");

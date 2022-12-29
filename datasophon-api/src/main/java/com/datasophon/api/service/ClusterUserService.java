@@ -11,7 +11,7 @@ import java.util.Map;
 public interface ClusterUserService extends IService<ClusterUser> {
 
 
-    Result create(Integer clusterId , String username, String groupIds);
+    Result create(Integer clusterId , String username,Integer mainGroupId , String otherGroupIds);
 
     Result listPage(Integer clusterId, String username, Integer page, Integer pageSize);
 

@@ -14,7 +14,10 @@
       "roleType": "master",
       "cardinality": "1+",
       "logFile": "logs/ddp_es.log",
-      "runAs": "elastic",
+      "runAs": {
+        "user": "elastic",
+        "group": "elastic"
+      },
       "sortNum": 1,
       "startRunner": {
         "timeout": "60",
