@@ -383,18 +383,14 @@
     },
     {
       "name": "hadoop.security.authentication",
-      "label": "Hadoop安全认证",
-      "description": "Hadoop安全认证",
+      "label": "开启Kerberos",
+      "description": "",
       "required": true,
-      "type": "select",
+      "type": "switch",
       "value": "",
       "configurableInWizard": true,
-      "selectValue": [
-        "simple",
-        "kerberos"
-      ],
       "hidden": false,
-      "defaultValue": "simple"
+      "defaultValue": false
     },
     {
       "name": "namenodeHeapSize",

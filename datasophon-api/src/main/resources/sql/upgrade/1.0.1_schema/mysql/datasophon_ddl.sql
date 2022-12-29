@@ -15,6 +15,17 @@ CREATE TABLE `t_ddh_access_token`  (
                                        PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
+DROP TABLE IF EXISTS `t_ddh_cluster_yarn_scheduler`;
+CREATE TABLE `t_ddh_cluster_yarn_scheduler`  (
+                                                 `id` int(10) NOT NULL AUTO_INCREMENT,
+                                                 `cluster_id` int(11) NULL DEFAULT NULL,
+                                                 `scheduler` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                                 `in_use` int(2) NULL DEFAULT NULL COMMENT '1: 是  2：否',
+                                                 PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
 -- ----------------------------
 -- Table structure for t_ddh_alert_group
 -- ----------------------------
