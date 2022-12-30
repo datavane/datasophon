@@ -3,6 +3,7 @@ package com.datasophon.worker.handler;
 
 
 import com.datasophon.common.Constants;
+import com.datasophon.common.model.RunAs;
 import com.datasophon.common.model.ServiceRoleRunner;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.PropertyUtils;
@@ -16,7 +17,7 @@ import java.util.*;
 public class ServiceHandler {
     private static final Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
 
-    public ExecResult start(ServiceRoleRunner startRunner,ServiceRoleRunner statusRunner, String decompressPackageName,String runAs) {
+    public ExecResult start(ServiceRoleRunner startRunner, ServiceRoleRunner statusRunner, String decompressPackageName, RunAs runAs) {
         ExecResult statusResult = execRunner(statusRunner, decompressPackageName,null);
         if(statusResult.getExecResult()){
             //已经启动，直接返回
@@ -26,7 +27,7 @@ public class ServiceHandler {
             return execResult;
         }
         //执行启动脚本
-        ExecResult startResult = execRunner(startRunner, decompressPackageName,runAs);
+        ExecResult startResult = execRunner(startRunner, decompressPackageName,runAs.getUser());
         //检测是否启动成功
         if(startResult.getExecResult()){
             int times = PropertyUtils.getInt("times");
@@ -55,11 +56,11 @@ public class ServiceHandler {
     }
 
 
-    public ExecResult stop(ServiceRoleRunner runner, ServiceRoleRunner statusRunner,String decompressPackageName) {
+    public ExecResult stop(ServiceRoleRunner runner, ServiceRoleRunner statusRunner,String decompressPackageName,RunAs runAs) {
         ExecResult statusResult = execRunner(statusRunner, decompressPackageName,null);
         ExecResult execResult = new ExecResult();
         if(statusResult.getExecResult()){
-            execResult = execRunner(runner, decompressPackageName,null);
+            execResult = execRunner(runner, decompressPackageName,runAs.getUser());
             //检测是否停止成功
             if(execResult.getExecResult()){
                 int times = PropertyUtils.getInt("times");
@@ -100,15 +101,15 @@ public class ServiceHandler {
         return result;
     }
 
-    private ExecResult execRunner(ServiceRoleRunner runner, String decompressPackageName,String runAs) {
+    private ExecResult execRunner(ServiceRoleRunner runner, String decompressPackageName,String user) {
         String shell = runner.getProgram();
         List<String> args = runner.getArgs();
         long timeout = Long.parseLong(runner.getTimeout());
         ArrayList<String> command = new ArrayList<>();
-        if(StringUtils.isNotBlank(runAs)){
+        if(StringUtils.isNotBlank(user)){
             command.add("sudo");
             command.add("-u");
-            command.add(runAs);
+            command.add(user);
         }
         if(runner.getProgram().contains(Constants.TASK_MANAGER) || runner.getProgram().contains(Constants.JOB_MANAGER)){
             logger.info("do not use sh");

@@ -6,18 +6,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.datasophon.common.Constants;
 import com.datasophon.common.model.AlertItem;
 import com.datasophon.common.model.Generators;
 import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.worker.strategy.ZKFCHandlerStrategy;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class FreemakerUtils {
 
+    private static final Logger logger = LoggerFactory.getLogger(FreemakerUtils.class);
 
     public static void generateConfigFile(Generators generators, List<ServiceConfig> configs, String decompressPackageName) throws IOException, TemplateException {
         // 1.加载模板
@@ -51,7 +56,6 @@ public class FreemakerUtils {
             data = configs.stream().filter(e -> "map".equals(e.getConfigType())).collect(Collectors.toMap(key -> key.getName(), value -> value.getValue()));
             configs = configs.stream().filter(e -> !"map".equals(e.getConfigType())).collect(Collectors.toList());
         }
-
         data.put("itemList", configs);
         // 3.产生输出
         processOut(generators, template, data, decompressPackageName);
@@ -130,22 +134,33 @@ public class FreemakerUtils {
 
     private static void processOut(Generators generators, Template template, Map<String, Object> data, String decompressPackageName) throws IOException, TemplateException {
         String packagePath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH;
-        if (generators.getOutputDirectory().contains(Constants.COMMA)) {
+        String outputDirectory = generators.getOutputDirectory();
+
+        if (outputDirectory.contains(Constants.COMMA)) {
             for (String outPutDir : generators.getOutputDirectory().split(StrUtil.COMMA)) {
-                FileWriter out = new FileWriter(new File(packagePath + outPutDir + Constants.SLASH + generators.getFilename()));
-                template.process(data, out);
-                out.close();
+                String outputFile = packagePath + outPutDir + Constants.SLASH + generators.getFilename();
+                writeToTemplate(template, data, outputFile);
             }
-        } else {
-            FileWriter out = new FileWriter(new File(packagePath + generators.getOutputDirectory() + Constants.SLASH + generators.getFilename()));
-            template.process(data, out);
-            out.close();
+        } else if(outputDirectory.startsWith(Constants.SLASH)){
+            String outputFile = generators.getOutputDirectory() + Constants.SLASH + generators.getFilename();
+            writeToTemplate(template, data, outputFile);
+        }else {
+            String outputFile = packagePath + generators.getOutputDirectory() + Constants.SLASH + generators.getFilename();
+            writeToTemplate(template, data, outputFile);
         }
     }
 
-    private static void testProcessOut(Generators generators, Template template, Map<String, Object> data, String decompressPackageName) throws IOException, TemplateException {
-        FileWriter out = new FileWriter(new File("D:\\360downloads\\" + generators.getOutputDirectory() + Constants.SLASH + generators.getFilename()));
+    private static void writeToTemplate(Template template, Map<String, Object> data, String outputFile) throws IOException, TemplateException {
+        File file = new File(outputFile);
+        if(!file.exists()){
+            FileUtil.mkParentDirs(file);
+        }
+        FileWriter out = new FileWriter(file);
         template.process(data, out);
         out.close();
+    }
+
+    private static void testProcessOut(Generators generators, Template template, Map<String, Object> data, String decompressPackageName) throws IOException, TemplateException {
+        writeToTemplate(template, data, "D:\\360downloads\\" + generators.getOutputDirectory() + Constants.SLASH + generators.getFilename());
     }
 }

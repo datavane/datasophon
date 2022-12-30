@@ -71,6 +71,9 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
             } else {
                 startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
             }
+        }else if(command.getEnableKerberos()){
+            //get kerberos keytab
+
         } else {
             startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
         }

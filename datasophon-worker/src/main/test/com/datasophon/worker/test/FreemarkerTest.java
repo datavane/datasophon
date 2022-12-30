@@ -186,4 +186,47 @@ public class FreemarkerTest {
         FreemakerUtils.generateConfigFile(generators,serviceConfigs,"");
     }
 
+    @Test
+    public void testKrb5Ftl() throws IOException, TemplateException {
+        Generators generators = new Generators();
+        generators.setFilename("krb5.conf");
+        generators.setOutputDirectory("D:\\360downloads\\test");
+        generators.setConfigFormat("custom");
+        generators.setTemplateName("krb5.ftl");
+
+        ServiceConfig serviceConfig = new ServiceConfig();
+        serviceConfig.setName("ticketLifetime");
+        serviceConfig.setConfigType("map");
+        serviceConfig.setValue("24h");
+
+        ServiceConfig serviceConfig2 = new ServiceConfig();
+        serviceConfig2.setName("renewLifetime");
+        serviceConfig2.setConfigType("map");
+        serviceConfig2.setValue("7d");
+
+        ServiceConfig serviceConfig3 = new ServiceConfig();
+        serviceConfig3.setName("realm");
+        serviceConfig3.setConfigType("map");
+        serviceConfig3.setValue("HADOOP.COM");
+
+        ServiceConfig serviceConfig4 = new ServiceConfig();
+        serviceConfig4.setName("kdcHost");
+        serviceConfig4.setConfigType("map");
+        serviceConfig4.setValue("ddp2");
+
+        ServiceConfig serviceConfig5 = new ServiceConfig();
+        serviceConfig5.setName("kadminHost");
+        serviceConfig5.setConfigType("map");
+        serviceConfig5.setValue("ddp2");
+
+        ArrayList<ServiceConfig> serviceConfigs = new ArrayList<>();
+        serviceConfigs.add(serviceConfig);
+        serviceConfigs.add(serviceConfig2);
+        serviceConfigs.add(serviceConfig3);
+        serviceConfigs.add(serviceConfig4);
+        serviceConfigs.add(serviceConfig5);
+        FreemakerUtils.generateConfigFile(generators,serviceConfigs,"");
+    }
+
+
 }

@@ -46,9 +46,9 @@ public class ClusterUserController {
      * 保存
      */
     @RequestMapping("/create")
-    public Result save(Integer clusterId ,String username,String groupIds){
+    public Result save(Integer clusterId ,String username,Integer mainGroupId,String otherGroupIds){
 
-        return clusterUserService.create(clusterId,username,groupIds);
+        return clusterUserService.create(clusterId,username,mainGroupId,otherGroupIds);
     }
 
     /**

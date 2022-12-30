@@ -1,5 +1,6 @@
 package com.datasophon.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -24,5 +25,11 @@ public class ClusterUser implements Serializable {
 	private String username;
 
 	private Integer clusterId;
+
+	@TableField(exist = false)
+	private String mainGroup;
+
+	@TableField(exist = false)
+	private String otherGroups;
 
 }
