@@ -137,6 +137,14 @@ public class ClusterServiceCommandHostCommandServiceImpl extends ServiceImpl<Clu
         return this.list(new QueryWrapper<ClusterServiceCommandHostCommandEntity>()
                 .eq(Constants.HOSTNAME, hostname)
                 .eq(Constants.COMMAND_HOST_ID, commandHostId)
-        .eq(Constants.COMMAND_STATE, CommandState.FAILED));
+                .eq(Constants.COMMAND_STATE, CommandState.FAILED));
+    }
+
+    @Override
+    public List<ClusterServiceCommandHostCommandEntity> findCanceledHostCommand(String hostname, String commandHostId) {
+        return this.list(new QueryWrapper<ClusterServiceCommandHostCommandEntity>()
+                .eq(Constants.HOSTNAME, hostname)
+                .eq(Constants.COMMAND_HOST_ID, commandHostId)
+                .eq(Constants.COMMAND_STATE, CommandState.CANCEL));
     }
 }

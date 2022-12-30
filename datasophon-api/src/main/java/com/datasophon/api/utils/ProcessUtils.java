@@ -165,7 +165,7 @@ public class ProcessUtils {
             for (ClusterServiceCommandHostCommandEntity hostCommandEntity : hostCommandList) {
                 if (hostCommandEntity.getCommandState() == CommandState.RUNNING) {
                     logger.info("{} host command  set to failed", hostCommandEntity.getCommandName());
-                    hostCommandEntity.setCommandState(CommandState.FAILED);
+                    hostCommandEntity.setCommandState(CommandState.CANCEL);
                     hostCommandEntity.setCommandProgress(100);
                     service.updateByHostCommandId(hostCommandEntity);
                     UpdateCommandHostMessage message = new UpdateCommandHostMessage();

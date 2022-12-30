@@ -12,6 +12,10 @@
       "name": "ZkServer",
       "label": "ZkServer",
       "roleType": "master",
+      "runAs": {
+        "user": "root",
+        "group": "root"
+      },
       "cardinality": "1+",
       "logFile": "logs/zookeeper-root-server-${host}.out",
       "jmxPort": 2191,

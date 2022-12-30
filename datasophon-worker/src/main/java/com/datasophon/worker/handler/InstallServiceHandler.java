@@ -61,11 +61,6 @@ public class InstallServiceHandler {
                 execResult.setExecOut("download package " + packageName + "success");
                 logger.info("download package {} success", packageName);
             }
-            if(!FileUtil.exist("/etc/security/keytab")){
-                FileUtil.mkdir("/etc/security/keytab");
-                ShellUtils.exceShell("chown -R root:hadoop /etc/security/keytab/");
-                ShellUtils.exceShell("chmod 770 /etc/security/keytab/");
-            }
             //decompress tar.gz
             if (!FileUtil.exist(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName)) {
                 if (CompressUtils.decompressTarGz(dest, Constants.INSTALL_PATH)) {
@@ -74,7 +69,7 @@ public class InstallServiceHandler {
                     if (Objects.nonNull(runAs)) {
                         ShellUtils.exceShell(" chown -R " + runAs.getUser() + ":" + runAs.getGroup() + " " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
                     }
-                    ShellUtils.exceShell(" chmod -R 755 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
+                    ShellUtils.exceShell(" chmod -R 770 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
                     if (decompressPackageName.contains(Constants.PROMETHEUS)) {
                         String alertPath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "alert_rules";
                         ShellUtils.exceShell("sed -i \"s/clusterIdValue/" + PropertyUtils.getString("clusterId") + "/g\" `grep clusterIdValue -rl " + alertPath + "`");

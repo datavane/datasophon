@@ -6,6 +6,7 @@ import cn.hutool.core.lang.Console;
 import cn.hutool.http.HttpUtil;
 import com.datasophon.common.Constants;
 import com.datasophon.common.utils.PropertyUtils;
+import com.datasophon.common.utils.ShellUtils;
 
 public class KerberosUtils {
 
@@ -35,5 +36,13 @@ public class KerberosUtils {
                 Console.log("install success！");
             }
         });
+    }
+
+    public static void createKeytabDir() {
+        if(!FileUtil.exist("/etc/security/keytab/")){
+            FileUtil.mkdir("/etc/security/keytab/");
+            ShellUtils.exceShell("chown -R root:hadoop /etc/security/keytab/");
+            ShellUtils.exceShell("chmod -R 770 /etc/security/keytab/");
+        }
     }
 }

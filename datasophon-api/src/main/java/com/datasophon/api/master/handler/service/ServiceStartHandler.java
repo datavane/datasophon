@@ -4,6 +4,8 @@ import akka.actor.ActorSelection;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import com.datasophon.api.master.ActorUtils;
+import com.datasophon.common.Constants;
+import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.enums.ServiceRoleType;
 import com.datasophon.common.model.ServiceRoleInfo;
@@ -14,6 +16,7 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +26,7 @@ public class ServiceStartHandler extends ServiceHandler{
     public ExecResult handlerRequest(ServiceRoleInfo serviceRoleInfo) throws Exception {
         logger.info("start to start service {} in {}" ,serviceRoleInfo.getName(),serviceRoleInfo.getHostname());
         //启动
+        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + serviceRoleInfo.getClusterId());
         ServiceRoleOperateCommand serviceRoleOperateCommand = new ServiceRoleOperateCommand();
         serviceRoleOperateCommand.setServiceRoleName(serviceRoleInfo.getName());
         serviceRoleOperateCommand.setStartRunner(serviceRoleInfo.getStartRunner());
@@ -33,6 +37,9 @@ public class ServiceStartHandler extends ServiceHandler{
         serviceRoleOperateCommand.setMasterHost(serviceRoleInfo.getMasterHost());
         serviceRoleOperateCommand.setEnableRangerPlugin(serviceRoleInfo.getEnableRangerPlugin());
         serviceRoleOperateCommand.setRunAs(serviceRoleInfo.getRunAs());
+        Boolean enableKerberos = Boolean.parseBoolean(globalVariables.get("${enableHDFSKerberos}"));
+        logger.info("enable kerberos is {}",enableKerberos);
+        serviceRoleOperateCommand.setEnableKerberos(enableKerberos);
         if(serviceRoleInfo.getRoleType() == ServiceRoleType.CLIENT){
             ExecResult execResult = new ExecResult();
             execResult.setExecResult(true);

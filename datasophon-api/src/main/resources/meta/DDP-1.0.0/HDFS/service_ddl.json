@@ -20,7 +20,7 @@
       },
       "cardinality": "1+",
       "sortNum": 1,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-journalnode-${host}.log",
+      "logFile": "${hadoopLogDir}/hadoop-hdfs-journalnode-${host}.log",
       "jmxPort": 27003,
       "startRunner": {
         "timeout": "60",
@@ -57,7 +57,7 @@
       },
       "cardinality": "1+",
       "sortNum": 2,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-namenode-${host}.log",
+      "logFile": "${hadoopLogDir}/hadoop-hdfs-namenode-${host}.log",
       "jmxPort": "27001",
       "startRunner": {
         "timeout": "60",
@@ -107,7 +107,7 @@
       },
       "cardinality": "1+",
       "sortNum": 4,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-datanode-${host}.log",
+      "logFile": "${hadoopLogDir}/hadoop-hdfs-datanode-${host}.log",
       "jmxPort": "27002",
       "startRunner": {
         "timeout": "60",
@@ -144,7 +144,7 @@
       },
       "cardinality": "1+",
       "sortNum": 3,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-zkfc-${host}.log",
+      "logFile": "${hadoopLogDir}/hadoop-hdfs-zkfc-${host}.log",
       "jmxPort": 27004,
       "startRunner": {
         "timeout": "60",
@@ -576,7 +576,7 @@
       "name": "dfs.journalnode.edits.dir",
       "label": "journalnode存储目录",
       "description": "journalnode存储目录",
-      "configType": "ha",
+      "configType": "path",
       "required": true,
       "type": "input",
       "value": "",
@@ -768,10 +768,10 @@
       "required": false,
       "configType": "kb",
       "type": "input",
-      "value": "nn/_HOST@EXAMPLE.COM",
+      "value": "nn/_HOST@HADOOP.COM",
       "configurableInWizard": true,
       "hidden": true,
-      "defaultValue": "nn/_HOST@EXAMPLE.COM"
+      "defaultValue": "nn/_HOST@HADOOP.COM"
     },
     {
       "name": "dfs.namenode.keytab.file",
@@ -792,10 +792,10 @@
       "required": false,
       "configType": "kb",
       "type": "input",
-      "value": "jn/_HOST@EXAMPLE.COM",
+      "value": "jn/_HOST@HADOOP.COM",
       "configurableInWizard": true,
       "hidden": true,
-      "defaultValue": "jn/_HOST@EXAMPLE.COM"
+      "defaultValue": "jn/_HOST@HADOOP.COM"
     },
     {
       "name": "dfs.journalnode.keytab.file",
@@ -817,10 +817,10 @@
       "required": false,
       "configType": "kb",
       "type": "input",
-      "value": "HTTP/_HOST@EXAMPLE.COM",
+      "value": "HTTP/_HOST@HADOOP.COM",
       "configurableInWizard": true,
       "hidden": true,
-      "defaultValue": "HTTP/_HOST@EXAMPLE.COM"
+      "defaultValue": "HTTP/_HOST@HADOOP.COM"
     },
     {
       "name": "dfs.web.authentication.keytab.file",
@@ -842,10 +842,10 @@
       "required": false,
       "configType": "kb",
       "type": "input",
-      "value": "dn/_HOST@EXAMPLE.COM",
+      "value": "dn/_HOST@HADOOP.COM",
       "configurableInWizard": true,
       "hidden": true,
-      "defaultValue": "dn/_HOST@EXAMPLE.COM"
+      "defaultValue": "dn/_HOST@HADOOP.COM"
     },
     {
       "name": "dfs.datanode.keytab.file",

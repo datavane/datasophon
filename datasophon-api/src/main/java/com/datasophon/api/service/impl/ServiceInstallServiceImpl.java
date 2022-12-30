@@ -110,6 +110,13 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         HashMap<String, ServiceConfig> map = new HashMap<>();
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
 
+        if (!"zookeeper".equals(serviceName.toLowerCase())) {
+            ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceName);
+            if (Objects.nonNull(serviceRoleHandler)) {
+                serviceRoleHandler.handlerConfig(clusterId, list);
+            }
+        }
+
         FrameServiceEntity frameServiceEntity = frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);
         for (ServiceConfig serviceConfig : list) {
 //            //配置添加到全局变量
@@ -134,12 +141,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             }
             map.put(serviceConfig.getName(), serviceConfig);
         }
-        if (!"zookeeper".equals(serviceName.toLowerCase())) {
-            ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceName);
-            if (Objects.nonNull(serviceRoleHandler)) {
-                serviceRoleHandler.handlerConfig(clusterId, list);
-            }
-        }
+
         //更新config-file
         HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
         FrameServiceEntity frameService = this.frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);

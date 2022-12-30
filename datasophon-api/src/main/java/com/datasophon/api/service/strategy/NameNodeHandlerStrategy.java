@@ -1,6 +1,7 @@
 package com.datasophon.api.service.strategy;
 
 import com.alibaba.fastjson.JSONArray;
+import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.load.ServiceInfoMap;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.FrameServiceService;
@@ -37,6 +38,7 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
+        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
         List<ServiceConfig> serviceConfigs = new ArrayList<>();
         boolean enableRack = false;
@@ -59,6 +61,9 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
             if("enableKerberos".equals(config.getName())){
                 if( (Boolean)config.getValue()){
                     enableKerberos = true;
+                    ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableHDFSKerberos}", "true");
+                }else {
+                    ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableHDFSKerberos}", "false");
                 }
             }
         }
@@ -71,21 +76,33 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
                 list.remove(map.get("net.topology.node.switch.mapping.impl"));
             }
         }
+        String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "HDFS" + Constants.CONFIG;
+        List<ServiceConfig> configs = ServiceConfigMap.get(key);
+        ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
         if(enableKerberos){
-            for (ServiceConfig serviceConfig : list) {
+            for (ServiceConfig serviceConfig : configs) {
                 if("kb".equals(serviceConfig.getConfigType())){
-                    serviceConfig.setRequired(true);
-                    serviceConfig.setHidden(false);
+                    if(map.containsKey(serviceConfig.getName())){
+                        ServiceConfig config = map.get(serviceConfig.getName());
+                        config.setRequired(true);
+                        config.setHidden(false);
+                    }else{
+                        serviceConfig.setRequired(true);
+                        serviceConfig.setHidden(false);
+                        kbConfigs.add(serviceConfig);
+                    }
                 }
             }
         }else{
-            for (ServiceConfig serviceConfig : list) {
+            for (ServiceConfig serviceConfig : configs) {
                 if("kb".equals(serviceConfig.getConfigType())){
-                    serviceConfig.setRequired(false);
-                    serviceConfig.setHidden(true);
+                    if(map.containsKey(serviceConfig.getName())){
+                        list.remove(map.get(serviceConfig.getName()));
+                    }
                 }
             }
         }
+        list.addAll(kbConfigs);
     }
 
     private Map<String, ServiceConfig> translateToMap(List<ServiceConfig> list) {

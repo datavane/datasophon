@@ -12,6 +12,10 @@
       "name": "AlertManager",
       "label": "AlertManager",
       "roleType": "master",
+      "runAs": {
+        "user": "root",
+        "group": "root"
+      },
       "cardinality": 1,
       "logFile": "logs/alertmanager-${host}.out",
       "jmxPort": 9093,

@@ -78,9 +78,16 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
                 startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
             }
         } else if (command.getEnableKerberos()) {
+            logger.info("start to get namenode keytab file");
             String hostname = CacheUtils.getString(Constants.HOSTNAME);
-            KerberosUtils.downloadKeytabFromMaster("nn/" + hostname, "nn.service.keytab");
-            KerberosUtils.downloadKeytabFromMaster("HTTP/" + hostname, "spnego.service.keytab");
+            KerberosUtils.createKeytabDir();
+            if(!FileUtil.exist("/etc/security/keytab/nn.service.keytab")){
+                KerberosUtils.downloadKeytabFromMaster("nn/" + hostname, "nn.service.keytab");
+            }
+            if(!FileUtil.exist("/etc/security/keytab/spnego.service.keytab")){
+                KerberosUtils.downloadKeytabFromMaster("HTTP/" + hostname, "spnego.service.keytab");
+            }
+
             startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
         } else {
             startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
