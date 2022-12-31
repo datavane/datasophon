@@ -53,7 +53,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
             ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
 
             List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                    .in(Constants.SERVICE_ROLE_NAME, "Prometheus", "AlertManager"));
+                    .in(Constants.SERVICE_ROLE_NAME, "Prometheus", "AlertManager","Krb5Kdc","KAdmin"));
             String frameCode = "";
             if (Objects.nonNull(list) && list.size() > 0) {
                 for (ClusterServiceRoleInstanceEntity roleInstanceEntity : list) {

@@ -33,13 +33,13 @@ public class ClusterKerberosServiceImpl implements ClusterKerberosService {
     private ClusterServiceRoleInstanceService roleInstanceService;
 
     @Override
-    public void downloadKeytab(Integer clusterId, String principal, String keytabName, HttpServletResponse response) throws IOException {
+    public void downloadKeytab(Integer clusterId, String principal, String keytabName, String hostname, HttpServletResponse response) throws IOException {
         //通过文件路径获得File对象
         String userDir = System.getProperty("user.dir");
-        String keytabFilePath = userDir + Constants.SLASH + "conf" + Constants.SLASH + clusterId + Constants.SLASH + keytabName;
+        String keytabFilePath = "/etc/security/keytab"+ Constants.SLASH + hostname + Constants.SLASH + keytabName;
         File file = new File(keytabFilePath);
-        if(!file.exists()){
-            generateKeytabFile(clusterId,keytabFilePath,principal,keytabName);
+        if (!file.exists()) {
+            generateKeytabFile(clusterId, keytabFilePath, principal, keytabName,hostname);
         }
         FileInputStream inputStream = new FileInputStream(file);
 
@@ -62,19 +62,20 @@ public class ClusterKerberosServiceImpl implements ClusterKerberosService {
         out.close();
     }
 
-    private void generateKeytabFile(Integer clusterId, String keytabFilePath,String principal, String keytabName) {
+    private void generateKeytabFile(Integer clusterId, String keytabFilePath, String principal, String keytabName,String hostname) {
         ClusterServiceRoleInstanceEntity roleInstanceEntity = roleInstanceService.getKAdminRoleIns(clusterId);
         ActorRef kerberosActor = ActorUtils.getRemoteActor(roleInstanceEntity.getHostname(), "kerberosActor");
         GenerateKeytabFileCommand command = new GenerateKeytabFileCommand();
         command.setKeytabName(keytabName);
         command.setPrincipal(principal);
+        command.setHostname(hostname);
         Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
         Future<Object> execFuture = Patterns.ask(kerberosActor, command, timeout);
         ExecResult execResult = null;
         try {
             execResult = (ExecResult) Await.result(execFuture, timeout.duration());
             if (execResult.getExecResult()) {
-                FileUtil.writeString(execResult.getExecOut(),keytabFilePath, Charset.forName("ISO-8859-1"));
+//                FileUtil.writeString(execResult.getExecOut(), keytabFilePath, Charset.forName("ISO-8859-1"));
             }
         } catch (Exception e) {
 
