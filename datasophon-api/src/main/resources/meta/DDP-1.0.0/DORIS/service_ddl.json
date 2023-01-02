@@ -131,7 +131,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "/data/fe/meta"
+      "defaultValue": "${DORIS_HOME}/doris-meta"
     },
     {
       "name": "rpc_port",
