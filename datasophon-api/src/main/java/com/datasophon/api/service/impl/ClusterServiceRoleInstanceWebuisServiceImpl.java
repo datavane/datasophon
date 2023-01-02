@@ -23,4 +23,9 @@ public class ClusterServiceRoleInstanceWebuisServiceImpl extends ServiceImpl<Clu
         List<ClusterServiceRoleInstanceWebuis> list = this.list(new QueryWrapper<ClusterServiceRoleInstanceWebuis>().eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceId));
         return Result.success(list);
     }
+
+    @Override
+    public void removeByServiceInsId(Integer serviceInstanceId) {
+
+    }
 }

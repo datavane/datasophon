@@ -56,6 +56,9 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
     @Autowired
     private ClusterServiceInstanceRoleGroupService roleGroupService;
 
+    @Autowired
+    private ClusterServiceRoleInstanceWebuisService webuisService;
+
     @Override
     public ClusterServiceInstanceEntity getServiceInstanceByClusterIdAndServiceName(Integer clusterId, String serviceName) {
         return this.getOne(new QueryWrapper<ClusterServiceInstanceEntity>()
@@ -198,8 +201,12 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
         roleGroupConfigService.removeByIds(roleGroupConfigList.stream().map(e -> e.getId()).collect(Collectors.toList()));
         //del service role instance
         if(roleInstanceList.size() > 0){
-            roleInstanceService.removeByIds(roleInstanceList.stream().map(e->e.getId()).collect(Collectors.toList()));
+            List<String> roleInsIds = roleInstanceList.stream().map(e -> e.getId().toString()).collect(Collectors.toList());
+            roleInstanceService.deleteServiceRole(roleInsIds);
         }
+        //del web uis
+        webuisService.removeByServiceInsId(serviceInstanceId);
+
         //del service instance
         this.removeById(serviceInstanceId);
         return Result.success();
@@ -207,7 +214,9 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
 
     @Override
     public List<ClusterServiceInstanceEntity> listRunningServiceInstance(Integer clusterId) {
-        return null;
+        return this.list(new QueryWrapper<ClusterServiceInstanceEntity>()
+                .eq(Constants.CLUSTER_ID,clusterId)
+                .eq(Constants.SERVICE_STATE,ServiceState.RUNNING));
     }
 
     private boolean hasRunningRoleInstance(Integer serviceInstanceId) {
