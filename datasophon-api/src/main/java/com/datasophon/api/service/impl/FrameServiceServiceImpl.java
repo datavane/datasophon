@@ -12,9 +12,11 @@ import com.datasophon.dao.mapper.FrameInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -80,7 +82,8 @@ public class FrameServiceServiceImpl extends ServiceImpl<FrameServiceMapper, Fra
 
     @Override
     public List<FrameServiceEntity> listServices(String serviceIds) {
-        return null;
+        List<String> ids = Arrays.stream(serviceIds.split(",")).collect(Collectors.toList());
+        return this.list(new QueryWrapper<FrameServiceEntity>().in(Constants.ID,ids));
     }
 
 
