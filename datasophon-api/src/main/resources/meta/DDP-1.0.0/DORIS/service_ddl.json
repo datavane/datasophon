@@ -131,7 +131,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "StarRocksFE.STARROCKS_HOME_DIR + \"/meta\""
+      "defaultValue": "/data/fe/meta"
     },
     {
       "name": "rpc_port",
@@ -160,7 +160,7 @@
     {
       "name": "edit_log_port",
       "label": "FE集群通信端口",
-      "description": "FE 所在 StarRocks 集群中各 Leader FE、Follower FE、Observer FE 之间通信用的端口。",
+      "description": "FE 所在 Doris 集群中各 Leader FE、Follower FE、Observer FE 之间通信用的端口。",
       "configType": "map",
       "required": true,
       "type": "input",
@@ -263,7 +263,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "${STARROCKS_HOME}/storage"
+      "defaultValue": "/data/be/storage"
     },
 
     {
