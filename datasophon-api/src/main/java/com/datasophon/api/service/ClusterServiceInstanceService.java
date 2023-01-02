@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
 
+import java.util.List;
+
 /**
  * 集群服务表
  *
@@ -27,5 +29,7 @@ public interface ClusterServiceInstanceService extends IService<ClusterServiceIn
     Result configVersionCompare(Integer serviceInstanceId,Integer roleGroupId);
 
     Result delServiceInstance(Integer serviceInstanceId);
+
+    List<ClusterServiceInstanceEntity> listRunningServiceInstance(Integer clusterId);
 }
 

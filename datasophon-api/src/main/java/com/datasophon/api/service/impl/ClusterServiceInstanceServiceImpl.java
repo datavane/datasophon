@@ -205,6 +205,11 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
         return Result.success();
     }
 
+    @Override
+    public List<ClusterServiceInstanceEntity> listRunningServiceInstance(Integer clusterId) {
+        return null;
+    }
+
     private boolean hasRunningRoleInstance(Integer serviceInstanceId) {
         List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.getRunningServiceRoleInstanceListByServiceId(serviceInstanceId);
         if(list.size() > 0){

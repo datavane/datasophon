@@ -78,5 +78,10 @@ public class FrameServiceServiceImpl extends ServiceImpl<FrameServiceMapper, Fra
         return this.list(new QueryWrapper<FrameServiceEntity>().eq(Constants.FRAME_CODE_1,clusterFrame));
     }
 
+    @Override
+    public List<FrameServiceEntity> listServices(String serviceIds) {
+        return null;
+    }
+
 
 }
