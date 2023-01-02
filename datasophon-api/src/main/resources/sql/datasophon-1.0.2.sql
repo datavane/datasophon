@@ -679,7 +679,8 @@ INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (13, 'TRINO', 'http://${gra
 INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (14, 'STARROCKS', 'http://${grafanaHost}:3000/d/wpcA3tG7z/starrocks?orgId=1&kiosk');
 INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (15, 'FLINK', 'http://${grafanaHost}:3000/d/-0rFuzoZk/flink-dashboard?orgId=1&refresh=30s&kiosk');
 INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (16, 'ELASTICSEARCH', 'http://${grafanaHost}:3000/d/3788af4adc3046dd92b3af31d0150c79/elasticsearch-cluster?orgId=1&refresh=5m&var-cluster=ddp_es&var-name=All&var-interval=5m&kiosk');
-
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (17, 'DS', 'http://${grafanaHost}:3000/d/X_NPpJOVk/dolphinscheduler?refresh=1m&kiosk');
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (18, 'STREAMPARK', 'http://${grafanaHost}:3000/d/98U0T1OVz/streampark?kiosk&refresh=1m');
 -- ----------------------------
 -- Table structure for t_ddh_cluster_service_instance
 -- ----------------------------
