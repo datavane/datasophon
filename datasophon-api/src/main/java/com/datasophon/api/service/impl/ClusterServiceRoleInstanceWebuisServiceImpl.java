@@ -26,6 +26,6 @@ public class ClusterServiceRoleInstanceWebuisServiceImpl extends ServiceImpl<Clu
 
     @Override
     public void removeByServiceInsId(Integer serviceInstanceId) {
-
+        this.remove(new QueryWrapper<ClusterServiceRoleInstanceWebuis>().eq(Constants.SERVICE_INSTANCE_ID,serviceInstanceId));
     }
 }
