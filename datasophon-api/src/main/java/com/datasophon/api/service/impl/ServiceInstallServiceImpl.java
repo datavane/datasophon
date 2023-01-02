@@ -453,12 +453,13 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         }
 
         for (FrameServiceEntity frameServiceEntity : list) {
-            for (String dependService : frameServiceEntity.getDependencies().split(",")) {
-                if(!instanceMap.containsKey(dependService) && !serviceMap.containsKey(dependService)){
-                    return Result.error(""+frameServiceEntity.getServiceName()+" install depends on "+dependService+",please make sure that you have selected it or that "+dependService+" is normal and running");
+            if(StringUtils.isNotBlank(frameServiceEntity.getDependencies())){
+                for (String dependService : frameServiceEntity.getDependencies().split(",")) {
+                    if(!instanceMap.containsKey(dependService) && !serviceMap.containsKey(dependService)){
+                        return Result.error(""+frameServiceEntity.getServiceName()+" install depends on "+dependService+",please make sure that you have selected it or that "+dependService+" is normal and running");
+                    }
                 }
             }
-
         }
         return Result.success();
     }

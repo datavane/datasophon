@@ -95,7 +95,7 @@
         "filename": "fe.conf",
         "configFormat": "custom",
         "outputDirectory": "fe/conf",
-        "templateName": "fe.ftl",
+        "templateName": "doris_fe.ftl",
         "includeParams": [
           "cluster_id",
           "meta_dir",
