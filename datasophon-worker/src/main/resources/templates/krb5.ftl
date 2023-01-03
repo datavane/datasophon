@@ -14,7 +14,7 @@ includedir /etc/krb5.conf.d/
  rdns = false
  pkinit_anchors = FILE:/etc/pki/tls/certs/ca-bundle.crt
  default_realm = ${realm}
- default_ccache_name = KEYRING:persistent:%{uid}
+ #default_ccache_name = KEYRING:persistent:%{uid}
 
 [realms]
  ${realm} = {

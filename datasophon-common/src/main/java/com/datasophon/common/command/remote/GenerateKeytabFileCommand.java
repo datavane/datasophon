@@ -10,4 +10,6 @@ public class GenerateKeytabFileCommand implements Serializable {
     private String principal;
 
     private String keytabName;
+
+    private String hostname;
 }
