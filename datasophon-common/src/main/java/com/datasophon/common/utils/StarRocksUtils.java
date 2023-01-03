@@ -11,11 +11,13 @@ public class StarRocksUtils {
 
     public static void allFollower(String feMaster, String hostname) throws SQLException, ClassNotFoundException {
         String sql = "ALTER SYSTEM add FOLLOWER \""+hostname+":9010\";";
+        logger.info("sql is {}",sql);
         executeSql(feMaster, hostname,sql);
     }
 
     public static void allBackend(String feMaster, String hostname) throws SQLException, ClassNotFoundException {
         String sql = "ALTER SYSTEM add BACKEND  \""+hostname+":9050\";";
+        logger.info("sql is {}",sql);
         executeSql(feMaster, hostname,sql);
     }
 

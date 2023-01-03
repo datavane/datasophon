@@ -98,6 +98,11 @@ public class DAGBuildActor extends UntypedActor {
                                 serviceRoleInfo.setSortNum(2);
                             }
                         }
+                        if("BE".equals(serviceRoleInfo.getName()) ){
+                            String feMaster = globalVariables.get("${feMaster}");
+                            logger.info("fe master is {}",feMaster);
+                            serviceRoleInfo.setMasterHost(feMaster);
+                        }
                         if (ServiceRoleType.MASTER.equals(serviceRoleInfo.getRoleType())) {
                             masterRoles.add(serviceRoleInfo);
                         } else {

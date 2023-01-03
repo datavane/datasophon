@@ -7,6 +7,7 @@ import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.model.ServiceRoleRunner;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.StarRocksUtils;
+import com.datasophon.common.utils.ThrowableUtils;
 import com.datasophon.worker.handler.ServiceHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ public class FEHandlerStrategy implements ServiceRoleStrategy {
     private static final Logger logger = LoggerFactory.getLogger(FEHandlerStrategy.class);
 
     @Override
-    public ExecResult handler(ServiceRoleOperateCommand command) throws SQLException, ClassNotFoundException {
+    public ExecResult handler(ServiceRoleOperateCommand command)  {
         ExecResult startResult = new ExecResult();
         ServiceHandler serviceHandler = new ServiceHandler();
         if (command.isSlave() && command.getCommandType()== CommandType.INSTALL_SERVICE) {
@@ -36,7 +37,11 @@ public class FEHandlerStrategy implements ServiceRoleStrategy {
             startResult = serviceHandler.start(startRunner, command.getStatusRunner(), command.getDecompressPackageName(),command.getRunAs());
             if (startResult.getExecResult()) {
                 //add follower
-                StarRocksUtils.allFollower(command.getMasterHost(), CacheUtils.getString(Constants.HOSTNAME));
+                try {
+                    StarRocksUtils.allFollower(command.getMasterHost(), CacheUtils.getString(Constants.HOSTNAME));
+                }catch (SQLException | ClassNotFoundException e){
+                    logger.info("add slave fe failed {}", ThrowableUtils.getStackTrace(e));
+                }
                 logger.info("slave fe start success");
             } else {
                 logger.info("slave fe start failed");
