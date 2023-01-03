@@ -16,6 +16,7 @@ public class ServiceRoleStrategyContext {
         map.put("HbaseMaster",new HbaseHandlerStrategy());
         map.put("RegionServer",new HbaseHandlerStrategy());
         map.put("FE",new FEHandlerStrategy());
+        map.put("BE",new BEHandlerStrategy());
     }
 
     public static ServiceRoleStrategy getServiceRoleHandler(String type){

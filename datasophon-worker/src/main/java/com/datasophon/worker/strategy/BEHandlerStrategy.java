@@ -22,12 +22,12 @@ public class BEHandlerStrategy implements ServiceRoleStrategy {
     public ExecResult handler(ServiceRoleOperateCommand command) throws SQLException, ClassNotFoundException {
         ExecResult startResult = new ExecResult();
         ServiceHandler serviceHandler = new ServiceHandler();
-        startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(),command.getRunAs());
+        startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
         if (command.getCommandType().equals(CommandType.INSTALL_SERVICE)) {
             logger.info("add starrocks be to cluster");
 
             ArrayList<String> commands = new ArrayList<>();
-            commands.add(command.getDecompressPackageName() + "fe/bin/start_be.sh");
+            commands.add(command.getDecompressPackageName() + Constants.SLASH + "be/bin/start_be.sh");
             commands.add("--helper");
             commands.add(command.getMasterHost() + ":9010");
             commands.add("--daemon");
