@@ -43,6 +43,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 public class ProcessUtils {
@@ -519,6 +520,10 @@ public class ProcessUtils {
             command.setCommands(commands);
             execCmdActor.tell(command,ActorRef.noSender());
         }
+    }
+
+    public static Map<String, ServiceConfig> translateToMap(List<ServiceConfig> list) {
+        return  list.stream().collect(Collectors.toMap(ServiceConfig::getName, serviceConfig -> serviceConfig, (v1, v2) -> v1));
     }
 
     public static void syncUserToHosts(List<ClusterHostEntity> hostList, String username,String mainGroup,String otherGroup,String operate) {

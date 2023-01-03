@@ -1,25 +1,17 @@
 package com.datasophon.api.service.strategy;
 
-import com.alibaba.fastjson.JSONArray;
+
 import com.datasophon.api.load.ServiceConfigMap;
-import com.datasophon.api.load.ServiceInfoMap;
-import com.datasophon.api.service.ClusterInfoService;
-import com.datasophon.api.service.FrameServiceService;
 import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.api.utils.ProcessUtils;
-import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
-import com.datasophon.common.model.ServiceInfo;
 import com.datasophon.dao.entity.ClusterInfoEntity;
-import com.datasophon.dao.entity.FrameServiceEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
 
@@ -43,7 +35,7 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
         List<ServiceConfig> serviceConfigs = new ArrayList<>();
         boolean enableRack = false;
         boolean enableKerberos = false;
-        Map<String, ServiceConfig> map = translateToMap(list);
+        Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
 
         for (ServiceConfig config : list) {
             if ("enableRack".equals(config.getName())) {
@@ -105,9 +97,7 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
         list.addAll(kbConfigs);
     }
 
-    private Map<String, ServiceConfig> translateToMap(List<ServiceConfig> list) {
-        return  list.stream().collect(Collectors.toMap(ServiceConfig::getName, serviceConfig -> serviceConfig, (v1, v2) -> v1));
-    }
+
 
     @Override
     public void getConfig(Integer clusterId, List<ServiceConfig> list) {

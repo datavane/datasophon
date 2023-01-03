@@ -18,7 +18,7 @@
         "group": "hadoop"
       },
       "sortNum": 1,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-resourcemanager-${host}.log",
+      "logFile": "${hadoopLogDir}/hadoop-yarn-resourcemanager-${host}.log",
       "jmxPort": 9323,
       "startRunner": {
         "timeout": "60",
@@ -68,7 +68,7 @@
         "group": "hadoop"
       },
       "sortNum": 3,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-nodemanager-${host}.log",
+      "logFile": "${hadoopLogDir}/hadoop-yarn-nodemanager-${host}.log",
       "jmxPort": 9324,
       "startRunner": {
         "timeout": "60",
@@ -100,11 +100,11 @@
       "roleType": "master",
       "cardinality": "1",
       "runAs": {
-        "user": "yarn",
+        "user": "mapred",
         "group": "hadoop"
       },
       "sortNum": 2,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-historyserver-${host}.log",
+      "logFile": "${hadoopLogDir}/hadoop-yarn-historyserver-${host}.log",
       "jmxPort": 9325,
       "startRunner": {
         "timeout": "60",
@@ -188,6 +188,9 @@
           "yarn.resourcemanager.keytab",
           "yarn.nodemanager.principal",
           "yarn.nodemanager.keytab",
+          "yarn.nodemanager.container-executor.class",
+          "yarn.nodemanager.linux-container-executor.group",
+          "yarn.nodemanager.linux-container-executor.path",
           "custom.yarn.site.xml"
         ]
       },
@@ -761,6 +764,42 @@
       "configurableInWizard": true,
       "hidden": true,
       "defaultValue": "/etc/security/keytab/jhs.service.keytab"
+    },
+    {
+      "name": "yarn.nodemanager.container-executor.class",
+      "label": "使用LinuxContainerExecutor管理Container",
+      "description": "",
+      "required": false,
+      "configType": "kb",
+      "type": "input",
+      "value": "org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor"
+    },
+    {
+      "name": "yarn.nodemanager.linux-container-executor.group",
+      "label": "NodeManager的启动用户的所属组",
+      "description": "",
+      "required": false,
+      "configType": "kb",
+      "type": "input",
+      "value": "hadoop",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "hadoop"
+    },
+    {
+      "name": "yarn.nodemanager.linux-container-executor.path",
+      "label": "LinuxContainerExecutor脚本路径",
+      "description": "",
+      "required": false,
+      "configType": "kb",
+      "type": "input",
+      "value": "${HADOOP_HOME}/bin/container-executor",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "${HADOOP_HOME}/bin/container-executor"
     },
     {
       "name": "custom.yarn.site.xml",
