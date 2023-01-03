@@ -3,7 +3,7 @@
   "label": "Kerberos",
   "description": "计算机网络认证协议",
   "version": "1.15.1",
-  "sortNum": 4,
+  "sortNum": 15,
   "dependencies":[],
   "packageName": "kerberos-1.15.1.tar.gz",
   "decompressPackageName": "kerberos-1.15.1",

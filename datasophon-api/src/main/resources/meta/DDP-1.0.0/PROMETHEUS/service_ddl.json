@@ -12,6 +12,10 @@
       "name": "Prometheus",
       "label": "Prometheus",
       "roleType": "master",
+      "runAs": {
+        "user": "root",
+        "group": "root"
+      },
       "cardinality": 1,
       "logFile": "logs/prometheus-${host}.out",
       "jmxPort": 9090,

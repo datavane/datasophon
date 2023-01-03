@@ -7,12 +7,13 @@ case ${r"${HADOOP_OS_TYPE}"} in
   ;;
 esac
 export HADOOP_PID_DIR=/opt/datasophon/hadoop-3.3.3/pid
-export HDFS_NAMENODE_USER=root
-export HDFS_DATANODE_USER=root
-export HDFS_SECONDARYNAMENODE_USER=root
-export YARN_RESOURCEMANAGER_USER=root
-export YARN_NODEMANAGER_USER=root
-
+export HDFS_NAMENODE_USER=hdfs
+export HDFS_DATANODE_USER=hdfs
+export HDFS_JOURNALNODE_USER=hdfs
+export HDFS_ZKFC_USER=hdfs
+export YARN_RESOURCEMANAGER_USER=yarn
+export YARN_NODEMANAGER_USER=yarn
+export JAVA_HOME=/usr/local/jdk1.8.0_333
 <#list itemList as item>
 export ${item.name}=${item.value}
 </#list>

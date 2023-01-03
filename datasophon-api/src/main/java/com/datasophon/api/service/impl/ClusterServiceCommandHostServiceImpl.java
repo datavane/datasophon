@@ -57,4 +57,10 @@ public class ClusterServiceCommandHostServiceImpl extends ServiceImpl<ClusterSer
                 .eq(Constants.COMMAND_ID,commandId).eq(Constants.COMMAND_STATE, CommandState.FAILED));
     }
 
+    @Override
+    public List<ClusterServiceCommandHostEntity> findCanceledCommandHost(String commandId) {
+        return this.list(new QueryWrapper<ClusterServiceCommandHostEntity>()
+                .eq(Constants.COMMAND_ID,commandId).eq(Constants.COMMAND_STATE, CommandState.CANCEL));
+    }
+
 }

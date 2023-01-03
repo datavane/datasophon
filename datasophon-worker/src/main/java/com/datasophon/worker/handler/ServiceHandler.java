@@ -27,7 +27,13 @@ public class ServiceHandler {
             return execResult;
         }
         //执行启动脚本
-        ExecResult startResult = execRunner(startRunner, decompressPackageName,runAs.getUser());
+        ExecResult startResult = new ExecResult();
+        if(Objects.nonNull(runAs)){
+            startResult = execRunner(startRunner, decompressPackageName,runAs.getUser());
+        }else{
+            startResult = execRunner(startRunner, decompressPackageName,null);
+        }
+
         //检测是否启动成功
         if(startResult.getExecResult()){
             int times = PropertyUtils.getInt("times");
@@ -60,7 +66,11 @@ public class ServiceHandler {
         ExecResult statusResult = execRunner(statusRunner, decompressPackageName,null);
         ExecResult execResult = new ExecResult();
         if(statusResult.getExecResult()){
-            execResult = execRunner(runner, decompressPackageName,runAs.getUser());
+            if(Objects.nonNull(runAs)){
+                execResult = execRunner(runner, decompressPackageName,runAs.getUser());
+            }else{
+                execResult = execRunner(runner, decompressPackageName,null);
+            }
             //检测是否停止成功
             if(execResult.getExecResult()){
                 int times = PropertyUtils.getInt("times");

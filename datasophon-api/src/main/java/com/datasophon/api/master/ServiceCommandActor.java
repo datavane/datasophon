@@ -57,7 +57,10 @@ public class ServiceCommandActor extends UntypedActor {
                 }else{
                     commandHost.setCommandState(CommandState.SUCCESS);
                 }
-
+                List<ClusterServiceCommandHostCommandEntity> cancelList = service.findCanceledHostCommand(message.getHostname(),message.getCommandHostId());
+                if(cancelList.size() > 0){
+                    commandHost.setCommandState(CommandState.CANCEL);
+                }
             }
             commandHostService.update(commandHost, new QueryWrapper<ClusterServiceCommandHostEntity>().eq(Constants.COMMAND_HOST_ID, message.getCommandHostId()));
 
@@ -109,6 +112,12 @@ public class ServiceCommandActor extends UntypedActor {
                 List<ClusterServiceCommandHostEntity> list = commandHostService.findFailedCommandHost(message.getCommandId());
                 if(list.size() > 0){
                     command.setCommandState(CommandState.FAILED);
+                    command.setEndTime(new Date());
+                }
+
+                List<ClusterServiceCommandHostEntity> cancelList = commandHostService.findCanceledCommandHost(message.getCommandId());
+                if(cancelList.size() > 0){
+                    command.setCommandState(CommandState.CANCEL);
                     command.setEndTime(new Date());
                 }
             }

@@ -5,5 +5,5 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public interface ClusterKerberosService {
-    void downloadKeytab(Integer clusterId, String principal, String keytabName, HttpServletResponse response) throws IOException;
+    void downloadKeytab(Integer clusterId, String principal, String keytabName, String hostname,HttpServletResponse response) throws IOException;
 }
