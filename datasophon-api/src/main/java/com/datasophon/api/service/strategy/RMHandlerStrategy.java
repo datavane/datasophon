@@ -1,19 +1,15 @@
 package com.datasophon.api.service.strategy;
 
-import com.alibaba.fastjson.JSONArray;
 import com.datasophon.api.load.ServiceConfigMap;
-import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterYarnSchedulerService;
-import com.datasophon.api.service.FrameServiceService;
-import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterYarnScheduler;
-import com.datasophon.dao.entity.FrameServiceEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +58,7 @@ public class RMHandlerStrategy implements ServiceRoleStrategy{
                 }
             }
         }
-        String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "HDFS" + Constants.CONFIG;
+        String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "YARN" + Constants.CONFIG;
         List<ServiceConfig> configs = ServiceConfigMap.get(key);
         ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
         if(enableKerberos){
@@ -72,11 +68,16 @@ public class RMHandlerStrategy implements ServiceRoleStrategy{
                         ServiceConfig config = map.get(serviceConfig.getName());
                         config.setRequired(true);
                         config.setHidden(false);
+                        String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
+                        config.setValue(value);
                     }else{
                         serviceConfig.setRequired(true);
                         serviceConfig.setHidden(false);
+                        String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
+                        serviceConfig.setValue(value);
                         kbConfigs.add(serviceConfig);
                     }
+
                 }
             }
         }else{

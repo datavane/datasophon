@@ -20,11 +20,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class ServiceStartHandler extends ServiceHandler{
+public class ServiceStartHandler extends ServiceHandler {
     private static final Logger logger = LoggerFactory.getLogger(ServiceStartHandler.class);
+
     @Override
     public ExecResult handlerRequest(ServiceRoleInfo serviceRoleInfo) throws Exception {
-        logger.info("start to start service {} in {}" ,serviceRoleInfo.getName(),serviceRoleInfo.getHostname());
+        logger.info("start to start service {} in {}", serviceRoleInfo.getName(), serviceRoleInfo.getHostname());
         //启动
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + serviceRoleInfo.getClusterId());
         ServiceRoleOperateCommand serviceRoleOperateCommand = new ServiceRoleOperateCommand();
@@ -37,13 +38,13 @@ public class ServiceStartHandler extends ServiceHandler{
         serviceRoleOperateCommand.setMasterHost(serviceRoleInfo.getMasterHost());
         serviceRoleOperateCommand.setEnableRangerPlugin(serviceRoleInfo.getEnableRangerPlugin());
         serviceRoleOperateCommand.setRunAs(serviceRoleInfo.getRunAs());
-        Boolean enableKerberos = Boolean.parseBoolean(globalVariables.get("${enableHDFSKerberos}"));
-        logger.info("enable kerberos is {}",enableKerberos);
+        Boolean enableKerberos = Boolean.parseBoolean(globalVariables.get("${enable" + serviceRoleInfo.getParentName() + "Kerberos}"));
+        logger.info("{} enable kerberos is {}", serviceRoleInfo.getParentName(), enableKerberos);
         serviceRoleOperateCommand.setEnableKerberos(enableKerberos);
-        if(serviceRoleInfo.getRoleType() == ServiceRoleType.CLIENT){
+        if (serviceRoleInfo.getRoleType() == ServiceRoleType.CLIENT) {
             ExecResult execResult = new ExecResult();
             execResult.setExecResult(true);
-            if(Objects.nonNull(getNext())){
+            if (Objects.nonNull(getNext())) {
                 return getNext().handlerRequest(serviceRoleInfo);
             }
             return execResult;
@@ -54,7 +55,7 @@ public class ServiceStartHandler extends ServiceHandler{
         ExecResult startResult = (ExecResult) Await.result(startFuture, timeout.duration());
         if (Objects.nonNull(startResult) && startResult.getExecResult()) {
             //角色启动成功
-            if(Objects.nonNull(getNext())){
+            if (Objects.nonNull(getNext())) {
                 return getNext().handlerRequest(serviceRoleInfo);
             }
         }
