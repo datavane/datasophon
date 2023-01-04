@@ -2,11 +2,13 @@ package com.datasophon.worker.strategy;
 
 import cn.hutool.core.io.FileUtil;
 import com.datasophon.common.Constants;
+import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.handler.ServiceHandler;
+import com.datasophon.worker.utils.KerberosUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,15 +31,14 @@ public class HiveServer2HandlerStrategy implements ServiceRoleStrategy {
                 if (execResult.getExecResult()) {
                     logger.info("enable ranger hive plugin success");
                     FileUtil.writeUtf8String("success", Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName() + "/ranger-hive-plugin/success.id");
-                    startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(),command.getRunAs());
                 } else {
                     logger.info("enable ranger hive plugin failed");
+                    return execResult;
                 }
-            } else {
-                startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(),command.getRunAs());
             }
-        } else if (command.getCommandType() == CommandType.INSTALL_SERVICE && !command.isSlave()) {
-            //初始化数据库
+        }
+        if (command.getCommandType() == CommandType.INSTALL_SERVICE && !command.isSlave()) {
+            //init hive database
             ArrayList<String> commands = new ArrayList<>();
             commands.add("bin/schematool");
             commands.add("-dbType");
@@ -45,13 +46,21 @@ public class HiveServer2HandlerStrategy implements ServiceRoleStrategy {
             commands.add("-initSchema");
             ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName(), commands, 60L);
             if (execResult.getExecResult()) {
-                startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(),command.getRunAs());
+                logger.info("init hive schema success");
             } else {
                 logger.info("init hive schema failed");
+                return execResult;
             }
-        } else {
-            startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(),command.getRunAs());
         }
+        if(command.getEnableKerberos()){
+            logger.info("start to get hive keytab file");
+            String hostname = CacheUtils.getString(Constants.HOSTNAME);
+            KerberosUtils.createKeytabDir();
+            if(!FileUtil.exist("/etc/security/keytab/hive.service.keytab")){
+                KerberosUtils.downloadKeytabFromMaster("hive/" + hostname, "hive.service.keytab");
+            }
+        }
+        startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(),command.getRunAs());
         return startResult;
     }
 }
