@@ -35,4 +35,6 @@ public class ServiceConfig  implements Serializable {
 
     private String configType;
 
+    private boolean configWithKerberos;
+
 }

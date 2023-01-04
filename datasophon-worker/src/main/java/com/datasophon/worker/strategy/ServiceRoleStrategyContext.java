@@ -21,6 +21,7 @@ public class ServiceRoleStrategyContext {
         map.put("RegionServer",new HbaseHandlerStrategy());
         map.put("Krb5Kdc",new KerberosHandlerStrategy());
         map.put("FE",new FEHandlerStrategy());
+        map.put("ZkServer",new ZkServerHandlerStrategy());
     }
 
     public static ServiceRoleStrategy getServiceRoleHandler(String type){

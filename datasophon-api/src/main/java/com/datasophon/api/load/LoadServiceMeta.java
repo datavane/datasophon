@@ -70,6 +70,8 @@ public class LoadServiceMeta implements ApplicationRunner {
 
     private static final String HDFS = "HDFS";
 
+    private static final String ZOOKEEPER = "ZOOKEEPER";
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void run(ApplicationArguments args) throws Exception {
@@ -106,6 +108,9 @@ public class LoadServiceMeta implements ApplicationRunner {
                     if (HDFS.equals(serviceName)) {
                         putHadoopHomeToVariable(globalVariables, serviceInfo.getDecompressPackageName());
                     }
+                    if (ZOOKEEPER.equals(serviceName)) {
+                        putZkHomeToVariable(globalVariables, serviceInfo.getDecompressPackageName());
+                    }
                     //save service and service config
                     FrameServiceEntity serviceEntity = saveFrameService(frameCode, frameInfo, serviceName, serviceDdl, serviceInfo, serviceInfoMd5, allParameters, configFileMap);
                     //save frame service role
@@ -114,6 +119,8 @@ public class LoadServiceMeta implements ApplicationRunner {
             }
         }
     }
+
+
 
     private void saveFrameServiceRole(String frameCode, String serviceName, ServiceInfo serviceInfo, FrameServiceEntity serviceEntity) {
         List<ServiceRoleInfo> serviceRoles = serviceInfo.getRoles();
@@ -201,6 +208,10 @@ public class LoadServiceMeta implements ApplicationRunner {
 
     private void putHadoopHomeToVariable(HashMap<String, String> globalVariables, String packageName) {
         globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + Constants.SLASH + packageName);
+    }
+
+    private void putZkHomeToVariable(HashMap<String, String> globalVariables, String packageName) {
+        globalVariables.put("${ZK_HOME}", Constants.INSTALL_PATH + Constants.SLASH + packageName);
     }
 
     private void loadGlobalVariables(HashMap<String, String> globalVariables) throws UnknownHostException {
