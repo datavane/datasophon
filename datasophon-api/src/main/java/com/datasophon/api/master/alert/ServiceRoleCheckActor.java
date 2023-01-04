@@ -8,7 +8,10 @@ import com.datasophon.api.service.ClusterServiceInstanceService;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.common.Constants;
+import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
+import com.datasophon.common.model.ProcInfo;
+import com.datasophon.common.utils.StarRocksUtils;
 import com.datasophon.dao.entity.ClusterAlertHistory;
 import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
@@ -18,6 +21,7 @@ import com.datasophon.dao.enums.ServiceState;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class ServiceRoleCheckActor extends UntypedActor {
@@ -39,7 +43,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
             ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
 
             List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                    .in(Constants.SERVICE_ROLE_NAME, "Prometheus", "AlertManager"));
+                    .in(Constants.SERVICE_ROLE_NAME, "Prometheus", "AlertManager","FE","BE"));
             if (Objects.nonNull(list) && list.size() > 0) {
                 for (ClusterServiceRoleInstanceEntity roleInstanceEntity : list) {
                     if("Prometheus".equals(roleInstanceEntity.getServiceRoleName())){
@@ -61,6 +65,19 @@ public class ServiceRoleCheckActor extends UntypedActor {
                             //产生告警
                             saveAlert(roleInstanceEntity,roleInstanceService);
 
+                        }
+                    }
+                    if("FE".equals(roleInstanceEntity.getServiceRoleName()) ||
+                            "BE".equals(roleInstanceEntity.getServiceRoleName())){
+                        Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+roleInstanceEntity.getClusterId());
+                        String feMaster = globalVariables.get("${feMaster}");
+                        List<ProcInfo> frontends = StarRocksUtils.showFrontends(feMaster);
+                        for (ProcInfo frontend : frontends) {
+                            if(!frontend.getAlive()){
+                                saveAlert(roleInstanceEntity,roleInstanceService);
+                            }else {
+                                recoverAlert(roleInstanceEntity,roleInstanceService);
+                            }
                         }
                     }
 
