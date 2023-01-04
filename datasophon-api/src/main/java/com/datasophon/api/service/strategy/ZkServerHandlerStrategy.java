@@ -1,13 +1,16 @@
 package com.datasophon.api.service.strategy;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterZkService;
+import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterZk;
 import org.apache.commons.collections.CollectionUtils;
@@ -36,7 +39,53 @@ public class ZkServerHandlerStrategy implements ServiceRoleStrategy {
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
+        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
+        boolean enableKerberos = false;
+        Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
 
+        for (ServiceConfig config : list) {
+            if("enableKerberos".equals(config.getName())){
+                if( (Boolean)config.getValue()){
+                    enableKerberos = true;
+                    ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableZOOKEEPERKerberos}", "true");
+                }else {
+                    ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableZOOKEEPERKerberos}", "false");
+                }
+            }
+        }
+
+        String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "ZOOKEEPER" + Constants.CONFIG;
+        List<ServiceConfig> configs = ServiceConfigMap.get(key);
+        ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
+        if(enableKerberos){
+            for (ServiceConfig serviceConfig : configs) {
+                if("kb".equals(serviceConfig.getConfigType())){
+                    if(map.containsKey(serviceConfig.getName())){
+                        ServiceConfig config = map.get(serviceConfig.getName());
+                        config.setRequired(true);
+                        config.setHidden(false);
+                        String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
+                        config.setValue(value);
+                    }else{
+                        serviceConfig.setRequired(true);
+                        serviceConfig.setHidden(false);
+                        String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
+                        serviceConfig.setValue(value);
+                        kbConfigs.add(serviceConfig);
+                    }
+                }
+            }
+        }else{
+            for (ServiceConfig serviceConfig : configs) {
+                if("kb".equals(serviceConfig.getConfigType())){
+                    if(map.containsKey(serviceConfig.getName())){
+                        list.remove(map.get(serviceConfig.getName()));
+                    }
+                }
+            }
+        }
+        list.addAll(kbConfigs);
     }
     /**
      * 查询现有的zkserver

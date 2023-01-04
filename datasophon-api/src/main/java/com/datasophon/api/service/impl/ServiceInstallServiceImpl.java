@@ -110,11 +110,9 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         HashMap<String, ServiceConfig> map = new HashMap<>();
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
 
-        if (!"zookeeper".equals(serviceName.toLowerCase())) {
-            ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceName);
-            if (Objects.nonNull(serviceRoleHandler)) {
-                serviceRoleHandler.handlerConfig(clusterId, list);
-            }
+        ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceName);
+        if (Objects.nonNull(serviceRoleHandler)) {
+            serviceRoleHandler.handlerConfig(clusterId, list);
         }
 
         FrameServiceEntity frameServiceEntity = frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);
