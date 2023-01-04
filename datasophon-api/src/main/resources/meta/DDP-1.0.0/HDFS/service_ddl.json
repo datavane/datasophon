@@ -731,11 +731,12 @@
       "description": "",
       "required": false,
       "configType": "kb",
-      "type": "input",
-      "value": "DEFAULT",
+      "separator":"\n",
+      "type": "multiple",
+      "value": ["RULE:[2:$1/$2@$0]([ndj]n\\/.*@HADOOP\\.COM)s/.*/hdfs/","DEFAULT"],
       "configurableInWizard": true,
       "hidden": true,
-      "defaultValue": "DEFAULT"
+      "defaultValue": []
     },
     {
       "name": "hadoop.rpc.protection",

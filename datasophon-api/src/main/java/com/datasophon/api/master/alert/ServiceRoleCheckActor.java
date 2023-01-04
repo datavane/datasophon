@@ -113,6 +113,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
                         }
                     }
                     //check namenode ha
+
                 }
             }
         } else {
