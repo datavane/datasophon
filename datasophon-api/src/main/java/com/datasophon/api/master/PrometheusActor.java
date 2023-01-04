@@ -192,7 +192,7 @@ public class PrometheusActor extends UntypedActor {
             }
             ArrayList<ServiceConfig> serviceConfigs = new ArrayList<>();
             Generators generators = new Generators();
-            generators.setFilename("starrocks.json");
+            generators.setFilename(command.getFilename());
             generators.setOutputDirectory("configs");
             generators.setConfigFormat("custom");
             generators.setTemplateName("starrocks-prom.ftl");
@@ -221,7 +221,7 @@ public class PrometheusActor extends UntypedActor {
             ServiceConfigureHandler configureHandler = new ServiceConfigureHandler();
             ExecResult execResult = configureHandler.handlerRequest(serviceRoleInfo);
             if(execResult.getExecResult()){
-                //重新加载prometheus配置
+                //reload prometheus
                 HttpUtil.post("http://"+prometheusInstance.getHostname()+":9090/-/reload","");
             }
         }
