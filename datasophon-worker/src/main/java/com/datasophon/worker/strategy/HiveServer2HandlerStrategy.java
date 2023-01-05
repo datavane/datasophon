@@ -37,8 +37,10 @@ public class HiveServer2HandlerStrategy implements ServiceRoleStrategy {
                 }
             }
         }
-        if (command.getCommandType() == CommandType.INSTALL_SERVICE && !command.isSlave()) {
+        logger.info("command is slave : {}",command.isSlave());
+        if (command.getCommandType().equals(CommandType.INSTALL_SERVICE) && !command.isSlave()) {
             //init hive database
+            logger.info("start to init hive schema");
             ArrayList<String> commands = new ArrayList<>();
             commands.add("bin/schematool");
             commands.add("-dbType");

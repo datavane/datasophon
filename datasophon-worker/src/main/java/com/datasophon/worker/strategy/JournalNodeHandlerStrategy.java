@@ -31,6 +31,9 @@ public class JournalNodeHandlerStrategy implements ServiceRoleStrategy {
             if(!FileUtil.exist("/etc/security/keytab/jn.service.keytab")){
                 KerberosUtils.downloadKeytabFromMaster("jn/" + hostname, "jn.service.keytab");
             }
+            if(!FileUtil.exist("//etc/security/keytab/keystore")){
+                ShellUtils.exceShell("keytool -genkey -alias datasophon -keypass admin123 -keyalg RSA -keysize 1024 -validity 365 -keystore  /etc/security/keytab/keystore -storepass admin123 -dname \"CN="+hostname+", OU=, O=, L=, ST=,C=\";");
+            }
             startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
         }else {
             startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
