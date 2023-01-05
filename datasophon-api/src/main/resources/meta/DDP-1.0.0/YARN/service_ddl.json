@@ -18,7 +18,7 @@
         "group": "hadoop"
       },
       "sortNum": 1,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-resourcemanager-${host}.log",
+      "logFile": "${hadoopLogDir}/hadoop-yarn-resourcemanager-${host}.log",
       "jmxPort": 9323,
       "startRunner": {
         "timeout": "60",
@@ -68,7 +68,7 @@
         "group": "hadoop"
       },
       "sortNum": 3,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-nodemanager-${host}.log",
+      "logFile": "${hadoopLogDir}/hadoop-yarn-nodemanager-${host}.log",
       "jmxPort": 9324,
       "startRunner": {
         "timeout": "60",
@@ -100,11 +100,11 @@
       "roleType": "master",
       "cardinality": "1",
       "runAs": {
-        "user": "yarn",
+        "user": "mapred",
         "group": "hadoop"
       },
       "sortNum": 2,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-historyserver-${host}.log",
+      "logFile": "${hadoopLogDir}/hadoop-yarn-historyserver-${host}.log",
       "jmxPort": 9325,
       "startRunner": {
         "timeout": "60",
@@ -184,7 +184,23 @@
           "yarn.resourcemanager.am.max-attempts",
           "yarn.node-labels.enabled",
           "yarn.node-labels.fs-store.root-dir",
+          "yarn.resourcemanager.principal",
+          "yarn.resourcemanager.keytab",
+          "yarn.nodemanager.principal",
+          "yarn.nodemanager.keytab",
+          "yarn.nodemanager.container-executor.class",
+          "yarn.nodemanager.linux-container-executor.group",
+          "yarn.nodemanager.linux-container-executor.path",
           "custom.yarn.site.xml"
+        ]
+      },
+      {
+        "filename": "mapred-site.xml",
+        "configFormat": "xml",
+        "outputDirectory": "etc/hadoop/",
+        "includeParams": [
+          "mapreduce.jobhistory.keytab",
+          "mapreduce.jobhistory.principal"
         ]
       }
     ]
@@ -205,6 +221,17 @@
       "name": "yarn.node-labels.enabled",
       "label": "启用YARN标签调度",
       "description": "开启 YARN Node Labels",
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
+    },
+    {
+      "name": "enableKerberos",
+      "label": "启用Kerberos认证",
+      "description": "启用Kerberos认证",
       "required": true,
       "type": "switch",
       "value": "",
@@ -646,6 +673,7 @@
       "label": "NodeManager本地存储目录",
       "description": "NodeManager本地存储目录，可配置多个，按逗号分隔",
       "required": true,
+      "configType": "path",
       "type": "multiple",
       "value": [
         "/data/nm"
@@ -665,6 +693,114 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": ["${HADOOP_HOME}/etc/hadoop","${HADOOP_HOME}/share/hadoop/common/lib/*","${HADOOP_HOME}/share/hadoop/common/*","${HADOOP_HOME}/share/hadoop/hdfs","${HADOOP_HOME}/share/hadoop/hdfs/lib/*","${HADOOP_HOME}/share/hadoop/hdfs/*","${HADOOP_HOME}/share/hadoop/mapreduce/lib/*","${HADOOP_HOME}/share/hadoop/mapreduce/*","${HADOOP_HOME}/share/hadoop/yarn","${HADOOP_HOME}/share/hadoop/yarn/lib/*","${HADOOP_HOME}/share/hadoop/yarn/*"]
+    },
+    {
+      "name": "yarn.resourcemanager.principal",
+      "label": "ResourceManager服务的Kerberos主体",
+      "description": "",
+      "required": false,
+      "configType": "kb",
+      "type": "input",
+      "value": "rm/_HOST@HADOOP.COM",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "rm/_HOST@HADOOP.COM"
+    },
+    {
+      "name": "yarn.resourcemanager.keytab",
+      "label": "ResourceManager服务的Kerberos密钥文件路径",
+      "description": "",
+      "required": false,
+      "configType": "kb",
+      "type": "input",
+      "value": "/etc/security/keytab/rm.service.keytab",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "/etc/security/keytab/rm.service.keytab"
+    },
+    {
+      "name": "yarn.nodemanager.principal",
+      "label": "NodeManager服务的Kerberos主体",
+      "description": "",
+      "required": false,
+      "configType": "kb",
+      "type": "input",
+      "value": "nm/_HOST@HADOOP.COM",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "nm/_HOST@HADOOP.COM"
+    },
+    {
+      "name": "yarn.nodemanager.keytab",
+      "label": "NodeManager服务的Kerberos密钥文件路径",
+      "description": "",
+      "required": false,
+      "configType": "kb",
+      "type": "input",
+      "value": "/etc/security/keytab/nm.service.keytab",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "/etc/security/keytab/nm.service.keytab"
+    },
+    {
+      "name": "mapreduce.jobhistory.principal",
+      "label": "JobHistory服务的Kerberos主体",
+      "description": "",
+      "required": false,
+      "configType": "kb",
+      "type": "input",
+      "value": "jhs/_HOST@HADOOP.COM",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "jhs/_HOST@HADOOP.COM"
+    },
+    {
+      "name": "mapreduce.jobhistory.keytab",
+      "label": "JobHistory服务的Kerberos密钥文件路径",
+      "description": "",
+      "required": false,
+      "configType": "kb",
+      "type": "input",
+      "value": "/etc/security/keytab/jhs.service.keytab",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "/etc/security/keytab/jhs.service.keytab"
+    },
+    {
+      "name": "yarn.nodemanager.container-executor.class",
+      "label": "使用LinuxContainerExecutor管理Container",
+      "description": "",
+      "required": false,
+      "configType": "kb",
+      "type": "input",
+      "value": "org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor"
+    },
+    {
+      "name": "yarn.nodemanager.linux-container-executor.group",
+      "label": "NodeManager的启动用户的所属组",
+      "description": "",
+      "required": false,
+      "configType": "kb",
+      "type": "input",
+      "value": "hadoop",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "hadoop"
+    },
+    {
+      "name": "yarn.nodemanager.linux-container-executor.path",
+      "label": "LinuxContainerExecutor脚本路径",
+      "description": "",
+      "required": false,
+      "configType": "kb",
+      "type": "input",
+      "value": "${HADOOP_HOME}/bin/container-executor",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "${HADOOP_HOME}/bin/container-executor"
     },
     {
       "name": "custom.yarn.site.xml",

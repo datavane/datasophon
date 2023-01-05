@@ -62,6 +62,7 @@ public class DAGBuildActor extends UntypedActor {
                     frameServiceList.add(serviceEntity);
                     serviceNode.setCommandId(command.getCommandId());
                     for (ClusterServiceCommandHostCommandEntity hostCommand : hostCommandList) {
+                        logger.info("service role is {}",hostCommand.getServiceRoleName());
                         FrameServiceRoleEntity serviceRole = frameServiceRoleService.getServiceRoleByFrameCodeAndServiceRoleName(clusterInfo.getClusterFrame(), hostCommand.getServiceRoleName());
                         ServiceRoleInfo serviceRoleInfo = JSONObject.parseObject(serviceRole.getServiceRoleJson(), ServiceRoleInfo.class);
                         serviceRoleInfo.setHostname(hostCommand.getHostname());

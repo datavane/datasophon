@@ -6,16 +6,19 @@ import akka.pattern.Patterns;
 import akka.util.Timeout;
 import cn.hutool.http.HttpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.load.ServiceInfoMap;
 import com.datasophon.api.load.ServiceRoleMap;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.ClusterAlertHistoryService;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceInstanceService;
+import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.ExecuteCmdCommand;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
+import com.datasophon.common.model.ServiceInfo;
 import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.dao.entity.ClusterAlertHistory;
@@ -53,7 +56,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
             ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
 
             List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                    .in(Constants.SERVICE_ROLE_NAME, "Prometheus", "AlertManager"));
+                    .in(Constants.SERVICE_ROLE_NAME, "Prometheus", "AlertManager", "Krb5Kdc", "KAdmin"));
             String frameCode = "";
             if (Objects.nonNull(list) && list.size() > 0) {
                 for (ClusterServiceRoleInstanceEntity roleInstanceEntity : list) {
@@ -87,11 +90,12 @@ public class ServiceRoleCheckActor extends UntypedActor {
                         }
                         String key = frameCode + Constants.UNDERLINE + roleInstanceEntity.getServiceName() + Constants.UNDERLINE + roleInstanceEntity.getServiceRoleName();
                         ServiceRoleInfo serviceRoleInfo = ServiceRoleMap.get(key);
+                        ServiceInfo serviceInfo = ServiceInfoMap.get(frameCode + Constants.UNDERLINE + roleInstanceEntity.getServiceName());
 
                         ActorSelection execCmdActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + roleInstanceEntity.getHostname() + ":2552/user/worker/executeCmdActor");
                         ExecuteCmdCommand cmdCommand = new ExecuteCmdCommand();
                         ArrayList<String> commandList = new ArrayList<>();
-                        commandList.add(serviceRoleInfo.getStatusRunner().getProgram());
+                        commandList.add(serviceInfo.getDecompressPackageName() + Constants.SLASH + serviceRoleInfo.getStatusRunner().getProgram());
                         commandList.addAll(serviceRoleInfo.getStatusRunner().getArgs());
                         cmdCommand.setCommands(commandList);
                         Timeout timeout = new Timeout(Duration.create(30, TimeUnit.SECONDS));
@@ -108,6 +112,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
                             saveAlert(roleInstanceEntity, roleInstanceService);
                         }
                     }
+                    //check namenode ha
                 }
             }
         } else {
@@ -126,7 +131,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
             clusterAlertHistory.setIsEnabled(2);
             alertHistoryService.updateById(clusterAlertHistory);
         }
-        //更改服务角色实例状态
+        //update service role instance state
         if (roleInstanceEntity.getServiceRoleState() != ServiceRoleState.RUNNING) {
             roleInstanceEntity.setServiceRoleState(ServiceRoleState.RUNNING);
             roleInstanceService.updateById(roleInstanceEntity);
@@ -148,7 +153,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
             clusterAlertHistory.setClusterId(roleInstanceEntity.getClusterId());
 
             clusterAlertHistory.setAlertGroupName(roleInstanceEntity.getServiceName().toLowerCase());
-            clusterAlertHistory.setAlertTargetName(roleInstanceEntity.getServiceRoleName()+" Survive");
+            clusterAlertHistory.setAlertTargetName(roleInstanceEntity.getServiceRoleName() + " Survive");
             clusterAlertHistory.setCreateTime(new Date());
             clusterAlertHistory.setUpdateTime(new Date());
             clusterAlertHistory.setAlertLevel(AlertLevel.EXCEPTION);
@@ -161,7 +166,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
 
             alertHistoryService.save(clusterAlertHistory);
         }
-        //更改服务实例状态
+        //update service role instance state
         serviceInstanceEntity.setServiceState(ServiceState.EXISTS_EXCEPTION);
         serviceInstanceService.updateById(serviceInstanceEntity);
 

@@ -12,6 +12,10 @@
       "name": "Grafana",
       "label": "Grafana",
       "roleType": "master",
+      "runAs": {
+        "user": "root",
+        "group": "root"
+      },
       "cardinality": 1,
       "logFile": "data/log/grafana.log",
       "jmxPort": "3000",

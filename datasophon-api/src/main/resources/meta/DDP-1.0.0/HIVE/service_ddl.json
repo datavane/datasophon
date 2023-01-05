@@ -12,9 +12,14 @@
       "name": "HiveServer2",
       "label": "HiveServer2",
       "roleType": "master",
+      "runAs": {
+        "user": "hive",
+        "group": "hadoop"
+      },
       "cardinality": "1+",
       "logFile": "logs/hiveserver2.out",
       "jmxPort": 11000,
+      "sortNum": 1,
       "startRunner": {
         "timeout": "60",
         "program": "control_hive.sh",
@@ -57,9 +62,14 @@
       "name": "HiveMetaStore",
       "label": "HiveMetaStore",
       "roleType": "master",
+      "runAs": {
+        "user": "hive",
+        "group": "hadoop"
+      },
       "cardinality": "1",
       "logFile": "logs/hivemetastore.out",
       "jmxPort": 12000,
+      "sortNum": 2,
       "startRunner": {
         "timeout": "60",
         "program": "control_hive.sh",
@@ -117,6 +127,12 @@
           "hive.metastore.port",
           "hive.metastore.uris",
           "hive.server2.map.fair.scheduler.queue",
+          "hive.server2.authentication",
+          "hive.server2.authentication.kerberos.principal",
+          "hive.server2.authentication.kerberos.keytab",
+          "hive.metastore.sasl.enabled",
+          "hive.metastore.kerberos.keytab.file",
+          "hive.metastore.kerberos.principal",
           "custom.hive.site.xml"
         ]
       },
@@ -250,6 +266,94 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": "false"
+    },
+    {
+      "name": "enableKerberos",
+      "label": "启用Kerberos认证",
+      "description": "启用Kerberos认证",
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
+    },
+    {
+      "name": "hive.server2.authentication",
+      "label": "hive认证方式",
+      "description": "",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "kerberos",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "kerberos"
+    },
+    {
+      "name": "hive.server2.authentication.kerberos.principal",
+      "label": "HiveServer2服务的Kerberos主体",
+      "description": "HiveServer2服务的Kerberos主体",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "hive/${host}@${realm}",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "hive/${host}@${realm}"
+    },
+    {
+      "name": "hive.server2.authentication.kerberos.keytab",
+      "label": "HiveServer2服务的Kerberos密钥文件",
+      "description": "HiveServer2服务的Kerberos密钥文件",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "/etc/security/keytab/hive.service.keytab",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "/etc/security/keytab/hive.service.keytab"
+    },
+    {
+      "name": "hive.metastore.sasl.enabled",
+      "label": "Metastore启动认证",
+      "description": "Metastore启动认证",
+      "configWithKerberos": true,
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
+    },
+    {
+      "name": "hive.metastore.kerberos.principal",
+      "label": "Metastore Kerberos主体",
+      "description": "Metastore Kerberos主体",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "hive/${host}@${realm}",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "hive/${host}@${realm}"
+    },
+    {
+      "name": "hive.metastore.kerberos.keytab.file",
+      "label": "Metastore Kerberos密钥文件",
+      "description": "Metastore Kerberos密钥文件",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "/etc/security/keytab/hive.service.keytab",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "/etc/security/keytab/hive.service.keytab"
     },
     {
       "name": "hive.server2.support.dynamic.service.discovery",
