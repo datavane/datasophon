@@ -46,10 +46,11 @@ public class ServiceRoleCheckActor extends UntypedActor {
                         String url = "http://"+roleInstanceEntity.getHostname()+":9090";
                         try {
                             HttpUtil.get(url);
-                            //恢复告警
+                            //recover alert
                             recoverAlert(roleInstanceEntity);
                         }catch (Exception e){
-                            saveAlert(roleInstanceEntity);
+                            String alertTargetName = roleInstanceEntity.getServiceRoleName() + " Survive";
+                            saveAlert(roleInstanceEntity,alertTargetName,AlertLevel.EXCEPTION,"restart");
                         }
                     }
                     if("AlertManager".equals(roleInstanceEntity.getServiceRoleName())){
@@ -58,8 +59,9 @@ public class ServiceRoleCheckActor extends UntypedActor {
                             HttpUtil.get(url);
                             recoverAlert(roleInstanceEntity);
                         }catch (Exception e){
-                            //产生告警
-                            saveAlert(roleInstanceEntity);
+                            //save alert
+                            String alertTargetName = roleInstanceEntity.getServiceRoleName() + " Survive";
+                            saveAlert(roleInstanceEntity,alertTargetName,AlertLevel.EXCEPTION,"restart");
 
                         }
                     }
@@ -68,6 +70,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
                         Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+roleInstanceEntity.getClusterId());
                         String feMaster = globalVariables.get("${feMaster}");
                         List<ProcInfo> procInfos = new ArrayList<>();
+                        String serviceRoleName = roleInstanceEntity.getServiceRoleName();
                         if("FE".equals(roleInstanceEntity.getServiceRoleName()) ){
                             procInfos = StarRocksUtils.showFrontends(feMaster);
                         }else{
@@ -75,7 +78,9 @@ public class ServiceRoleCheckActor extends UntypedActor {
                         }
                         for (ProcInfo frontend : procInfos) {
                             if(!frontend.getAlive()){
-                                saveAlert(roleInstanceEntity);
+                                String alertTargetName = serviceRoleName+" Alive";
+                                String alertAdvice = "the errmsg is "+frontend.getErrMsg();
+                                saveAlert(roleInstanceEntity,alertTargetName,AlertLevel.WARN,alertAdvice);
                             }else {
                                 recoverAlert(roleInstanceEntity);
                             }
@@ -107,7 +112,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
         }
     }
 
-    private void saveAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity) {
+    private void saveAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity,String alertTargetName,AlertLevel alertLevel,String alertAdvice) {
         ClusterAlertHistoryService alertHistoryService = SpringTool.getApplicationContext().getBean(ClusterAlertHistoryService.class);
         ClusterServiceInstanceService serviceInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceInstanceService.class);
         ClusterAlertHistory clusterAlertHistory = alertHistoryService.getOne(new QueryWrapper<ClusterAlertHistory>()
@@ -122,12 +127,12 @@ public class ServiceRoleCheckActor extends UntypedActor {
             clusterAlertHistory.setClusterId(roleInstanceEntity.getClusterId());
 
             clusterAlertHistory.setAlertGroupName(roleInstanceEntity.getServiceName().toLowerCase());
-            clusterAlertHistory.setAlertTargetName(roleInstanceEntity.getServiceRoleName() + " Survive");
+            clusterAlertHistory.setAlertTargetName(alertTargetName);
             clusterAlertHistory.setCreateTime(new Date());
             clusterAlertHistory.setUpdateTime(new Date());
-            clusterAlertHistory.setAlertLevel(AlertLevel.EXCEPTION);
+            clusterAlertHistory.setAlertLevel(alertLevel);
             clusterAlertHistory.setAlertInfo("");
-            clusterAlertHistory.setAlertAdvice("restart");
+            clusterAlertHistory.setAlertAdvice(alertAdvice);
             clusterAlertHistory.setHostname(roleInstanceEntity.getHostname());
             clusterAlertHistory.setIsEnabled(1);
 
