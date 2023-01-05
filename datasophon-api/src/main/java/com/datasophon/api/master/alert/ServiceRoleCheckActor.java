@@ -112,6 +112,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
                             saveAlert(roleInstanceEntity, roleInstanceService);
                         }
                     }
+                    //check namenode ha
                 }
             }
         } else {

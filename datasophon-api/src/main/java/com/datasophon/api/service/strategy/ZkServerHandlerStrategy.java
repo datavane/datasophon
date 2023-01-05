@@ -1,13 +1,16 @@
 package com.datasophon.api.service.strategy;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterZkService;
+import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterZk;
 import org.apache.commons.collections.CollectionUtils;
@@ -36,44 +39,77 @@ public class ZkServerHandlerStrategy implements ServiceRoleStrategy {
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
+        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
+        boolean enableKerberos = false;
+        Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
 
+        for (ServiceConfig config : list) {
+            if("enableKerberos".equals(config.getName())){
+                if( (Boolean)config.getValue()){
+                    enableKerberos = true;
+                    ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableZOOKEEPERKerberos}", "true");
+                }else {
+                    ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableZOOKEEPERKerberos}", "false");
+                }
+            }
+        }
+
+        String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "ZOOKEEPER" + Constants.CONFIG;
+        List<ServiceConfig> configs = ServiceConfigMap.get(key);
+        ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
+        if(enableKerberos){
+            for (ServiceConfig serviceConfig : configs) {
+                if(serviceConfig.isConfigWithKerberos()){
+                    if(map.containsKey(serviceConfig.getName())){
+                        ServiceConfig config = map.get(serviceConfig.getName());
+                        config.setRequired(true);
+                        config.setHidden(false);
+                        String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
+                        logger.info("the value is {}" , value);
+                        config.setValue(value);
+                    }else{
+                        serviceConfig.setRequired(true);
+                        serviceConfig.setHidden(false);
+                        String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
+                        serviceConfig.setValue(value);
+                        kbConfigs.add(serviceConfig);
+                    }
+                }
+            }
+        }else{
+            for (ServiceConfig serviceConfig : configs) {
+                if(serviceConfig.isConfigWithKerberos()){
+                    if(map.containsKey(serviceConfig.getName())){
+                        list.remove(map.get(serviceConfig.getName()));
+                    }
+                }
+            }
+        }
+        list.addAll(kbConfigs);
     }
     /**
-     * 查询现有的zkserver
-     * 比较获取新增的zkserver
-     * 给新增的zkserver赋值myid
      *
      * @param clusterId
      * @param list
      */
     @Override
     public void getConfig(Integer clusterId, List<ServiceConfig> list) {
-        //添加server.x配置
+        //add server.x config
         ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
-        ClusterZkService zkService = SpringTool.getApplicationContext().getBean(ClusterZkService.class);
+
         String hostMapKey = clusterInfo.getClusterCode() + Constants.UNDERLINE + Constants.SERVICE_ROLE_HOST_MAPPING;
         HashMap<String, List<String>> hostMap = (HashMap<String, List<String>>) CacheUtils.get(hostMapKey);
-        List<ClusterZk> zkList = zkService.list(new QueryWrapper<ClusterZk>().eq(Constants.CLUSTER_ID, clusterId));
-        List<String> zkServerList = zkList.stream().map(e -> e.getZkServer()).collect(Collectors.toList());
-        Integer maxMyId = zkService.getMaxMyId(clusterId);
-        logger.info("zk max myid is {}", maxMyId);
+
         if (Objects.nonNull(hostMap)) {
             List<String> zkServers = hostMap.get("ZkServer");
             HashMap<String, String> hostIpMap = (HashMap<String, String>) CacheUtils.get(Constants.HOST_IP);
 
-            HashMap<String, ServiceConfig> map = new HashMap<>();
-            for (ServiceConfig serviceConfig : list) {
-                map.put(serviceConfig.getName(), serviceConfig);
-            }
-            List<String> subtractList = new ArrayList<>(CollectionUtils.subtract(zkServers, zkServerList));
-            logger.info("zk subtractList is : {}", subtractList.toString());
-            int i = 0;
-            if (Objects.nonNull(maxMyId)) {
-                i = maxMyId;
-            }
-            for (String server : subtractList) {
-                Integer myid = i + 1;
+            Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
+
+            Integer myid =  1;
+            for (String server : zkServers) {
                 ServiceConfig serviceConfig = new ServiceConfig();
                 serviceConfig.setName("server." + myid);
                 serviceConfig.setLabel("server." + myid);
@@ -92,7 +128,7 @@ public class ZkServerHandlerStrategy implements ServiceRoleStrategy {
                     list.add(serviceConfig);
                 }
                 CacheUtils.put("zkserver_" + server, myid);
-                i++;
+                myid++;
             }
         }
     }

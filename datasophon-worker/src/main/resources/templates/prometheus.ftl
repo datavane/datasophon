@@ -126,6 +126,11 @@ scrape_configs:
     file_sd_configs:
      - files:
        - configs/starrocks.json
+  - job_name: 'doris'
+    metrics_path: '/metrics'
+    file_sd_configs:
+     - files:
+       - configs/doris.json
   - job_name: 'rangeradmin'
     file_sd_configs:
      - files:

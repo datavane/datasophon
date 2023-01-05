@@ -18,6 +18,7 @@ import java.util.Objects;
 
 public class InstallServiceHandler {
     private static final Logger logger = LoggerFactory.getLogger(InstallServiceHandler.class);
+    private static final CharSequence HADOOP = "hadoop";
 
     public ExecResult install(String packageName, String decompressPackageName, String packageMd5, RunAs runAs) {
         ExecResult execResult = new ExecResult();
@@ -53,6 +54,7 @@ public class InstallServiceHandler {
                     public void progress(long progressSize, long l1) {
                         Console.log("installed：{}", FileUtil.readableFileSize(progressSize));
                     }
+
                     @Override
                     public void finish() {
                         Console.log("install success！");
@@ -73,6 +75,13 @@ public class InstallServiceHandler {
                     if (decompressPackageName.contains(Constants.PROMETHEUS)) {
                         String alertPath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "alert_rules";
                         ShellUtils.exceShell("sed -i \"s/clusterIdValue/" + PropertyUtils.getString("clusterId") + "/g\" `grep clusterIdValue -rl " + alertPath + "`");
+                    }
+                    if (decompressPackageName.contains(HADOOP)) {
+                        ShellUtils.exceShell(" chown -R  root:hadoop " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
+                        ShellUtils.exceShell(" chmod 755 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
+                        ShellUtils.exceShell(" chmod -R 755 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/etc");
+                        ShellUtils.exceShell(" chmod 6050 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/bin/container-executor");
+                        ShellUtils.exceShell(" chmod 400 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/etc/hadoop/container-executor.cfg");
                     }
                 } else {
                     execResult.setExecOut("install package " + packageName + "failed");

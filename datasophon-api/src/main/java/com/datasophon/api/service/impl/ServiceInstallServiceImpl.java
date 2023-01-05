@@ -110,18 +110,15 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         HashMap<String, ServiceConfig> map = new HashMap<>();
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
 
-        if (!"zookeeper".equals(serviceName.toLowerCase())) {
-            ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceName);
-            if (Objects.nonNull(serviceRoleHandler)) {
-                serviceRoleHandler.handlerConfig(clusterId, list);
-            }
+        ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceName);
+        if (Objects.nonNull(serviceRoleHandler)) {
+            serviceRoleHandler.handlerConfig(clusterId, list);
         }
 
         FrameServiceEntity frameServiceEntity = frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);
         for (ServiceConfig serviceConfig : list) {
-//            //配置添加到全局变量
+//            //add to global variable
             if (Constants.INPUT.equals(serviceConfig.getType())) {
-                //查询变量是否存在
                 String variableName = "${" + serviceConfig.getName() + "}";
                 String value = String.valueOf(serviceConfig.getValue());
                 if (globalVariables.containsKey(variableName)) {
@@ -243,11 +240,6 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             }
             String configJson = JSONObject.toJSONString(list);
             String newMd5 = SecureUtil.md5(configJson);
-            //新增版本配置,zk配置改变不新增角色组
-            if("zookeeper".equals(serviceName.toLowerCase())){
-                roleGroupId = roleGroupConfig.getId();
-            }
-
             String configJsonMd5 = roleGroupConfig.getConfigJsonMd5();
             CacheUtils.put("UseRoleGroup_" + serviceInstanceEntity.getId(), roleGroupConfig.getRoleGroupId());
             if (!configJsonMd5.equals(newMd5)) {
@@ -258,7 +250,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
                             .eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceEntity.getId()));
                     ClusterServiceInstanceRoleGroup roleGroup = new ClusterServiceInstanceRoleGroup();
                     int num = count + 1;
-                    roleGroup.setRoleGroupName("角色组" + num);
+                    roleGroup.setRoleGroupName("RoleGroup" + num);
                     roleGroup.setServiceInstanceId(serviceInstanceEntity.getId());
                     roleGroup.setServiceName(serviceInstanceEntity.getServiceName());
                     roleGroup.setClusterId(serviceInstanceEntity.getClusterId());
@@ -377,7 +369,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             List<ServiceRoleInfo> elseRoles = new ArrayList<>();
             ServiceNode serviceNode = new ServiceNode();
             String serviceKey = clusterInfo.getClusterFrame() + Constants.UNDERLINE + command.getServiceName();
-            ServiceInfo serviceInfo =  ServiceInfoMap.get(serviceKey);
+            ServiceInfo serviceInfo = ServiceInfoMap.get(serviceKey);
             for (ClusterServiceCommandHostCommandEntity hostCommand : commandHostList) {
                 String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + command.getServiceName() + Constants.UNDERLINE + hostCommand.getServiceRoleName();
                 ServiceRoleInfo serviceRoleInfo = ServiceRoleMap.get(key);
@@ -443,22 +435,22 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         List<ClusterServiceInstanceEntity> serviceInstanceList = serviceInstanceService.listRunningServiceInstance(clusterId);
         Map<String, ClusterServiceInstanceEntity> instanceMap = serviceInstanceList.stream().collect(Collectors.toMap(ClusterServiceInstanceEntity::getServiceName, e -> e, (v1, v2) -> v1));
 
-        List<FrameServiceEntity>  list = frameService.listServices(serviceIds);
+        List<FrameServiceEntity> list = frameService.listServices(serviceIds);
         Map<String, FrameServiceEntity> serviceMap = list.stream().collect(Collectors.toMap(FrameServiceEntity::getServiceName, e -> e, (v1, v2) -> v1));
-        if(!instanceMap.containsKey("ALERTMANAGER") && !serviceMap.containsKey("ALERTMANAGER")){
+        if (!instanceMap.containsKey("ALERTMANAGER") && !serviceMap.containsKey("ALERTMANAGER")) {
             return Result.error("service install depends on alertmanager ,please make sure you have selected it or that alertmanager is normal and running");
         }
-        if(!instanceMap.containsKey("GRAFANA") && !serviceMap.containsKey("GRAFANA")){
+        if (!instanceMap.containsKey("GRAFANA") && !serviceMap.containsKey("GRAFANA")) {
             return Result.error("service install depends on grafana ,please make sure you have selected it or that grafana is normal and running");
         }
-        if(!instanceMap.containsKey("PROMETHEUS") && !serviceMap.containsKey("PROMETHEUS")){
+        if (!instanceMap.containsKey("PROMETHEUS") && !serviceMap.containsKey("PROMETHEUS")) {
             return Result.error("service install depends on prometheus ,please make sure you have selected it or that prometheus is normal and running");
         }
 
         for (FrameServiceEntity frameServiceEntity : list) {
             for (String dependService : frameServiceEntity.getDependencies().split(",")) {
-                if(StringUtils.isNotBlank(dependService) && !instanceMap.containsKey(dependService) && !serviceMap.containsKey(dependService)){
-                    return Result.error(""+frameServiceEntity.getServiceName()+" install depends on "+dependService+",please make sure that you have selected it or that "+dependService+" is normal and running");
+                if (StringUtils.isNotBlank(dependService) && !instanceMap.containsKey(dependService) && !serviceMap.containsKey(dependService)) {
+                    return Result.error("" + frameServiceEntity.getServiceName() + " install depends on " + dependService + ",please make sure that you have selected it or that " + dependService + " is normal and running");
                 }
             }
 
