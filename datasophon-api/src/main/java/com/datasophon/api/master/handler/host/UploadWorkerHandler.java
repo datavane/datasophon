@@ -1,6 +1,7 @@
 package com.datasophon.api.master.handler.host;
 
 import com.datasophon.api.utils.CommonUtils;
+import com.datasophon.api.utils.MessageResolverUtils;
 import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.enums.InstallState;
@@ -21,10 +22,10 @@ public class UploadWorkerHandler implements DispatcherWorkerHandler {
                         Constants.SLASH +
                         Constants.WORKER_PACKAGE_NAME);
         if(uploadFile){
-            hostInfo.setMessage("分发成功，开始校验md5");
+            hostInfo.setMessage(MessageResolverUtils.getMessage("distribution.successful.and.starts.md5.authentication"));
             hostInfo.setProgress(25);
         }else{
-            hostInfo.setMessage("分发主机管理agent安装包失败");
+            hostInfo.setMessage(MessageResolverUtils.getMessage("distributed.host.management.agent.installation.package.fail"));
             hostInfo.setErrMsg("dispatcher host agent to " + hostInfo.getHostname() + " failed");
             CommonUtils.updateInstallState(InstallState.FAILED, hostInfo);
         }

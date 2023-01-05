@@ -3,6 +3,7 @@ package com.datasophon.api.controller;
 import java.util.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.ClusterYarnQueueService;
 import com.datasophon.common.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public class ClusterYarnQueueController {
     public Result save(@RequestBody ClusterYarnQueue clusterYarnQueue){
         List<ClusterYarnQueue> list = clusterYarnQueueService.list(new QueryWrapper<ClusterYarnQueue>().eq(Constants.QUEUE_NAME, clusterYarnQueue.getQueueName()));
         if(Objects.nonNull(list) && list.size() == 1){
-            return Result.error("队列名已存在");
+            return Result.error(Status.QUEUE_NAME_ALREADY_EXISTS.getMsg());
         }
         clusterYarnQueue.setCreateTime(new Date());
         clusterYarnQueueService.save(clusterYarnQueue);

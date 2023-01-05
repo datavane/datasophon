@@ -1,5 +1,6 @@
 package com.datasophon.api.service.impl;
 
+import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.ClusterHostService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.utils.Result;
@@ -42,7 +43,7 @@ public class ClusterRackServiceImpl extends ServiceImpl<ClusterRackMapper, Clust
     public Result deleteRack(Integer rackId) {
         ClusterRack clusterRack = this.getById(rackId);
         if(rackInUse(clusterRack)){
-            return Result.error("rack is using");
+            return Result.error(Status.RACK_IS_USING.getMsg());
         }
         this.removeById(rackId);
         return Result.success();

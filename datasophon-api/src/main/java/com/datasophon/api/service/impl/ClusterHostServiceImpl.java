@@ -2,6 +2,7 @@ package com.datasophon.api.service.impl;
 
 import akka.actor.ActorRef;
 import com.alibaba.fastjson.JSONObject;
+import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.RackActor;
 import com.datasophon.api.service.ClusterInfoService;
@@ -99,7 +100,7 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
                 .ne(Constants.ROLE_TYPE, RoleType.CLIENT));
         List<String> roles = list.stream().map(e -> e.getServiceRoleName()).collect(Collectors.toList());
         if(Objects.nonNull(list) && list.size() > 0){
-            return Result.error(host.getHostname()+"主机存在正在运行的角色:"+roles.toString());
+            return Result.error(host.getHostname()+ Status.HOST_EXIT_ONE_RUNNING_ROLE.getMsg() +roles.toString());
         }
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(host.getClusterId());
         String clusterCode = clusterInfo.getClusterCode();
