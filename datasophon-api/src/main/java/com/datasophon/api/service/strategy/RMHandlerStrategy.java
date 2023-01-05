@@ -68,13 +68,17 @@ public class RMHandlerStrategy implements ServiceRoleStrategy{
                         ServiceConfig config = map.get(serviceConfig.getName());
                         config.setRequired(true);
                         config.setHidden(false);
-                        String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
-                        config.setValue(value);
+                        if(Constants.INPUT.equals(config.getType())) {
+                            String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
+                            config.setValue(value);
+                        }
                     }else{
                         serviceConfig.setRequired(true);
                         serviceConfig.setHidden(false);
-                        String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
-                        serviceConfig.setValue(value);
+                        if(Constants.INPUT.equals(serviceConfig.getType())) {
+                            String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
+                            serviceConfig.setValue(value);
+                        }
                         kbConfigs.add(serviceConfig);
                     }
 

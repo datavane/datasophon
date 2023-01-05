@@ -18,21 +18,18 @@ import java.util.concurrent.TimeUnit;
 public class ServiceConfigureHandler extends ServiceHandler{
     @Override
     public ExecResult handlerRequest(ServiceRoleInfo serviceRoleInfo) throws Exception {
-        //配置
+        //config
         GenerateServiceConfigCommand generateServiceConfigCommand = new GenerateServiceConfigCommand();
         generateServiceConfigCommand.setServiceName(serviceRoleInfo.getParentName());
         generateServiceConfigCommand.setCofigFileMap(serviceRoleInfo.getConfigFileMap());
         generateServiceConfigCommand.setDecompressPackageName(serviceRoleInfo.getDecompressPackageName());
+        generateServiceConfigCommand.setRunAs(serviceRoleInfo.getRunAs());
         if("zkserver".equals(serviceRoleInfo.getName().toLowerCase())){
             generateServiceConfigCommand.setMyid((Integer) CacheUtils.get("zkserver_"+serviceRoleInfo.getHostname()));
         }
         generateServiceConfigCommand.setServiceRoleName(serviceRoleInfo.getName());
         ActorSelection configActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + serviceRoleInfo.getHostname() + ":2552/user/worker/configureServiceActor");
-//        if(serviceRoleInfo.getRoleType() == ServiceRoleType.CLIENT){
-//            ExecResult execResult = new ExecResult();
-//            execResult.setExecResult(true);
-//            return execResult;
-//        }
+
         Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
         Future<Object> configureFuture = Patterns.ask(configActor, generateServiceConfigCommand, timeout);
         ExecResult configResult = (ExecResult) Await.result(configureFuture, timeout.duration());
