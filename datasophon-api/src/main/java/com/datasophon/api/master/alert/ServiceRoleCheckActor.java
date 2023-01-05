@@ -19,16 +19,13 @@ import com.datasophon.dao.enums.AlertLevel;
 import com.datasophon.dao.enums.ServiceRoleState;
 import com.datasophon.dao.enums.ServiceState;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class ServiceRoleCheckActor extends UntypedActor {
 
     private static final String promQl = "up{job=\"{}\",instance=\"{}.{}\"}";
 
-
+    ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
     /**
      * 1、查询所有服务角色
      * 2、遍历服务角色，查询对应prometheus上服务角色状态
@@ -40,7 +37,6 @@ public class ServiceRoleCheckActor extends UntypedActor {
     @Override
     public void onReceive(Object msg) throws Throwable {
         if (msg instanceof ServiceRoleCheckCommand) {//定时检测prometheus和alertmanager
-            ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
 
             List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                     .in(Constants.SERVICE_ROLE_NAME, "Prometheus", "AlertManager","FE","BE"));
@@ -51,19 +47,19 @@ public class ServiceRoleCheckActor extends UntypedActor {
                         try {
                             HttpUtil.get(url);
                             //恢复告警
-                            recoverAlert(roleInstanceEntity,roleInstanceService);
+                            recoverAlert(roleInstanceEntity);
                         }catch (Exception e){
-                            saveAlert(roleInstanceEntity,roleInstanceService);
+                            saveAlert(roleInstanceEntity);
                         }
                     }
                     if("AlertManager".equals(roleInstanceEntity.getServiceRoleName())){
                         String url = "http://"+roleInstanceEntity.getHostname()+":9093";
                         try {
                             HttpUtil.get(url);
-                            recoverAlert(roleInstanceEntity,roleInstanceService);
+                            recoverAlert(roleInstanceEntity);
                         }catch (Exception e){
                             //产生告警
-                            saveAlert(roleInstanceEntity,roleInstanceService);
+                            saveAlert(roleInstanceEntity);
 
                         }
                     }
@@ -71,12 +67,17 @@ public class ServiceRoleCheckActor extends UntypedActor {
                             "BE".equals(roleInstanceEntity.getServiceRoleName())){
                         Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+roleInstanceEntity.getClusterId());
                         String feMaster = globalVariables.get("${feMaster}");
-                        List<ProcInfo> frontends = StarRocksUtils.showFrontends(feMaster);
-                        for (ProcInfo frontend : frontends) {
+                        List<ProcInfo> procInfos = new ArrayList<>();
+                        if("FE".equals(roleInstanceEntity.getServiceRoleName()) ){
+                            procInfos = StarRocksUtils.showFrontends(feMaster);
+                        }else{
+                            procInfos = StarRocksUtils.showBackends(feMaster);
+                        }
+                        for (ProcInfo frontend : procInfos) {
                             if(!frontend.getAlive()){
-                                saveAlert(roleInstanceEntity,roleInstanceService);
+                                saveAlert(roleInstanceEntity);
                             }else {
-                                recoverAlert(roleInstanceEntity,roleInstanceService);
+                                recoverAlert(roleInstanceEntity);
                             }
                         }
                     }
@@ -88,50 +89,45 @@ public class ServiceRoleCheckActor extends UntypedActor {
         }
     }
 
-    private void recoverAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity, ClusterServiceRoleInstanceService roleInstanceService) {
+    private void recoverAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity) {
         ClusterAlertHistoryService alertHistoryService = SpringTool.getApplicationContext().getBean(ClusterAlertHistoryService.class);
         ClusterAlertHistory clusterAlertHistory = alertHistoryService.getOne(new QueryWrapper<ClusterAlertHistory>()
-                .eq(Constants.ALERT_TARGET_NAME, roleInstanceEntity.getServiceRoleName()+"进程存活")
+                .eq(Constants.ALERT_TARGET_NAME, roleInstanceEntity.getServiceRoleName() + " Survive")
                 .eq(Constants.CLUSTER_ID, roleInstanceEntity.getClusterId())
-                .eq(Constants.HOSTNAME,roleInstanceEntity.getHostname())
-                .eq(Constants.IS_ENABLED,1));
-        if(Objects.nonNull(clusterAlertHistory)){
+                .eq(Constants.HOSTNAME, roleInstanceEntity.getHostname())
+                .eq(Constants.IS_ENABLED, 1));
+        if (Objects.nonNull(clusterAlertHistory)) {
             clusterAlertHistory.setIsEnabled(2);
             alertHistoryService.updateById(clusterAlertHistory);
         }
-        //更改服务角色实例状态
-        if(roleInstanceEntity.getServiceRoleState() != ServiceRoleState.RUNNING){
+        //update service role instance state
+        if (roleInstanceEntity.getServiceRoleState() != ServiceRoleState.RUNNING) {
             roleInstanceEntity.setServiceRoleState(ServiceRoleState.RUNNING);
             roleInstanceService.updateById(roleInstanceEntity);
         }
     }
 
-    private void saveAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity,ClusterServiceRoleInstanceService roleInstanceService) {
+    private void saveAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity) {
         ClusterAlertHistoryService alertHistoryService = SpringTool.getApplicationContext().getBean(ClusterAlertHistoryService.class);
         ClusterServiceInstanceService serviceInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceInstanceService.class);
         ClusterAlertHistory clusterAlertHistory = alertHistoryService.getOne(new QueryWrapper<ClusterAlertHistory>()
-                .eq(Constants.ALERT_TARGET_NAME, roleInstanceEntity.getServiceRoleName()+"进程存活")
+                .eq(Constants.ALERT_TARGET_NAME, roleInstanceEntity.getServiceRoleName() + " Survive")
                 .eq(Constants.CLUSTER_ID, roleInstanceEntity.getClusterId())
-                .eq(Constants.HOSTNAME,roleInstanceEntity.getHostname())
-                .eq(Constants.IS_ENABLED,1));
+                .eq(Constants.HOSTNAME, roleInstanceEntity.getHostname())
+                .eq(Constants.IS_ENABLED, 1));
 
         ClusterServiceInstanceEntity serviceInstanceEntity = serviceInstanceService.getById(roleInstanceEntity.getServiceId());
-        if(Objects.isNull(clusterAlertHistory)){
+        if (Objects.isNull(clusterAlertHistory)) {
             clusterAlertHistory = new ClusterAlertHistory();
             clusterAlertHistory.setClusterId(roleInstanceEntity.getClusterId());
-            if("Prometheus".equals(roleInstanceEntity.getServiceRoleName())){
-                clusterAlertHistory.setAlertGroupName("prometheus");
-                clusterAlertHistory.setAlertTargetName("Prometheus进程存活");
-            }
-            if("AlertManager".equals(roleInstanceEntity.getServiceRoleName())){
-                clusterAlertHistory.setAlertGroupName("alertmanager");
-                clusterAlertHistory.setAlertTargetName("AlertManager进程存活");
-            }
+
+            clusterAlertHistory.setAlertGroupName(roleInstanceEntity.getServiceName().toLowerCase());
+            clusterAlertHistory.setAlertTargetName(roleInstanceEntity.getServiceRoleName() + " Survive");
             clusterAlertHistory.setCreateTime(new Date());
             clusterAlertHistory.setUpdateTime(new Date());
             clusterAlertHistory.setAlertLevel(AlertLevel.EXCEPTION);
             clusterAlertHistory.setAlertInfo("");
-            clusterAlertHistory.setAlertAdvice("重新启动");
+            clusterAlertHistory.setAlertAdvice("restart");
             clusterAlertHistory.setHostname(roleInstanceEntity.getHostname());
             clusterAlertHistory.setIsEnabled(1);
 
@@ -139,7 +135,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
 
             alertHistoryService.save(clusterAlertHistory);
         }
-        //更改服务实例状态
+        //update service role instance state
         serviceInstanceEntity.setServiceState(ServiceState.EXISTS_EXCEPTION);
         serviceInstanceService.updateById(serviceInstanceEntity);
 
