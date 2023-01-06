@@ -87,7 +87,7 @@ public class ServiceCommandActor extends UntypedActor {
                     //更新prometheus配置
                     logger.info("start to generate prometheus config");
                     ActorRef prometheusActor = (ActorRef) CacheUtils.get("prometheusActor");
-                    if("starrocks".equals(serviceName.toLowerCase())){
+                    if("starrocks".equals(serviceName.toLowerCase()) || "doris".equals(serviceName.toLowerCase())){
                         GenerateSRPromConfigCommand prometheusConfigCommand = new GenerateSRPromConfigCommand();
                         prometheusConfigCommand.setServiceInstanceId(command.getServiceInstanceId());
                         prometheusConfigCommand.setClusterFrame(clusterInfo.getClusterFrame());
