@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class RMHandlerStrategy implements ServiceRoleStrategy{
+public class RMHandlerStrategy extends KerberosHandlerAbstract implements ServiceRoleStrategy {
     @Override
     public void handler(Integer clusterId,List<String> hosts) {
 
@@ -50,51 +50,21 @@ public class RMHandlerStrategy implements ServiceRoleStrategy{
                 }
             }
             if("enableKerberos".equals(config.getName())){
-                if( (Boolean)config.getValue()){
-                    enableKerberos = true;
-                    ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableYARNKerberos}", "true");
-                }else {
-                    ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableYARNKerberos}", "false");
-                }
+                enableKerberos = isEnableKerberos(clusterId, globalVariables, enableKerberos, config,"YARN");
             }
         }
         String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "YARN" + Constants.CONFIG;
         List<ServiceConfig> configs = ServiceConfigMap.get(key);
         ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
         if(enableKerberos){
-            for (ServiceConfig serviceConfig : configs) {
-                if("kb".equals(serviceConfig.getConfigType())){
-                    if(map.containsKey(serviceConfig.getName())){
-                        ServiceConfig config = map.get(serviceConfig.getName());
-                        config.setRequired(true);
-                        config.setHidden(false);
-                        if(Constants.INPUT.equals(config.getType())) {
-                            String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
-                            config.setValue(value);
-                        }
-                    }else{
-                        serviceConfig.setRequired(true);
-                        serviceConfig.setHidden(false);
-                        if(Constants.INPUT.equals(serviceConfig.getType())) {
-                            String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
-                            serviceConfig.setValue(value);
-                        }
-                        kbConfigs.add(serviceConfig);
-                    }
-
-                }
-            }
+            addConfigWithKerberos(globalVariables, map, configs, kbConfigs);
         }else{
-            for (ServiceConfig serviceConfig : configs) {
-                if("kb".equals(serviceConfig.getConfigType())){
-                    if(map.containsKey(serviceConfig.getName())){
-                        list.remove(map.get(serviceConfig.getName()));
-                    }
-                }
-            }
+            removeConfigWithKerberos(list, map, configs);
         }
         list.addAll(kbConfigs);
     }
+
+
 
     @Override
     public void getConfig(Integer clusterId, List<ServiceConfig> list) {
