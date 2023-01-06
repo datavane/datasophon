@@ -21,6 +21,7 @@ import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.utils.HostUtils;
 import com.datasophon.common.utils.PlaceholderUtils;
+import com.datasophon.common.utils.PropertyUtils;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.dao.entity.ClusterInfoEntity;
@@ -170,7 +171,7 @@ public class InstallServiceImpl implements InstallService {
             hostInfo.setManaged(true);
             hostInfo.setInstallState(InstallState.SUCCESS);
             hostInfo.setInstallStateCode(InstallState.SUCCESS.getValue());
-            hostInfo.setProgress(100);
+            hostInfo.setProgress(Constants.ONE_HUNDRRD);
             hostInfo.setCheckResult(new CheckResult(Status.CHECK_HOST_SUCCESS.getCode(),Status.CHECK_HOST_SUCCESS.getMsg()));
         } else {
             hostInfo.setManaged(false);
@@ -227,7 +228,7 @@ public class InstallServiceImpl implements InstallService {
         for (HostInfo hostInfo : list) {
             if(hostInfo.isManaged()){
                 hostInfo.setInstallStateCode(InstallState.SUCCESS.getValue());
-                hostInfo.setProgress(100);
+                hostInfo.setProgress(Constants.ONE_HUNDRRD);
                 hostInfo.setMessage("分发成功");
                 hostInfo.setInstallState(InstallState.SUCCESS);
             }else if(!CacheUtils.constainsKey(distributeAgentKey+Constants.UNDERLINE+hostInfo.getHostname())){
@@ -240,12 +241,20 @@ public class InstallServiceImpl implements InstallService {
                 CacheUtils.put(distributeAgentKey+Constants.UNDERLINE+hostInfo.getHostname(), true);
                 
             }else {
-                //判断是否超时
                 long timeout = DateUtil.between(hostInfo.getCreateTime(), new Date(), DateUnit.MINUTE);
-                if (timeout > 5) {
+                long timeOutPeriodOne=PropertyUtils.getLong("timeOutPeriodOne");
+                long timeOutPeriodTwo=PropertyUtils.getLong("timeOutPeriodTwo");
+                Integer progress=hostInfo.getProgress();
+                if("75".equals(String.valueOf(progress))&&timeout>timeOutPeriodOne){
                     hostInfo.setInstallStateCode(InstallState.FAILED.getValue());
-                    hostInfo.setProgress(100);
-                    hostInfo.setMessage("分发失败");
+                    hostInfo.setProgress(Constants.ONE_HUNDRRD);
+                    hostInfo.setMessage("分发失败,请查看agent端日志");
+                    hostInfo.setInstallState(InstallState.FAILED);
+                }
+                if (timeout > timeOutPeriodTwo) {
+                    hostInfo.setInstallStateCode(InstallState.FAILED.getValue());
+                    hostInfo.setProgress(Constants.ONE_HUNDRRD);
+                    hostInfo.setMessage("分发失败,请查看agent端日志");
                     hostInfo.setInstallState(InstallState.FAILED);
                 }
             }
