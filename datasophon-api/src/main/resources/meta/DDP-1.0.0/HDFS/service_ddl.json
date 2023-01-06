@@ -186,8 +186,9 @@
         "outputDirectory": "etc/hadoop/",
         "includeParams": [
           "fs.defaultFS",
-          "hadoop.proxyuser.root.hosts",
-          "hadoop.proxyuser.root.groups",
+          "hadoop.proxyuser.hive.hosts",
+          "hadoop.proxyuser.hive.groups",
+          "hadoop.proxyuser.hive.users",
           "hadoop.http.staticuser.user",
           "ha.zookeeper.quorum",
           "hadoop.tmp.dir",
@@ -348,6 +349,7 @@
       "description": "用于配置NameNode数据存储目录",
       "configType": "path",
       "required": true,
+      "separator": ",",
       "type": "multiple",
       "value": [
         "/data/dfs/nn"
@@ -400,6 +402,7 @@
       "description": "DataNode数据存储目录，可配置多个，按逗号分隔",
       "configType": "path",
       "required": true,
+      "separator": ",",
       "type": "multiple",
       "value": [
         "/data/dfs/dn"
