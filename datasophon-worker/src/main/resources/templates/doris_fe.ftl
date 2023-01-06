@@ -39,6 +39,7 @@ sys_log_level = INFO
 
 http_port = 18030
 mysql_service_nio_enabled = true
+edit_log_port = 9010
 <#list itemList as item>
 ${item.name} = ${item.value}
 </#list>

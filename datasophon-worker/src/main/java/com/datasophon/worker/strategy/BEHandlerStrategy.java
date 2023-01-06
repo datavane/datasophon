@@ -26,6 +26,8 @@ public class BEHandlerStrategy implements ServiceRoleStrategy {
 
         if (command.getCommandType().equals(CommandType.INSTALL_SERVICE)) {
             logger.info("add starrocks be to cluster");
+            ShellUtils.exceShell("ulimit -n 102400");
+            ShellUtils.exceShell("sysctl -w vm.max_map_count=2000000");
             startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
             if (startResult.getExecResult()) {
                 try {

@@ -85,7 +85,6 @@
           "sys_log_level",
           "be_port",
           "webserver_port",
-          "heartbeat_service_port",
           "brpc_port",
           "storage_root_path",
           "custom.be.conf"
@@ -101,7 +100,6 @@
           "meta_dir",
           "rpc_port",
           "query_port",
-          "edit_log_port",
           "fe_priority_networks",
           "custom.fe.conf"
         ]
@@ -156,18 +154,6 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": "9030"
-    },
-    {
-      "name": "edit_log_port",
-      "label": "FE集群通信端口",
-      "description": "FE 所在 Doris 集群中各 Leader FE、Follower FE、Observer FE 之间通信用的端口。",
-      "configType": "map",
-      "required": true,
-      "type": "input",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": "9010"
     },
     {
       "name": "fe_priority_networks",
@@ -230,17 +216,6 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": "18040"
-    },
-    {
-      "name": "heartbeat_service_port",
-      "label": "BE心跳服务端口",
-      "description": "BE心跳服务端口",
-      "required": true,
-      "type": "input",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": "9050"
     },
     {
       "name": "brpc_port",
