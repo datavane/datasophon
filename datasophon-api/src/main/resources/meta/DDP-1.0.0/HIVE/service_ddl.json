@@ -12,7 +12,7 @@
       "name": "HiveServer2",
       "label": "HiveServer2",
       "roleType": "master",
-      "cardinality": "1+",
+      "cardinality": "1",
       "logFile": "logs/hiveserver2.out",
       "jmxPort": 11000,
       "startRunner": {

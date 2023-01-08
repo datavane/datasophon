@@ -588,7 +588,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": true
+      "defaultValue": false
     },
     {
       "name": "dfs.client.failover.proxy.provider.nameservice1",

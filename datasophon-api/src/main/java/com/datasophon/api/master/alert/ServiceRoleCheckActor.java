@@ -75,13 +75,18 @@ public class ServiceRoleCheckActor extends UntypedActor {
                         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + roleInstanceEntity.getClusterId());
                         String feMaster = globalVariables.get("${feMaster}");
                         if (roleInstanceEntity.getHostname().equals(feMaster) && roleInstanceEntity.getServiceRoleState() == ServiceRoleState.RUNNING) {
-
+                        try {
                             List<ProcInfo> frontends = StarRocksUtils.showFrontends(feMaster);
-
-                            List<ProcInfo> backends = StarRocksUtils.showBackends(feMaster);
-
                             resolveProcInfoAlert("FE", frontends, map);
+                        }catch (Exception e){
+
+                        }
+                        try {
+                            List<ProcInfo> backends = StarRocksUtils.showBackends(feMaster);
                             resolveProcInfoAlert("BE", backends, map);
+                        }catch (Exception e){
+
+                        }
                         }
                     }
 
