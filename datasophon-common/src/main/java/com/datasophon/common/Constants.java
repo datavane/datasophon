@@ -189,5 +189,20 @@ public final class Constants {
      */
     public static final Pattern REGEX_MAIL_NAME = Pattern.compile("^([a-z0-9A-Z]+[_|\\-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$");
 
+    /**
+     * os name properties
+     */
+    public static final String OSNAME_PROPERTIES = "os.name";
+
+    /**
+     * windows os name
+     */
+    public static final String OSNAME_WINDOWS = "Windows";
+
+    /**
+     * windows hosts file basedir
+     */
+    public static final String WINDOWS_HOST_DIR = "C:/Windows/System32/drivers";
+
 
 }
