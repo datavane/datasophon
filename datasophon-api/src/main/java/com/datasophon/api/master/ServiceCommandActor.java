@@ -92,6 +92,7 @@ public class ServiceCommandActor extends UntypedActor {
                         prometheusConfigCommand.setServiceInstanceId(command.getServiceInstanceId());
                         prometheusConfigCommand.setClusterFrame(clusterInfo.getClusterFrame());
                         prometheusConfigCommand.setClusterId(clusterInfo.getId());
+                        prometheusConfigCommand.setFilename(serviceName.toLowerCase()+".json");
                         prometheusActor.tell(prometheusConfigCommand, getSelf());
                     }else{
                         GeneratePrometheusConfigCommand prometheusConfigCommand = new GeneratePrometheusConfigCommand();

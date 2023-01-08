@@ -48,8 +48,9 @@ public class FEHandlerStrategy implements ServiceRoleStrategy {
                 } else {
                     logger.info("slave fe start failed");
                 }
+            }else{
+                startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(),command.getRunAs());
             }
-
         } else {
             startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(),command.getRunAs());
         }

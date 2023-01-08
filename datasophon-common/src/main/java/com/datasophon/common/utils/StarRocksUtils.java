@@ -65,13 +65,13 @@ public class StarRocksUtils {
 
     public static List<ProcInfo> listDeadBackends(String feMaster) throws SQLException, ClassNotFoundException {
         String sql = "SHOW PROC '/frontends';";
-        logger.info("sql is {}",sql);
+//        logger.info("sql is {}",sql);
         return getDeadProcInfos(feMaster, sql);
     }
 
     public static List<ProcInfo> showBackends(String feMaster) throws SQLException, ClassNotFoundException {
         String sql = "SHOW PROC '/backends';";
-        logger.info("sql is {}",sql);
+//        logger.info("sql is {}",sql);
         return executeQuerySql(feMaster, sql);
     }
 

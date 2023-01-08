@@ -192,7 +192,7 @@ public class PrometheusActor extends UntypedActor {
             }
             ArrayList<ServiceConfig> serviceConfigs = new ArrayList<>();
             Generators generators = new Generators();
-            generators.setFilename("starrocks.json");
+            generators.setFilename(command.getFilename());
             generators.setOutputDirectory("configs");
             generators.setConfigFormat("custom");
             generators.setTemplateName("starrocks-prom.ftl");

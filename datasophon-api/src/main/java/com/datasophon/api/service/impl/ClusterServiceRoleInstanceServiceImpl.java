@@ -261,4 +261,11 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
                 .eq(Constants.SERVICE_ID,serviceInstanceId)
                 .eq(Constants.SERVICE_ROLE_STATE,ServiceRoleState.STOP));
     }
+
+    @Override
+    public ClusterServiceRoleInstanceEntity getServiceRoleInsByHostAndName(String hostName, String serviceRoleName) {
+        return this.getOne(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                .eq(Constants.HOSTNAME,hostName)
+                .eq(Constants.SERVICE_ROLE_NAME,serviceRoleName));
+    }
 }

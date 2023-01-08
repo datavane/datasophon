@@ -130,7 +130,7 @@ scrape_configs:
     metrics_path: '/metrics'
     file_sd_configs:
      - files:
-       - configs/starrocks.json
+       - configs/doris.json
   - job_name: 'rangeradmin'
     file_sd_configs:
      - files:

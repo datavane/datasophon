@@ -364,12 +364,11 @@
       "type": "select",
       "value":"",
       "selectValue": [
-        "org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler",
         "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler"
       ],
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler"
+      "defaultValue": "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler"
     },
     {
       "name": "yarn.scheduler.fair.allocation.file",
