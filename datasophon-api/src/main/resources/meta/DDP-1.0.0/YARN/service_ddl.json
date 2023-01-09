@@ -14,7 +14,7 @@
       "roleType": "master",
       "cardinality": "1+",
       "sortNum": 1,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-resourcemanager-${host}.log",
+      "logFile": "${HADOOP_HOME}/logs/hadoop-${user}-resourcemanager-${host}.log",
       "jmxPort": 9323,
       "startRunner": {
         "timeout": "60",
@@ -60,7 +60,7 @@
       "roleType": "worker",
       "cardinality": "1+",
       "sortNum": 3,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-nodemanager-${host}.log",
+      "logFile": "${HADOOP_HOME}/logs/hadoop-${user}-nodemanager-${host}.log",
       "jmxPort": 9324,
       "startRunner": {
         "timeout": "60",
@@ -92,7 +92,7 @@
       "roleType": "master",
       "cardinality": "1",
       "sortNum": 2,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-historyserver-${host}.log",
+      "logFile": "${HADOOP_HOME}/logs/hadoop-${user}-historyserver-${host}.log",
       "jmxPort": 9325,
       "startRunner": {
         "timeout": "60",

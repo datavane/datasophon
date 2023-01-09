@@ -17,7 +17,7 @@
       "roleType": "master",
       "cardinality": "1+",
       "sortNum": 1,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-journalnode-${host}.log",
+      "logFile": "${HADOOP_HOME}/logs/hadoop-${user}-journalnode-${host}.log",
       "jmxPort": 27003,
       "startRunner": {
         "timeout": "60",
@@ -50,7 +50,7 @@
       "roleType": "master",
       "cardinality": "1+",
       "sortNum": 2,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-namenode-${host}.log",
+      "logFile": "${HADOOP_HOME}/logs/hadoop-${user}-namenode-${host}.log",
       "jmxPort": "27001",
       "startRunner": {
         "timeout": "60",
@@ -96,7 +96,7 @@
       "roleType": "worker",
       "cardinality": "1+",
       "sortNum": 4,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-datanode-${host}.log",
+      "logFile": "${HADOOP_HOME}/logs/hadoop-${user}-datanode-${host}.log",
       "jmxPort": "27002",
       "startRunner": {
         "timeout": "60",
@@ -129,7 +129,7 @@
       "roleType": "master",
       "cardinality": "1+",
       "sortNum": 3,
-      "logFile": "${hadoopLogDir}/hadoop-${user}-zkfc-${host}.log",
+      "logFile": "${HADOOP_HOME}/logs/hadoop-${user}-zkfc-${host}.log",
       "jmxPort": 27004,
       "startRunner": {
         "timeout": "60",
@@ -578,17 +578,6 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": true
-    },
-    {
-      "name": "enableRack",
-      "label": "开启机架感知",
-      "description": "开启机架感知",
-      "required": false,
-      "type": "switch",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": false
     },
     {
       "name": "dfs.client.failover.proxy.provider.nameservice1",
