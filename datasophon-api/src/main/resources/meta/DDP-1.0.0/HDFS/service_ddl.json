@@ -650,6 +650,7 @@
       "hidden": false,
       "defaultValue": "${INSTALL_PATH}/hadoop-3.3.3/etc/hadoop/blacklist"
     },
+
     {
       "name": "custom.core.site.xml",
       "label": "自定义配置core-site.xml",
