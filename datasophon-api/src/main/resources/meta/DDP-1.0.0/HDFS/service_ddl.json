@@ -186,8 +186,9 @@
         "outputDirectory": "etc/hadoop/",
         "includeParams": [
           "fs.defaultFS",
-          "hadoop.proxyuser.root.hosts",
-          "hadoop.proxyuser.root.groups",
+          "hadoop.proxyuser.hive.hosts",
+          "hadoop.proxyuser.hive.groups",
+          "hadoop.proxyuser.hive.users",
           "hadoop.http.staticuser.user",
           "ha.zookeeper.quorum",
           "hadoop.tmp.dir",
@@ -298,9 +299,9 @@
       "defaultValue": "admin"
     },
     {
-      "name": "hadoop.proxyuser.root.hosts",
+      "name": "hadoop.proxyuser.hive.hosts",
       "label": "允许通过代理访问的主机节点",
-      "description": "配置root(超级用户)允许通过代理访问的主机节点",
+      "description": "配置hive允许通过代理访问的主机节点",
       "required": true,
       "type": "input",
       "value": "",
@@ -309,9 +310,20 @@
       "defaultValue": "*"
     },
     {
-      "name": "hadoop.proxyuser.root.groups",
+      "name": "hadoop.proxyuser.hive.groups",
       "label": "允许通过代理用户所属组",
-      "description": "配置root(超级用户)允许通过代理用户所属组",
+      "description": "配置hive允许通过代理用户所属组",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "*"
+    },
+    {
+      "name": "hadoop.proxyuser.hive.users",
+      "label": "允许通过代理的用户",
+      "description": "配置hive允许通过代理的用户",
       "required": true,
       "type": "input",
       "value": "",
@@ -337,6 +349,7 @@
       "description": "用于配置NameNode数据存储目录",
       "configType": "path",
       "required": true,
+      "separator": ",",
       "type": "multiple",
       "value": [
         "/data/dfs/nn"
@@ -389,6 +402,7 @@
       "description": "DataNode数据存储目录，可配置多个，按逗号分隔",
       "configType": "path",
       "required": true,
+      "separator": ",",
       "type": "multiple",
       "value": [
         "/data/dfs/dn"
@@ -731,11 +745,12 @@
       "description": "",
       "required": false,
       "configType": "kb",
-      "type": "input",
-      "value": "DEFAULT",
+      "separator":"\n",
+      "type": "multiple",
+      "value": ["RULE:[2:$1/$2@$0]([ndj]n\\/.*@HADOOP\\.COM)s/.*/hdfs/","DEFAULT"],
       "configurableInWizard": true,
       "hidden": true,
-      "defaultValue": "DEFAULT"
+      "defaultValue": []
     },
     {
       "name": "hadoop.rpc.protection",

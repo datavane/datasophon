@@ -29,6 +29,7 @@ public class ServiceRoleStrategyContext {
         map.put("YARN",new RMHandlerStrategy());
         map.put("HDFS",new NameNodeHandlerStrategy());
         map.put("HIVE",new HiveServer2HandlerStrategy());
+        map.put("KAFKA",new KafkaHandlerStrategy());
     }
 
     public static ServiceRoleStrategy getServiceRoleHandler(String type){

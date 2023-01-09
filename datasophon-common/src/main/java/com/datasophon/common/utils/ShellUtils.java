@@ -213,4 +213,13 @@ public class ShellUtils {
         command.add(path);
         execWithStatus(Constants.INSTALL_PATH,command,60);
     }
+
+    public static void addChown(String path, String user, String group) {
+        ArrayList<String> command = new ArrayList<>();
+        command.add("chown");
+        command.add("-R");
+        command.add(user+":"+group);
+        command.add(path);
+        execWithStatus(Constants.INSTALL_PATH,command,60);
+    }
 }

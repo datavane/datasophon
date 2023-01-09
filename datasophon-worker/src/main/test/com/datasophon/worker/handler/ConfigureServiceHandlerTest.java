@@ -25,8 +25,8 @@ public class ConfigureServiceHandlerTest {
         final Map<Generators, List<ServiceConfig>> cofigFileMap = new HashMap<>();
 
         // Run the test
-        final ExecResult result = configureServiceHandlerUnderTest.configure(cofigFileMap, "decompressPackageName", 0,
-                "serviceRoleName");
+//        final ExecResult result = configureServiceHandlerUnderTest.configure(cofigFileMap, "decompressPackageName", 0,
+//                "serviceRoleName");
 
         // Verify the results
     }

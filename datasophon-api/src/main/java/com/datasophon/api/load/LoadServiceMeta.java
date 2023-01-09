@@ -111,6 +111,7 @@ public class LoadServiceMeta implements ApplicationRunner {
                     if (ZOOKEEPER.equals(serviceName)) {
                         putZkHomeToVariable(globalVariables, serviceInfo.getDecompressPackageName());
                     }
+                    putServiceHomeToVariable(globalVariables,serviceName,serviceInfo.getDecompressPackageName());
                     //save service and service config
                     FrameServiceEntity serviceEntity = saveFrameService(frameCode, frameInfo, serviceName, serviceDdl, serviceInfo, serviceInfoMd5, allParameters, configFileMap);
                     //save frame service role
@@ -120,6 +121,9 @@ public class LoadServiceMeta implements ApplicationRunner {
         }
     }
 
+    private void putServiceHomeToVariable(HashMap<String, String> globalVariables, String serviceName, String decompressPackageName) {
+        globalVariables.put("${"+serviceName+"_HOME}", Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
+    }
 
 
     private void saveFrameServiceRole(String frameCode, String serviceName, ServiceInfo serviceInfo, FrameServiceEntity serviceEntity) {

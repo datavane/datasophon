@@ -322,11 +322,11 @@
       "label": "Metastore启动认证",
       "description": "Metastore启动认证",
       "configWithKerberos": true,
-      "required": true,
+      "required": false,
       "type": "switch",
-      "value": "",
+      "value": false,
       "configurableInWizard": true,
-      "hidden": false,
+      "hidden": true,
       "defaultValue": false
     },
     {

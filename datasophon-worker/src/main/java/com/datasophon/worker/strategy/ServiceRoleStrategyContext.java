@@ -22,6 +22,7 @@ public class ServiceRoleStrategyContext {
         map.put("Krb5Kdc",new KerberosHandlerStrategy());
         map.put("FE",new FEHandlerStrategy());
         map.put("ZkServer",new ZkServerHandlerStrategy());
+        map.put("KafkaBroker",new KafkaHandlerStrategy());
     }
 
     public static ServiceRoleStrategy getServiceRoleHandler(String type){
