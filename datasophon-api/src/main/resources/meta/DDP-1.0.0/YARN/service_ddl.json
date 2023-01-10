@@ -441,8 +441,8 @@
       "type": "switch",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
-      "defaultValue": false
+      "hidden": false,
+      "defaultValue": true
     },
     {
       "name": "yarn.resourcemanager.cluster-id",
@@ -606,7 +606,7 @@
       "description": "",
       "configType": "ha",
       "required": true,
-      "type": "input",
+      "type": "switch",
       "value":"",
       "configurableInWizard": true,
       "hidden": false,
