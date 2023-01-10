@@ -222,5 +222,20 @@ public final class Constants {
     public static final String PROPERTIES2 = "properties2";
     public static final String PROPERTIES3 = "properties3";
 
+    /**
+     * os name properties
+     */
+    public static final String OSNAME_PROPERTIES = "os.name";
+
+    /**
+     * windows os name
+     */
+    public static final String OSNAME_WINDOWS = "Windows";
+
+    /**
+     * windows hosts file basedir
+     */
+    public static final String WINDOWS_HOST_DIR = "C:/Windows/System32/drivers";
+
 
 }
