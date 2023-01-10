@@ -190,6 +190,11 @@ public final class Constants {
     public static final Pattern REGEX_MAIL_NAME = Pattern.compile("^([a-z0-9A-Z]+[_|\\-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$");
 
     /**
+     * 常量-数值100
+     */
+    public static final int ONE_HUNDRRD = 100;
+
+    /**
      * 常量-数值200
      */
     public static final int TWO_HUNDRRD = 200;

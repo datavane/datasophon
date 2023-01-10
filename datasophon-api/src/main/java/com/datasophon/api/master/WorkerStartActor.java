@@ -57,7 +57,7 @@ public class WorkerStartActor extends UntypedActor {
                 HashMap<String, HostInfo> map = (HashMap<String, HostInfo>) CacheUtils.get(cluster.getClusterCode() + Constants.HOST_MAP);
                 HostInfo hostInfo = map.get(msg.getHostname());
                 if (Objects.nonNull(hostInfo)) {
-                    hostInfo.setProgress(100);
+                    hostInfo.setProgress(Constants.ONE_HUNDRRD);
                     hostInfo.setInstallState(InstallState.SUCCESS);
                     hostInfo.setInstallStateCode(InstallState.SUCCESS.getValue());
                     hostInfo.setManaged(true);
