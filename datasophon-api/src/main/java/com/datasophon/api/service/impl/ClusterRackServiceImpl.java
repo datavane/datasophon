@@ -2,6 +2,7 @@ package com.datasophon.api.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.ClusterHostService;
 import com.datasophon.api.service.ClusterRackService;
 import com.datasophon.common.Constants;
@@ -38,7 +39,7 @@ public class ClusterRackServiceImpl extends ServiceImpl<ClusterRackMapper, Clust
     public Result deleteRack(Integer rackId) {
         ClusterRack clusterRack = this.getById(rackId);
         if(rackInUse(clusterRack)){
-            return Result.error("rack is using");
+            return Result.error(Status.RACK_IS_USING.getMsg());
         }
         this.removeById(rackId);
         return Result.success();

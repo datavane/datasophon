@@ -9,10 +9,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.DispatcherWorkerActor;
 import com.datasophon.api.master.HostActor;
+import com.datasophon.api.master.HostAgentCommandActor;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.utils.MessageResolverUtils;
 import com.datasophon.common.command.DispatcherHostAgentCommand;
+import com.datasophon.common.command.HostAgentCommand;
 import com.datasophon.common.model.CheckResult;
 import com.datasophon.common.model.HostInfo;
 import com.datasophon.api.service.ClusterHostService;
@@ -332,6 +334,28 @@ public class InstallServiceImpl implements InstallService {
         return Result.success().put("dispatcherHostAgentCompleted", true);
     }
 
+
+    @Override
+    public Result generateHostAgentCommand(Integer clusterId, String hostNames, String commandType) {
+        ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
+        String clusterCode = clusterInfo.getClusterCode();
+        Map<String, HostInfo> map = (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
+
+        for (String hostname : hostNames.split(",")) {
+            ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
+            HostInfo hostInfo = new HostInfo();
+            if (Objects.nonNull(map) && map.containsKey(hostname)) {
+                hostInfo = map.get(hostname);
+            }else if (Objects.nonNull(clusterHost)){
+                hostInfo.setHostname(hostname);
+                hostInfo.setSshUser("root");
+                hostInfo.setSshPort(22);
+            }
+            ActorRef hostActor = ActorUtils.getLocalActor(HostAgentCommandActor.class,"hostAgentCommandActor-" + hostname);
+            hostActor.tell(new HostAgentCommand(hostInfo, clusterId, commandType), ActorRef.noSender());
+        }
+        return Result.success();
+    }
 
     private List<HostInfo> getListPage(List<HostInfo> list, Integer offset, Integer pageSize) {
         List<HostInfo> result = new ArrayList<>();
