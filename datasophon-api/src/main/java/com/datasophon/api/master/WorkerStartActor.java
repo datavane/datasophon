@@ -40,15 +40,7 @@ public class WorkerStartActor extends UntypedActor {
 
             ClusterHostService clusterHostService = SpringTool.getApplicationContext().getBean(ClusterHostService.class);
             ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
-            ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
-            ClusterServiceCommandService serviceCommandService = SpringTool.getApplicationContext().getBean(ClusterServiceCommandService.class);
-            //start stopped service
-//            List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.getStoppedRoleInstanceOnHost(msg.getClusterId(),msg.getHostname(),ServiceRoleState.STOP);
-//            for (ClusterServiceRoleInstanceEntity roleInstanceEntity : list) {
-//                Integer serviceId = roleInstanceEntity.getServiceId();
-//                List<String> idList = list.stream().map(e -> e.getId().toString()).collect(Collectors.toList());
-//                serviceCommandService.generateServiceRoleCommand(msg.getClusterId(), CommandType.START_SERVICE, serviceId, idList);
-//            }
+
             //is managed?
             ClusterHostEntity hostEntity = clusterHostService.getClusterHostByHostname(msg.getHostname());
             ClusterInfoEntity cluster = clusterInfoService.getById(msg.getClusterId());

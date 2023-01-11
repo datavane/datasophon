@@ -32,4 +32,6 @@ public class ClusterYarnScheduler implements Serializable {
 	 */
 	private String scheduler;
 
+	private Integer inUse;
+
 }

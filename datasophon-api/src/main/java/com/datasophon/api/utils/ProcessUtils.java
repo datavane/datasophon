@@ -149,6 +149,7 @@ public class ProcessUtils {
         clusterHostEntity.setClusterId(cluster.getId());
         clusterHostEntity.setCheckTime(new Date());
         clusterHostEntity.setRack("default");
+        clusterHostEntity.setNodeLabel("default");
         clusterHostEntity.setCreateTime(new Date());
         clusterHostEntity.setIp(hostIp.get(message.getHostname()));
         clusterHostEntity.setHostState(1);
@@ -164,8 +165,8 @@ public class ProcessUtils {
             ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class, "commandActor");
             List<ClusterServiceCommandHostCommandEntity> hostCommandList = service.getHostCommandListByCommandId(commandId);
             for (ClusterServiceCommandHostCommandEntity hostCommandEntity : hostCommandList) {
-                if (hostCommandEntity.getCommandState() == CommandState.RUNNING) {
-                    logger.info("{} host command  set to failed", hostCommandEntity.getCommandName());
+                if (hostCommandEntity.getCommandState() == CommandState.RUNNING && hostCommandEntity.getServiceRoleType() != RoleType.MASTER) {
+                    logger.info("{} host command  set to cancel", hostCommandEntity.getCommandName());
                     hostCommandEntity.setCommandState(CommandState.CANCEL);
                     hostCommandEntity.setCommandProgress(100);
                     service.updateByHostCommandId(hostCommandEntity);
@@ -387,7 +388,7 @@ public class ProcessUtils {
 
         List<FrameServiceEntity> frameServiceList = frameServiceService.getAllFrameServiceByFrameCode(clusterInfo.getClusterFrame());
         for (FrameServiceEntity frameServiceEntity : frameServiceList) {
-            //创建服务actor
+            //create service actor
             logger.info("create {} actor", clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
             ActorUtils.actorSystem.actorOf(Props.create(MasterServiceActor.class)
                     .withDispatcher("my-forkjoin-dispatcher"), clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());

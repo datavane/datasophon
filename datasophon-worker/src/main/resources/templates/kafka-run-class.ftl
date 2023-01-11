@@ -242,7 +242,7 @@ fi
 if [ -z "$KAFKA_HEAP_OPTS" ]; then
   KAFKA_HEAP_OPTS="-Xmx${kafkaHeapSize}G -Xms${kafkaHeapSize}G"
 fi
-
+KAFKA_HEAP_OPTS="-Xmx${kafkaHeapSize}G -Xms${kafkaHeapSize}G"
 # JVM performance options
 if [ -z "$KAFKA_JVM_PERFORMANCE_OPTS" ]; then
   KAFKA_JVM_PERFORMANCE_OPTS="-server  -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent -Djava.awt.headless=true <#if javaSecurityKrb5Conf??>-Djava.security.krb5.conf=${javaSecurityKrb5Conf}</#if> <#if javaSecurityAuthLoginConfig??>-Djava.security.auth.login.config=${javaSecurityAuthLoginConfig}</#if>"
