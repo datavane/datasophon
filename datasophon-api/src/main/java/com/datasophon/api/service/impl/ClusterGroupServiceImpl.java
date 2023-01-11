@@ -6,6 +6,7 @@ import akka.pattern.Patterns;
 import akka.util.Timeout;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.datasophon.api.enums.Status;
 import com.datasophon.api.exceptions.ServiceException;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.ClusterGroupService;
@@ -54,7 +55,7 @@ public class ClusterGroupServiceImpl extends ServiceImpl<ClusterGroupMapper, Clu
     public Result saveClusterGroup(Integer clusterId, String groupName)  {
         //判读groupName是否重复
         if(hasRepeatGroupName(clusterId,groupName)){
-            return Result.error("组名重复");
+            return Result.error(Status.GROUP_NAME_DUPLICATION.getMsg());
         }
         ClusterGroup clusterGroup = new ClusterGroup();
         clusterGroup.setClusterId(clusterId);
@@ -111,7 +112,7 @@ public class ClusterGroupServiceImpl extends ServiceImpl<ClusterGroupMapper, Clu
         ClusterGroup clusterGroup = this.getById(id);
         Integer num = userGroupService.countGroupUserNum(id);
         if(num > 0){
-            return Result.error("当前用户组存在用户，请先删除用户");
+            return Result.error(Status.USER_GROUP_TIPS_ONE.getMsg());
         }
         this.removeById(id);
         List<ClusterHostEntity> hostList = hostService.getHostListByClusterId(clusterGroup.getClusterId());

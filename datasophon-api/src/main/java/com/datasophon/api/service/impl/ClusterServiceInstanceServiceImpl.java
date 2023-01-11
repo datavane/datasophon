@@ -1,6 +1,7 @@
 package com.datasophon.api.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.*;
 import com.datasophon.dao.entity.*;
 import com.datasophon.api.service.*;
@@ -188,7 +189,7 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
     @Override
     public Result delServiceInstance(Integer serviceInstanceId) {
         if(hasRunningRoleInstance(serviceInstanceId)){
-            return Result.error("It has running role instance , stop it first");
+            return Result.error(Status.EXIT_RUNNING_ROLE_INSTANCE.getMsg());
         }
         List<ClusterServiceInstanceRoleGroup> roleGroups = roleGroupService.listRoleGroupByServiceInstanceId(serviceInstanceId);
         List<Integer> roleGroupIds = roleGroups.stream().map(e -> e.getId()).collect(Collectors.toList());
