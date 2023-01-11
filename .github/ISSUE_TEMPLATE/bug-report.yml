@@ -17,7 +17,7 @@
 
 name: Bug report
 title: "[Bug] Bug title"
-description: Problems and issues with code of StreamPark
+description: Problems and issues with code of DataSophon
 labels: ["bug"]
 body:
   - type: markdown
@@ -32,11 +32,11 @@ body:
     attributes:
       label: Search before asking
       description: >
-        Please make sure to search in the [issues](https://github.com/apache/incubator-streampark/issues?q=is%3Aissue+label%3A%22bug%22)
+        Please make sure to search in the [issues](https://github.com/datasophon/issues?q=is%3Aissue+label%3A%22bug%22)
         first to see whether the same issue was reported already.
       options:
         - label: >
-            I had searched in the [issues](https://github.com/apache/incubator-streampark/issues?q=is%3Aissue+label%3A%22bug%22) and found
+            I had searched in the [issues](https://github.com/datasophon/issues?q=is%3Aissue+label%3A%22bug%22) and found
             no similar issues.
           required: true
 
@@ -51,39 +51,13 @@ body:
 
   - type: textarea
     attributes:
-      label: StreamPark Version
-      description: Provide StreamPark version.
+      label: DataSophon Version
+      description: Provide DataSophon version.
       placeholder: >
-        Please provide the version of StreamPark.
+        Please provide the version of DataSophon.
     validations:
       required: true
 
-  - type: textarea
-    attributes:
-      label: Java Version
-      description: Provide Java Version.
-      placeholder: >
-        Please provide the version of Java.
-    validations:
-      required: false
-
-  - type: textarea
-    attributes:
-      label: Flink Version
-      description: Provide Flink Version.
-      placeholder: >
-        Please provide the version of Flink.
-    validations:
-      required: true
-
-  - type: textarea
-    attributes:
-      label: Scala Version of Flink
-      description: Provide Scala Version of Flink.
-      placeholder: >
-        Please provide the Scala Version of Flink.
-    validations:
-      required: true
 
   - type: textarea
     attributes:
@@ -110,7 +84,7 @@ body:
       description: >
         This is absolutely not required, but we are happy to guide you in the contribution process
         especially if you already have a good understanding of how to implement the fix.
-        StreamPark is a totally community-driven project and we love to bring new contributors in.
+        DataSophon is a totally community-driven project and we love to bring new contributors in.
       options:
         - label: Yes I am willing to submit a PR!
 
