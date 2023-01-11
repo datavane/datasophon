@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import cn.hutool.core.util.EnumUtil;
+import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.ClusterServiceCommandService;
 import com.datasophon.api.security.UserPermission;
 import com.datasophon.common.enums.CommandType;
@@ -62,7 +63,7 @@ public class ClusterServiceCommandController {
             List<String> ids = Arrays.asList(serviceInstanceIds.split(","));
             return clusterServiceCommandService.generateServiceCommand(clusterId, command, ids);
         }else {
-            return Result.error("there is no service to execute");
+            return Result.error(Status.NO_SERVICE_EXECUTE.getMsg());
         }
 
 

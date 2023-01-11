@@ -20,7 +20,10 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
   mvc:
     date-format: yyyy-MM-dd HH:mm:ss
-
+#国际化配置
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
 #mybatis
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
@@ -46,5 +49,3 @@ mybatis-plus:
     call-setters-on-nulls: true
     jdbc-type-for-null: 'null'
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
-

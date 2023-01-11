@@ -6,6 +6,7 @@ import akka.pattern.Patterns;
 import akka.util.Timeout;
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.ClusterYarnQueueService;
 import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
@@ -132,7 +133,7 @@ public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMap
             logger.info("yarn dfsadmin -refreshQueues success at {}", hostname);
         } else {
             logger.info(execResult.getExecOut());
-            return Result.error("刷新队列到Yarn失败");
+            return Result.error(Status.FAILED_TO_REFRESH_THE_QUEUE_TO_YARN.getMsg());
         }
         return Result.success();
     }

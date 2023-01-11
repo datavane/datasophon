@@ -11,6 +11,7 @@ import com.datasophon.api.master.DispatcherWorkerActor;
 import com.datasophon.api.master.HostActor;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.utils.MessageResolverUtils;
 import com.datasophon.common.command.DispatcherHostAgentCommand;
 import com.datasophon.common.model.CheckResult;
 import com.datasophon.common.model.HostInfo;
@@ -229,7 +230,7 @@ public class InstallServiceImpl implements InstallService {
             if(hostInfo.isManaged()){
                 hostInfo.setInstallStateCode(InstallState.SUCCESS.getValue());
                 hostInfo.setProgress(Constants.ONE_HUNDRRD);
-                hostInfo.setMessage("分发成功");
+                hostInfo.setMessage(MessageResolverUtils.getMessage("distribution.success"));
                 hostInfo.setInstallState(InstallState.SUCCESS);
             }else if(!CacheUtils.constainsKey(distributeAgentKey+Constants.UNDERLINE+hostInfo.getHostname())){
                 logger.info("start to dispatcher host agent to {}",hostInfo.getHostname());
@@ -248,13 +249,12 @@ public class InstallServiceImpl implements InstallService {
                 if("75".equals(String.valueOf(progress))&&timeout>timeOutPeriodOne){
                     hostInfo.setInstallStateCode(InstallState.FAILED.getValue());
                     hostInfo.setProgress(Constants.ONE_HUNDRRD);
-                    hostInfo.setMessage("分发失败,请查看agent端日志");
+                    hostInfo.setMessage(MessageResolverUtils.getMessage("distribution.fail.tips.one"));
                     hostInfo.setInstallState(InstallState.FAILED);
                 }
                 if (timeout > timeOutPeriodTwo) {
                     hostInfo.setInstallStateCode(InstallState.FAILED.getValue());
                     hostInfo.setProgress(Constants.ONE_HUNDRRD);
-                    hostInfo.setMessage("分发失败,请查看agent端日志");
                     hostInfo.setInstallState(InstallState.FAILED);
                 }
             }

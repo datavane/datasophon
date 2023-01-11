@@ -4,6 +4,7 @@ import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.enums.Status;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.load.ServiceInfoMap;
 import com.datasophon.api.load.ServiceRoleMap;
@@ -299,22 +300,22 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         for (ServiceRoleHostMapping serviceRoleHostMapping : list) {
             if ("JournalNode".equals(serviceRoleHostMapping.getServiceRole())) {
                 if (serviceRoleHostMapping.getHosts().size() != 3) {
-                    return Result.error("JournalNode需要部署三台");
+                    return Result.error(Status.THREE_JOURNALNODE_DEPLOYMENTS_REQUIRED.getMsg());
                 }
             }
             if ("NameNode".equals(serviceRoleHostMapping.getServiceRole())) {
                 if (serviceRoleHostMapping.getHosts().size() != 2) {
-                    return Result.error("NameNode需要部署两台");
+                    return Result.error(Status.TWO_NAMENODES_NEED_TO_BE_DEPLOYED.getMsg());
                 }
             }
             if ("ZKFC".equals(serviceRoleHostMapping.getServiceRole())) {
                 if (serviceRoleHostMapping.getHosts().size() != 2) {
-                    return Result.error("ZKFC需要部署两台");
+                    return Result.error(Status.TWO_ZKFC_DEVICES_ARE_REQUIRED.getMsg());
                 }
             }
             if ("ResourceManager".equals(serviceRoleHostMapping.getServiceRole())) {
                 if (serviceRoleHostMapping.getHosts().size() != 2) {
-                    return Result.error("ResourceManager需要部署两台");
+                    return Result.error(Status.TWO_RESOURCEMANAGER_ARE_DEPLOYED.getMsg());
                 }
             }
             map.put(serviceRoleHostMapping.getServiceRole(), serviceRoleHostMapping.getHosts());

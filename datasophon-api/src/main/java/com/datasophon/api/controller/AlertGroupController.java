@@ -3,6 +3,7 @@ package com.datasophon.api.controller;
 import java.util.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.AlertGroupService;
 import com.datasophon.api.service.ClusterAlertQuotaService;
 import com.datasophon.common.Constants;
@@ -80,7 +81,7 @@ public class AlertGroupController {
         //校验是否绑定告警指标
         List<ClusterAlertQuota> list = alertQuotaService.list(new QueryWrapper<ClusterAlertQuota>().in(Constants.ALERT_GROUP_ID, ids));
         if(list.size() > 0){
-            return Result.error("当前告警组已绑定告警指标，请先删除绑定的告警指标");
+            return Result.error(Status.ALERT_GROUP_TIPS_ONE.getMsg());
         }
         alertGroupService.removeByIds(Arrays.asList(ids));
 
