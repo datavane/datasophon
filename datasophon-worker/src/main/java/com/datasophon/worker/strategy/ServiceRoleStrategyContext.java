@@ -23,6 +23,7 @@ public class ServiceRoleStrategyContext {
         map.put("FE",new FEHandlerStrategy());
         map.put("ZkServer",new ZkServerHandlerStrategy());
         map.put("KafkaBroker",new KafkaHandlerStrategy());
+        map.put("BE",new BEHandlerStrategy());
     }
 
     public static ServiceRoleStrategy getServiceRoleHandler(String type){

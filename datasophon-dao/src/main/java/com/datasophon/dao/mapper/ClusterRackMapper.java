@@ -1,7 +1,7 @@
 package com.datasophon.dao.mapper;
 
-import com.datasophon.dao.entity.ClusterRack;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.datasophon.dao.entity.ClusterRack;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

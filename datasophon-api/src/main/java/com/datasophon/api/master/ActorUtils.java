@@ -36,13 +36,16 @@ public class ActorUtils {
         ActorRef serviceRoleCheckActor = actorSystem.actorOf(Props.create(ServiceRoleCheckActor.class), "serviceRoleCheckActor");
         ActorRef hostCheckActor = actorSystem.actorOf(Props.create(HostCheckActor.class), "hostCheckActor");
 
-        actorSystem.scheduler().schedule(FiniteDuration.apply(60L, TimeUnit.SECONDS),
+        actorSystem.scheduler().schedule(
+                FiniteDuration.apply(60L, TimeUnit.SECONDS),
                 FiniteDuration.apply(5L, TimeUnit.MINUTES),
-                hostCheckActor, new HostCheckCommand(),
+                hostCheckActor,
+                new HostCheckCommand(),
                 actorSystem.dispatcher(),
                 ActorRef.noSender());
 
-        actorSystem.scheduler().schedule(FiniteDuration.apply(15L, TimeUnit.SECONDS),
+        actorSystem.scheduler().schedule(
+                FiniteDuration.apply(15L, TimeUnit.SECONDS),
                 FiniteDuration.apply(15L, TimeUnit.SECONDS),
                 serviceRoleCheckActor,
                 new ServiceRoleCheckCommand(),

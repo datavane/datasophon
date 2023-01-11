@@ -50,5 +50,7 @@ public interface ClusterServiceRoleInstanceService extends IService<ClusterServi
     ClusterServiceRoleInstanceEntity getKAdminRoleIns(Integer clusterId);
 
     List<ClusterServiceRoleInstanceEntity> listServiceRoleByName(String alertManager);
+
+    ClusterServiceRoleInstanceEntity getServiceRoleInsByHostAndName(String hostName, String serviceRoleName);
 }
 
