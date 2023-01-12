@@ -11,18 +11,14 @@ import java.sql.SQLException;
 public class HistoryServerHandlerStrategy implements ServiceRoleStrategy {
     @Override
     public ExecResult handler(ServiceRoleOperateCommand command) throws SQLException, ClassNotFoundException {
-        ExecResult startResult = new ExecResult();
         ServiceHandler serviceHandler = new ServiceHandler();
         if (command.getCommandType().equals(CommandType.INSTALL_SERVICE)) {
-            startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
-            if(startResult.getExecResult()){
-                //create tmp
-                ShellUtils.exceShell("sudo -u hdfs /opt/datasophon/hadoop-3.3.3/bin/hdfs dfs -mkdir /tmp");
-                ShellUtils.exceShell("sudo -u hdfs /opt/datasophon/hadoop-3.3.3/bin/hdfs dfs -chmod 777 /tmp");
-            }
-        } else {
-            startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
+            //create tmp
+            ShellUtils.exceShell("sudo -u hdfs /opt/datasophon/hadoop-3.3.3/bin/hdfs dfs -mkdir -p /user/yarn/yarn-logs");
+            ShellUtils.exceShell("sudo -u hdfs /opt/datasophon/hadoop-3.3.3/bin/hdfs dfs -mkdir /tmp");
+            ShellUtils.exceShell("sudo -u hdfs /opt/datasophon/hadoop-3.3.3/bin/hdfs dfs -chmod 777 /tmp");
+            ShellUtils.exceShell("sudo -u hdfs /opt/datasophon/hadoop-3.3.3/bin/hdfs dfs -chown yarn:hadoop /user/yarn/yarn-logs");
         }
-        return startResult;
+        return serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
     }
 }

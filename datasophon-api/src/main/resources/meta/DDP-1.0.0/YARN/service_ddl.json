@@ -218,28 +218,6 @@
       "defaultValue": true
     },
     {
-      "name": "yarn.node-labels.enabled",
-      "label": "启用YARN标签调度",
-      "description": "开启 YARN Node Labels",
-      "required": true,
-      "type": "switch",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": false
-    },
-    {
-      "name": "enableKerberos",
-      "label": "启用Kerberos认证",
-      "description": "启用Kerberos认证",
-      "required": true,
-      "type": "switch",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": false
-    },
-    {
       "name": "yarn.node-labels.fs-store.root-dir",
       "label": "Node Label存储目录",
       "description": "Node Label存储目录",
@@ -812,6 +790,28 @@
       "configurableInWizard": true,
       "hidden": true,
       "defaultValue": "${HADOOP_HOME}/bin/container-executor"
+    },
+    {
+      "name": "yarn.node-labels.enabled",
+      "label": "启用YARN标签调度",
+      "description": "开启 YARN Node Labels",
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
+    },
+    {
+      "name": "enableKerberos",
+      "label": "启用Kerberos认证",
+      "description": "启用Kerberos认证",
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
     },
     {
       "name": "custom.yarn.site.xml",

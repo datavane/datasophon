@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class KafkaHandlerStrategy extends KerberosHandlerAbstract implements ServiceRoleStrategy {
+public class KafkaHandlerStrategy extends ServiceHandlerAbstract implements ServiceRoleStrategy {
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
 

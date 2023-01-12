@@ -250,7 +250,9 @@
           "dfs.permissions",
           "dfs.namenode.inode.attributes.provider.class",
           "dfs.hosts",
-          "dfs.hosts.exclude"
+          "dfs.hosts.exclude",
+          "net.topology.table.file.name",
+          "net.topology.node.switch.mapping.impl"
         ]
       },
       {
@@ -274,7 +276,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "hdfs://${fs.defaultFS}"
+      "defaultValue": "hdfs://nameservice1"
     },
     {
       "name": "hadoop.tmp.dir",
@@ -898,7 +900,30 @@
       "hidden": true,
       "defaultValue": "HTTPS_ONLY"
     },
-
+    {
+      "name": "net.topology.table.file.name",
+      "label": "net.topology.table.file.name",
+      "description": "",
+      "required": false,
+      "configType": "rack",
+      "type": "input",
+      "value": "${HADOOP_HOME}/etc/hadoop/rack.properties",
+      "configWithRack": true,
+      "hidden": true,
+      "defaultValue": "${HADOOP_HOME}/etc/hadoop/rack.properties"
+    },
+    {
+      "name": "net.topology.node.switch.mapping.impl",
+      "label": "net.topology.node.switch.mapping.impl",
+      "description": "",
+      "required": false,
+      "configType": "rack",
+      "type": "input",
+      "value": "org.apache.hadoop.net.TableMapping",
+      "configWithRack": true,
+      "hidden": true,
+      "defaultValue": "org.apache.hadoop.net.TableMapping"
+    },
     {
       "name": "custom.core.site.xml",
       "label": "自定义配置core-site.xml",

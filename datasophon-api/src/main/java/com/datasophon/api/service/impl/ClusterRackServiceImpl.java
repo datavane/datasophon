@@ -47,7 +47,7 @@ public class ClusterRackServiceImpl extends ServiceImpl<ClusterRackMapper, Clust
     @Override
     public void createDefaultRack(Integer clusterId) {
         ClusterRack clusterRack = new ClusterRack();
-        clusterRack.setRack("default");
+        clusterRack.setRack("default-rack");
         clusterRack.setClusterId(clusterId);
         this.save(clusterRack);
     }
