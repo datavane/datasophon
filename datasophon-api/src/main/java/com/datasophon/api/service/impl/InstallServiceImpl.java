@@ -335,20 +335,22 @@ public class InstallServiceImpl implements InstallService {
 
 
     @Override
-    public Result generateHostAgentCommand(Integer clusterId, String hostNames, String commandType) throws Exception {
-        if(StringUtils.isBlank(hostNames)){
+    public Result generateHostAgentCommand(String clusterHostIds, String commandType) throws Exception {
+        if(StringUtils.isBlank(clusterHostIds)){
             return Result.error(Status.SELECT_LEAST_ONE_HOST.getMsg());
         }
-        String[] hostNameArray = hostNames.split(Constants.COMMA);
-        for (String hostname : hostNameArray) {
+        String[] clusterHostIdArray = clusterHostIds.split(Constants.COMMA);
+        List<String> clusterHostIdList = Arrays.asList(clusterHostIdArray);
+        List<ClusterHostEntity> clusterHostList = hostService.getHostListByIds(clusterHostIdList);
+        for (ClusterHostEntity clusterHostEntity : clusterHostList) {
             ClientSession session = MinaUtils.openConnection(
-                     hostname,
+                    clusterHostEntity.getHostname(),
               22,
                      Constants.ROOT,
                     Constants.SLASH + Constants.ROOT + Constants.ID_RSA);
             MinaUtils.execCmdWithResult( session,"service datasophon-worker "+commandType);
             logger.info("hostAgent command:{}", "service datasophon-worker "+commandType);
-            String cpuArchitecture = ShellUtils.getCpuArchitecture();
+            String cpuArchitecture = clusterHostEntity.getCpuArchitecture();
             String workDir = Constants.WORKER_PATH;
             ArrayList<String> commands = new ArrayList<>();
             commands.add("sh");

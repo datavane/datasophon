@@ -104,16 +104,15 @@ public class HostInstallController {
 
     /**
      * 主机管理agent操作(启动(start)、停止(stop)、重启(restart))
-     * @param clusterId
-     * @param hostNames
+     * @param clusterHostIds
      * @param commandType
      * @return
      */
     @PostMapping("/generateHostAgentCommand")
-    public Result generateHostAgentCommand(@RequestParam Integer clusterId,
-                                           @RequestParam String hostNames,
+    public Result generateHostAgentCommand(
+                                           @RequestParam String clusterHostIds,
                                            @RequestParam String commandType) throws Exception {
-        return installService.generateHostAgentCommand(clusterId, hostNames,commandType);
+        return installService.generateHostAgentCommand(clusterHostIds,commandType);
     }
 
 }
