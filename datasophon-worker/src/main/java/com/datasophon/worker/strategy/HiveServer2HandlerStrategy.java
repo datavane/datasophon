@@ -62,6 +62,11 @@ public class HiveServer2HandlerStrategy implements ServiceRoleStrategy {
                 KerberosUtils.downloadKeytabFromMaster("hive/" + hostname, "hive.service.keytab");
             }
         }
+        ShellUtils.exceShell("sudo -u hdfs /opt/datasophon/hadoop-3.3.3/bin/hdfs dfs -mkdir -p /user/hive/warehouse");
+        ShellUtils.exceShell("sudo -u hdfs /opt/datasophon/hadoop-3.3.3/bin/hdfs dfs -mkdir -p /tmp/hive");
+        ShellUtils.exceShell("sudo -u hdfs /opt/datasophon/hadoop-3.3.3/bin/hdfs dfs -chown hive:hadoop /user/hive/warehouse");
+        ShellUtils.exceShell("sudo -u hdfs /opt/datasophon/hadoop-3.3.3/bin/hdfs dfs -chown hive:hadoop /tmp/hive");
+
         startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(),command.getRunAs());
         return startResult;
     }

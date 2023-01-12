@@ -104,7 +104,7 @@
         "group": "hadoop"
       },
       "sortNum": 2,
-      "logFile": "${hadoopLogDir}/hadoop-yarn-historyserver-${host}.log",
+      "logFile": "${hadoopLogDir}/hadoop-mapred-historyserver-${host}.log",
       "jmxPort": 9325,
       "startRunner": {
         "timeout": "60",
@@ -216,28 +216,6 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": true
-    },
-    {
-      "name": "yarn.node-labels.enabled",
-      "label": "启用YARN标签调度",
-      "description": "开启 YARN Node Labels",
-      "required": true,
-      "type": "switch",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": false
-    },
-    {
-      "name": "enableKerberos",
-      "label": "启用Kerberos认证",
-      "description": "启用Kerberos认证",
-      "required": true,
-      "type": "switch",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": false
     },
     {
       "name": "yarn.node-labels.fs-store.root-dir",
@@ -812,6 +790,28 @@
       "configurableInWizard": true,
       "hidden": true,
       "defaultValue": "${HADOOP_HOME}/bin/container-executor"
+    },
+    {
+      "name": "yarn.node-labels.enabled",
+      "label": "启用YARN标签调度",
+      "description": "开启 YARN Node Labels",
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
+    },
+    {
+      "name": "enableKerberos",
+      "label": "启用Kerberos认证",
+      "description": "启用Kerberos认证",
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
     },
     {
       "name": "custom.yarn.site.xml",

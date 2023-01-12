@@ -7,7 +7,6 @@ import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
-import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterYarnScheduler;
 
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class RMHandlerStrategy extends KerberosHandlerAbstract implements ServiceRoleStrategy {
+public class RMHandlerStrategy extends ServiceHandlerAbstract implements ServiceRoleStrategy {
     @Override
     public void handler(Integer clusterId,List<String> hosts) {
 

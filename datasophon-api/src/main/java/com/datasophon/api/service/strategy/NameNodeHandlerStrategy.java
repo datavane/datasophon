@@ -8,13 +8,20 @@ import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.dao.entity.ClusterInfoEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
+public class NameNodeHandlerStrategy extends ServiceHandlerAbstract  implements ServiceRoleStrategy {
 
+    private static final Logger logger = LoggerFactory.getLogger(NameNodeHandlerStrategy.class);
+
+    private static final String ENABLE_RACK = "enableRack";
+
+    private static final String ENABLE_KERBEROS = "enableRack";
 
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
@@ -23,8 +30,6 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
 
         ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${nn1}", hosts.get(0));
         ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${nn2}", hosts.get(1));
-        ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${fs.defaultFS}", "nameservice1");
-
 
     }
 
@@ -32,67 +37,38 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
-        List<ServiceConfig> serviceConfigs = new ArrayList<>();
+
         boolean enableRack = false;
         boolean enableKerberos = false;
         Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
 
-        for (ServiceConfig config : list) {
-            if ("enableRack".equals(config.getName())) {
-                if( (Boolean)config.getValue()){
-                    ServiceConfig serviceConfig = ProcessUtils.createServiceConfig("net.topology.table.file.name",Constants.INSTALL_PATH +
-                            Constants.SLASH +
-                            PackageUtils.getServiceDcPackageName(clusterInfo.getClusterFrame(), "HDFS")+
-                            "/etc/hadoop/rack.properties","input");
-                    ServiceConfig mapImplConfig = ProcessUtils.createServiceConfig("net.topology.node.switch.mapping.impl", "org.apache.hadoop.net.TableMapping","input");
-                    serviceConfigs.add(serviceConfig);
-                    serviceConfigs.add(mapImplConfig);
-                    enableRack = true;
-                }
-            }
-            if("enableKerberos".equals(config.getName())){
-                if( (Boolean)config.getValue()){
-                    enableKerberos = true;
-                    ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableHDFSKerberos}", "true");
-                }else {
-                    ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableHDFSKerberos}", "false");
-                }
-            }
-        }
-        list.addAll(serviceConfigs);
-        if(!enableRack){
-            if(map.containsKey("net.topology.table.file.name")){
-                list.remove(map.get("net.topology.table.file.name"));
-            }
-            if(map.containsKey("net.topology.node.switch.mapping.impl")){
-                list.remove(map.get("net.topology.node.switch.mapping.impl"));
-            }
-        }
         String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "HDFS" + Constants.CONFIG;
         List<ServiceConfig> configs = ServiceConfigMap.get(key);
+
+        for (ServiceConfig config : list) {
+            if (ENABLE_RACK.equals(config.getName())) {
+                if( (Boolean)config.getValue()){
+                    enableRack = isEnableRack(enableRack,config);
+                }
+            }
+            if(ENABLE_KERBEROS.equals(config.getName())){
+                enableKerberos = isEnableKerberos(clusterId,globalVariables,enableKerberos,config,"HDFS");
+            }
+        }
+        List<ServiceConfig> rackConfigs = new ArrayList<>();
+        if(enableRack){
+            logger.info("start to add rack config");
+            addConfigWithRack(globalVariables, map, configs, rackConfigs);
+        }else{
+            removeConfigWithRack(list, map, configs);
+        }
+        list.addAll(rackConfigs);
+
         ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
         if(enableKerberos){
-            for (ServiceConfig serviceConfig : configs) {
-                if("kb".equals(serviceConfig.getConfigType())){
-                    if(map.containsKey(serviceConfig.getName())){
-                        ServiceConfig config = map.get(serviceConfig.getName());
-                        config.setRequired(true);
-                        config.setHidden(false);
-                    }else{
-                        serviceConfig.setRequired(true);
-                        serviceConfig.setHidden(false);
-                        kbConfigs.add(serviceConfig);
-                    }
-                }
-            }
+            addConfigWithKerberos(globalVariables, map, configs, kbConfigs);
         }else{
-            for (ServiceConfig serviceConfig : configs) {
-                if("kb".equals(serviceConfig.getConfigType())){
-                    if(map.containsKey(serviceConfig.getName())){
-                        list.remove(map.get(serviceConfig.getName()));
-                    }
-                }
-            }
+            removeConfigWithKerberos(list, map, configs);
         }
         list.addAll(kbConfigs);
     }

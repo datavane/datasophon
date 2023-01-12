@@ -19,11 +19,13 @@ public class ServiceRoleStrategyContext {
         map.put("HiveServer2",new HiveServer2HandlerStrategy());
         map.put("HbaseMaster",new HbaseHandlerStrategy());
         map.put("RegionServer",new HbaseHandlerStrategy());
-        map.put("Krb5Kdc",new KerberosHandlerStrategy());
+        map.put("Krb5Kdc",new Krb5KdcHandlerStrategy());
+        map.put("KAdmin",new KAdminHandlerStrategy());
         map.put("FE",new FEHandlerStrategy());
         map.put("ZkServer",new ZkServerHandlerStrategy());
         map.put("KafkaBroker",new KafkaHandlerStrategy());
         map.put("BE",new BEHandlerStrategy());
+        map.put("HistoryServer",new HistoryServerHandlerStrategy());
     }
 
     public static ServiceRoleStrategy getServiceRoleHandler(String type){
