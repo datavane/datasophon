@@ -15,6 +15,6 @@ public interface ClusterYarnSchedulerService extends IService<ClusterYarnSchedul
 
     ClusterYarnScheduler getScheduler(Integer clusterId);
 
-    void createYarnScheduler(Integer id);
+    void createDefaultYarnScheduler(Integer clusterId);
 }
 

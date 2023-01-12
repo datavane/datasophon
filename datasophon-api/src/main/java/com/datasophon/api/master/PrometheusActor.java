@@ -32,10 +32,7 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class PrometheusActor extends UntypedActor {
@@ -109,61 +106,65 @@ public class PrometheusActor extends UntypedActor {
                     .eq(Constants.MANAGED, 1)
                     .eq(Constants.CLUSTER_ID,clusterId));
             ClusterServiceRoleInstanceEntity prometheusInstance = roleInstanceService.getOneServiceRole("Prometheus", null, command.getClusterId());
+            if(Objects.nonNull(prometheusInstance)){
+                Generators workerGenerators = new Generators();
+                workerGenerators.setFilename("worker.json");
+                workerGenerators.setOutputDirectory("configs");
+                workerGenerators.setConfigFormat("custom");
+                workerGenerators.setTemplateName("scrape.ftl");
 
-            Generators workerGenerators = new Generators();
-            workerGenerators.setFilename("worker.json");
-            workerGenerators.setOutputDirectory("configs");
-            workerGenerators.setConfigFormat("custom");
-            workerGenerators.setTemplateName("scrape.ftl");
+                Generators nodeGenerators = new Generators();
+                nodeGenerators.setFilename("linux.json");
+                nodeGenerators.setOutputDirectory("configs");
+                nodeGenerators.setConfigFormat("custom");
+                nodeGenerators.setTemplateName("scrape.ftl");
+                ArrayList<ServiceConfig> workerServiceConfigs = new ArrayList<>();
+                ArrayList<ServiceConfig> nodeServiceConfigs = new ArrayList<>();
+                for (ClusterHostEntity clusterHostEntity : hostList) {
+                    ServiceConfig serviceConfig = new ServiceConfig();
+                    serviceConfig.setName("worker_"+clusterHostEntity.getHostname());
+                    serviceConfig.setValue(clusterHostEntity.getHostname()+":8585");
+                    serviceConfig.setRequired(true);
+                    workerServiceConfigs.add(serviceConfig);
 
-            Generators nodeGenerators = new Generators();
-            nodeGenerators.setFilename("linux.json");
-            nodeGenerators.setOutputDirectory("configs");
-            nodeGenerators.setConfigFormat("custom");
-            nodeGenerators.setTemplateName("scrape.ftl");
-            ArrayList<ServiceConfig> workerServiceConfigs = new ArrayList<>();
-            ArrayList<ServiceConfig> nodeServiceConfigs = new ArrayList<>();
-            for (ClusterHostEntity clusterHostEntity : hostList) {
-                ServiceConfig serviceConfig = new ServiceConfig();
-                serviceConfig.setName("worker_"+clusterHostEntity.getHostname());
-                serviceConfig.setValue(clusterHostEntity.getHostname()+":8585");
-                serviceConfig.setRequired(true);
-                workerServiceConfigs.add(serviceConfig);
-
-                ServiceConfig nodeServiceConfig = new ServiceConfig();
-                nodeServiceConfig.setName("node_"+clusterHostEntity.getHostname());
-                nodeServiceConfig.setValue(clusterHostEntity.getHostname()+":9100");
-                nodeServiceConfig.setRequired(true);
-                nodeServiceConfigs.add(nodeServiceConfig);
+                    ServiceConfig nodeServiceConfig = new ServiceConfig();
+                    nodeServiceConfig.setName("node_"+clusterHostEntity.getHostname());
+                    nodeServiceConfig.setValue(clusterHostEntity.getHostname()+":9100");
+                    nodeServiceConfig.setRequired(true);
+                    nodeServiceConfigs.add(nodeServiceConfig);
+                }
+                configFileMap.put(workerGenerators,workerServiceConfigs);
+                configFileMap.put(nodeGenerators,nodeServiceConfigs);
+                ServiceRoleInfo serviceRoleInfo = new ServiceRoleInfo();
+                serviceRoleInfo.setName("Prometheus");
+                serviceRoleInfo.setParentName("PROMETHEUS");
+                serviceRoleInfo.setConfigFileMap(configFileMap);
+                serviceRoleInfo.setDecompressPackageName("prometheus-2.17.2");
+                serviceRoleInfo.setHostname(prometheusInstance.getHostname());
+                ServiceConfigureHandler configureHandler = new ServiceConfigureHandler();
+                ExecResult execResult = configureHandler.handlerRequest(serviceRoleInfo);
+                if(execResult.getExecResult()){
+                    //reload prometheus config
+                    HttpUtil.post("http://"+prometheusInstance.getHostname()+":9090/-/reload","");
+                }
             }
-            configFileMap.put(workerGenerators,workerServiceConfigs);
-            configFileMap.put(nodeGenerators,nodeServiceConfigs);
-            ServiceRoleInfo serviceRoleInfo = new ServiceRoleInfo();
-            serviceRoleInfo.setName("Prometheus");
-            serviceRoleInfo.setParentName("PROMETHEUS");
-            serviceRoleInfo.setConfigFileMap(configFileMap);
-            serviceRoleInfo.setDecompressPackageName("prometheus-2.17.2");
-            serviceRoleInfo.setHostname(prometheusInstance.getHostname());
-            ServiceConfigureHandler configureHandler = new ServiceConfigureHandler();
-            ExecResult execResult = configureHandler.handlerRequest(serviceRoleInfo);
-            if(execResult.getExecResult()){
-                //重新加载prometheus配置
-                HttpUtil.post("http://"+prometheusInstance.getHostname()+":9090/-/reload","");
-            }
+
         }else if(msg instanceof GenerateAlertConfigCommand){
 
             GenerateAlertConfigCommand command = (GenerateAlertConfigCommand) msg;
             ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
             ClusterServiceRoleInstanceEntity prometheusInstance = roleInstanceService.getOneServiceRole("Prometheus", null, command.getClusterId());
-
-            ActorSelection alertConfigActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + prometheusInstance.getHostname() + ":2552/user/worker/alertConfigActor");
-            Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
-            Future<Object> configureFuture = Patterns.ask(alertConfigActor, command, timeout);
-            ExecResult configResult = (ExecResult) Await.result(configureFuture, timeout.duration());
-            if(configResult.getExecResult()){
-                //重新加载prometheus配置
-                HttpUtil.post("http://"+prometheusInstance.getHostname()+":9090/-/reload","");
+            if(Objects.nonNull(prometheusInstance)){
+                ActorSelection alertConfigActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + prometheusInstance.getHostname() + ":2552/user/worker/alertConfigActor");
+                Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
+                Future<Object> configureFuture = Patterns.ask(alertConfigActor, command, timeout);
+                ExecResult configResult = (ExecResult) Await.result(configureFuture, timeout.duration());
+                if(configResult.getExecResult()){
+                    //reload prometheus config
+                    HttpUtil.post("http://"+prometheusInstance.getHostname()+":9090/-/reload","");
+                }
             }
+
         }else if(msg instanceof GenerateSRPromConfigCommand){
             GenerateSRPromConfigCommand command = (GenerateSRPromConfigCommand) msg;
             ClusterServiceInstanceService serviceInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceInstanceService.class);

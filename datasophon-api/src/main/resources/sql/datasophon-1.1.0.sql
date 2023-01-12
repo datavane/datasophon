@@ -945,7 +945,6 @@ CREATE TABLE `t_ddh_frame_info`  (
 -- Records of t_ddh_frame_info
 -- ----------------------------
 INSERT INTO `t_ddh_frame_info` VALUES (9, NULL, 'DDP-1.0.0', NULL);
-INSERT INTO `t_ddh_frame_info` VALUES (10, NULL, 'DDP-1.1.0', NULL);
 
 -- ----------------------------
 -- Table structure for t_ddh_frame_service
