@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class KerberosHandlerStrategy implements ServiceRoleStrategy {
-    private static final Logger logger = LoggerFactory.getLogger(KerberosHandlerStrategy.class);
+public class Krb5KdcHandlerStrategy implements ServiceRoleStrategy {
+
+    private static final Logger logger = LoggerFactory.getLogger(Krb5KdcHandlerStrategy.class);
+
     @Override
     public ExecResult handler(ServiceRoleOperateCommand command) throws SQLException, ClassNotFoundException {
         ExecResult startResult = new ExecResult();

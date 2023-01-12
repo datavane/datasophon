@@ -104,7 +104,7 @@
         "group": "hadoop"
       },
       "sortNum": 2,
-      "logFile": "${hadoopLogDir}/hadoop-yarn-historyserver-${host}.log",
+      "logFile": "${hadoopLogDir}/hadoop-mapred-historyserver-${host}.log",
       "jmxPort": 9325,
       "startRunner": {
         "timeout": "60",
