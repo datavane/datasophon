@@ -242,6 +242,8 @@ public final class Constants {
      * windows hosts file basedir
      */
     public static final String WINDOWS_HOST_DIR = "C:/Windows/System32/drivers";
-
-
+    /**
+     * root user
+     */
+    public static final String   ROOT= "root";
 }

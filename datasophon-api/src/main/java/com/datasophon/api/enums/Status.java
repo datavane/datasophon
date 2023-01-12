@@ -74,6 +74,7 @@ public enum Status {
     TWO_NAMENODES_NEED_TO_BE_DEPLOYED (10031,"two Namenodes need to be deployed","NameNode需要部署两台"),
     TWO_ZKFC_DEVICES_ARE_REQUIRED (10032,"two ZKFC devices are required","ZKFC需要部署两台"),
     TWO_RESOURCEMANAGER_ARE_DEPLOYED (10033,"two ResourceManager are deployed","ResourceManager需要部署两台"),
+    SELECT_LEAST_ONE_HOST (10034,"select at least one host","至少选择一台主机"),
 
     USER_NO_OPERATION_PERM(30001, "user has no operation privilege", "当前用户没有操作权限"),
     ;

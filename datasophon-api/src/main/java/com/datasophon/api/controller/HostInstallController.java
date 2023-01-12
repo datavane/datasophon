@@ -110,7 +110,9 @@ public class HostInstallController {
      * @return
      */
     @PostMapping("/generateHostAgentCommand")
-    public Result generateHostAgentCommand(Integer clusterId, String hostNames,String commandType) {
+    public Result generateHostAgentCommand(@RequestParam Integer clusterId,
+                                           @RequestParam String hostNames,
+                                           @RequestParam String commandType) throws Exception {
         return installService.generateHostAgentCommand(clusterId, hostNames,commandType);
     }
 

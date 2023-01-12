@@ -9,12 +9,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.DispatcherWorkerActor;
 import com.datasophon.api.master.HostActor;
-import com.datasophon.api.master.HostAgentCommandActor;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.utils.MessageResolverUtils;
+import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.command.DispatcherHostAgentCommand;
-import com.datasophon.common.command.HostAgentCommand;
 import com.datasophon.common.model.CheckResult;
 import com.datasophon.common.model.HostInfo;
 import com.datasophon.api.service.ClusterHostService;
@@ -22,19 +21,19 @@ import com.datasophon.api.service.InstallService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.HostCheckCommand;
-import com.datasophon.common.utils.HostUtils;
-import com.datasophon.common.utils.PlaceholderUtils;
-import com.datasophon.common.utils.PropertyUtils;
-import com.datasophon.common.utils.Result;
+import com.datasophon.common.utils.*;
 import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.InstallStepEntity;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.dao.mapper.InstallStepMapper;
+import org.apache.commons.lang.StringUtils;
+import org.apache.sshd.client.session.ClientSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import scala.collection.immutable.Stream;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -336,23 +335,34 @@ public class InstallServiceImpl implements InstallService {
 
 
     @Override
-    public Result generateHostAgentCommand(Integer clusterId, String hostNames, String commandType) {
-        ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
-        String clusterCode = clusterInfo.getClusterCode();
-        Map<String, HostInfo> map = (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
-
-        for (String hostname : hostNames.split(",")) {
-            ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
-            HostInfo hostInfo = new HostInfo();
-            if (Objects.nonNull(map) && map.containsKey(hostname)) {
-                hostInfo = map.get(hostname);
-            }else if (Objects.nonNull(clusterHost)){
-                hostInfo.setHostname(hostname);
-                hostInfo.setSshUser("root");
-                hostInfo.setSshPort(22);
+    public Result generateHostAgentCommand(Integer clusterId, String hostNames, String commandType) throws Exception {
+        if(StringUtils.isBlank(hostNames)){
+            return Result.error(Status.SELECT_LEAST_ONE_HOST.getMsg());
+        }
+        String[] hostNameArray = hostNames.split(Constants.COMMA);
+        for (String hostname : hostNameArray) {
+            ClientSession session = MinaUtils.openConnection(
+                     hostname,
+              22,
+                     Constants.ROOT,
+                    Constants.SLASH + Constants.ROOT + Constants.ID_RSA);
+            MinaUtils.execCmdWithResult( session,"service datasophon-worker "+commandType);
+            logger.info("hostAgent command:{}", "service datasophon-worker "+commandType);
+            String cpuArchitecture = ShellUtils.getCpuArchitecture();
+            String workDir = Constants.WORKER_PATH;
+            ArrayList<String> commands = new ArrayList<>();
+            commands.add("sh");
+            if (Constants.x86_64.equals(cpuArchitecture)) {
+                commands.add(workDir + "/node/x86/control.sh");
+            } else {
+                commands.add(workDir + "/node/arm/control.sh");
             }
-            ActorRef hostActor = ActorUtils.getLocalActor(HostAgentCommandActor.class,"hostAgentCommandActor-" + hostname);
-            hostActor.tell(new HostAgentCommand(hostInfo, clusterId, commandType), ActorRef.noSender());
+            commands.add(commandType);
+            commands.add("node");
+            ShellUtils.execWithStatus(Constants.WORKER_PATH, commands, 60L);
+            if (ObjectUtil.isNotEmpty(session)) {
+                session.close();
+            }
         }
         return Result.success();
     }
