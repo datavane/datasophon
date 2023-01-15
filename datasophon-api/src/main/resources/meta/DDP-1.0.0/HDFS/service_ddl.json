@@ -753,7 +753,7 @@
       "configType": "kb",
       "separator":"\n",
       "type": "multiple",
-      "value": ["RULE:[2:$1/$2@$0]([ndj]n\\/.*@HADOOP\\.COM)s/.*/hdfs/","DEFAULT"],
+      "value": ["RULE:[2:$1/$2@$0]([ndj]n\\/.*@HADOOP\\.COM)s/.*/hdfs/","RULE:[2:$1/$2@$0]([rn]m\\/.*@HADOOP\\.COM)s/.*/yarn/","RULE:[2:$1/$2@$0](jhs\\/.*@HADOOP\\.COM)s/.*/mapred/","DEFAULT"],
       "hidden": true,
       "defaultValue": []
     },
