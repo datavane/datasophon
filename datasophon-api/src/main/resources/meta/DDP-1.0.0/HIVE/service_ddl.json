@@ -324,10 +324,10 @@
       "configWithKerberos": true,
       "required": false,
       "type": "switch",
-      "value": false,
+      "value": true,
       "configurableInWizard": true,
       "hidden": true,
-      "defaultValue": false
+      "defaultValue": true
     },
     {
       "name": "hive.metastore.kerberos.principal",
