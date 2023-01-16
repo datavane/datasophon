@@ -20,4 +20,6 @@ public interface InstallService {
     Result cancelDispatcherHostAgent(Integer clusterId, String hostname, Integer installStateCode);
 
     Result dispatcherHostAgentCompleted(Integer clusterId);
+
+    Result generateHostAgentCommand(String clusterHostIds,String commandType) throws Exception;
 }
