@@ -208,9 +208,8 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             serviceInstanceEntity.setNeedRestart(NeedRestart.NO);
             serviceInstanceEntity.setFrameServiceId(frameServiceEntity.getId());
             serviceInstanceEntity.setSortNum(frameServiceEntity.getSortNum());
-            //服务实例持久化
             serviceInstanceService.save(serviceInstanceEntity);
-            //保存角色组，生成默认角色组
+
             ClusterServiceInstanceRoleGroup clusterServiceInstanceRoleGroup = new ClusterServiceInstanceRoleGroup();
             clusterServiceInstanceRoleGroup.setServiceInstanceId(serviceInstanceEntity.getId());
             clusterServiceInstanceRoleGroup.setClusterId(clusterId);
@@ -218,7 +217,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             clusterServiceInstanceRoleGroup.setServiceName(serviceName);
             clusterServiceInstanceRoleGroup.setRoleGroupType("default");
             roleGroupService.save(clusterServiceInstanceRoleGroup);
-            //角色组配置持久化
+
             ClusterServiceRoleGroupConfig roleGroupConfig = new ClusterServiceRoleGroupConfig();
             roleGroupConfig.setRoleGroupId(clusterServiceInstanceRoleGroup.getId());
             roleGroupConfig.setClusterId(clusterId);
