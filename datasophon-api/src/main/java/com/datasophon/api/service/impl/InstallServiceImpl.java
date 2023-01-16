@@ -350,18 +350,6 @@ public class InstallServiceImpl implements InstallService {
                     Constants.SLASH + Constants.ROOT + Constants.ID_RSA);
             MinaUtils.execCmdWithResult( session,"service datasophon-worker "+commandType);
             logger.info("hostAgent command:{}", "service datasophon-worker "+commandType);
-            String cpuArchitecture = clusterHostEntity.getCpuArchitecture();
-            String workDir = Constants.WORKER_PATH;
-            ArrayList<String> commands = new ArrayList<>();
-            commands.add("sh");
-            if (Constants.x86_64.equals(cpuArchitecture)) {
-                commands.add(workDir + "/node/x86/control.sh");
-            } else {
-                commands.add(workDir + "/node/arm/control.sh");
-            }
-            commands.add(commandType);
-            commands.add("node");
-            ShellUtils.execWithStatus(Constants.WORKER_PATH, commands, 60L);
             if (ObjectUtil.isNotEmpty(session)) {
                 session.close();
             }
