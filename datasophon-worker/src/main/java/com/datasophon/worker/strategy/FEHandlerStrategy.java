@@ -26,7 +26,7 @@ public class FEHandlerStrategy implements ServiceRoleStrategy {
         ServiceHandler serviceHandler = new ServiceHandler();
         if ( command.getCommandType()== CommandType.INSTALL_SERVICE) {
             if(command.isSlave()){
-                logger.info("first start starrocks fe");
+                logger.info("first start  fe");
                 ArrayList<String> commands = new ArrayList<>();
                 commands.add("--helper");
                 commands.add(command.getMasterHost() + ":9010");

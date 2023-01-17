@@ -19,7 +19,8 @@ public class ServiceRoleStrategyContext {
         map.put("TrinoCoordinator",new TrinoHandlerStrategy());
         map.put("JournalNode",new JournalNodeHandlerStrategy());
         map.put("ZKFC",new ZKFCHandlerStrategy());
-        map.put("FE",new StarRocksHandlerStartegy());
+        map.put("SRFE",new FEHandlerStartegy());
+        map.put("DorisFE",new FEHandlerStartegy());
         map.put("Krb5Kdc",new Krb5KdcHandlerStrategy());
         map.put("KAdmin",new KAdminHandlerStrategy());
         map.put("RangerAdmin",new RangerAdminHandlerStrategy());
