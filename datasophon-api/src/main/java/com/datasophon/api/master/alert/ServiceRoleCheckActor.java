@@ -64,7 +64,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
             ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
 
             List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                    .in(Constants.SERVICE_ROLE_NAME, "Prometheus", "AlertManager", "Krb5Kdc", "KAdmin", "FE", "BE"));
+                    .in(Constants.SERVICE_ROLE_NAME, "Prometheus", "AlertManager", "Krb5Kdc", "KAdmin", "SRFE", "SRBE", "DorisFE", "DorisBE"));
             Map<String, ClusterServiceRoleInstanceEntity> map = list.stream().collect(Collectors.toMap(e -> e.getHostname() + e.getServiceRoleName(), e -> e, (v1, v2) -> v1));
             String frameCode = "";
             if (Objects.nonNull(list) && list.size() > 0) {
@@ -77,7 +77,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
                             recoverAlert(roleInstanceEntity);
                         } catch (Exception e) {
                             String alertTargetName = roleInstanceEntity.getServiceRoleName() + " Survive";
-                            saveAlert(roleInstanceEntity,  alertTargetName, AlertLevel.EXCEPTION, "restart");
+                            saveAlert(roleInstanceEntity, alertTargetName, AlertLevel.EXCEPTION, "restart");
                         }
                     }
                     if ("AlertManager".equals(roleInstanceEntity.getServiceRoleName())) {
@@ -92,67 +92,67 @@ public class ServiceRoleCheckActor extends UntypedActor {
 
                         }
                     }
-                    if ("FE".equals(roleInstanceEntity.getServiceRoleName())) {
+                    if ("SRFE".equals(roleInstanceEntity.getServiceRoleName())) {
                         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + roleInstanceEntity.getClusterId());
                         String feMaster = globalVariables.get("${feMaster}");
                         if (roleInstanceEntity.getHostname().equals(feMaster) && roleInstanceEntity.getServiceRoleState() == ServiceRoleState.RUNNING) {
                             try {
                                 List<ProcInfo> frontends = StarRocksUtils.showFrontends(feMaster);
-                                resolveProcInfoAlert("FE", frontends, map);
+                                resolveProcInfoAlert("SRFE", frontends, map);
                             } catch (Exception e) {
 
                             }
                             try {
                                 List<ProcInfo> backends = StarRocksUtils.showBackends(feMaster);
-                                resolveProcInfoAlert("BE", backends, map);
+                                resolveProcInfoAlert("SRBE", backends, map);
                             } catch (Exception e) {
 
                             }
 
                         }
-                        if ("Krb5Kdc".equals(roleInstanceEntity.getServiceRoleName()) ||
-                                "KAdmin".equals(roleInstanceEntity.getServiceRoleName())) {
-                            Integer clusterId = roleInstanceEntity.getClusterId();
-                            if (StringUtils.isBlank(frameCode)) {
-                                ClusterInfoEntity cluster = clusterInfoService.getById(clusterId);
-                                frameCode = cluster.getClusterFrame();
-                            }
-                            String key = frameCode + Constants.UNDERLINE + roleInstanceEntity.getServiceName() + Constants.UNDERLINE + roleInstanceEntity.getServiceRoleName();
-                            ServiceRoleInfo serviceRoleInfo = ServiceRoleMap.get(key);
-                            ServiceInfo serviceInfo = ServiceInfoMap.get(frameCode + Constants.UNDERLINE + roleInstanceEntity.getServiceName());
-
-                            ActorSelection execCmdActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + roleInstanceEntity.getHostname() + ":2552/user/worker/executeCmdActor");
-                            ExecuteCmdCommand cmdCommand = new ExecuteCmdCommand();
-                            ArrayList<String> commandList = new ArrayList<>();
-                            commandList.add(serviceInfo.getDecompressPackageName() + Constants.SLASH + serviceRoleInfo.getStatusRunner().getProgram());
-                            commandList.addAll(serviceRoleInfo.getStatusRunner().getArgs());
-                            cmdCommand.setCommands(commandList);
-                            Timeout timeout = new Timeout(Duration.create(30, TimeUnit.SECONDS));
-                            Future<Object> execFuture = Patterns.ask(execCmdActor, cmdCommand, timeout);
-                            try {
-                                ExecResult execResult = (ExecResult) Await.result(execFuture, timeout.duration());
-                                if (execResult.getExecResult()) {
-                                    recoverAlert(roleInstanceEntity);
-                                } else {
-                                    String alertTargetName = roleInstanceEntity.getServiceRoleName() + " Survive";
-                                    saveAlert(roleInstanceEntity,  alertTargetName, AlertLevel.EXCEPTION, "restart");
-                                }
-                            } catch (Exception e) {
-                                //save alert
-                                String alertTargetName = roleInstanceEntity.getServiceRoleName() + " Survive";
-                                saveAlert(roleInstanceEntity,  alertTargetName, AlertLevel.EXCEPTION, "restart");
-                            }
-                        }
-                        //check namenode ha
-
                     }
+                    if ("Krb5Kdc".equals(roleInstanceEntity.getServiceRoleName()) ||
+                            "KAdmin".equals(roleInstanceEntity.getServiceRoleName())) {
+                        Integer clusterId = roleInstanceEntity.getClusterId();
+                        if (StringUtils.isBlank(frameCode)) {
+                            ClusterInfoEntity cluster = clusterInfoService.getById(clusterId);
+                            frameCode = cluster.getClusterFrame();
+                        }
+                        String key = frameCode + Constants.UNDERLINE + roleInstanceEntity.getServiceName() + Constants.UNDERLINE + roleInstanceEntity.getServiceRoleName();
+                        ServiceRoleInfo serviceRoleInfo = ServiceRoleMap.get(key);
+                        ServiceInfo serviceInfo = ServiceInfoMap.get(frameCode + Constants.UNDERLINE + roleInstanceEntity.getServiceName());
+
+                        ActorSelection execCmdActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + roleInstanceEntity.getHostname() + ":2552/user/worker/executeCmdActor");
+                        ExecuteCmdCommand cmdCommand = new ExecuteCmdCommand();
+                        ArrayList<String> commandList = new ArrayList<>();
+                        commandList.add(serviceInfo.getDecompressPackageName() + Constants.SLASH + serviceRoleInfo.getStatusRunner().getProgram());
+                        commandList.addAll(serviceRoleInfo.getStatusRunner().getArgs());
+                        cmdCommand.setCommands(commandList);
+                        Timeout timeout = new Timeout(Duration.create(30, TimeUnit.SECONDS));
+                        Future<Object> execFuture = Patterns.ask(execCmdActor, cmdCommand, timeout);
+                        try {
+                            ExecResult execResult = (ExecResult) Await.result(execFuture, timeout.duration());
+                            if (execResult.getExecResult()) {
+                                recoverAlert(roleInstanceEntity);
+                            } else {
+                                String alertTargetName = roleInstanceEntity.getServiceRoleName() + " Survive";
+                                saveAlert(roleInstanceEntity, alertTargetName, AlertLevel.EXCEPTION, "restart");
+                            }
+                        } catch (Exception e) {
+                            //save alert
+                            String alertTargetName = roleInstanceEntity.getServiceRoleName() + " Survive";
+                            saveAlert(roleInstanceEntity, alertTargetName, AlertLevel.EXCEPTION, "restart");
+                        }
+                    }
+                    //check namenode ha
                 }
             } else {
                 unhandled(msg);
             }
         }
     }
-    private void resolveProcInfoAlert (String serviceRoleName, List <ProcInfo> frontends, Map < String, ClusterServiceRoleInstanceEntity > map){
+
+    private void resolveProcInfoAlert(String serviceRoleName, List<ProcInfo> frontends, Map<String, ClusterServiceRoleInstanceEntity> map) {
         for (ProcInfo frontend : frontends) {
             ClusterServiceRoleInstanceEntity roleInstanceEntity = map.get(frontend.getHostName() + serviceRoleName);
 //            ClusterServiceRoleInstanceEntity roleInstanceEntity = roleInstanceService.getServiceRoleInsByHostAndName(frontend.getHostName(), serviceRoleName);
@@ -160,14 +160,14 @@ public class ServiceRoleCheckActor extends UntypedActor {
                 String alertTargetName = serviceRoleName + " Alive";
                 logger.info("{} at host {} is not alive", serviceRoleName, frontend.getHostName());
                 String alertAdvice = "the errmsg is " + frontend.getErrMsg();
-                saveAlert(roleInstanceEntity,  alertTargetName, AlertLevel.WARN, alertAdvice);
+                saveAlert(roleInstanceEntity, alertTargetName, AlertLevel.WARN, alertAdvice);
             } else {
                 recoverAlert(roleInstanceEntity);
             }
         }
     }
 
-    private void recoverAlert (ClusterServiceRoleInstanceEntity roleInstanceEntity ){
+    private void recoverAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity) {
         ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
         ClusterAlertHistoryService alertHistoryService = SpringTool.getApplicationContext().getBean(ClusterAlertHistoryService.class);
         ClusterAlertHistory clusterAlertHistory = alertHistoryService.getOne(new QueryWrapper<ClusterAlertHistory>()
@@ -186,8 +186,8 @@ public class ServiceRoleCheckActor extends UntypedActor {
         }
     }
 
-    private void saveAlert (ClusterServiceRoleInstanceEntity roleInstanceEntity, String
-            alertTargetName, AlertLevel alertLevel, String alertAdvice){
+    private void saveAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity, String
+            alertTargetName, AlertLevel alertLevel, String alertAdvice) {
         ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
         ClusterAlertHistoryService alertHistoryService = SpringTool.getApplicationContext().getBean(ClusterAlertHistoryService.class);
         ClusterServiceInstanceService serviceInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceInstanceService.class);

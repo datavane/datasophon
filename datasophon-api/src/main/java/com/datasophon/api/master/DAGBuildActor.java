@@ -87,7 +87,7 @@ public class DAGBuildActor extends UntypedActor {
                             logger.info("set to slave hiveserver2");
                             serviceRoleInfo.setSlave(true);
                         }
-                        if("FE".equals(serviceRoleInfo.getName()) ){
+                        if("SRFE".equals(serviceRoleInfo.getName()) || "DorisFE".equals(serviceRoleInfo.getName())){
                             String feMaster = globalVariables.get("${feMaster}");
                             if(hostCommand.getHostname().equals(feMaster)){
                                 logger.info("fe master is {}",feMaster);
@@ -99,7 +99,7 @@ public class DAGBuildActor extends UntypedActor {
                                 serviceRoleInfo.setSortNum(2);
                             }
                         }
-                        if("BE".equals(serviceRoleInfo.getName()) ){
+                        if("SRBE".equals(serviceRoleInfo.getName()) || "DorisBe".equals(serviceRoleInfo.getName())){
                             String feMaster = globalVariables.get("${feMaster}");
                             logger.info("fe master is {}",feMaster);
                             serviceRoleInfo.setMasterHost(feMaster);
