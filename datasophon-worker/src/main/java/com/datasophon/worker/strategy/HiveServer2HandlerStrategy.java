@@ -68,7 +68,7 @@ public class HiveServer2HandlerStrategy implements ServiceRoleStrategy {
         ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -mkdir -p /tmp/hive");
         ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -chown hive:hadoop /user/hive/warehouse");
         ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -chown hive:hadoop /tmp/hive");
-
+        ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -chmod 777 /tmp/hive");
         startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(),command.getRunAs());
         return startResult;
     }

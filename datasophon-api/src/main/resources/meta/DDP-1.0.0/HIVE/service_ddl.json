@@ -133,6 +133,12 @@
           "hive.metastore.sasl.enabled",
           "hive.metastore.kerberos.keytab.file",
           "hive.metastore.kerberos.principal",
+          "hive.server2.support.dynamic.service.discovery",
+          "hive.server2.zookeeper.namespace",
+          "hive.zookeeper.quorum",
+          "hive.zookeeper.client.port",
+          "hive.server2.thrift.bind.host",
+          "hive.server2.thrift.port",
           "custom.hive.site.xml"
         ]
       },
@@ -407,10 +413,10 @@
       "description": "",
       "required": false,
       "type": "input",
-      "value": "",
+      "value": "${host}",
       "configurableInWizard": true,
       "hidden": true,
-      "defaultValue": "0.0.0.0"
+      "defaultValue": "${host}"
     },{
       "name": "hive.server2.thrift.port",
       "label": "hiveserver2 thrift端口",

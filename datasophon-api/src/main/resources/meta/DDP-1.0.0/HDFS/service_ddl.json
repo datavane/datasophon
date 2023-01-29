@@ -284,6 +284,7 @@
       "name": "hadoop.tmp.dir",
       "label": "Hadoop运行时文件存储目录",
       "description": "Hadoop运行时文件存储目录",
+      "configType": "path",
       "required": true,
       "type": "input",
       "value": "",
