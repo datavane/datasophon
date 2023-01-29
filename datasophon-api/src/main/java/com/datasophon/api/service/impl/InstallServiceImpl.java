@@ -12,6 +12,7 @@ import com.datasophon.api.master.HostActor;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.utils.MessageResolverUtils;
+import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.command.DispatcherHostAgentCommand;
 import com.datasophon.common.model.CheckResult;
 import com.datasophon.common.model.HostInfo;
@@ -20,19 +21,19 @@ import com.datasophon.api.service.InstallService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.HostCheckCommand;
-import com.datasophon.common.utils.HostUtils;
-import com.datasophon.common.utils.PlaceholderUtils;
-import com.datasophon.common.utils.PropertyUtils;
-import com.datasophon.common.utils.Result;
+import com.datasophon.common.utils.*;
 import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.InstallStepEntity;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.dao.mapper.InstallStepMapper;
+import org.apache.commons.lang.StringUtils;
+import org.apache.sshd.client.session.ClientSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import scala.collection.immutable.Stream;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -332,6 +333,29 @@ public class InstallServiceImpl implements InstallService {
         return Result.success().put("dispatcherHostAgentCompleted", true);
     }
 
+
+    @Override
+    public Result generateHostAgentCommand(String clusterHostIds, String commandType) throws Exception {
+        if(StringUtils.isBlank(clusterHostIds)){
+            return Result.error(Status.SELECT_LEAST_ONE_HOST.getMsg());
+        }
+        String[] clusterHostIdArray = clusterHostIds.split(Constants.COMMA);
+        List<String> clusterHostIdList = Arrays.asList(clusterHostIdArray);
+        List<ClusterHostEntity> clusterHostList = hostService.getHostListByIds(clusterHostIdList);
+        for (ClusterHostEntity clusterHostEntity : clusterHostList) {
+            ClientSession session = MinaUtils.openConnection(
+                    clusterHostEntity.getHostname(),
+              22,
+                     Constants.ROOT,
+                    Constants.SLASH + Constants.ROOT + Constants.ID_RSA);
+            MinaUtils.execCmdWithResult( session,"service datasophon-worker "+commandType);
+            logger.info("hostAgent command:{}", "service datasophon-worker "+commandType);
+            if (ObjectUtil.isNotEmpty(session)) {
+                session.close();
+            }
+        }
+        return Result.success();
+    }
 
     private List<HostInfo> getListPage(List<HostInfo> list, Integer offset, Integer pageSize) {
         List<HostInfo> result = new ArrayList<>();

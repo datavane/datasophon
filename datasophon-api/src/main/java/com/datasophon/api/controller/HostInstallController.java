@@ -101,4 +101,18 @@ public class HostInstallController {
     public Result reStartDispatcherHostAgent(Integer clusterId, String hostnames) {
         return installService.reStartDispatcherHostAgent(clusterId, hostnames);
     }
+
+    /**
+     * 主机管理agent操作(启动(start)、停止(stop)、重启(restart))
+     * @param clusterHostIds
+     * @param commandType
+     * @return
+     */
+    @PostMapping("/generateHostAgentCommand")
+    public Result generateHostAgentCommand(
+                                           @RequestParam String clusterHostIds,
+                                           @RequestParam String commandType) throws Exception {
+        return installService.generateHostAgentCommand(clusterHostIds,commandType);
+    }
+
 }

@@ -70,11 +70,11 @@ public enum Status {
     ROLE_GROUP_HAS_NO_OUTDATED_SERVICE (10026,"this role group has no outdated service","该角色组没有过时服务"),
     DUPLICATE_USER_NAME (10027,"duplicate user name","用户名重复"),
     QUEUE_NAME_ALREADY_EXISTS (10028,"the queue name already exists","队列名已存在"),
-    FAILED_TO_REFRESH_THE_QUEUE_TO_YARN (10029,"description Failed to refresh the queue to yarn","刷新队列到Yarn失败"),
     THREE_JOURNALNODE_DEPLOYMENTS_REQUIRED (10030,"three JournalNode deployments are required","JournalNode需要部署三台"),
     TWO_NAMENODES_NEED_TO_BE_DEPLOYED (10031,"two Namenodes need to be deployed","NameNode需要部署两台"),
     TWO_ZKFC_DEVICES_ARE_REQUIRED (10032,"two ZKFC devices are required","ZKFC需要部署两台"),
     TWO_RESOURCEMANAGER_ARE_DEPLOYED (10033,"two ResourceManager are deployed","ResourceManager需要部署两台"),
+    SELECT_LEAST_ONE_HOST (10034,"select at least one host","至少选择一台主机"),
 
     USER_NO_OPERATION_PERM(30001, "user has no operation privilege", "当前用户没有操作权限"),
     ;

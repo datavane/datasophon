@@ -113,7 +113,7 @@ public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMap
             ServiceConfigureHandler configureHandler = new ServiceConfigureHandler();
             ExecResult execResult = configureHandler.handlerRequest(serviceRoleInfo);
             if (!execResult.getExecResult()) {
-                return Result.error("刷新队列到Yarn失败");
+                return Result.error(Status.FAILED_REFRESH_THE_QUEUE_TO_YARN.getMsg());
             }
             if (StringUtils.isBlank(hostname)) {
                 hostname = roleInstanceEntity.getHostname();
@@ -133,7 +133,7 @@ public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMap
             logger.info("yarn dfsadmin -refreshQueues success at {}", hostname);
         } else {
             logger.info(execResult.getExecOut());
-            return Result.error(Status.FAILED_TO_REFRESH_THE_QUEUE_TO_YARN.getMsg());
+            return Result.error(Status.FAILED_REFRESH_THE_QUEUE_TO_YARN.getMsg());
         }
         return Result.success();
     }
