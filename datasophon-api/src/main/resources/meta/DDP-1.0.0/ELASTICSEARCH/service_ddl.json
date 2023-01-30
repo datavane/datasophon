@@ -257,6 +257,7 @@
       "label": "数据存储目录",
       "description": "",
       "configType": "path",
+      "separator": ",",
       "required": true,
       "type": "multiple",
       "value": ["/data/es"],

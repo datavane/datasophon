@@ -148,7 +148,7 @@ public class ProcessUtils {
 
         clusterHostEntity.setClusterId(cluster.getId());
         clusterHostEntity.setCheckTime(new Date());
-        clusterHostEntity.setRack("default");
+        clusterHostEntity.setRack("/default-rack");
         clusterHostEntity.setNodeLabel("default");
         clusterHostEntity.setCreateTime(new Date());
         clusterHostEntity.setIp(hostIp.get(message.getHostname()));

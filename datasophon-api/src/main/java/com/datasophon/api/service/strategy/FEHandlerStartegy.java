@@ -8,7 +8,7 @@ import com.datasophon.common.model.ServiceConfig;
 import java.util.List;
 import java.util.Map;
 
-public class StarRocksHandlerStartegy implements ServiceRoleStrategy{
+public class FEHandlerStartegy implements ServiceRoleStrategy{
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
         Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+clusterId);

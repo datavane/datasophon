@@ -21,10 +21,12 @@ public class ServiceRoleStrategyContext {
         map.put("RegionServer",new HbaseHandlerStrategy());
         map.put("Krb5Kdc",new Krb5KdcHandlerStrategy());
         map.put("KAdmin",new KAdminHandlerStrategy());
-        map.put("FE",new FEHandlerStrategy());
+        map.put("SRFE",new FEHandlerStrategy());
+        map.put("DorisFE",new FEHandlerStrategy());
         map.put("ZkServer",new ZkServerHandlerStrategy());
         map.put("KafkaBroker",new KafkaHandlerStrategy());
-        map.put("BE",new BEHandlerStrategy());
+        map.put("SRBE",new BEHandlerStrategy());
+        map.put("DorisBE",new BEHandlerStrategy());
         map.put("HistoryServer",new HistoryServerHandlerStrategy());
     }
 

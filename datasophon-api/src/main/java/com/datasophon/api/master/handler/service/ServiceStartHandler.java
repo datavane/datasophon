@@ -36,6 +36,9 @@ public class ServiceStartHandler extends ServiceHandler {
         serviceRoleOperateCommand.setSlave(serviceRoleInfo.isSlave());
         serviceRoleOperateCommand.setCommandType(serviceRoleInfo.getCommandType());
         serviceRoleOperateCommand.setMasterHost(serviceRoleInfo.getMasterHost());
+
+        logger.info("service master host is {}", serviceRoleInfo.getMasterHost());
+
         serviceRoleOperateCommand.setEnableRangerPlugin(serviceRoleInfo.getEnableRangerPlugin());
         serviceRoleOperateCommand.setRunAs(serviceRoleInfo.getRunAs());
         Boolean enableKerberos = Boolean.parseBoolean(globalVariables.get("${enable" + serviceRoleInfo.getParentName() + "Kerberos}"));

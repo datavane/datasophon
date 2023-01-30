@@ -245,10 +245,10 @@
       "configWithKerberos": true,
       "required": false,
       "type": "input",
-      "value": "-Djava.security.auth.login.config=${ZK_HOME}/conf/jaas.conf",
+      "value": "-Djava.security.auth.login.config=${ZOOKEEPER_HOME}/conf/jaas.conf",
       "configurableInWizard": true,
       "hidden": true,
-      "defaultValue": "-Djava.security.auth.login.config=${ZK_HOME}/conf/jaas.conf"
+      "defaultValue": "-Djava.security.auth.login.config=${ZOOKEEPER_HOME}/conf/jaas.conf"
     },
     {
       "name": "server.1",

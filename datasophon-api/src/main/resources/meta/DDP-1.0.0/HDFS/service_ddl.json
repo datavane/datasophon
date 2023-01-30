@@ -252,7 +252,9 @@
           "dfs.hosts",
           "dfs.hosts.exclude",
           "net.topology.table.file.name",
-          "net.topology.node.switch.mapping.impl"
+          "net.topology.node.switch.mapping.impl",
+          "dfs.datanode.address",
+          "dfs.datanode.http.address"
         ]
       },
       {
@@ -282,6 +284,7 @@
       "name": "hadoop.tmp.dir",
       "label": "Hadoop运行时文件存储目录",
       "description": "Hadoop运行时文件存储目录",
+      "configType": "path",
       "required": true,
       "type": "input",
       "value": "",
@@ -599,6 +602,30 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": "/data/dfs/jn"
+    },
+    {
+      "name": "dfs.datanode.address",
+      "label": "datanode地址",
+      "description": "",
+      "configType": "ha",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "0.0.0.0:1026"
+    },
+    {
+      "name": "dfs.datanode.http.address",
+      "label": "datanode http地址",
+      "description": "",
+      "configType": "ha",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "0.0.0.0:1025"
     },
     {
       "name": "dfs.permissions.enabled",

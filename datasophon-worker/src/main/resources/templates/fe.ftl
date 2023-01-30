@@ -31,6 +31,7 @@ JAVA_OPTS_FOR_JDK_9="-Dlog4j2.formatMsgNoLookups=true -Xmx8192m -XX:SurvivorRati
 
 http_port = 18030
 mysql_service_nio_enabled = true
+edit_log_port = 9010
 <#list itemList as item>
 ${item.name} = ${item.value}
 </#list>

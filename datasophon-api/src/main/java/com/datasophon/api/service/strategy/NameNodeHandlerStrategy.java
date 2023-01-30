@@ -21,7 +21,7 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract  implements 
 
     private static final String ENABLE_RACK = "enableRack";
 
-    private static final String ENABLE_KERBEROS = "enableRack";
+    private static final String ENABLE_KERBEROS = "enableKerberos";
 
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
