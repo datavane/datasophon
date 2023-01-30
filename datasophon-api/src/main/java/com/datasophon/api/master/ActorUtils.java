@@ -8,6 +8,7 @@ import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.concurrent.Await;
@@ -32,7 +33,7 @@ public class ActorUtils {
         String hostname = InetAddress.getLocalHost().getHostName();
         Config config = ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" + hostname);
         actorSystem = ActorSystem.create("datasophon", config.withFallback(ConfigFactory.load()));
-        actorSystem.actorOf(Props.create(MasterServer.class), "master");
+        actorSystem.actorOf(Props.create(WorkerStartActor.class), getActorRefName(WorkerStartActor.class));
         ActorRef serviceRoleCheckActor = actorSystem.actorOf(Props.create(ServiceRoleCheckActor.class), "serviceRoleCheckActor");
         ActorRef hostCheckActor = actorSystem.actorOf(Props.create(HostCheckActor.class), "hostCheckActor");
 
@@ -86,4 +87,9 @@ public class ActorUtils {
 
         return actorRef;
     }
+    /** Get ActorRef name from Class name. */
+    public static String getActorRefName(Class clazz) {
+        return StringUtils.uncapitalize(clazz.getSimpleName());
+    }
+
 }

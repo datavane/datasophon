@@ -65,7 +65,7 @@ public class WorkerStartActor extends UntypedActor {
                 clusterHostService.updateById(hostEntity);
             }
             //add to prometheus
-            ActorRef prometheusActor = (ActorRef) CacheUtils.get("prometheusActor");
+            ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class,ActorUtils.getActorRefName(PrometheusActor.class));
             GenerateHostPrometheusConfig prometheusConfigCommand = new GenerateHostPrometheusConfig();
             prometheusConfigCommand.setClusterId(cluster.getId());
             prometheusActor.tell(prometheusConfigCommand, getSelf());

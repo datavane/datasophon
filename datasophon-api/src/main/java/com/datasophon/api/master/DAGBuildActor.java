@@ -148,7 +148,7 @@ public class DAGBuildActor extends UntypedActor {
             submitActiveTaskNodeCommand.setReadyToSubmitTaskList(readyToSubmitTaskList);
             submitActiveTaskNodeCommand.setCompleteTaskList(completeTaskList);
             submitActiveTaskNodeCommand.setClusterCode(clusterInfo.getClusterCode());
-            ActorRef submitTaskNodeActor = (ActorRef) CacheUtils.get("submitTaskNodeActor");
+            ActorRef submitTaskNodeActor = ActorUtils.getLocalActor(SubmitTaskNodeActor.class,ActorUtils.getActorRefName(SubmitTaskNodeActor.class));
             submitTaskNodeActor.tell(submitActiveTaskNodeCommand, getSelf());
         }
     }

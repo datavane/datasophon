@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.ServiceCommandActor;
+import com.datasophon.api.master.ServiceExecuteResultActor;
 import com.datasophon.api.master.handler.service.*;
 import com.datasophon.api.service.*;
 import com.datasophon.api.master.MasterServiceActor;
@@ -191,7 +192,8 @@ public class ProcessUtils {
     }
 
     public static void tellCommandActorResult(String serviceName, ExecuteServiceRoleCommand executeServiceRoleCommand, ServiceExecuteState state) {
-        ActorRef serviceExecuteResult = (ActorRef) CacheUtils.get("serviceExecuteResultActor");
+        ActorRef serviceExecuteResultActor = ActorUtils.getLocalActor(ServiceExecuteResultActor.class, ActorUtils.getActorRefName(ServiceExecuteResultActor.class));
+
         ServiceExecuteResultMessage serviceExecuteResultMessage = new ServiceExecuteResultMessage();
         serviceExecuteResultMessage.setServiceExecuteState(state);
         serviceExecuteResultMessage.setDag(executeServiceRoleCommand.getDag());
@@ -206,8 +208,7 @@ public class ProcessUtils {
         serviceExecuteResultMessage.setReadyToSubmitTaskList(executeServiceRoleCommand.getReadyToSubmitTaskList());
         serviceExecuteResultMessage.setCompleteTaskList(executeServiceRoleCommand.getCompleteTaskList());
 
-
-        serviceExecuteResult.tell(serviceExecuteResultMessage, ActorRef.noSender());
+        serviceExecuteResultActor.tell(serviceExecuteResultMessage, ActorRef.noSender());
     }
 
     public static ClusterServiceCommandHostCommandEntity handleCommandResult(String hostCommandId, Boolean execResult, String execOut) {

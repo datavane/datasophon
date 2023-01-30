@@ -33,12 +33,12 @@ public class WorkerApplicationServer  {
     private static final Logger logger = LoggerFactory.getLogger(WorkerApplicationServer.class);
 
     public static void main(String[] args) throws UnknownHostException, NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException, MalformedObjectNameException {
-        //启动actorsystem
+        //actorsystem
         String hostname = InetAddress.getLocalHost().getHostName();
         CacheUtils.put("hostname",hostname);
         Config config = ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" + hostname);
         ActorSystem system = ActorSystem.create("datasophon", config.withFallback(ConfigFactory.load()));
-        //初始化actor
+        //init actor
         system.actorOf(Props.create(WorkerActor.class), "worker");
 
         ActorRef remoteEventActor = system.actorOf(Props.create(RemoteEventActor.class), "remoteEventActor");
@@ -51,7 +51,7 @@ public class WorkerApplicationServer  {
 
         String masterHost = PropertyUtils.getString("masterHost");
 
-        ActorSelection workerStartActor = system.actorSelection("akka.tcp://datasophon@" + masterHost + ":2551/user/master/workerStartActor");
+        ActorSelection workerStartActor = system.actorSelection("akka.tcp://datasophon@" + masterHost + ":2551/user/workerStartActor");
 
         String workDir = System.getProperty("user.dir");
         ExecResult result = ShellUtils.exceShell(workDir + "/script/host-info-collect.sh");
