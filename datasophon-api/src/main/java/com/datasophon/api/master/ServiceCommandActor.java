@@ -87,7 +87,6 @@ public class ServiceCommandActor extends UntypedActor {
                         hdfsEcCommand.setServiceInstanceId(command.getServiceInstanceId());
                         hdfsECActor.tell(hdfsEcCommand,getSelf());
                     }
-                    //更新prometheus配置
                     logger.info("start to generate prometheus config");
                     ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class,ActorUtils.getActorRefName(PrometheusActor.class));
                     if("starrocks".equals(serviceName.toLowerCase()) || "doris".equals(serviceName.toLowerCase())){

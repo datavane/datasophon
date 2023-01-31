@@ -32,50 +32,31 @@ public class WorkerApplicationServer  {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkerApplicationServer.class);
 
-    public static void main(String[] args) throws UnknownHostException, NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException, MalformedObjectNameException {
-        //actorsystem
+    private static final String USER_DIR = "user.dir";
+
+    private static final String MASTER_HOST= "masterHost";
+
+    private static final String WORKER = "worker";
+
+    private static final String SH = "sh";
+
+    private static final String NODE = "node";
+
+    public static void main(String[] args) throws UnknownHostException {
         String hostname = InetAddress.getLocalHost().getHostName();
-        CacheUtils.put("hostname",hostname);
-        Config config = ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" + hostname);
-        ActorSystem system = ActorSystem.create("datasophon", config.withFallback(ConfigFactory.load()));
-        //init actor
-        system.actorOf(Props.create(WorkerActor.class), "worker");
-
-        ActorRef remoteEventActor = system.actorOf(Props.create(RemoteEventActor.class), "remoteEventActor");
-
-        //订阅远程监听事件
-        EventStream eventStream = system.eventStream();
-        eventStream.subscribe(remoteEventActor, AssociationErrorEvent.class);
-        eventStream.subscribe(remoteEventActor, AssociatedEvent.class);
-        eventStream.subscribe(remoteEventActor, DisassociatedEvent.class);
-
-        String masterHost = PropertyUtils.getString("masterHost");
-
-        ActorSelection workerStartActor = system.actorSelection("akka.tcp://datasophon@" + masterHost + ":2551/user/workerStartActor");
-
-        String workDir = System.getProperty("user.dir");
-        ExecResult result = ShellUtils.exceShell(workDir + "/script/host-info-collect.sh");
-        logger.info("host info collect result:{}", result);
-        StartWorkerMessage startWorkerMessage = JSONObject.parseObject(result.getExecOut(), StartWorkerMessage.class);
+        String workDir = System.getProperty(USER_DIR);
+        String masterHost = PropertyUtils.getString(MASTER_HOST);
         String cpuArchitecture = ShellUtils.getCpuArchitecture();
-        startWorkerMessage.setCpuArchitecture(cpuArchitecture);
-        startWorkerMessage.setClusterId(PropertyUtils.getInt("clusterId"));
-        startWorkerMessage.setHostname(hostname);
 
+        CacheUtils.put(Constants.HOSTNAME,hostname);
+        //init actor
+        ActorSystem system = initActor(hostname);
 
-        ArrayList<String> commands = new ArrayList<>();
-        commands.add("sh");
-        if (Constants.x86_64.equals(cpuArchitecture)) {
-            commands.add(workDir + "/node/x86/control.sh");
-        } else {
-            commands.add(workDir + "/node/arm/control.sh");
-        }
-        commands.add("restart");
-        commands.add("node");
-        ShellUtils.execWithStatus(Constants.INSTALL_PATH, commands, 60L);
+        subscribeRemoteEvent(system);
 
+        startNodeExporter(workDir, cpuArchitecture);
 
-        workerStartActor.tell(startWorkerMessage, ActorRef.noSender());
+        tellToMaster(hostname, workDir, masterHost, cpuArchitecture, system);
         logger.info("start worker");
 
         /*
@@ -86,30 +67,57 @@ public class WorkerApplicationServer  {
                 close("WorkerServer shutdown hook");
             }
         }));
-
-//        MBeanServer platformBeanServer = ManagementFactory.getPlatformMBeanServer();
-//        EsMetrics esMetrics = new EsMetrics();
-//        ObjectName objectName = new ObjectName("com.datasophon.ddh.worker.metrics:type=esMetrics");
-//        platformBeanServer.registerMBean(esMetrics, objectName);
-
     }
 
-      public static void close(String cause) {
+    private static ActorSystem initActor(String hostname) {
+        Config config = ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" + hostname);
+        ActorSystem system = ActorSystem.create(Constants.DATASOPHON, config.withFallback(ConfigFactory.load()));
+        system.actorOf(Props.create(WorkerActor.class), WORKER);
+        return system;
+    }
+
+    private static void subscribeRemoteEvent(ActorSystem system) {
+        ActorRef remoteEventActor = system.actorOf(Props.create(RemoteEventActor.class), "remoteEventActor");
+        EventStream eventStream = system.eventStream();
+        eventStream.subscribe(remoteEventActor, AssociationErrorEvent.class);
+        eventStream.subscribe(remoteEventActor, AssociatedEvent.class);
+        eventStream.subscribe(remoteEventActor, DisassociatedEvent.class);
+    }
+
+
+    private static void tellToMaster(String hostname, String workDir, String masterHost, String cpuArchitecture, ActorSystem system) {
+        ActorSelection workerStartActor = system.actorSelection("akka.tcp://datasophon@" + masterHost + ":2551/user/workerStartActor");
+        ExecResult result = ShellUtils.exceShell(workDir + "/script/host-info-collect.sh");
+        logger.info("host info collect result:{}", result);
+        StartWorkerMessage startWorkerMessage = JSONObject.parseObject(result.getExecOut(), StartWorkerMessage.class);
+        startWorkerMessage.setCpuArchitecture(cpuArchitecture);
+        startWorkerMessage.setClusterId(PropertyUtils.getInt("clusterId"));
+        startWorkerMessage.setHostname(hostname);
+        workerStartActor.tell(startWorkerMessage, ActorRef.noSender());
+    }
+
+    public static void close(String cause) {
         logger.info("Worker server stopped, current cause: {}", cause);
         String workDir = System.getProperty("user.dir");
         String cpuArchitecture = ShellUtils.getCpuArchitecture();
+        operateNodeExporter(workDir, cpuArchitecture, "stop");
+        logger.info("Worker server stopped, current cause: {}", cause);
+    }
+
+    private static void startNodeExporter(String workDir, String cpuArchitecture) {
+        operateNodeExporter(workDir, cpuArchitecture, "restart");
+    }
+
+    private static void operateNodeExporter(String workDir, String cpuArchitecture, String operate) {
         ArrayList<String> commands = new ArrayList<>();
-        commands.add("sh");
+        commands.add(SH);
         if (Constants.x86_64.equals(cpuArchitecture)) {
             commands.add(workDir + "/node/x86/control.sh");
         } else {
             commands.add(workDir + "/node/arm/control.sh");
         }
-        commands.add("stop");
-        commands.add("node");
+        commands.add(operate);
+        commands.add(NODE);
         ShellUtils.execWithStatus(Constants.INSTALL_PATH, commands, 60L);
-        logger.info("Worker server stopped, current cause: {}", cause);
-
     }
-
 }

@@ -14,6 +14,8 @@ public final class Constants {
     public static final String INSTALL_TYPE = "install_type";
     public static final String TOTAL = "total";
 
+    public static final String DATASOPHON = "datasophon";
+
     public static final String HOST_MAP = "_host_map";
     public static final String COMMAND_ID = "command_id";
     public static final String COMMAND_HOST_ID = "command_host_id";

@@ -51,24 +51,16 @@ public class ServiceRoleCheckActor extends UntypedActor {
     private static final Logger logger = LoggerFactory.getLogger(ServiceRoleCheckActor.class);
 
 
-    /**
-     * 1、查询所有服务角色
-     * 2、遍历服务角色，查询对应prometheus上服务角色状态
-     * 3、服务状态若有变更，则更新到数据库
-     *
-     * @param msg
-     * @throws Throwable
-     */
     @Override
     public void onReceive(Object msg) throws Throwable {
-        if (msg instanceof ServiceRoleCheckCommand) {//定时检测prometheus和alertmanager
+        if (msg instanceof ServiceRoleCheckCommand) {
             ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
-            ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
 
             List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                     .in(Constants.SERVICE_ROLE_NAME, "Prometheus", "AlertManager", "Krb5Kdc", "KAdmin", "SRFE", "SRBE", "DorisFE", "DorisBE"));
+
             Map<String, ClusterServiceRoleInstanceEntity> map = list.stream().collect(Collectors.toMap(e -> e.getHostname() + e.getServiceRoleName(), e -> e, (v1, v2) -> v1));
-            String frameCode = "";
+
             if (Objects.nonNull(list) && list.size() > 0) {
                 for (ClusterServiceRoleInstanceEntity roleInstanceEntity : list) {
                     ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(roleInstanceEntity.getServiceRoleName());

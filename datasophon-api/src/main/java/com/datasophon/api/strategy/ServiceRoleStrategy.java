@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ServiceRoleStrategy {
-    public void handler(Integer clusterId,List<String> hosts);
+    void handler(Integer clusterId,List<String> hosts);
 
     void handlerConfig(Integer clusterId, List<ServiceConfig> list);
 
