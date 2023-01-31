@@ -1,4 +1,4 @@
-package com.datasophon.api.service.strategy;
+package com.datasophon.api.strategy;
 
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.utils.ProcessUtils;

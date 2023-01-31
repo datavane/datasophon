@@ -1,4 +1,4 @@
-package com.datasophon.api.service.strategy;
+package com.datasophon.api.strategy;
 
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
@@ -8,14 +8,16 @@ import com.datasophon.common.model.ServiceConfig;
 import java.util.List;
 import java.util.Map;
 
-public class GrafanaHandlerStrategy implements ServiceRoleStrategy{
+public class ElasticSearchHandlerStrategy implements ServiceRoleStrategy {
     @Override
-    public void handler(Integer clusterId,List<String> hosts) {
+    public void handler(Integer clusterId, List<String> hosts) {
         Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+clusterId);
-        Map<String,String> hostIp = (Map<String, String>) CacheUtils.get(Constants.HOST_IP);
-        if(hosts.size() == 1 && hostIp.containsKey(hosts.get(0))){
-            ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${grafanaHost}",hostIp.get(hosts.get(0)));
-        }
+
+        ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${initMasterNodes}",String.join(",",hosts));
+        String join = String.join(":9300,", hosts);
+        String seedHosts = join + ":9300";
+        ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${seedHosts}",seedHosts);
+
     }
 
     @Override

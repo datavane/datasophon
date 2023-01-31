@@ -1,14 +1,20 @@
-package com.datasophon.api.service.strategy;
+package com.datasophon.api.strategy;
 
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.common.model.ServiceRoleInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
 
 public class ZKFCHandlerStrategy implements ServiceRoleStrategy{
+
+    private static final Logger logger = LoggerFactory.getLogger(ZKFCHandlerStrategy.class);
+
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
         Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+clusterId);
@@ -26,5 +32,15 @@ public class ZKFCHandlerStrategy implements ServiceRoleStrategy{
     @Override
     public void getConfig(Integer clusterId, List<ServiceConfig> list) {
 
+    }
+
+    @Override
+    public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {
+        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + serviceRoleInfo.getClusterId());
+        if(hostname.equals(globalVariables.get("${ZKFC2}"))){
+            logger.info("set to slave zkfc");
+            serviceRoleInfo.setSlave(true);
+            serviceRoleInfo.setSortNum(6);
+        }
     }
 }

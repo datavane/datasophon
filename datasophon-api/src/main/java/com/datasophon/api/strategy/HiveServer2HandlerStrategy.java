@@ -1,10 +1,11 @@
-package com.datasophon.api.service.strategy;
+package com.datasophon.api.strategy;
 
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import org.slf4j.Logger;
@@ -98,6 +99,15 @@ public class HiveServer2HandlerStrategy implements ServiceRoleStrategy {
                     serviceConfig.setHidden(true);
                 }
             }
+        }
+    }
+
+    @Override
+    public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {
+        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + serviceRoleInfo.getClusterId());
+        if(globalVariables.containsKey("${masterHiveServer2}") && !hostname.equals(globalVariables.get("${masterHiveServer2}"))){
+            logger.info("set to slave hiveserver2");
+            serviceRoleInfo.setSlave(true);
         }
     }
 }

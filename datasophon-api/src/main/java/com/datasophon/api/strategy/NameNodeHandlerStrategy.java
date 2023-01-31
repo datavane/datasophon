@@ -1,12 +1,12 @@
-package com.datasophon.api.service.strategy;
+package com.datasophon.api.strategy;
 
 
 import com.datasophon.api.load.ServiceConfigMap;
-import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +78,16 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract  implements 
     @Override
     public void getConfig(Integer clusterId, List<ServiceConfig> list) {
 
+    }
+
+    @Override
+    public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {
+        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + serviceRoleInfo.getClusterId());
+        if( hostname.equals(globalVariables.get("${nn2}"))){
+            logger.info("set to slave namenode");
+            serviceRoleInfo.setSlave(true);
+            serviceRoleInfo.setSortNum(5);
+        }
     }
 
 

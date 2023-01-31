@@ -1,4 +1,4 @@
-package com.datasophon.api.service.strategy;
+package com.datasophon.api.strategy;
 
 import com.alibaba.fastjson.JSONObject;
 import com.datasophon.api.service.*;
@@ -6,7 +6,6 @@ import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
-import com.datasophon.api.service.*;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.Constants;

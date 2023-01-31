@@ -6,6 +6,7 @@ import com.datasophon.api.master.alert.HostCheckActor;
 import com.datasophon.api.master.alert.ServiceRoleCheckActor;
 import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
+import com.datasophon.common.enums.ServiceRoleType;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import org.apache.commons.lang.StringUtils;
@@ -26,16 +27,20 @@ public class ActorUtils {
 
     public static ActorSystem actorSystem;
 
+    public static final String DATASOPHON = "datasophon";
+
+    public static final String AKKA_REMOTE_NETTY_TCP_HOSTNAME = "akka.remote.netty.tcp.hostname";
+
     private ActorUtils() {
     }
 
     public static void init() throws UnknownHostException {
         String hostname = InetAddress.getLocalHost().getHostName();
-        Config config = ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" + hostname);
-        actorSystem = ActorSystem.create("datasophon", config.withFallback(ConfigFactory.load()));
+        Config config = ConfigFactory.parseString(AKKA_REMOTE_NETTY_TCP_HOSTNAME + "=" + hostname);
+        actorSystem = ActorSystem.create(DATASOPHON, config.withFallback(ConfigFactory.load()));
         actorSystem.actorOf(Props.create(WorkerStartActor.class), getActorRefName(WorkerStartActor.class));
-        ActorRef serviceRoleCheckActor = actorSystem.actorOf(Props.create(ServiceRoleCheckActor.class), "serviceRoleCheckActor");
-        ActorRef hostCheckActor = actorSystem.actorOf(Props.create(HostCheckActor.class), "hostCheckActor");
+        ActorRef serviceRoleCheckActor = actorSystem.actorOf(Props.create(ServiceRoleCheckActor.class), getActorRefName(ServiceRoleCheckActor.class));
+        ActorRef hostCheckActor = actorSystem.actorOf(Props.create(HostCheckActor.class), getActorRefName(HostCheckActor.class));
 
         actorSystem.scheduler().schedule(
                 FiniteDuration.apply(60L, TimeUnit.SECONDS),
@@ -62,19 +67,19 @@ public class ActorUtils {
         try {
             actorRef = Await.result(future, Duration.create(30, TimeUnit.SECONDS));
         } catch (Exception e) {
-            logger.error("{} actor not found",actorName);
+            logger.error("{} actor not found", actorName);
         }
         if (Objects.isNull(actorRef)) {
-            logger.info("create actor {}",actorName);
+            logger.info("create actor {}", actorName);
             actorRef = actorSystem.actorOf(Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"), actorName);
-        }else{
-            logger.info("find actor {}",actorName);
+        } else {
+            logger.info("find actor {}", actorName);
         }
         return actorRef;
     }
 
     public static ActorRef getRemoteActor(String hostname, String actorName) {
-        String actorPath = "akka.tcp://datasophon@" + hostname + ":2552/user/worker/"+actorName;
+        String actorPath = "akka.tcp://datasophon@" + hostname + ":2552/user/worker/" + actorName;
         ActorSelection actorSelection = actorSystem.actorSelection(actorPath);
         Timeout timeout = new Timeout(Duration.create(30, TimeUnit.SECONDS));
         Future<ActorRef> future = actorSelection.resolveOne(timeout);
@@ -87,7 +92,10 @@ public class ActorUtils {
 
         return actorRef;
     }
-    /** Get ActorRef name from Class name. */
+
+    /**
+     * Get ActorRef name from Class name.
+     */
     public static String getActorRefName(Class clazz) {
         return StringUtils.uncapitalize(clazz.getSimpleName());
     }
