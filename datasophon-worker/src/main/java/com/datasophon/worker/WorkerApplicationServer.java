@@ -11,13 +11,16 @@ import akka.remote.DisassociatedEvent;
 import com.alibaba.fastjson.JSONObject;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
+import com.datasophon.common.command.remote.CreateUnixUserCommand;
 import com.datasophon.common.lifecycle.ServerLifeCycleManager;
 import com.datasophon.common.model.StartWorkerMessage;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.PropertyUtils;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.actor.RemoteEventActor;
+import com.datasophon.worker.actor.UnixUserActor;
 import com.datasophon.worker.actor.WorkerActor;
+import com.datasophon.worker.utils.UnixUtils;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import org.slf4j.Logger;
@@ -27,6 +30,8 @@ import javax.management.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WorkerApplicationServer  {
 
@@ -42,6 +47,8 @@ public class WorkerApplicationServer  {
 
     private static final String NODE = "node";
 
+
+
     public static void main(String[] args) throws UnknownHostException {
         String hostname = InetAddress.getLocalHost().getHostName();
         String workDir = System.getProperty(USER_DIR);
@@ -56,6 +63,11 @@ public class WorkerApplicationServer  {
 
         startNodeExporter(workDir, cpuArchitecture);
 
+        Map<String,String> userMap = new HashMap<String,String>();
+        initUserMap(userMap);
+
+        createDefaultUser(userMap);
+
         tellToMaster(hostname, workDir, masterHost, cpuArchitecture, system);
         logger.info("start worker");
 
@@ -68,6 +80,26 @@ public class WorkerApplicationServer  {
             }
         }));
     }
+
+    private static void initUserMap(Map<String, String> userMap) {
+        userMap.put("hdfs","hadoop");
+        userMap.put("yarn","hadoop");
+        userMap.put("hive","hadoop");
+        userMap.put("mapred","hadoop");
+        userMap.put("elastic","elastic");
+    }
+
+    private static void createDefaultUser(Map<String,String> userMap) {
+        for (String user : userMap.keySet()) {
+            String group = userMap.get(user);
+            if(!UnixUtils.isGroupExists(group)){
+                UnixUtils.createUnixGroup(group);
+            };
+            UnixUtils.createUnixUser(user,group,null);
+        }
+    }
+
+
 
     private static ActorSystem initActor(String hostname) {
         Config config = ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" + hostname);
