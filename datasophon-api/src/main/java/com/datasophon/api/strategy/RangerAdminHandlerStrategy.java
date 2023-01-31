@@ -2,6 +2,7 @@ package com.datasophon.api.strategy;
 
 import com.alibaba.fastjson.JSONObject;
 import com.datasophon.api.service.*;
+import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
@@ -56,6 +57,16 @@ public class RangerAdminHandlerStrategy implements ServiceRoleStrategy {
 
     @Override
     public void getConfig(Integer clusterId, List<ServiceConfig> list) {
+
+    }
+
+    @Override
+    public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {
+
+    }
+
+    @Override
+    public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity, Map<String, ClusterServiceRoleInstanceEntity> map) {
 
     }
 

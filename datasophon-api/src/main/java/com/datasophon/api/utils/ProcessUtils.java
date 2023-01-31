@@ -548,7 +548,8 @@ public class ProcessUtils {
         }
     }
 
-    public static void recoverAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity, ClusterServiceRoleInstanceService roleInstanceService) {
+    public static void recoverAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity) {
+        ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
         ClusterAlertHistoryService alertHistoryService = SpringTool.getApplicationContext().getBean(ClusterAlertHistoryService.class);
         ClusterAlertHistory clusterAlertHistory = alertHistoryService.getOne(new QueryWrapper<ClusterAlertHistory>()
                 .eq(Constants.ALERT_TARGET_NAME, roleInstanceEntity.getServiceRoleName() + " Survive")
@@ -566,11 +567,13 @@ public class ProcessUtils {
         }
     }
 
-    public static void saveAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity, ClusterServiceRoleInstanceService roleInstanceService) {
+    public static void saveAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity, String
+            alertTargetName, AlertLevel alertLevel, String alertAdvice) {
+        ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
         ClusterAlertHistoryService alertHistoryService = SpringTool.getApplicationContext().getBean(ClusterAlertHistoryService.class);
         ClusterServiceInstanceService serviceInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceInstanceService.class);
         ClusterAlertHistory clusterAlertHistory = alertHistoryService.getOne(new QueryWrapper<ClusterAlertHistory>()
-                .eq(Constants.ALERT_TARGET_NAME, roleInstanceEntity.getServiceRoleName() + " Survive")
+                .eq(Constants.ALERT_TARGET_NAME, alertTargetName)
                 .eq(Constants.CLUSTER_ID, roleInstanceEntity.getClusterId())
                 .eq(Constants.HOSTNAME, roleInstanceEntity.getHostname())
                 .eq(Constants.IS_ENABLED, 1));
@@ -581,13 +584,15 @@ public class ProcessUtils {
             clusterAlertHistory.setClusterId(roleInstanceEntity.getClusterId());
 
             clusterAlertHistory.setAlertGroupName(roleInstanceEntity.getServiceName().toLowerCase());
-            clusterAlertHistory.setAlertTargetName(roleInstanceEntity.getServiceRoleName() + " Survive");
+            clusterAlertHistory.setAlertTargetName(alertTargetName);
             clusterAlertHistory.setCreateTime(new Date());
             clusterAlertHistory.setUpdateTime(new Date());
-            clusterAlertHistory.setAlertLevel(AlertLevel.EXCEPTION);
+            clusterAlertHistory.setAlertLevel(alertLevel);
             clusterAlertHistory.setAlertInfo("");
-            clusterAlertHistory.setAlertAdvice("restart");
+            clusterAlertHistory.setAlertAdvice(alertAdvice);
             clusterAlertHistory.setHostname(roleInstanceEntity.getHostname());
+            clusterAlertHistory.setServiceRoleInstanceId(roleInstanceEntity.getId());
+            clusterAlertHistory.setServiceInstanceId(roleInstanceEntity.getServiceId());
             clusterAlertHistory.setIsEnabled(1);
 
             clusterAlertHistory.setServiceInstanceId(roleInstanceEntity.getServiceId());
@@ -596,9 +601,12 @@ public class ProcessUtils {
         }
         //update service role instance state
         serviceInstanceEntity.setServiceState(ServiceState.EXISTS_EXCEPTION);
-        serviceInstanceService.updateById(serviceInstanceEntity);
-
         roleInstanceEntity.setServiceRoleState(ServiceRoleState.STOP);
+        if (alertLevel == AlertLevel.WARN) {
+            serviceInstanceEntity.setServiceState(ServiceState.EXISTS_ALARM);
+            roleInstanceEntity.setServiceRoleState(ServiceRoleState.EXISTS_ALARM);
+        }
+        serviceInstanceService.updateById(serviceInstanceEntity);
         roleInstanceService.updateById(roleInstanceEntity);
 
     }

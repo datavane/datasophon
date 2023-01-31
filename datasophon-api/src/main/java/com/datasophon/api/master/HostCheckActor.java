@@ -1,4 +1,4 @@
-package com.datasophon.api.master.alert;
+package com.datasophon.api.master;
 
 import akka.actor.UntypedActor;
 import com.datasophon.api.service.ClusterInfoService;

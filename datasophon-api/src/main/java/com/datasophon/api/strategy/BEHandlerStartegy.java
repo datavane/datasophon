@@ -4,6 +4,7 @@ import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.model.ServiceRoleInfo;
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,5 +36,10 @@ public class BEHandlerStartegy implements ServiceRoleStrategy {
         String feMaster = globalVariables.get("${feMaster}");
         logger.info("fe master is {}",feMaster);
         serviceRoleInfo.setMasterHost(feMaster);
+    }
+
+    @Override
+    public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity, Map<String, ClusterServiceRoleInstanceEntity> map) {
+
     }
 }

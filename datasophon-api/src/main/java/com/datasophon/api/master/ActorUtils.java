@@ -2,11 +2,9 @@ package com.datasophon.api.master;
 
 import akka.actor.*;
 import akka.util.Timeout;
-import com.datasophon.api.master.alert.HostCheckActor;
 import com.datasophon.api.master.alert.ServiceRoleCheckActor;
 import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
-import com.datasophon.common.enums.ServiceRoleType;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import org.apache.commons.lang.StringUtils;

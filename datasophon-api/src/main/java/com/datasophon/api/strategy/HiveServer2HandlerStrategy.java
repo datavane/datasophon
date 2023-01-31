@@ -8,6 +8,7 @@ import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.dao.entity.ClusterInfoEntity;
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,5 +110,10 @@ public class HiveServer2HandlerStrategy implements ServiceRoleStrategy {
             logger.info("set to slave hiveserver2");
             serviceRoleInfo.setSlave(true);
         }
+    }
+
+    @Override
+    public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity, Map<String, ClusterServiceRoleInstanceEntity> map) {
+
     }
 }
