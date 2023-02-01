@@ -11,9 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @Author ：gaodayu
- */
 public class ShellUtils {
 
     private static ProcessBuilder processBuilder = new ProcessBuilder();

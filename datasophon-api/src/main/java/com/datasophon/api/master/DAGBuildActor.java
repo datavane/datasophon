@@ -2,6 +2,7 @@ package com.datasophon.api.master;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
+import cn.hutool.core.util.ArrayUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.service.*;
@@ -49,10 +50,8 @@ public class DAGBuildActor extends UntypedActor {
             ClusterInfoEntity clusterInfo = clusterInfoService.getById(executeCommandCommand.getClusterId());
             List<ClusterServiceCommandEntity> commandList = commandService.list(new QueryWrapper<ClusterServiceCommandEntity>().in(Constants.COMMAND_ID, executeCommandCommand.getCommandIds()));
 
-            Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+executeCommandCommand.getClusterId());
-
             ArrayList<FrameServiceEntity> frameServiceList = new ArrayList<>();
-            if (Objects.nonNull(commandList) && commandList.size() > 0) {
+            if (ArrayUtil.isNotEmpty(commandList)) {
                 for (ClusterServiceCommandEntity command : commandList) {
                     //build dag
                     List<ServiceRoleInfo> masterRoles = new ArrayList<>();
