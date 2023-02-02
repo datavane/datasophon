@@ -139,7 +139,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             map.put(serviceConfig.getName(), serviceConfig);
         }
 
-        //更新config-file
+        //update config-file
         HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
         FrameServiceEntity frameService = this.frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);
         if (StringUtils.isNotBlank(frameService.getConfigFileJson())) {
@@ -265,6 +265,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
                 newRoleGroupConfig.setClusterId(clusterId);
                 newRoleGroupConfig.setCreateTime(new Date());
                 newRoleGroupConfig.setUpdateTime(new Date());
+                newRoleGroupConfig.setServiceName(serviceInstanceEntity.getServiceName());
                 buildConfig(list, configFileMap, newRoleGroupConfig);
                 groupConfigService.save(newRoleGroupConfig);
                 serviceInstanceEntity.setNeedRestart(NeedRestart.YES);

@@ -18,7 +18,7 @@ public interface ClusterHostService extends IService<ClusterHostEntity> {
 
     ClusterHostEntity getClusterHostByHostname(String hostname);
 
-    Result listByPage(Integer clusterId, String hostname,String cpuArchitecture,Integer hostState,String orderField,String orderType, Integer page, Integer pageSize);
+    Result listByPage(Integer clusterId, String hostname,String ip,String cpuArchitecture,Integer hostState,String orderField,String orderType, Integer page, Integer pageSize);
 
     List<ClusterHostEntity> getHostListByClusterId(Integer id);
 

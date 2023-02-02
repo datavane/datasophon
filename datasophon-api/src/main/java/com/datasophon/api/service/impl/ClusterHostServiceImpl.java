@@ -51,10 +51,11 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     }
 
     @Override
-    public Result listByPage(Integer clusterId, String hostname, String cpuArchitecture, Integer hostState,String orderField, String orderType, Integer page, Integer pageSize) {
+    public Result listByPage(Integer clusterId, String hostname, String ip,String cpuArchitecture, Integer hostState,String orderField, String orderType, Integer page, Integer pageSize) {
         Integer offset = (page -1)*pageSize;
         List<ClusterHostEntity> list = this.list(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.MANAGED,1)
+                .eq(StringUtils.isNotBlank(ip),"ip",ip)
                 .eq(StringUtils.isNotBlank(cpuArchitecture),Constants.CPU_ARCHITECTURE,cpuArchitecture)
                 .eq(hostState != null,Constants.HOST_STATE,hostState)
                 .like(StringUtils.isNotBlank(hostname),Constants.HOSTNAME,hostname)
