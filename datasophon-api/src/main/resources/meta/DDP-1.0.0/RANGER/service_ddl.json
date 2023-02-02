@@ -3,7 +3,7 @@
   "label": "Ranger",
   "description": "权限控制框架",
   "version": "2.1.0",
-  "sortNum": 5,
+  "sortNum": 10,
   "dependencies":[],
   "packageName": "ranger-2.1.0.tar.gz",
   "decompressPackageName": "ranger-2.1.0",

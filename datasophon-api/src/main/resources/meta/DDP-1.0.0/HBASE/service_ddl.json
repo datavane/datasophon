@@ -3,7 +3,7 @@
   "label": "Hbase",
   "description": "分布式列式海量存储数据库",
   "version": "2.0.2",
-  "sortNum": 9,
+  "sortNum": 8,
   "dependencies":["HDFS"],
   "packageName": "hbase-2.0.2.tar.gz",
   "decompressPackageName": "hbase-2.0.2",

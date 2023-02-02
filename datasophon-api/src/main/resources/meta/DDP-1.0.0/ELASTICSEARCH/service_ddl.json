@@ -3,7 +3,7 @@
   "label": "ElasticSearch",
   "description": "高性能搜索引擎",
   "version": "7.16.2",
-  "sortNum": 9,
+  "sortNum": 11,
   "dependencies": [],
   "packageName": "elasticsearch-7.16.2.tar.gz",
   "decompressPackageName": "elasticsearch-7.16.2",

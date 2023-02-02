@@ -3,7 +3,7 @@
   "label": "Trino",
   "description": "分布式SQL交互式查询引擎",
   "version": "367",
-  "sortNum": 7,
+  "sortNum": 9,
   "dependencies": [],
   "packageName": "trino-367.tar.gz",
   "decompressPackageName": "trino-367",
