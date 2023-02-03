@@ -25,7 +25,7 @@
 # into the startup scripts (bin/hbase, etc.)
 
 # The java implementation to use.  Java 1.8+ required.
-# export JAVA_HOME=/usr/java/jdk1.8.0/
+export JAVA_HOME=/usr/local/jdk1.8.0_333
 
 # Extra Java CLASSPATH elements.  Optional.
 # export HBASE_CLASSPATH=
@@ -117,7 +117,7 @@ export HBASE_OPTS="$HBASE_OPTS -XX:+UseConcMarkSweepGC <#if hbaseSecurity??>${hb
 
 # The directory where pid files are stored. /tmp by default.
 # export HBASE_PID_DIR=/var/hadoop/pids
-export HBASE_PID_DIR=/opt/datasophon/hbase-2.0.2/pid
+export HBASE_PID_DIR=${hbasePidDir}
 # Seconds to sleep between slave commands.  Unset by default.  This
 # can be useful in large clusters, where, e.g., slave rsyncs can
 # otherwise arrive faster than the master can service them.

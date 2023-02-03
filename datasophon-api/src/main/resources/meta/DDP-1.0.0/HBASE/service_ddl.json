@@ -148,6 +148,7 @@
         "outputDirectory": "conf",
         "templateName": "hbase-env.ftl",
         "includeParams": [
+          "hbasePidDir",
           "hbaseSecurity",
           "custom.hbase.env.sh"
         ]
@@ -209,6 +210,18 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": "false"
+    },
+    {
+      "name": "hbasePidDir",
+      "label": "HBase PID DIR",
+      "description": "",
+      "configType": "map",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${HBASE_HOME}/pid"
     },
     {
       "name": "hbase.security.authorization",

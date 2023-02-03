@@ -55,6 +55,8 @@
             <includes>
                 <include>profile</include>
                 <include>datasophon-worker</include>
+                <include>bd_ca_cert</include>
+                <include>bd_ca_key</include>
             </includes>
             <fileMode>0755</fileMode>
             <filtered>true</filtered>
