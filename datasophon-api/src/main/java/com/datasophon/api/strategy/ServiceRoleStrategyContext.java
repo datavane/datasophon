@@ -29,8 +29,6 @@ public class ServiceRoleStrategyContext {
         map.put("ElasticSearch",new ElasticSearchHandlerStrategy());
         map.put("Prometheus",new PrometheusHandlerStrategy());
         map.put("AlertManager",new AlertManagerHandlerStrategy());
-        map.put("Krb5Kdc",new KerberosHandlerStrategy());
-        map.put("KAdmin",new KerberosHandlerStrategy());
 
         map.put("RANGER",new RangerAdminHandlerStrategy());
         map.put("ZOOKEEPER",new ZkServerHandlerStrategy());
@@ -38,6 +36,7 @@ public class ServiceRoleStrategyContext {
         map.put("HDFS",new NameNodeHandlerStrategy());
         map.put("HIVE",new HiveServer2HandlerStrategy());
         map.put("KAFKA",new KafkaHandlerStrategy());
+        map.put("HBASE",new HBaseHandlerStrategy());
     }
 
     public static ServiceRoleStrategy getServiceRoleHandler(String type){

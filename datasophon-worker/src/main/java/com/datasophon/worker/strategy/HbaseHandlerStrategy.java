@@ -2,10 +2,12 @@ package com.datasophon.worker.strategy;
 
 import cn.hutool.core.io.FileUtil;
 import com.datasophon.common.Constants;
+import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.handler.ServiceHandler;
+import com.datasophon.worker.utils.KerberosUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,16 +30,23 @@ public class HbaseHandlerStrategy implements ServiceRoleStrategy {
                 if (execResult.getExecResult()) {
                     logger.info("enable ranger hbase plugin success");
                     FileUtil.writeUtf8String("success", Constants.INSTALL_PATH + "/hbase-2.0.2/ranger-hbase-plugin/success.id");
-                    startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
                 } else {
                     logger.info("enable ranger hbase plugin failed");
+                    return execResult;
                 }
-            } else {
-                startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
             }
-        } else {
-            startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
         }
+        if(command.getEnableKerberos()){
+            logger.info("start to get hbase keytab file");
+            String hostname = CacheUtils.getString(Constants.HOSTNAME);
+            KerberosUtils.createKeytabDir();
+            if(!FileUtil.exist("/etc/security/keytab/hbase.keytab")){
+                KerberosUtils.downloadKeytabFromMaster("hbase/" + hostname, "hbase.keytab");
+            }
+        }
+
+        startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
+
         return startResult;
 
     }

@@ -13,6 +13,10 @@
       "name": "HbaseMaster",
       "label": "HbaseMaster",
       "roleType": "master",
+      "runAs": {
+        "user": "hbase",
+        "group": "hadoop"
+      },
       "cardinality": "1+",
       "logFile": "logs/hbase-${user}-master-${host}.log",
       "jmxPort": 16100,
@@ -58,6 +62,10 @@
       "name": "RegionServer",
       "label": "RegionServer",
       "roleType": "worker",
+      "runAs": {
+        "user": "hbase",
+        "group": "hadoop"
+      },
       "cardinality": "1+",
       "logFile": "logs/hbase-${user}-regionserver-${host}.log",
       "jmxPort": 16101,
@@ -106,6 +114,13 @@
           "hbase.zookeeper.quorum",
           "hbase.wal.provider",
           "hbase.unsafe.stream.capability.enforce",
+          "hbase.security.authentication",
+          "hbase.rpc.engine",
+          "hbase.coprocessor.region.classes",
+          "hbase.master.kerberos.principal",
+          "hbase.master.keytab.file",
+          "hbase.regionserver.kerberos.principal",
+          "hbase.regionserver.keytab.file",
           "custom.hbase.site.xml"
         ]
       },
@@ -116,6 +131,25 @@
         "templateName": "ranger-hbase.ftl",
         "includeParams": [
           "rangerAdminUrl"
+        ]
+      },
+      {
+        "filename": "zk-jaas.conf",
+        "configFormat": "custom",
+        "outputDirectory": "conf",
+        "templateName": "zk-jaas.ftl",
+        "includeParams": [
+          "hostname"
+        ]
+      },
+      {
+        "filename": "hbase-env.sh",
+        "configFormat": "custom",
+        "outputDirectory": "conf",
+        "templateName": "hbase-env.ftl",
+        "includeParams": [
+          "hbaseSecurity",
+          "custom.hbase.env.sh"
         ]
       }
     ]
@@ -225,6 +259,127 @@
       "defaultValue": ""
     },
     {
+      "name": "enableKerberos",
+      "label": "开启Kerberos认证",
+      "description": "开启Kerberos认证",
+      "required": false,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
+    },
+    {
+      "name": "hbase.security.authentication",
+      "label": "hbase.security.authentication",
+      "description": "",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "kerberos",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "kerberos"
+    },
+    {
+      "name": "hbase.rpc.engine",
+      "label": "HBase rpc安全通信",
+      "description": "",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "org.apache.hadoop.hbase.ipc.SecureRpcEngine",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "org.apache.hadoop.hbase.ipc.SecureRpcEngine"
+    },
+    {
+      "name": "hbase.coprocessor.region.classes",
+      "label": "hbase.coprocessor.region.classes",
+      "description": "",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "org.apache.hadoop.hbase.security.token.TokenProvider",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "org.apache.hadoop.hbase.security.token.TokenProvider"
+    },
+    {
+      "name": "hbase.master.kerberos.principal",
+      "label": "HMaster kerberos安全凭据",
+      "description": "",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "hbase/_HOST@HADOOP.COM",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "hbase/_HOST@HADOOP.COM"
+    },
+    {
+      "name": "hbase.master.kerberos.principal",
+      "label": "HMasterkeytab文件位置",
+      "description": "",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "/etc/security/keytab/hbase.keytab",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "/etc/security/keytab/hbase.keytab"
+    },
+    {
+      "name": "hbase.regionserver.kerberos.principal",
+      "label": "RegionServer kerberos安全凭据",
+      "description": "",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "hbase/_HOST@HADOOP.COM",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "hbase/_HOST@HADOOP.COM"
+    },
+    {
+      "name": "hbase.regionserver.keytab.file",
+      "label": "RegionServer keytab文件位置",
+      "description": "",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "/etc/security/keytab/hbase.keytab",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "/etc/security/keytab/hbase.keytab"
+    },
+    {
+      "name": "hostname",
+      "label": "hostname",
+      "description": "",
+      "configType": "map",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "${host}",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "${host}"
+    },
+    {
+      "name": "hbaseSecurity",
+      "label": "hbaseSecurity",
+      "description": "",
+      "configType": "map",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "-Djava.security.auth.login.config=${HBASE_HOME}/conf/zk-jaas.conf",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "-Djava.security.auth.login.config=${HBASE_HOME}/conf/zk-jaas.conf"
+    },
+    {
       "name": "custom.hbase.site.xml",
       "label": "自定义配置hbase-site.xml",
       "description": "自定义配置",
@@ -232,6 +387,18 @@
       "required": false,
       "type": "multipleWithKey",
       "value":[],
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": ""
+    },
+    {
+      "name": "custom.hbase.env.sh",
+      "label": "自定义配置hbase-env.sh",
+      "description": "自定义配置",
+      "configType": "custom",
+      "required": false,
+      "type": "multipleWithKey",
+      "value": [],
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": ""
