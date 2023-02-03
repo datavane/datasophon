@@ -42,9 +42,15 @@ public class FrameServiceServiceImpl extends ServiceImpl<FrameServiceMapper, Fra
     public Result getAllFrameService(Integer clusterId) {
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         FrameInfoEntity frameInfo = frameInfoMapper.getFrameInfoByFrameCode(clusterInfo.getClusterFrame());
-        List<FrameServiceEntity> list = this.list(new QueryWrapper<FrameServiceEntity>().eq(Constants.FRAME_ID, frameInfo.getId()));
+        List<FrameServiceEntity> list = this.list(new QueryWrapper<FrameServiceEntity>()
+                .eq(Constants.FRAME_ID, frameInfo.getId())
+                .orderByAsc(Constants.SORT_NUM));
+        setInstalled(clusterId, list);
+        return Result.success(list);
+    }
+
+    private void setInstalled(Integer clusterId, List<FrameServiceEntity> list) {
         for (FrameServiceEntity serviceEntity : list) {
-            //判断是否已安装
             ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceEntity.getServiceName());
             if(Objects.nonNull(serviceInstance) && !serviceInstance.getServiceState().equals(ServiceState.WAIT_INSTALL)){
                 serviceEntity.setInstalled(true);
@@ -52,7 +58,6 @@ public class FrameServiceServiceImpl extends ServiceImpl<FrameServiceMapper, Fra
                 serviceEntity.setInstalled(false);
             }
         }
-        return Result.success(list);
     }
 
     @Override
