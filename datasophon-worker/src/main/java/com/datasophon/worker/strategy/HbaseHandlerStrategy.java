@@ -50,6 +50,7 @@ public class HbaseHandlerStrategy implements ServiceRoleStrategy {
             String hadoopHome = PropertyUtils.getString("HADOOP_HOME");
             ShellUtils.exceShell("sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -mkdir -p /hbase");
             ShellUtils.exceShell("sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -chown hbase:hadoop /hbase");
+            ShellUtils.exceShell("sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -chmod 777 /hbase");
         }
         startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
 

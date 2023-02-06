@@ -13,8 +13,12 @@
       "name": "HbaseMaster",
       "label": "HbaseMaster",
       "roleType": "master",
+      "runAs": {
+        "user": "hbase",
+        "group": "hadoop"
+      },
       "cardinality": "1+",
-      "logFile": "logs/hbase-${user}-master-${host}.log",
+      "logFile": "logs/hbase-hbase-master-${host}.log",
       "jmxPort": 16100,
       "startRunner": {
         "timeout": "60",
@@ -58,8 +62,12 @@
       "name": "RegionServer",
       "label": "RegionServer",
       "roleType": "worker",
+      "runAs": {
+        "user": "hbase",
+        "group": "hadoop"
+      },
       "cardinality": "1+",
-      "logFile": "logs/hbase-${user}-regionserver-${host}.log",
+      "logFile": "logs/hbase-hbase-regionserver-${host}.log",
       "jmxPort": 16101,
       "startRunner": {
         "timeout": "60",

@@ -18,6 +18,7 @@ import java.util.Objects;
 
 public class InstallServiceHandler {
     private static final Logger logger = LoggerFactory.getLogger(InstallServiceHandler.class);
+
     private static final String HADOOP = "hadoop";
 
     public ExecResult install(String packageName, String decompressPackageName, String packageMd5, RunAs runAs) {
@@ -85,6 +86,7 @@ public class InstallServiceHandler {
                         ShellUtils.exceShell(" ln -s "+ Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/bin/hdfs /usr/bin/hdfs");
                         ShellUtils.exceShell(" ln -s "+ Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/bin/yarn /usr/bin/yarn");
                     }
+
                 } else {
                     execResult.setExecOut("install package " + packageName + "failed");
                     logger.info("install package " + packageName + " failed");
