@@ -63,12 +63,15 @@ public class HiveServer2HandlerStrategy implements ServiceRoleStrategy {
                 KerberosUtils.downloadKeytabFromMaster("hive/" + hostname, "hive.service.keytab");
             }
         }
-        String hadoopHome = PropertyUtils.getString("HADOOP_HOME");
-        ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -mkdir -p /user/hive/warehouse");
-        ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -mkdir -p /tmp/hive");
-        ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -chown hive:hadoop /user/hive/warehouse");
-        ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -chown hive:hadoop /tmp/hive");
-        ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -chmod 777 /tmp/hive");
+        if (command.getCommandType().equals(CommandType.INSTALL_SERVICE)) {
+            String hadoopHome = PropertyUtils.getString("HADOOP_HOME");
+            ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -mkdir -p /user/hive/warehouse");
+            ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -mkdir -p /tmp/hive");
+            ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -chown hive:hadoop /user/hive/warehouse");
+            ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -chown hive:hadoop /tmp/hive");
+            ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -chmod 777 /tmp/hive");
+        }
+
         startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(),command.getRunAs());
         return startResult;
     }

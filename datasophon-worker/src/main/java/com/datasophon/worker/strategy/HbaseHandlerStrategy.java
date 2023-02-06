@@ -4,6 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
+import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.PropertyUtils;
 import com.datasophon.common.utils.ShellUtils;
@@ -45,9 +46,11 @@ public class HbaseHandlerStrategy implements ServiceRoleStrategy {
                 KerberosUtils.downloadKeytabFromMaster("hbase/" + hostname, "hbase.keytab");
             }
         }
-        String hadoopHome = PropertyUtils.getString("HADOOP_HOME");
-        ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -mkdir -p /hbase");
-        ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -chown hbase:hadoop /hbase");
+        if (command.getCommandType().equals(CommandType.INSTALL_SERVICE)) {
+            String hadoopHome = PropertyUtils.getString("HADOOP_HOME");
+            ShellUtils.exceShell("sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -mkdir -p /hbase");
+            ShellUtils.exceShell("sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -chown hbase:hadoop /hbase");
+        }
         startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
 
         return startResult;
