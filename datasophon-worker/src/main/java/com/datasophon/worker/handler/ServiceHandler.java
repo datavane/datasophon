@@ -44,27 +44,20 @@ public class ServiceHandler {
     public ExecResult start(ServiceRoleRunner startRunner, ServiceRoleRunner statusRunner, String decompressPackageName, RunAs runAs) {
         ExecResult statusResult = execRunner(statusRunner, decompressPackageName, null);
         if (statusResult.getExecResult()) {
-            //已经启动，直接返回
             logger.info("{} already started", decompressPackageName);
             ExecResult execResult = new ExecResult();
             execResult.setExecResult(true);
             return execResult;
         }
-        //执行启动脚本
-        ExecResult startResult = new ExecResult();
-        if (Objects.nonNull(runAs)) {
-            startResult = execRunner(startRunner, decompressPackageName, runAs.getUser());
-        } else {
-            startResult = execRunner(startRunner, decompressPackageName, null);
-        }
-
-        //检测是否启动成功
+        //start service
+        ExecResult startResult =execRunner(startRunner, decompressPackageName, runAs);
+        //check start result
         if (startResult.getExecResult()) {
             int times = PropertyUtils.getInt("times");
             int count = 0;
             while (count < times) {
                 logger.info("check start result at times {}", count + 1);
-                ExecResult result = execRunner(statusRunner, decompressPackageName, null);
+                ExecResult result = execRunner(statusRunner, decompressPackageName, runAs);
                 if (result.getExecResult()) {
                     logger.info("start success in {}", decompressPackageName);
                     break;
@@ -77,7 +70,7 @@ public class ServiceHandler {
                 }
                 count++;
             }
-            if (count == times) {//超时，置为失败
+            if (count == times) {
                 logger.info(" start {} timeout", decompressPackageName);
                 startResult.setExecResult(false);
             }
@@ -90,18 +83,14 @@ public class ServiceHandler {
         ExecResult statusResult = execRunner(statusRunner, decompressPackageName, null);
         ExecResult execResult = new ExecResult();
         if (statusResult.getExecResult()) {
-            if (Objects.nonNull(runAs)) {
-                execResult = execRunner(runner, decompressPackageName, runAs.getUser());
-            } else {
-                execResult = execRunner(runner, decompressPackageName, null);
-            }
+            execResult = execRunner(runner, decompressPackageName, runAs);
             //检测是否停止成功
             if (execResult.getExecResult()) {
                 int times = PropertyUtils.getInt("times");
                 int count = 0;
                 while (count < times) {
                     logger.info("check stop result at times {}", count + 1);
-                    ExecResult result = execRunner(statusRunner, decompressPackageName, null);
+                    ExecResult result = execRunner(statusRunner, decompressPackageName, runAs);
                     if (!result.getExecResult()) {
                         logger.info("stop success in {}", decompressPackageName);
                         break;
@@ -135,15 +124,15 @@ public class ServiceHandler {
         return result;
     }
 
-    public ExecResult execRunner(ServiceRoleRunner runner, String decompressPackageName, String user) {
+    public ExecResult execRunner(ServiceRoleRunner runner, String decompressPackageName, RunAs runAs) {
         String shell = runner.getProgram();
         List<String> args = runner.getArgs();
         long timeout = Long.parseLong(runner.getTimeout());
         ArrayList<String> command = new ArrayList<>();
-        if (StringUtils.isNotBlank(user)) {
+        if (Objects.nonNull(runAs) && StringUtils.isNotBlank(runAs.getUser())) {
             command.add("sudo");
             command.add("-u");
-            command.add(user);
+            command.add(runAs.getUser());
         }
         if (runner.getProgram().contains(Constants.TASK_MANAGER) || runner.getProgram().contains(Constants.JOB_MANAGER)) {
             logger.info("do not use sh");
