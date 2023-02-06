@@ -80,7 +80,7 @@ public class ServiceHandler {
 
 
     public ExecResult stop(ServiceRoleRunner runner, ServiceRoleRunner statusRunner, String decompressPackageName, RunAs runAs) {
-        ExecResult statusResult = execRunner(statusRunner, decompressPackageName, null);
+        ExecResult statusResult = execRunner(statusRunner, decompressPackageName, runAs);
         ExecResult execResult = new ExecResult();
         if (statusResult.getExecResult()) {
             execResult = execRunner(runner, decompressPackageName, runAs);

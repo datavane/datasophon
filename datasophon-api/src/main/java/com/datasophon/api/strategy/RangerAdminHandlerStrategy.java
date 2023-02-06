@@ -1,6 +1,7 @@
 package com.datasophon.api.strategy;
 
 import com.alibaba.fastjson.JSONObject;
+import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.service.*;
 import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.dao.entity.ClusterInfoEntity;
@@ -89,8 +90,9 @@ public class RangerAdminHandlerStrategy implements ServiceRoleStrategy {
             List<ServiceConfig> serviceConfigs = JSONObject.parseArray(config.getConfigJson(), ServiceConfig.class);
             Map<String, ServiceConfig> map = serviceConfigs.stream().collect(Collectors.toMap(ServiceConfig::getName, serviceConfig -> serviceConfig, (v1, v2) -> v1));
 
-            List<ServiceConfig> allParameters = (List<ServiceConfig>) CacheUtils.get(clusterInfo.getClusterFrame() + Constants.UNDERLINE + serviceInstance.getServiceName() + Constants.CONFIG);
-            for (ServiceConfig parameter : allParameters) {
+            String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "RANGER" + Constants.CONFIG;
+            List<ServiceConfig> configs = ServiceConfigMap.get(key);
+            for (ServiceConfig parameter : configs) {
                 String name = parameter.getName();
                 if (map.containsKey(name)) {
                     parameter = map.get(name);
