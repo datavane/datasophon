@@ -100,14 +100,23 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
 
         rackService.createDefaultRack(clusterInfo.getId());
 
+        putClusterVariable(clusterInfo);
+        return Result.success();
+    }
+
+    private void putClusterVariable(ClusterInfoEntity clusterInfo) {
         HashMap<String, String> globalVariables = new HashMap<>();
+        List<FrameServiceEntity> frameServiceList =
+                frameServiceService.getAllFrameServiceByFrameCode(clusterInfo.getClusterFrame());
+        for (FrameServiceEntity frameServiceEntity : frameServiceList) {
+            globalVariables.put("${" + frameServiceEntity.getServiceName() + "_HOME}", Constants.INSTALL_PATH + Constants.SLASH + frameServiceEntity.getDecompressPackageName());
+        }
         globalVariables.put("${INSTALL_PATH}",Constants.INSTALL_PATH);
         globalVariables.put("${apiHost}", CacheUtils.getString("hostname"));
         globalVariables.put("${apiPort}", configBean.getServerPort());
         globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + Constants.SLASH+ PackageUtils.getServiceDcPackageName(clusterInfo.getClusterFrame(),"HDFS"));
 
         CacheUtils.put("globalVariables" + Constants.UNDERLINE + clusterInfo.getId(), globalVariables);
-        return Result.success();
     }
 
 

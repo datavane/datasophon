@@ -86,6 +86,7 @@ public class WorkerApplicationServer  {
         userMap.put("yarn","hadoop");
         userMap.put("hive","hadoop");
         userMap.put("mapred","hadoop");
+        userMap.put("hbase","hadoop");
         userMap.put("elastic","elastic");
     }
 

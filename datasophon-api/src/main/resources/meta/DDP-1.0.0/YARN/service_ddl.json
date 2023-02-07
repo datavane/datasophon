@@ -18,7 +18,7 @@
         "group": "hadoop"
       },
       "sortNum": 1,
-      "logFile": "${hadoopLogDir}/hadoop-yarn-resourcemanager-${host}.log",
+      "logFile": "logs/hadoop-yarn-resourcemanager-${host}.log",
       "jmxPort": 9323,
       "startRunner": {
         "timeout": "60",
@@ -68,7 +68,7 @@
         "group": "hadoop"
       },
       "sortNum": 3,
-      "logFile": "${hadoopLogDir}/hadoop-yarn-nodemanager-${host}.log",
+      "logFile": "logs/hadoop-yarn-nodemanager-${host}.log",
       "jmxPort": 9324,
       "startRunner": {
         "timeout": "60",
@@ -104,7 +104,7 @@
         "group": "hadoop"
       },
       "sortNum": 2,
-      "logFile": "${hadoopLogDir}/hadoop-mapred-historyserver-${host}.log",
+      "logFile": "logs/hadoop-mapred-historyserver-${host}.log",
       "jmxPort": 9325,
       "startRunner": {
         "timeout": "60",

@@ -16,12 +16,13 @@ import com.datasophon.common.model.ServiceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class RangerAdminHandlerStrategy implements ServiceRoleStrategy {
+public class RangerAdminHandlerStrategy  extends ServiceHandlerAbstract  implements ServiceRoleStrategy {
 
     private static final Logger logger = LoggerFactory.getLogger(RangerAdminHandlerStrategy.class);
 
@@ -37,10 +38,12 @@ public class RangerAdminHandlerStrategy implements ServiceRoleStrategy {
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
-
-        //判断是否启用ranger插件
+        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
+        boolean enableKerberos = false;
+        Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
+        //enable ranger plugin
         for (ServiceConfig config : list) {
-            //启用hdfs ranger插件，修改hdfs权限配置
             if ("enableHdfsPlugin".equals(config.getName()) && ((Boolean) config.getValue()).booleanValue()) {
                 logger.info("enableHdfsPlugin");
                 enableRangerPlugin(clusterId, "HDFS", "NameNode");
@@ -53,7 +56,19 @@ public class RangerAdminHandlerStrategy implements ServiceRoleStrategy {
                 logger.info("enableHivePlugin");
                 enableRangerPlugin(clusterId, "HBASE", "HbaseMaster");
             }
+            if("enableKerberos".equals(config.getName())){
+                enableKerberos = isEnableKerberos(clusterId, globalVariables, enableKerberos, config,"RANGER");
+            }
         }
+        String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "RANGER" + Constants.CONFIG;
+        List<ServiceConfig> configs = ServiceConfigMap.get(key);
+        ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
+        if(enableKerberos){
+            addConfigWithKerberos(globalVariables, map, configs, kbConfigs);
+        }else{
+            removeConfigWithKerberos(list, map, configs);
+        }
+        list.addAll(kbConfigs);
     }
 
     @Override
@@ -90,7 +105,7 @@ public class RangerAdminHandlerStrategy implements ServiceRoleStrategy {
             List<ServiceConfig> serviceConfigs = JSONObject.parseArray(config.getConfigJson(), ServiceConfig.class);
             Map<String, ServiceConfig> map = serviceConfigs.stream().collect(Collectors.toMap(ServiceConfig::getName, serviceConfig -> serviceConfig, (v1, v2) -> v1));
 
-            String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "RANGER" + Constants.CONFIG;
+            String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + serviceName + Constants.CONFIG;
             List<ServiceConfig> configs = ServiceConfigMap.get(key);
             for (ServiceConfig parameter : configs) {
                 String name = parameter.getName();

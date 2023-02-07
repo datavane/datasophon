@@ -135,16 +135,16 @@ xa_ldap_ad_referral=
 xa_ldap_ad_userSearchFilter=
 
 #------------ Kerberos Config -----------------
-spnego_principal=
-spnego_keytab=
+spnego_principal=<#if spnegoPrincipal??>${spnegoPrincipal}</#if>
+spnego_keytab=<#if spnegoKeytab??>${spnegoKeytab}</#if>
 token_valid=30
 cookie_domain=
 cookie_path=/
-admin_principal=
-admin_keytab=
-lookup_principal=
-lookup_keytab=
-hadoop_conf=/etc/hadoop/conf
+admin_principal=<#if adminPrincipal??>${adminPrincipal}</#if>
+admin_keytab=<#if adminKeytab??>${adminKeytab}</#if>
+lookup_principal=<#if adminPrincipal??>${adminPrincipal}</#if>
+lookup_keytab=<#if adminKeytab??>${adminKeytab}</#if>
+hadoop_conf=${hadoopHome}/etc/hadoop/conf
 #
 #-------- SSO CONFIG - Start ------------------
 #
