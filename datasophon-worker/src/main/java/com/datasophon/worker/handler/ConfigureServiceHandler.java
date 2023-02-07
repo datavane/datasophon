@@ -22,6 +22,8 @@ import java.util.*;
 public class ConfigureServiceHandler {
     private static final Logger logger = LoggerFactory.getLogger(ConfigureServiceHandler.class);
 
+    private static final String RANGER_ADMIN = "RangerAdmin";
+
     public ExecResult configure(Map<Generators, List<ServiceConfig>> cofigFileMap,
                                 String decompressPackageName,
                                 Integer myid,
@@ -105,6 +107,9 @@ public class ConfigureServiceHandler {
                 execResult.setExecOut("configure success");
                 logger.info("configure success");
             }
+            if (RANGER_ADMIN.equals(serviceRoleName) && !setupRangerAdmin(decompressPackageName)) {
+                return execResult;
+            }
             execResult.setExecResult(true);
         } catch (Exception e) {
             execResult.setExecErrOut(e.getMessage());
@@ -113,14 +118,31 @@ public class ConfigureServiceHandler {
         return execResult;
     }
 
+    private boolean setupRangerAdmin(String decompressPackageName) {
+        logger.info("start to execute ranger admin setup.sh");
+        ArrayList<String> commands = new ArrayList<>();
+        commands.add(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "setup.sh");
+        ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName, commands, 300L);
+
+        ArrayList<String> globalCommand = new ArrayList<>();
+        globalCommand.add(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "set_globals.sh");
+        ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName, globalCommand, 300L);
+        if (execResult.getExecResult()) {
+            logger.info("ranger admin setup success");
+            return true;
+        }
+        logger.info("ranger admin setup failed");
+        return false;
+    }
+
     private void createPath(ServiceConfig config, RunAs runAs) {
         String path = (String) config.getValue();
         if (path.contains(Constants.COMMA)) {
             for (String dir : path.split(Constants.COMMA)) {
-                mkdir(dir,runAs);
+                mkdir(dir, runAs);
             }
         } else {
-            mkdir(path,runAs);
+            mkdir(path, runAs);
         }
     }
 
@@ -157,8 +179,8 @@ public class ConfigureServiceHandler {
             logger.info("create file path {}", path);
             FileUtil.mkdir(path);
             ShellUtils.addChmod(path, "755");
-            if(Objects.nonNull(runAs)){
-                ShellUtils.addChown(path,runAs.getUser(),runAs.getGroup());
+            if (Objects.nonNull(runAs)) {
+                ShellUtils.addChown(path, runAs.getUser(), runAs.getGroup());
             }
         }
     }

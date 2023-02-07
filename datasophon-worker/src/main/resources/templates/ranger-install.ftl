@@ -144,7 +144,7 @@ admin_principal=<#if adminPrincipal??>${adminPrincipal}</#if>
 admin_keytab=<#if adminKeytab??>${adminKeytab}</#if>
 lookup_principal=<#if adminPrincipal??>${adminPrincipal}</#if>
 lookup_keytab=<#if adminKeytab??>${adminKeytab}</#if>
-hadoop_conf=${hadoopHome}/etc/hadoop/conf
+hadoop_conf=<#if hadoopHome??>${hadoopHome}</#if>/etc/hadoop/conf
 #
 #-------- SSO CONFIG - Start ------------------
 #

@@ -22,23 +22,6 @@ public class RangerAdminHandlerStrategy implements ServiceRoleStrategy {
     public ExecResult handler(ServiceRoleOperateCommand command) {
         ExecResult startResult = new ExecResult();
         ServiceHandler serviceHandler = new ServiceHandler();
-        if(command.getCommandType() == CommandType.INSTALL_SERVICE){
-            //execute setup.sh setup_global.sh
-            logger.info("start to execute ranger admin setup.sh");
-            ArrayList<String> commands = new ArrayList<>();
-            commands.add(Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName() + Constants.SLASH + "setup.sh");
-            ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName(), commands, 300L);
-
-            ArrayList<String> globalCommand = new ArrayList<>();
-            globalCommand.add(Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName() + Constants.SLASH + "set_globals.sh");
-            ExecResult globalResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName(), globalCommand, 300L);
-            if(!execResult.getExecResult() || !globalResult.getExecResult()){
-                logger.info("ranger admin setup failed");
-                return startResult;
-            }else{
-                logger.info("ranger admin setup success");
-            }
-        }
         if(command.getEnableKerberos()){
             logger.info("start to get ranger keytab file");
             String hostname = CacheUtils.getString(Constants.HOSTNAME);
@@ -54,4 +37,6 @@ public class RangerAdminHandlerStrategy implements ServiceRoleStrategy {
 
         return startResult;
     }
+
+
 }
