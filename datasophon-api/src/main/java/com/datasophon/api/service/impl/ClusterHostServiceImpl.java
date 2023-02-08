@@ -45,23 +45,25 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     @Autowired
     ClusterInfoService clusterInfoService;
 
+    private final String IP = "ip";
+
     @Override
     public ClusterHostEntity getClusterHostByHostname(String hostname) {
         return hostMapper.getClusterHostByHostname(hostname);
     }
 
     @Override
-    public Result listByPage(Integer clusterId, String hostname, String ip,String cpuArchitecture, Integer hostState,String orderField, String orderType, Integer page, Integer pageSize) {
-        Integer offset = (page -1)*pageSize;
+    public Result listByPage(Integer clusterId, String hostname, String ip, String cpuArchitecture, Integer hostState, String orderField, String orderType, Integer page, Integer pageSize) {
+        Integer offset = (page - 1) * pageSize;
         List<ClusterHostEntity> list = this.list(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID, clusterId)
-                .eq(Constants.MANAGED,1)
-                .eq(StringUtils.isNotBlank(ip),"ip",ip)
-                .eq(StringUtils.isNotBlank(cpuArchitecture),Constants.CPU_ARCHITECTURE,cpuArchitecture)
-                .eq(hostState != null,Constants.HOST_STATE,hostState)
-                .like(StringUtils.isNotBlank(hostname),Constants.HOSTNAME,hostname)
-                .orderByAsc("asc".equals(orderType),orderField)
-                .orderByDesc("desc".equals(orderType),orderField)
-                .last("limit "+offset+","+pageSize));
+                .eq(Constants.MANAGED, 1)
+                .eq(StringUtils.isNotBlank(ip), IP, ip)
+                .eq(StringUtils.isNotBlank(cpuArchitecture), Constants.CPU_ARCHITECTURE, cpuArchitecture)
+                .eq(hostState != null, Constants.HOST_STATE, hostState)
+                .like(StringUtils.isNotBlank(hostname), Constants.HOSTNAME, hostname)
+                .orderByAsc("asc".equals(orderType), orderField)
+                .orderByDesc("desc".equals(orderType), orderField)
+                .last("limit " + offset + "," + pageSize));
         for (ClusterHostEntity clusterHostEntity : list) {
             //查询主机上服务角色数
             int serviceRoleNum = roleInstanceService.count(new QueryWrapper<ClusterServiceRoleInstanceEntity>().eq(Constants.HOSTNAME, clusterHostEntity.getHostname()));
@@ -69,16 +71,16 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
         }
         int count = this.count(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.MANAGED, 1)
-                .eq(StringUtils.isNotBlank(cpuArchitecture),Constants.CPU_ARCHITECTURE,cpuArchitecture)
-                .eq(hostState != null,Constants.HOST_STATE,hostState)
+                .eq(StringUtils.isNotBlank(cpuArchitecture), Constants.CPU_ARCHITECTURE, cpuArchitecture)
+                .eq(hostState != null, Constants.HOST_STATE, hostState)
                 .like(StringUtils.isNotBlank(hostname), Constants.HOSTNAME, hostname));
-        return Result.success(list).put(Constants.TOTAL,count);
+        return Result.success(list).put(Constants.TOTAL, count);
     }
 
     @Override
     public List<ClusterHostEntity> getHostListByClusterId(Integer clusterId) {
         return this.list(new QueryWrapper<ClusterHostEntity>()
-                .eq(Constants.CLUSTER_ID,clusterId)
+                .eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.MANAGED, 1));
     }
 
@@ -100,14 +102,14 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
                 .eq(Constants.SERVICE_ROLE_STATE, ServiceRoleState.RUNNING)
                 .ne(Constants.ROLE_TYPE, RoleType.CLIENT));
         List<String> roles = list.stream().map(e -> e.getServiceRoleName()).collect(Collectors.toList());
-        if(Objects.nonNull(list) && list.size() > 0){
-            return Result.error(host.getHostname()+ Status.HOST_EXIT_ONE_RUNNING_ROLE.getMsg() +roles.toString());
+        if (Objects.nonNull(list) && list.size() > 0) {
+            return Result.error(host.getHostname() + Status.HOST_EXIT_ONE_RUNNING_ROLE.getMsg() + roles.toString());
         }
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(host.getClusterId());
         String clusterCode = clusterInfo.getClusterCode();
         String distributeAgentKey = clusterCode + Constants.UNDERLINE + Constants.START_DISTRIBUTE_AGENT;
-        if(CacheUtils.constainsKey(distributeAgentKey+Constants.UNDERLINE+host.getHostname())){
-            CacheUtils.removeKey(distributeAgentKey+Constants.UNDERLINE+host.getHostname());
+        if (CacheUtils.constainsKey(distributeAgentKey + Constants.UNDERLINE + host.getHostname())) {
+            CacheUtils.removeKey(distributeAgentKey + Constants.UNDERLINE + host.getHostname());
         }
         this.removeById(hostId);
         return Result.success();
@@ -117,14 +119,14 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     public Result getRack(Integer clusterId) {
         ArrayList<JSONObject> list = new ArrayList<>();
         JSONObject rack = new JSONObject();
-        rack.put("rack","default");
+        rack.put("rack", "/default-rack");
         list.add(rack);
         return Result.success(list);
     }
 
     @Override
     public void deleteHostByClusterId(Integer clusterId) {
-        this.remove(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID,clusterId));
+        this.remove(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID, clusterId));
     }
 
     @Override
@@ -138,7 +140,7 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
 
     @Override
     public List<ClusterHostEntity> getHostListByIds(List<String> ids) {
-        return this.list(new QueryWrapper<ClusterHostEntity>().in(Constants.ID,ids));
+        return this.list(new QueryWrapper<ClusterHostEntity>().in(Constants.ID, ids));
     }
 
     @Override
@@ -153,14 +155,14 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
         GenerateRackPropCommand command = new GenerateRackPropCommand();
         command.setClusterId(clusterId);
         ActorRef rackActor = ActorUtils.getLocalActor(RackActor.class, "rackActor");
-        rackActor.tell(command,ActorRef.noSender());
+        rackActor.tell(command, ActorRef.noSender());
         return Result.success();
     }
 
     @Override
-    public List<ClusterHostEntity> getClusterHostByRack(Integer clusterId ,String rack) {
+    public List<ClusterHostEntity> getClusterHostByRack(Integer clusterId, String rack) {
         return this.list(new QueryWrapper<ClusterHostEntity>()
-                .eq(Constants.CLUSTER_ID,clusterId)
+                .eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.RACK, rack));
     }
 }
