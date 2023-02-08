@@ -83,10 +83,7 @@ public class InstallServiceHandler {
                         ShellUtils.exceShell(" chmod -R 755 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/etc");
                         ShellUtils.exceShell(" chmod 6050 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/bin/container-executor");
                         ShellUtils.exceShell(" chmod 400 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/etc/hadoop/container-executor.cfg");
-                        ShellUtils.exceShell(" ln -s "+ Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/bin/hdfs /usr/bin/hdfs");
-                        ShellUtils.exceShell(" ln -s "+ Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/bin/yarn /usr/bin/yarn");
                     }
-
                 } else {
                     execResult.setExecOut("install package " + packageName + "failed");
                     logger.info("install package " + packageName + " failed");

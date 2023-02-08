@@ -175,6 +175,17 @@
       "defaultValue": "1"
     },
     {
+      "name": "skipACL",
+      "label": "skipACL",
+      "description": "",
+      "required": true,
+      "type": "input",
+      "value": "yes",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "yes"
+    },
+    {
       "name": "enableKerberos",
       "label": "启用Kerberos认证",
       "description": "启用Kerberos认证",
