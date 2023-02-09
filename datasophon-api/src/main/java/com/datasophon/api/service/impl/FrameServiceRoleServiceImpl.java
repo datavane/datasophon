@@ -41,7 +41,7 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
     public Result getServiceRoleList(Integer clusterId, String serviceIds, Integer serviceRoleType) {
         List<String> ids = Arrays.asList(serviceIds.split(","));
         List<FrameServiceRoleEntity> list = this.list(new QueryWrapper<FrameServiceRoleEntity>()
-                .eq(Objects.nonNull(serviceRoleType),Constants.SERVICE_ROLE_TYPE,serviceRoleType)
+                .eq(Objects.nonNull(serviceRoleType), Constants.SERVICE_ROLE_TYPE, serviceRoleType)
                 .in(Constants.SERVICE_ID, ids)
         );
         //校验是否已安装依赖的服务
@@ -53,14 +53,14 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
             FrameServiceEntity frameServiceEntity = frameService.getById(role.getServiceId());
             List<ClusterServiceRoleInstanceEntity> roleInstanceList = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                     .eq(Constants.SERVICE_NAME, frameServiceEntity.getServiceName())
-                    .eq(Constants.SERVICE_ROLE_NAME,role.getServiceRoleName())
+                    .eq(Constants.SERVICE_ROLE_NAME, role.getServiceRoleName())
                     .eq(Constants.CLUSTER_ID, clusterId));
-            if(Objects.nonNull(roleInstanceList) && roleInstanceList.size() > 0){
+            if (Objects.nonNull(roleInstanceList) && roleInstanceList.size() > 0) {
                 List<String> hosts = roleInstanceList.stream().map(e -> e.getHostname()).collect(Collectors.toList());
                 role.setHosts(hosts);
-            }else if(CacheUtils.constainsKey(key)){
-                Map<String,List<String>> map = (Map<String, List<String>>) CacheUtils.get(key);
-                if(map.containsKey(role.getServiceRoleName())){
+            } else if (CacheUtils.constainsKey(key)) {
+                Map<String, List<String>> map = (Map<String, List<String>>) CacheUtils.get(key);
+                if (map.containsKey(role.getServiceRoleName())) {
                     role.setHosts(map.get(role.getServiceRoleName()));
                 }
             }
@@ -71,13 +71,13 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
     @Override
     public FrameServiceRoleEntity getServiceRoleByServiceIdAndServiceRoleName(Integer serviceId, String roleName) {
         return this.getOne(new QueryWrapper<FrameServiceRoleEntity>()
-                .eq(Constants.SERVICE_ID,serviceId).eq(Constants.SERVICE_ROLE_NAME,roleName));
+                .eq(Constants.SERVICE_ID, serviceId).eq(Constants.SERVICE_ROLE_NAME, roleName));
     }
 
     @Override
     public FrameServiceRoleEntity getServiceRoleByFrameCodeAndServiceRoleName(String clusterFrame, String serviceRoleName) {
         return this.getOne(new QueryWrapper<FrameServiceRoleEntity>()
-                .eq(Constants.FRAME_CODE_1,clusterFrame).eq(Constants.SERVICE_ROLE_NAME,serviceRoleName));
+                .eq(Constants.FRAME_CODE_1, clusterFrame).eq(Constants.SERVICE_ROLE_NAME, serviceRoleName));
     }
 
     @Override
@@ -94,14 +94,14 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
             FrameServiceEntity frameServiceEntity = frameService.getById(role.getServiceId());
             List<ClusterServiceRoleInstanceEntity> roleInstanceList = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                     .eq(Constants.SERVICE_NAME, frameServiceEntity.getServiceName())
-                    .eq(Constants.SERVICE_ROLE_NAME,role.getServiceRoleName())
+                    .eq(Constants.SERVICE_ROLE_NAME, role.getServiceRoleName())
                     .eq(Constants.CLUSTER_ID, clusterId));
-            if(Objects.nonNull(roleInstanceList) && roleInstanceList.size() > 0){
+            if (Objects.nonNull(roleInstanceList) && roleInstanceList.size() > 0) {
                 hosts = roleInstanceList.stream().map(e -> e.getHostname()).collect(Collectors.toList());
 
-            }else if(CacheUtils.constainsKey(key)){
-                Map<String,List<String>> map = (Map<String, List<String>>) CacheUtils.get(key);
-                if(map.containsKey(role.getServiceRoleName())){
+            } else if (CacheUtils.constainsKey(key)) {
+                Map<String, List<String>> map = (Map<String, List<String>>) CacheUtils.get(key);
+                if (map.containsKey(role.getServiceRoleName())) {
                     hosts = map.get(role.getServiceRoleName());
                 }
             }
@@ -112,7 +112,7 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
 
     @Override
     public Result getServiceRoleByServiceName(Integer clusterId, String serviceName) {
-        if("NODE".equals(serviceName)){
+        if ("NODE".equals(serviceName)) {
             List<FrameServiceRoleEntity> list = new ArrayList<>();
             FrameServiceRoleEntity frameServiceRoleEntity = new FrameServiceRoleEntity();
             frameServiceRoleEntity.setServiceRoleName("node");
@@ -127,7 +127,7 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
 
     @Override
     public List<FrameServiceRoleEntity> getAllServiceRoleList(Integer frameServiceId) {
-        return this.list(new QueryWrapper<FrameServiceRoleEntity>().eq(Constants.SERVICE_ID,frameServiceId));
+        return this.list(new QueryWrapper<FrameServiceRoleEntity>().eq(Constants.SERVICE_ID, frameServiceId));
     }
 
 

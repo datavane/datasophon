@@ -39,6 +39,8 @@ public class ServiceConfig  implements Serializable {
 
     private boolean configWithRack;
 
+    private boolean configWithHA;
+
     private String separator;
 
 }

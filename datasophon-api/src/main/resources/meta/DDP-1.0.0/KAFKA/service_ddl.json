@@ -166,7 +166,7 @@
       "description": "",
       "required": true,
       "type": "input",
-      "value": "${zkUrls}",
+      "value": "${zkUrls}/kafka",
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": ""

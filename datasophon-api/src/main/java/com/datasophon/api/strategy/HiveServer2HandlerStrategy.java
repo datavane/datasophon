@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class HiveServer2HandlerStrategy implements ServiceRoleStrategy {
+public class HiveServer2HandlerStrategy extends ServiceHandlerAbstract implements ServiceRoleStrategy {
     private static final Logger logger = LoggerFactory.getLogger(HiveServer2HandlerStrategy.class);
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
@@ -33,51 +33,28 @@ public class HiveServer2HandlerStrategy implements ServiceRoleStrategy {
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
         boolean enableKerberos = false;
+        boolean enableHiveServer2HA = false;
         Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
         for (ServiceConfig config : list) {
             if("enableKerberos".equals(config.getName())){
-                if( (Boolean)config.getValue()){
-                    enableKerberos = true;
-                    ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableHIVEKerberos}", "true");
-                }else {
-                    ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableHIVEKerberos}", "false");
-                }
+                enableKerberos = isEnableKerberos(clusterId, globalVariables, enableKerberos, config,"HIVE");
+            }
+            if("enableHiveServer2HA".equals(config.getName())){
+                enableHiveServer2HA = isEnableHA(clusterId, globalVariables, enableHiveServer2HA, config,"HIVE");
             }
         }
         String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "HIVE" + Constants.CONFIG;
         List<ServiceConfig> configs = ServiceConfigMap.get(key);
         ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
         if(enableKerberos){
-            for (ServiceConfig serviceConfig : configs) {
-                if(serviceConfig.isConfigWithKerberos()){
-                    if(map.containsKey(serviceConfig.getName())){
-                        ServiceConfig config = map.get(serviceConfig.getName());
-                        config.setRequired(true);
-                        config.setHidden(false);
-                        if(Constants.INPUT.equals(config.getType())) {
-                            String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
-                            config.setValue(value);
-                        }
-                    }else{
-                        serviceConfig.setRequired(true);
-                        serviceConfig.setHidden(false);
-                        if(Constants.INPUT.equals(serviceConfig.getType())) {
-                            String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
-                            serviceConfig.setValue(value);
-                        }
-                        kbConfigs.add(serviceConfig);
-                    }
-
-                }
-            }
+            addConfigWithKerberos(globalVariables, map, configs, kbConfigs);
         }else{
-            for (ServiceConfig serviceConfig : configs) {
-                if(serviceConfig.isConfigWithKerberos()){
-                    if(map.containsKey(serviceConfig.getName())){
-                        list.remove(map.get(serviceConfig.getName()));
-                    }
-                }
-            }
+            removeConfigWithKerberos(list, map, configs);
+        }
+        if(enableHiveServer2HA){
+            addConfigWithHA(globalVariables, map, configs, kbConfigs);
+        }else{
+            removeConfigWithHA(list, map, configs);
         }
         list.addAll(kbConfigs);
 
@@ -86,15 +63,23 @@ public class HiveServer2HandlerStrategy implements ServiceRoleStrategy {
     @Override
     public void getConfig(Integer clusterId, List<ServiceConfig> list) {
         //if enabled hiveserver2 ha
+        ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
+        List<ServiceConfig> serviceConfigs = ServiceConfigMap.get(clusterInfo.getClusterFrame() + Constants.UNDERLINE + "HIVE" + Constants.CONFIG);
+        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
         if((Boolean) CacheUtils.get("enableHiveServer2HA")){
-            for (ServiceConfig serviceConfig : list) {
+            for (ServiceConfig serviceConfig : serviceConfigs) {
                 if("ha".equals(serviceConfig.getConfigType())){
                     serviceConfig.setRequired(true);
                     serviceConfig.setHidden(false);
+                    if(Constants.INPUT.equals(serviceConfig.getType())) {
+                        String value = PlaceholderUtils.replacePlaceholders((String) serviceConfig.getValue(), globalVariables, Constants.REGEX_VARIABLE);
+                        serviceConfig.setValue(value);
+                    }
+                    list.add(serviceConfig);
                 }
             }
         }else{
-            for (ServiceConfig serviceConfig : list) {
+            for (ServiceConfig serviceConfig : serviceConfigs) {
                 if("ha".equals(serviceConfig.getConfigType())){
                     serviceConfig.setRequired(false);
                     serviceConfig.setHidden(true);
