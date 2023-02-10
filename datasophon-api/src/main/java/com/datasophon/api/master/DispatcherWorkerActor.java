@@ -34,13 +34,11 @@ public class DispatcherWorkerActor extends UntypedActor {
         HostInfo hostInfo = command.getHostInfo();
         logger.info("start dispatcher host agent :{}", hostInfo.getHostname());
         hostInfo.setMessage(MessageResolverUtils.getMessage("distributed.host.management.agent.installation.package"));
-        String rsa_path=Constants.SLASH + hostInfo.getSshUser() + Constants.ID_RSA;
-        String rsa_content= new String(Files.readAllBytes(Paths.get(rsa_path)));
         ClientSession session = MinaUtils.openConnection(
                 hostInfo.getHostname(),
                 hostInfo.getSshPort(),
                 hostInfo.getSshUser(),
-                rsa_content);
+                Constants.SLASH + hostInfo.getSshUser() + Constants.ID_RSA);
         DispatcherWorkerHandlerChain handlerChain = new DispatcherWorkerHandlerChain();
         handlerChain.addHandler(new UploadWorkerHandler());
         handlerChain.addHandler(new CheckWorkerMd5Handler());
