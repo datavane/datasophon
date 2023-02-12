@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -26,14 +27,14 @@ public class MinaUtils {
     /**
      * 打开远程会话
      */
-    public static ClientSession openConnection(String sshHost, Integer sshPort, String sshUser, String privateKey) {
-
+    public static ClientSession openConnection(String sshHost, Integer sshPort, String sshUser, String privateKey_path) {
         SshClient sshClient = SshClient.setUpDefaultClient();
         sshClient.start();
         ClientSession session = null;
         try {
+            String privateKey_content= new String(Files.readAllBytes(Paths.get(privateKey_path)));
             session = sshClient.connect(sshUser, sshHost, sshPort).verify().getClientSession();
-            session.addPublicKeyIdentity(getKeyPairFromString(privateKey));
+            session.addPublicKeyIdentity(getKeyPairFromString(privateKey_content));
             if (session.auth().verify().isFailure()) {
                 LOG.info("验证失败");
                 return null;
