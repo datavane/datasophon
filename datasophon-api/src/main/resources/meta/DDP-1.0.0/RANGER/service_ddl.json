@@ -57,9 +57,9 @@
           "rangerUser",
           "rangerPassword",
           "rangerAdminUrl",
-          "enableHdfsPlugin",
-          "enableHivePlugin",
-          "enableHbasePlugin",
+          "enableHDFSPlugin",
+          "enableHIVEPlugin",
+          "enableHBASEPlugin",
           "spnegoPrincipal",
           "spnegoKeytab",
           "adminPrincipal",
@@ -142,7 +142,7 @@
       "defaultValue": "${rangerAdminUrl}"
     },
     {
-      "name": "enableHdfsPlugin",
+      "name": "enableHDFSPlugin",
       "label": "启用HDFS Ranger插件",
       "description": "",
       "required": true,
@@ -153,7 +153,7 @@
       "defaultValue": false
     },
     {
-      "name": "enableHivePlugin",
+      "name": "enableHIVEPlugin",
       "label": "启用Hive Ranger插件",
       "description": "",
       "required": true,
@@ -164,7 +164,7 @@
       "defaultValue": false
     },
     {
-      "name": "enableHbasePlugin",
+      "name": "enableHBASEPlugin",
       "label": "启用Hbase Ranger插件",
       "description": "",
       "required": true,

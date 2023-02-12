@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class RangerAdminHandlerStrategy  extends ServiceHandlerAbstract  implements ServiceRoleStrategy {
+public class RangerAdminHandlerStrategy extends ServiceHandlerAbstract implements ServiceRoleStrategy {
 
     private static final Logger logger = LoggerFactory.getLogger(RangerAdminHandlerStrategy.class);
 
@@ -44,28 +44,35 @@ public class RangerAdminHandlerStrategy  extends ServiceHandlerAbstract  impleme
         Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
         //enable ranger plugin
         for (ServiceConfig config : list) {
-            if ("enableHdfsPlugin".equals(config.getName()) && ((Boolean) config.getValue()).booleanValue()) {
+            if ("enableHDFSPlugin".equals(config.getName()) && ((Boolean) config.getValue()).booleanValue()) {
                 logger.info("enableHdfsPlugin");
+                ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableHDFSPlugin}", "true");
                 enableRangerPlugin(clusterId, "HDFS", "NameNode");
             }
-            if ("enableHivePlugin".equals(config.getName()) && ((Boolean) config.getValue()).booleanValue()) {
+            if ("enableHIVEPlugin".equals(config.getName()) && ((Boolean) config.getValue()).booleanValue()) {
                 logger.info("enableHivePlugin");
+                ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableHIVEPlugin}", "true");
                 enableRangerPlugin(clusterId, "HIVE", "HiveServer2");
             }
-            if ("enableHbasePlugin".equals(config.getName()) && ((Boolean) config.getValue()).booleanValue()) {
-                logger.info("enableHivePlugin");
+            if ("enableHBASEPlugin".equals(config.getName()) && ((Boolean) config.getValue()).booleanValue()) {
+                logger.info("enableHbasePlugin");
+                ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableHBASEPlugin}", "true");
                 enableRangerPlugin(clusterId, "HBASE", "HbaseMaster");
             }
-            if("enableKerberos".equals(config.getName())){
-                enableKerberos = isEnableKerberos(clusterId, globalVariables, enableKerberos, config,"RANGER");
+            if (!(Boolean) config.getValue()) {
+                String configName = config.getName();
+                ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${" + configName + "}", "false");
+            }
+            if ("enableKerberos".equals(config.getName())) {
+                enableKerberos = isEnableKerberos(clusterId, globalVariables, enableKerberos, config, "RANGER");
             }
         }
         String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "RANGER" + Constants.CONFIG;
         List<ServiceConfig> configs = ServiceConfigMap.get(key);
         ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
-        if(enableKerberos){
+        if (enableKerberos) {
             addConfigWithKerberos(globalVariables, map, configs, kbConfigs);
-        }else{
+        } else {
             removeConfigWithKerberos(list, map, configs);
         }
         list.addAll(kbConfigs);
@@ -93,7 +100,7 @@ public class RangerAdminHandlerStrategy  extends ServiceHandlerAbstract  impleme
         ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
         ServiceInstallService serviceInstallService = SpringTool.getApplicationContext().getBean(ServiceInstallService.class);
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
-        Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+clusterId);
+        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
         ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceName);
         //查询角色组id
         List<ClusterServiceRoleInstanceEntity> roleList = roleInstanceService.getServiceRoleInstanceListByClusterIdAndRoleName(clusterId, serviceRoleName);
