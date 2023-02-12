@@ -32,9 +32,9 @@ public class MinaUtils {
         sshClient.start();
         ClientSession session = null;
         try {
-            String privateKey_content= new String(Files.readAllBytes(Paths.get(privateKey_path)));
+            String privateKeyContent= new String(Files.readAllBytes(Paths.get(privateKey_path)));
             session = sshClient.connect(sshUser, sshHost, sshPort).verify().getClientSession();
-            session.addPublicKeyIdentity(getKeyPairFromString(privateKey_content));
+            session.addPublicKeyIdentity(getKeyPairFromString(privateKeyContent));
             if (session.auth().verify().isFailure()) {
                 LOG.info("验证失败");
                 return null;

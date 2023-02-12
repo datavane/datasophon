@@ -43,7 +43,9 @@ public class StartWorkerHandler implements DispatcherWorkerHandler{
                         Constants.SPACE +
                         this.clusterFrame +
                         Constants.SPACE +
-                        this.clusterId);
+                        this.clusterId+
+                        Constants.SPACE+
+                        Constants.INSTALL_PATH);
         if (StringUtils.isBlank(updateCommonPropertiesResult) || "failed".equals(updateCommonPropertiesResult)) {
             logger.error("common.properties update failed");
             hostInfo.setErrMsg("common.properties update failed");
@@ -57,7 +59,7 @@ public class StartWorkerHandler implements DispatcherWorkerHandler{
 //            MinaUtils.execCmdWithResult(session,"\\cp "+installPath+"/datasophon-worker/script/profile /etc/");
 //            MinaUtils.execCmdWithResult(session,"source /etc/profile");
             hostInfo.setMessage(MessageResolverUtils.getMessage("start.host.management.agent"));
-            MinaUtils.execCmdWithResult( session,"service datasophon-worker restart");
+            MinaUtils.execCmdWithResult( session,"service datasophon-worker restart "+Constants.INSTALL_PATH+"");
             hostInfo.setProgress(75);
             hostInfo.setCreateTime(new Date());
         }

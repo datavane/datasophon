@@ -1,8 +1,8 @@
-POLICY_MGR_URL=${rangerAdminUrl}
+POLICY_MGR_URL=<#if rangerAdminUrl??>${rangerAdminUrl}</#if>
 
 REPOSITORY_NAME=hivedev
 
-COMPONENT_INSTALL_DIR_NAME=${hiveHome}
+COMPONENT_INSTALL_DIR_NAME=<#if hiveHome??>${hiveHome}</#if>
 
 
 XAAUDIT.SOLR.ENABLE=false

@@ -1,4 +1,4 @@
-POLICY_MGR_URL=${rangerAdminUrl}
+POLICY_MGR_URL=<#if rangerAdminUrl??>${rangerAdminUrl}</#if>
 
 REPOSITORY_NAME=hbasedev
 
@@ -8,7 +8,7 @@ REPOSITORY_NAME=hbasedev
 # Example:
 # COMPONENT_INSTALL_DIR_NAME=/var/local/hbase-1.1.5
 #
-COMPONENT_INSTALL_DIR_NAME=${hbaseHome}
+COMPONENT_INSTALL_DIR_NAME=<#if hbaseHome??>${hbaseHome}</#if>
 
 # AUDIT configuration with V3 properties
 
