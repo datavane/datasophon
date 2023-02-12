@@ -67,7 +67,7 @@ public class MasterServiceActor extends UntypedActor {
                     generateConfigFileMap(configFileMap, config);
                     needReConfig = true;
                 }
-                logger.info("set enable ranger plugin {}", enableRangerPlugin);
+                logger.info("enable ranger plugin is {}", enableRangerPlugin);
                 serviceRoleInfo.setConfigFileMap(configFileMap);
                 serviceRoleInfo.setEnableRangerPlugin(enableRangerPlugin);
                 switch (executeServiceRoleCommand.getCommandType()) {
@@ -188,7 +188,7 @@ public class MasterServiceActor extends UntypedActor {
 
     private boolean isEnableRangerPlugin(Integer clusterId,String serviceName) {
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
-        if(globalVariables.containsKey("${"+serviceName+"}") && "true".equals(globalVariables.get("${"+serviceName+"}"))){
+        if(globalVariables.containsKey("${enable"+serviceName+"Plugin}") && "true".equals(globalVariables.get("${enable"+serviceName+"Plugin}"))){
             return true;
         }
         return false;

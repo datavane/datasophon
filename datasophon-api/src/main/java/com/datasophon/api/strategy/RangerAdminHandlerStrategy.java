@@ -59,7 +59,7 @@ public class RangerAdminHandlerStrategy extends ServiceHandlerAbstract implement
                 ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${enableHBASEPlugin}", "true");
                 enableRangerPlugin(clusterId, "HBASE", "HbaseMaster");
             }
-            if (!(Boolean) config.getValue()) {
+            if (config.getName().contains("Plugin") && !(Boolean) config.getValue()) {
                 String configName = config.getName();
                 ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${" + configName + "}", "false");
             }
