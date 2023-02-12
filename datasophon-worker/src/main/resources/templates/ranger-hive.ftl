@@ -2,7 +2,7 @@ POLICY_MGR_URL=${rangerAdminUrl}
 
 REPOSITORY_NAME=hivedev
 
-COMPONENT_INSTALL_DIR_NAME=/opt/datasophon/hive-3.1.0
+COMPONENT_INSTALL_DIR_NAME=${hiveHome}
 
 
 XAAUDIT.SOLR.ENABLE=false

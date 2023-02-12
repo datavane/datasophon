@@ -208,6 +208,7 @@
         "templateName": "hadoop-env.ftl",
         "includeParams": [
           "hadoopLogDir",
+          "hadoopHome",
           "custom.hadoop.env.sh"
         ]
       },
@@ -263,6 +264,7 @@
         "outputDirectory": "ranger-hdfs-plugin",
         "templateName": "ranger-hdfs.ftl",
         "includeParams": [
+          "hadoopHome",
           "rangerAdminUrl"
         ]
       }
@@ -965,6 +967,18 @@
       "configWithRack": true,
       "hidden": true,
       "defaultValue": "org.apache.hadoop.net.TableMapping"
+    },
+    {
+      "name": "hadoopHome",
+      "label": "HADOOP_HOME",
+      "description": "Hadoop的安装目录",
+      "required": true,
+      "configType": "map",
+      "type": "input",
+      "value": "${HADOOP_HOME}",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${HADOOP_HOME}"
     },
     {
       "name": "custom.core.site.xml",

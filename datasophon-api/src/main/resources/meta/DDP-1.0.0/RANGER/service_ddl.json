@@ -64,7 +64,8 @@
           "spnegoKeytab",
           "adminPrincipal",
           "adminKeytab",
-          "hadoopHome"
+          "hadoopHome",
+          "rangerHome"
         ]
       }
     ]
@@ -238,7 +239,7 @@
     },
     {
       "name": "hadoopHome",
-      "label": "HADOOP HOME",
+      "label": "HADOOP_HOME",
       "description": "",
       "configWithKerberos": true,
       "required": false,
@@ -248,6 +249,18 @@
       "configurableInWizard": true,
       "hidden": true,
       "defaultValue": "${HADOOP_HOME}"
+    },
+    {
+      "name": "rangerHome",
+      "label": "RANGER_HOME",
+      "description": "",
+      "required": true,
+      "configType": "map",
+      "type": "input",
+      "value": "${RANGER_HOME}",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${RANGER_HOME}"
     }
   ]
 }

@@ -1,7 +1,7 @@
 
 POLICY_MGR_URL=${rangerAdminUrl}
 REPOSITORY_NAME=hadoopdev
-COMPONENT_INSTALL_DIR_NAME=/opt/datasophon/hadoop-3.3.3
+COMPONENT_INSTALL_DIR_NAME=${hadoopHome}
 
 #XAAUDIT.SOLR.ENABLE=true
 #XAAUDIT.SOLR.URL=http://localhost:6083/solr/ranger_audits

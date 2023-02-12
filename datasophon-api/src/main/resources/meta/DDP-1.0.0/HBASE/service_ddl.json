@@ -130,7 +130,8 @@
         "outputDirectory": "ranger-hbase-plugin",
         "templateName": "ranger-hbase.ftl",
         "includeParams": [
-          "rangerAdminUrl"
+          "rangerAdminUrl",
+          "hbaseHome"
         ]
       },
       {
@@ -391,6 +392,18 @@
       "configurableInWizard": true,
       "hidden": true,
       "defaultValue": "-Djava.security.auth.login.config=${HBASE_HOME}/conf/zk-jaas.conf"
+    },
+    {
+      "name": "hbaseHome",
+      "label": "HBASE_HOME",
+      "description": "HBase的安装目录",
+      "required": true,
+      "configType": "map",
+      "type": "input",
+      "value": "${HBASE_HOME}",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${HBASE_HOME}"
     },
     {
       "name": "custom.hbase.site.xml",
