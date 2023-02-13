@@ -16,7 +16,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
- * 用于管理hdfs的扩容与缩容
+ * Used to manage hdfs capacity expansion and reduction
  */
 public class HdfsECActor extends UntypedActor {
     private static final Logger logger = LoggerFactory.getLogger(HdfsECActor.class);
@@ -27,7 +27,7 @@ public class HdfsECActor extends UntypedActor {
 
             HdfsEcCommand hdfsEcCommand = (HdfsEcCommand) msg;
             ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
-            //list datanode test
+            //list datanode
             List<ClusterServiceRoleInstanceEntity> datanodes = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>().eq(Constants.SERVICE_ID, hdfsEcCommand.getServiceInstanceId()).eq(Constants.SERVICE_ROLE_NAME, "DataNode"));
             TreeSet<String> list = datanodes.stream().map(e -> e.getHostname()).collect(Collectors.toCollection(TreeSet::new));
             ProcessUtils.hdfsEcMethond(hdfsEcCommand.getServiceInstanceId(),roleInstanceService,list,"whitelist","NameNode");
