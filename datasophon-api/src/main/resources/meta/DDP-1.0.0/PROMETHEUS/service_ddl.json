@@ -3,7 +3,7 @@
   "label": "Prometheus",
   "description": "高性能监控指标采集与告警系统",
   "version": "2.17.2",
-  "sortNum": 10,
+  "sortNum": 16,
   "dependencies":[],
   "packageName": "prometheus-2.17.2.tar.gz",
   "decompressPackageName": "prometheus-2.17.2",
@@ -12,6 +12,10 @@
       "name": "Prometheus",
       "label": "Prometheus",
       "roleType": "master",
+      "runAs": {
+        "user": "root",
+        "group": "root"
+      },
       "cardinality": 1,
       "logFile": "logs/prometheus-${host}.out",
       "jmxPort": 9090,

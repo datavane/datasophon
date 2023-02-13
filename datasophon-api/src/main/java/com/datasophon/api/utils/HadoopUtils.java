@@ -16,11 +16,11 @@ import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 
 public class HadoopUtils {
 

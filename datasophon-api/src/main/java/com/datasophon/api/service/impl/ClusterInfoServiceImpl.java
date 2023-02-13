@@ -55,6 +55,17 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
     @Autowired
     private ClusterHostService clusterHostService;
 
+    @Autowired
+    private ClusterYarnSchedulerService yarnSchedulerService;
+
+    @Autowired
+    private ClusterNodeLabelService nodeLabelService;
+
+    @Autowired
+    private ClusterQueueCapacityService queueCapacityService;
+
+    @Autowired
+    private ClusterRackService rackService;
 
     @Override
     public ClusterInfoEntity getClusterByClusterCode(String clusterCode) {
@@ -64,7 +75,6 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
 
     @Override
     public Result saveCluster(ClusterInfoEntity clusterInfo) {
-        //集群编码判重
         List<ClusterInfoEntity> list = this.list(new QueryWrapper<ClusterInfoEntity>().eq(Constants.CLUSTER_CODE, clusterInfo.getClusterCode()));
         if (Objects.nonNull(list) && list.size() >= 1) {
             return Result.error(Status.CLUSTER_CODE_EXISTS.getMsg());
@@ -73,7 +83,6 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         clusterInfo.setCreateBy(SecurityUtils.getAuthUser().getUsername());
         clusterInfo.setClusterState(ClusterState.NEED_CONFIG);
         this.save(clusterInfo);
-        //保存告警组与集群关系
         List<AlertGroupEntity> alertGroupList = alertGroupService.list();
         for (AlertGroupEntity alertGroupEntity : alertGroupList) {
             ClusterAlertGroupMap alertGroupMap = new ClusterAlertGroupMap();
@@ -81,16 +90,33 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
             alertGroupMap.setClusterId(clusterInfo.getId());
             groupMapService.save(alertGroupMap);
         }
-        ProcessUtils.createServiceActor(clusterInfo);
+//        ProcessUtils.createServiceActor(clusterInfo);
 
+        yarnSchedulerService.createDefaultYarnScheduler(clusterInfo.getId());
+
+        nodeLabelService.createDefaultNodeLabel(clusterInfo.getId());
+
+        queueCapacityService.createDefaultQueue(clusterInfo.getId());
+
+        rackService.createDefaultRack(clusterInfo.getId());
+
+        putClusterVariable(clusterInfo);
+        return Result.success();
+    }
+
+    private void putClusterVariable(ClusterInfoEntity clusterInfo) {
         HashMap<String, String> globalVariables = new HashMap<>();
+        List<FrameServiceEntity> frameServiceList =
+                frameServiceService.getAllFrameServiceByFrameCode(clusterInfo.getClusterFrame());
+        for (FrameServiceEntity frameServiceEntity : frameServiceList) {
+            globalVariables.put("${" + frameServiceEntity.getServiceName() + "_HOME}", Constants.INSTALL_PATH + Constants.SLASH + frameServiceEntity.getDecompressPackageName());
+        }
         globalVariables.put("${INSTALL_PATH}",Constants.INSTALL_PATH);
         globalVariables.put("${apiHost}", CacheUtils.getString("hostname"));
         globalVariables.put("${apiPort}", configBean.getServerPort());
         globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + Constants.SLASH+ PackageUtils.getServiceDcPackageName(clusterInfo.getClusterFrame(),"HDFS"));
 
         CacheUtils.put("globalVariables" + Constants.UNDERLINE + clusterInfo.getId(), globalVariables);
-        return Result.success();
     }
 
 
@@ -151,12 +177,5 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         this.removeByIds(ids);
         //delete host
         clusterHostService.deleteHostByClusterId(id);
-        List<FrameServiceEntity> frameServiceList = frameServiceService.getAllFrameServiceByFrameCode(clusterInfo.getClusterFrame());
-        for (FrameServiceEntity frameServiceEntity : frameServiceList) {
-            //创建服务actor
-            ActorRef actor = ActorUtils.getLocalActor(MasterServiceActor.class,clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
-            actor.tell(PoisonPill.getInstance(), ActorRef.noSender());
-        }
-
     }
 }

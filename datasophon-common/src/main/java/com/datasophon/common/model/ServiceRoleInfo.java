@@ -58,7 +58,7 @@ public class ServiceRoleInfo implements Serializable,Comparable<ServiceRoleInfo>
 
     private Integer serviceInstanceId;
 
-    private String runAs;
+    private RunAs runAs;
 
 
     @Override

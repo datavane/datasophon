@@ -31,5 +31,7 @@ public interface ClusterServiceCommandHostCommandService extends IService<Cluste
     Result getHostCommandLog(Integer clusterId , String hostCommandId) throws Exception;
 
     List<ClusterServiceCommandHostCommandEntity> findFailedHostCommand(String hostname, String commandHostId);
+
+    List<ClusterServiceCommandHostCommandEntity> findCanceledHostCommand(String hostname, String commandHostId);
 }
 

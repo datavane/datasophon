@@ -57,7 +57,10 @@ public class ServiceCommandActor extends UntypedActor {
                 }else{
                     commandHost.setCommandState(CommandState.SUCCESS);
                 }
-
+                List<ClusterServiceCommandHostCommandEntity> cancelList = service.findCanceledHostCommand(message.getHostname(),message.getCommandHostId());
+                if(cancelList.size() > 0){
+                    commandHost.setCommandState(CommandState.CANCEL);
+                }
             }
             commandHostService.update(commandHost, new QueryWrapper<ClusterServiceCommandHostEntity>().eq(Constants.COMMAND_HOST_ID, message.getCommandHostId()));
 
@@ -79,20 +82,23 @@ public class ServiceCommandActor extends UntypedActor {
                     }
                     String serviceName = command.getServiceName();
                     if("hdfs".equals(serviceName.toLowerCase())){
-                        ActorRef hdfsECActor = (ActorRef) CacheUtils.get("hdfsECActor");
+                        ActorRef hdfsECActor = ActorUtils.getLocalActor(HdfsECActor.class,ActorUtils.getActorRefName(HdfsECActor.class));
                         HdfsEcCommand hdfsEcCommand = new HdfsEcCommand();
                         hdfsEcCommand.setServiceInstanceId(command.getServiceInstanceId());
                         hdfsECActor.tell(hdfsEcCommand,getSelf());
                     }
-                    //更新prometheus配置
                     logger.info("start to generate prometheus config");
-                    ActorRef prometheusActor = (ActorRef) CacheUtils.get("prometheusActor");
+                    ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class,ActorUtils.getActorRefName(PrometheusActor.class));
                     if("starrocks".equals(serviceName.toLowerCase()) || "doris".equals(serviceName.toLowerCase())){
                         GenerateSRPromConfigCommand prometheusConfigCommand = new GenerateSRPromConfigCommand();
                         prometheusConfigCommand.setServiceInstanceId(command.getServiceInstanceId());
                         prometheusConfigCommand.setClusterFrame(clusterInfo.getClusterFrame());
                         prometheusConfigCommand.setClusterId(clusterInfo.getId());
-                        prometheusConfigCommand.setFilename(serviceName.toLowerCase()+".json");
+                        if("starrocks".equals(serviceName.toLowerCase())){
+                            prometheusConfigCommand.setFilename("starrocks.json");
+                        }else{
+                            prometheusConfigCommand.setFilename("doris.json");
+                        }
                         prometheusActor.tell(prometheusConfigCommand, getSelf());
                     }else{
                         GeneratePrometheusConfigCommand prometheusConfigCommand = new GeneratePrometheusConfigCommand();
@@ -110,6 +116,12 @@ public class ServiceCommandActor extends UntypedActor {
                 List<ClusterServiceCommandHostEntity> list = commandHostService.findFailedCommandHost(message.getCommandId());
                 if(list.size() > 0){
                     command.setCommandState(CommandState.FAILED);
+                    command.setEndTime(new Date());
+                }
+
+                List<ClusterServiceCommandHostEntity> cancelList = commandHostService.findCanceledCommandHost(message.getCommandId());
+                if(cancelList.size() > 0){
+                    command.setCommandState(CommandState.CANCEL);
                     command.setEndTime(new Date());
                 }
             }

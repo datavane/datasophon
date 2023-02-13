@@ -3,7 +3,7 @@
   "label": "DolphinScheduler",
   "description": "分布式易扩展的可视化工作流任务调度平台",
   "version": "3.1.1",
-  "sortNum": 4,
+  "sortNum": 14,
   "dependencies":["ZOOKEEPER"],
   "packageName": "dolphinscheduler-3.1.1.tar.gz",
   "decompressPackageName": "dolphinscheduler-3.1.1",

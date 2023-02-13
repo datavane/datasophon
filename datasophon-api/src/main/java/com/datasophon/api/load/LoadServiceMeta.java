@@ -20,6 +20,7 @@ import com.datasophon.common.utils.HostUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -69,6 +70,8 @@ public class LoadServiceMeta implements ApplicationRunner {
 
     private static final String HDFS = "HDFS";
 
+    private static final String HADOOP = "HADOOP";
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void run(ApplicationArguments args) throws Exception {
@@ -78,8 +81,8 @@ public class LoadServiceMeta implements ApplicationRunner {
 
         File[] ddps = FileUtil.ls(PATH);
         //load global variable
-        HashMap<String, String> globalVariables = new HashMap<>();
-        loadGlobalVariables(globalVariables);
+        List<ClusterInfoEntity> clusters = clusterInfoService.list();
+        loadGlobalVariables(clusters);
 
         for (File path : ddps) {
             List<File> files = FileUtil.loopFiles(path);
@@ -102,9 +105,7 @@ public class LoadServiceMeta implements ApplicationRunner {
 
                     PackageUtils.putServicePackageName(frameCode, serviceName, serviceInfo.getDecompressPackageName());
 
-                    if (HDFS.equals(serviceName)) {
-                        putHadoopHomeToVariable(globalVariables, serviceInfo.getDecompressPackageName());
-                    }
+                    putServiceHomeToVariable(clusters, serviceName, serviceInfo.getDecompressPackageName());
                     //save service and service config
                     FrameServiceEntity serviceEntity = saveFrameService(frameCode, frameInfo, serviceName, serviceDdl, serviceInfo, serviceInfoMd5, allParameters, configFileMap);
                     //save frame service role
@@ -114,6 +115,17 @@ public class LoadServiceMeta implements ApplicationRunner {
         }
     }
 
+    private void putServiceHomeToVariable(List<ClusterInfoEntity> clusters, String serviceName, String decompressPackageName) {
+        for (ClusterInfoEntity cluster : clusters) {
+            Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + cluster.getId());
+            if (HDFS.equals(serviceName)) {
+                serviceName = HADOOP;
+            }
+            globalVariables.put("${" + serviceName + "_HOME}", Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
+        }
+    }
+
+
     private void saveFrameServiceRole(String frameCode, String serviceName, ServiceInfo serviceInfo, FrameServiceEntity serviceEntity) {
         List<ServiceRoleInfo> serviceRoles = serviceInfo.getRoles();
 
@@ -121,7 +133,7 @@ public class LoadServiceMeta implements ApplicationRunner {
             String key = frameCode + Constants.UNDERLINE + serviceInfo.getName() + Constants.UNDERLINE + serviceRole.getName();
             logger.info("put {} {} {} service role info into cache", frameCode, serviceName, serviceRole.getName());
             if (StringUtils.isNotBlank(serviceRole.getJmxPort())) {
-                logger.info("{} jmx port is :{} and the jmx key is: {}",serviceRole.getName(),serviceRole.getJmxPort(),key);
+                logger.info("{} jmx port is :{} and the jmx key is: {}", serviceRole.getName(), serviceRole.getJmxPort(), key);
                 ServiceRoleJmxMap.put(key, serviceRole.getJmxPort());
             }
             ServiceRoleMap.put(key, serviceRole);
@@ -175,7 +187,9 @@ public class LoadServiceMeta implements ApplicationRunner {
             for (String includeParam : includeParams) {
                 if (map.containsKey(includeParam)) {
                     ServiceConfig serviceConfig = map.get(includeParam);
-                    list.add(serviceConfig);
+                    ServiceConfig newConfig = new ServiceConfig();
+                    BeanUtils.copyProperties(serviceConfig, newConfig);
+                    list.add(newConfig);
                 }
             }
             if (configFileMap.containsKey(generator)) {
@@ -196,12 +210,9 @@ public class LoadServiceMeta implements ApplicationRunner {
         return frameInfo;
     }
 
-    private void putHadoopHomeToVariable(HashMap<String, String> globalVariables, String packageName) {
-        globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + Constants.SLASH + packageName);
-    }
 
-    private void loadGlobalVariables(HashMap<String, String> globalVariables) throws UnknownHostException {
-        List<ClusterInfoEntity> clusters = clusterInfoService.list();
+    private void loadGlobalVariables(List<ClusterInfoEntity> clusters) throws UnknownHostException {
+        HashMap<String, String> globalVariables = new HashMap<>();
         if (Objects.nonNull(clusters) && clusters.size() > 0) {
             for (ClusterInfoEntity cluster : clusters) {
                 List<ClusterVariable> variables = variableService.list(new QueryWrapper<ClusterVariable>().eq(Constants.CLUSTER_ID, cluster.getId()));

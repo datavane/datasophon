@@ -30,7 +30,7 @@ public class ServiceExecuteResultActor extends UntypedActor {
             Map<String, String> errorTaskList = result.getErrorTaskList();
             Map<String, String> readyToSubmitTaskList = result.getReadyToSubmitTaskList();
             Map<String, String> completeTaskList = result.getCompleteTaskList();
-            ActorRef submitTaskNodeActor = (ActorRef) CacheUtils.get("submitTaskNodeActor");
+            ActorRef submitTaskNodeActor = ActorUtils.getLocalActor(SubmitTaskNodeActor.class,ActorUtils.getActorRefName(SubmitTaskNodeActor.class));
             String node = result.getServiceName();
             ServiceNode servicNode = dag.getNode(node);
             if (result.getServiceRoleType().equals(ServiceRoleType.MASTER)) {

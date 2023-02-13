@@ -14,6 +14,8 @@ public final class Constants {
     public static final String INSTALL_TYPE = "install_type";
     public static final String TOTAL = "total";
 
+    public static final String DATASOPHON = "datasophon";
+
     public static final String HOST_MAP = "_host_map";
     public static final String COMMAND_ID = "command_id";
     public static final String COMMAND_HOST_ID = "command_host_id";
@@ -27,6 +29,7 @@ public final class Constants {
 
     public static final String WORKER_PACKAGE_NAME = "datasophon-worker.tar.gz";
     public static final String WORKER_SCRIPT_PATH = INSTALL_PATH + "/datasophon-worker/script/";
+    public static final String WORKER_PATH = INSTALL_PATH + "/datasophon-worker";
 
     public static final String IP_HOST = "ip_host";
     public static final String HOST_IP = "host_ip";
@@ -190,6 +193,44 @@ public final class Constants {
     public static final Pattern REGEX_MAIL_NAME = Pattern.compile("^([a-z0-9A-Z]+[_|\\-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$");
 
     /**
+     * 常量-数值100
+     */
+    public static final int ONE_HUNDRRD = 100;
+
+    /**
+     * 常量-数值200
+     */
+    public static final int TWO_HUNDRRD = 200;
+
+    /**
+     * 常量-数值10
+     */
+    public static final int TEN= 10;
+
+    /**
+     * 常量-zkserver
+     */
+    public static final String ZKSERVER= "zkserver";
+
+    public static final String  CENTER_BRACKET_LEFT= "[";
+
+    public static final String   CENTER_BRACKET_RIGHT= "]";
+    /**
+     * 常量-连接号
+     */
+    public static final String   HYPHEN= "-";
+
+    public static final String TASK_MANAGER = "taskmanager";
+    public static final String JOB_MANAGER = "jobmanager";
+    public static final String x86_64 = "x86_64";
+    public static final String PROMETHEUS = "prometheus";
+
+    public static final String XML = "xml";
+    public static final String PROPERTIES = "properties";
+    public static final String PROPERTIES2 = "properties2";
+    public static final String PROPERTIES3 = "properties3";
+
+    /**
      * os name properties
      */
     public static final String OSNAME_PROPERTIES = "os.name";
@@ -203,6 +244,8 @@ public final class Constants {
      * windows hosts file basedir
      */
     public static final String WINDOWS_HOST_DIR = "C:/Windows/System32/drivers";
-
-
+    /**
+     * root user
+     */
+    public static final String   ROOT= "root";
 }

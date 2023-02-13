@@ -69,16 +69,34 @@
           "socket.receive.buffer.bytes",
           "socket.send.buffer.bytes",
           "socket.request.max.bytes",
+          "advertised.listeners",
+          "listeners",
+          "security.inter.broker.protocol",
+          "sasl.mechanism.inter.broker.protocol",
+          "sasl.enabled.mechanisms",
+          "sasl.kerberos.service.name",
           "custom.server.properties"
         ]
       },
       {
-        "filename": "kafka-server-start.sh",
+        "filename": "kafka-run-class.sh",
         "configFormat": "custom",
         "outputDirectory": "bin",
-        "templateName": "kafka-server-start.ftl",
+        "templateName": "kafka-run-class.ftl",
         "includeParams": [
-          "kafkaHeapSize"
+          "kafkaHeapSize",
+          "javaSecurityKrb5Conf",
+          "javaSecurityAuthLoginConfig"
+        ]
+      },
+      {
+        "filename": "kafka-jaas.conf",
+        "configFormat": "custom",
+        "outputDirectory": "config",
+        "templateName": "kafka-jaas.ftl",
+        "includeParams": [
+          "kafkaHost",
+          "kafkaRealm"
         ]
       }
     ]
@@ -90,6 +108,7 @@
       "description": "",
       "required": true,
       "type": "multiple",
+      "separator": ",",
       "value": ["/data/kafka-logs"],
       "configurableInWizard": true,
       "hidden": false,
@@ -147,7 +166,7 @@
       "description": "",
       "required": true,
       "type": "input",
-      "value": "${zkUrls}",
+      "value": "${zkUrls}/kafka",
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": ""
@@ -282,6 +301,147 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": "102857600"
+    },
+    {
+      "name": "enableKerberos",
+      "label": "开启Kerberos认证",
+      "description": "开启Kerberos认证",
+      "required": false,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
+    },
+    {
+      "name": "advertised.listeners",
+      "label": "advertised.listeners",
+      "description": "",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "SASL_PLAINTEXT://${host}:9092",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "SASL_PLAINTEXT://${host}:9092"
+    },
+    {
+      "name": "listeners",
+      "label": "listeners",
+      "description": "",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "SASL_PLAINTEXT://${host}:9092",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "SASL_PLAINTEXT://${host}:9092"
+    },
+    {
+      "name": "security.inter.broker.protocol",
+      "label": "security.inter.broker.protocol",
+      "description": "",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "SASL_PLAINTEXT",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "SASL_PLAINTEXT"
+    },
+    {
+      "name": "sasl.mechanism.inter.broker.protocol",
+      "label": "sasl.mechanism.inter.broker.protocol",
+      "description": "",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "GSSAPI",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "GSSAPI"
+    },
+    {
+      "name": "sasl.enabled.mechanisms",
+      "label": "sasl.enabled.mechanisms",
+      "description": "",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "GSSAPI",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "GSSAPI"
+    },
+    {
+      "name": "sasl.kerberos.service.name",
+      "label": "sasl.kerberos.service.name",
+      "description": "",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "kafka",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "kafka"
+    },
+    {
+      "name": "javaSecurityKrb5Conf",
+      "label": "java.security.krb5.conf",
+      "description": "",
+      "configType": "map",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "/etc/krb5.conf",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "/etc/krb5.conf"
+    },
+    {
+      "name": "javaSecurityAuthLoginConfig",
+      "label": "java.security.auth.login.config",
+      "description": "",
+      "configType": "map",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "${KAFKA_HOME}/config/kafka-jaas.conf",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "${KAFKA_HOME}/config/kafka-jaas.conf"
+    },
+    {
+      "name": "kafkaHost",
+      "label": "kafkaHost",
+      "description": "",
+      "configType": "map",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "${host}",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "${host}"
+    },
+    {
+      "name": "kafkaRealm",
+      "label": "kafkaRealm",
+      "description": "",
+      "configType": "map",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "${realm}",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "${realm}"
     },
     {
       "name": "custom.server.properties",

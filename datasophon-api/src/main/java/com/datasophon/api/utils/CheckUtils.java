@@ -22,16 +22,13 @@ package com.datasophon.api.utils;
 import com.datasophon.api.enums.Status;
 import com.datasophon.common.Constants;
 import org.apache.commons.lang.StringUtils;
-
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 
-/**
- * check utils
- */
+
 public class CheckUtils {
 
   private CheckUtils() {
@@ -68,8 +65,8 @@ public class CheckUtils {
    * @return true if description regex valid, otherwise return false
    */
   public static Map<String, Object> checkDesc(String desc) {
-    Map<String, Object> result = new HashMap<>();
-    if (StringUtils.isNotEmpty(desc) && desc.length() > 200) {
+    Map<String, Object> result = new HashMap<>(16);
+    if (StringUtils.isNotEmpty(desc) && desc.length() > Constants.TWO_HUNDRRD) {
         result.put(Constants.STATUS, Status.REQUEST_PARAMS_NOT_VALID_ERROR);
         result.put(Constants.MSG, MessageFormat.format(Status.REQUEST_PARAMS_NOT_VALID_ERROR.getMsg(), "desc length"));
     }else{

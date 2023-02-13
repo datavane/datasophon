@@ -3,7 +3,7 @@
   "label": "Hive",
   "description": "离线数据仓库",
   "version": "3.1.0",
-  "sortNum": 8,
+  "sortNum": 5,
   "dependencies":["HDFS"],
   "packageName": "hive-3.1.0.tar.gz",
   "decompressPackageName": "hive-3.1.0",
@@ -12,9 +12,14 @@
       "name": "HiveServer2",
       "label": "HiveServer2",
       "roleType": "master",
-      "cardinality": "1",
+      "runAs": {
+        "user": "hive",
+        "group": "hadoop"
+      },
+      "cardinality": "1+",
       "logFile": "logs/hiveserver2.out",
       "jmxPort": 11000,
+      "sortNum": 1,
       "startRunner": {
         "timeout": "60",
         "program": "control_hive.sh",
@@ -57,9 +62,14 @@
       "name": "HiveMetaStore",
       "label": "HiveMetaStore",
       "roleType": "master",
+      "runAs": {
+        "user": "hive",
+        "group": "hadoop"
+      },
       "cardinality": "1",
       "logFile": "logs/hivemetastore.out",
       "jmxPort": 12000,
+      "sortNum": 2,
       "startRunner": {
         "timeout": "60",
         "program": "control_hive.sh",
@@ -117,6 +127,18 @@
           "hive.metastore.port",
           "hive.metastore.uris",
           "hive.server2.map.fair.scheduler.queue",
+          "hive.server2.authentication",
+          "hive.server2.authentication.kerberos.principal",
+          "hive.server2.authentication.kerberos.keytab",
+          "hive.metastore.sasl.enabled",
+          "hive.metastore.kerberos.keytab.file",
+          "hive.metastore.kerberos.principal",
+          "hive.server2.support.dynamic.service.discovery",
+          "hive.server2.zookeeper.namespace",
+          "hive.zookeeper.quorum",
+          "hive.zookeeper.client.port",
+          "hive.server2.thrift.bind.host",
+          "hive.server2.thrift.port",
           "custom.hive.site.xml"
         ]
       },
@@ -127,6 +149,7 @@
         "templateName": "hive-env.ftl",
         "includeParams": [
           "hiveHeapSize",
+          "hadoopHome",
           "custom.hive.env.sh"
         ]
       },
@@ -252,13 +275,103 @@
       "defaultValue": "false"
     },
     {
+      "name": "enableKerberos",
+      "label": "启用Kerberos认证",
+      "description": "启用Kerberos认证",
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
+    },
+
+    {
+      "name": "hive.server2.authentication",
+      "label": "hive认证方式",
+      "description": "",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "kerberos",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "kerberos"
+    },
+    {
+      "name": "hive.server2.authentication.kerberos.principal",
+      "label": "HiveServer2服务的Kerberos主体",
+      "description": "HiveServer2服务的Kerberos主体",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "hive/${host}@${realm}",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "hive/${host}@${realm}"
+    },
+    {
+      "name": "hive.server2.authentication.kerberos.keytab",
+      "label": "HiveServer2服务的Kerberos密钥文件",
+      "description": "HiveServer2服务的Kerberos密钥文件",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "/etc/security/keytab/hive.service.keytab",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "/etc/security/keytab/hive.service.keytab"
+    },
+    {
+      "name": "hive.metastore.sasl.enabled",
+      "label": "Metastore启动认证",
+      "description": "Metastore启动认证",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "switch",
+      "value": true,
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": true
+    },
+    {
+      "name": "hive.metastore.kerberos.principal",
+      "label": "Metastore Kerberos主体",
+      "description": "Metastore Kerberos主体",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "hive/${host}@${realm}",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "hive/${host}@${realm}"
+    },
+    {
+      "name": "hive.metastore.kerberos.keytab.file",
+      "label": "Metastore Kerberos密钥文件",
+      "description": "Metastore Kerberos密钥文件",
+      "configType": "kb",
+      "configWithKerberos": true,
+      "required": false,
+      "type": "input",
+      "value": "/etc/security/keytab/hive.service.keytab",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "/etc/security/keytab/hive.service.keytab"
+    },
+    {
       "name": "hive.server2.support.dynamic.service.discovery",
       "label": "开启HiveServer2动态发现",
       "configType": "ha",
+      "configWithHA": true,
       "description": "",
       "required": false,
       "type": "switch",
-      "value": "",
+      "value": true,
       "configurableInWizard": true,
       "hidden": true,
       "defaultValue": true
@@ -267,10 +380,11 @@
       "name": "hive.server2.zookeeper.namespace",
       "label": "HiveServer2在zk命名空间",
       "configType": "ha",
+      "configWithHA": true,
       "description": "",
       "required": false,
       "type": "input",
-      "value": "",
+      "value": "hiveserver2",
       "configurableInWizard": true,
       "hidden": true,
       "defaultValue": "hiveserver2"
@@ -278,10 +392,11 @@
       "name": "hive.zookeeper.quorum",
       "label": "zk地址",
       "configType": "ha",
+      "configWithHA": true,
       "description": "",
       "required": false,
       "type": "input",
-      "value": "",
+      "value": "${zkUrls}",
       "configurableInWizard": true,
       "hidden": true,
       "defaultValue": "${zkUrls}"
@@ -289,10 +404,11 @@
       "name": "hive.zookeeper.client.port",
       "label": "zk端口",
       "configType": "ha",
+      "configWithHA": true,
       "description": "",
       "required": false,
       "type": "input",
-      "value": "",
+      "value": "2181",
       "configurableInWizard": true,
       "hidden": true,
       "defaultValue": "2181"
@@ -300,21 +416,23 @@
       "name": "hive.server2.thrift.bind.host",
       "label": "hive.server2.thrift.bind.host",
       "configType": "ha",
+      "configWithHA": true,
       "description": "",
       "required": false,
       "type": "input",
-      "value": "",
+      "value": "${host}",
       "configurableInWizard": true,
       "hidden": true,
-      "defaultValue": "0.0.0.0"
+      "defaultValue": "${host}"
     },{
       "name": "hive.server2.thrift.port",
       "label": "hiveserver2 thrift端口",
       "configType": "ha",
+      "configWithHA": true,
       "description": "",
       "required": false,
       "type": "input",
-      "value": "",
+      "value": "10000",
       "configurableInWizard": true,
       "hidden": true,
       "defaultValue": "10000"
@@ -342,6 +460,30 @@
       "configurableInWizard": true,
       "hidden": true,
       "defaultValue": ""
+    },
+    {
+      "name": "hadoopHome",
+      "label": "HADOOP_HOME",
+      "description": "Hadoop的安装目录",
+      "required": true,
+      "configType": "map",
+      "type": "input",
+      "value": "${HADOOP_HOME}",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${HADOOP_HOME}"
+    },
+    {
+      "name": "hiveHome",
+      "label": "HIVE_HOME",
+      "description": "Hive的安装目录",
+      "required": true,
+      "configType": "map",
+      "type": "input",
+      "value": "${HIVE_HOME}",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${HIVE_HOME}"
     },
     {
       "name": "custom.hive.site.xml",

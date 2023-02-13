@@ -1,5 +1,6 @@
 package com.datasophon.api.utils;
 
+import com.datasophon.common.Constants;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ChannelExec;
 import org.apache.sshd.client.channel.ClientChannelEvent;
@@ -7,16 +8,17 @@ import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.sftp.client.SftpClientFactory;
 import org.apache.sshd.sftp.client.fs.SftpFileSystem;
 import org.slf4j.LoggerFactory;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
 
 public class MinaUtils {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MinaUtils.class);
@@ -25,14 +27,14 @@ public class MinaUtils {
     /**
      * 打开远程会话
      */
-    public static ClientSession openConnection(String sshHost, Integer sshPort, String sshUser, String privateKey) {
-
+    public static ClientSession openConnection(String sshHost, Integer sshPort, String sshUser, String privateKey_path) {
         SshClient sshClient = SshClient.setUpDefaultClient();
         sshClient.start();
         ClientSession session = null;
         try {
+            String privateKeyContent= new String(Files.readAllBytes(Paths.get(privateKey_path)));
             session = sshClient.connect(sshUser, sshHost, sshPort).verify().getClientSession();
-            session.addPublicKeyIdentity(getKeyPairFromString(privateKey));
+            session.addPublicKeyIdentity(getKeyPairFromString(privateKeyContent));
             if (session.auth().verify().isFailure()) {
                 LOG.info("验证失败");
                 return null;
@@ -181,7 +183,7 @@ public class MinaUtils {
     public static void main(String[] args) throws IOException, InterruptedException {
         ClientSession session = MinaUtils.openConnection("localhost", 22, "liuxin",
                 "/Users/liuxin/.ssh/id_rsa");
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < Constants.TEN; i++) {
             String ls = MinaUtils.execCmdWithResult(session, "arch");
             System.out.println(ls);
         }

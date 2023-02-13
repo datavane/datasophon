@@ -3,14 +3,14 @@
   "label": "Doris",
   "description": "简单易用、高性能和统一的分析数据库",
   "version": "1.1.5",
-  "sortNum": 5,
+  "sortNum": 20,
   "dependencies":[],
   "packageName": "doris-1.1.5.tar.gz",
   "decompressPackageName": "doris-1.1.5",
   "roles": [
     {
-      "name": "FE",
-      "label": "FE",
+      "name": "DorisFE",
+      "label": "DorisFE",
       "roleType": "master",
       "cardinality": "1+",
       "logFile": "fe/log/fe.log",
@@ -44,8 +44,8 @@
       }
     },
     {
-      "name": "BE",
-      "label": "BE",
+      "name": "DorisBE",
+      "label": "DorisBE",
       "roleType": "worker",
       "cardinality": "1+",
       "logFile": "be/log/be.INFO",
@@ -127,7 +127,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "${DORIS_HOME}/doris-meta"
+      "defaultValue": "${DORIS_HOME}/fe/doris-meta"
     },
     {
       "name": "rpc_port",

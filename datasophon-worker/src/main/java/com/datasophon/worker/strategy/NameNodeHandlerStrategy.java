@@ -2,11 +2,13 @@ package com.datasophon.worker.strategy;
 
 import cn.hutool.core.io.FileUtil;
 import com.datasophon.common.Constants;
+import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.handler.ServiceHandler;
+import com.datasophon.worker.utils.KerberosUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +34,9 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
                 ExecResult execResult = ShellUtils.execWithStatus(workPath, commands, 30L);
                 if (execResult.getExecResult()) {
                     logger.info("namenode standby success");
-                    startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
                 } else {
                     logger.info("namenode standby failed");
+                    return execResult;
                 }
             } else {
                 logger.info("start to execute format namenode");
@@ -48,12 +50,13 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
                 ExecResult execResult = ShellUtils.execWithStatus(workPath, commands, 180L);
                 if (execResult.getExecResult()) {
                     logger.info("namenode format success");
-                    startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
                 } else {
                     logger.info("namenode format failed");
+                    return execResult;
                 }
             }
-        } else if (command.getEnableRangerPlugin()) {
+        }
+        if (command.getEnableRangerPlugin()) {
             logger.info("start to enable ranger hdfs plugin");
             ArrayList<String> commands = new ArrayList<>();
             commands.add("sh");
@@ -64,16 +67,27 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
                     logger.info("enable ranger hdfs plugin success");
                     //写入ranger plugin集成成功标识
                     FileUtil.writeUtf8String("success", workPath + "/ranger-hdfs-plugin/success.id");
-                    startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
                 } else {
                     logger.info("enable ranger hdfs plugin failed");
+                    return execResult;
                 }
-            } else {
-                startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
             }
-        } else {
-            startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
         }
+        if (command.getEnableKerberos()) {
+            logger.info("start to get namenode keytab file");
+            String hostname = CacheUtils.getString(Constants.HOSTNAME);
+            KerberosUtils.createKeytabDir();
+            if(!FileUtil.exist("/etc/security/keytab/nn.service.keytab")){
+                KerberosUtils.downloadKeytabFromMaster("nn/" + hostname, "nn.service.keytab");
+            }
+            if(!FileUtil.exist("/etc/security/keytab/spnego.service.keytab")){
+                KerberosUtils.downloadKeytabFromMaster("HTTP/" + hostname, "spnego.service.keytab");
+            }
+        }
+        startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
+
         return startResult;
     }
+
+
 }

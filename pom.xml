@@ -7,12 +7,13 @@
     <groupId>com.datasophon</groupId>
     <artifactId>datasophon</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
     <modules>
         <module>datasophon-api</module>
         <module>datasophon-dao</module>
         <module>datasophon-common</module>
         <module>datasophon-worker</module>
+        <module>datasophon-ui</module>
     </modules>
 
     <properties>
@@ -21,7 +22,7 @@
         <spring.version>5.1.19.RELEASE</spring.version>
         <spring.boot.version>2.1.18.RELEASE</spring.boot.version>
         <java.version>1.8</java.version>
-        <fastjson.version>1.2.61</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <jackson.version>2.9.10</jackson.version>
         <mybatis-plus.version>3.2.0</mybatis-plus.version>
         <mybatis.spring.version>2.0.1</mybatis.spring.version>
@@ -157,78 +158,78 @@
         </dependencies>
   </dependencyManagement>
 
-  <build>
-    <pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <testSource>${java.version}</testSource>
-                    <testTarget>${java.version}</testTarget>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-            </plugin>
+<!--  <build>-->
+<!--    <pluginManagement>-->
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                <version>${maven-compiler-plugin.version}</version>-->
+<!--                <configuration>-->
+<!--                    <source>${java.version}</source>-->
+<!--                    <target>${java.version}</target>-->
+<!--                    <testSource>${java.version}</testSource>-->
+<!--                    <testTarget>${java.version}</testTarget>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <version>${maven-surefire-plugin.version}</version>-->
+<!--            </plugin>-->
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${maven-checkstyle-plugin.version}</version>
-                <configuration>
-                    <consoleOutput>true</consoleOutput>
-                    <encoding>UTF-8</encoding>
-                    <configLocation>style/checkstyle.xml</configLocation>
-                    <suppressionsLocation>style/checkstyle-suppressions.xml</suppressionsLocation>
-                    <failOnViolation>true</failOnViolation>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                    <sourceDirectories>
-                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-                    </sourceDirectories>
-                    <excludes>**\/generated-sources\/</excludes>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>8.14</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <phase>compile</phase>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </pluginManagement>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-checkstyle-plugin</artifactId>-->
+<!--                <version>${maven-checkstyle-plugin.version}</version>-->
+<!--                <configuration>-->
+<!--                    <consoleOutput>true</consoleOutput>-->
+<!--                    <encoding>UTF-8</encoding>-->
+<!--                    <configLocation>style/checkstyle.xml</configLocation>-->
+<!--                    <suppressionsLocation>style/checkstyle-suppressions.xml</suppressionsLocation>-->
+<!--                    <failOnViolation>true</failOnViolation>-->
+<!--                    <includeTestSourceDirectory>true</includeTestSourceDirectory>-->
+<!--                    <sourceDirectories>-->
+<!--                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>-->
+<!--                    </sourceDirectories>-->
+<!--                    <excludes>**\/generated-sources\/</excludes>-->
+<!--                </configuration>-->
+<!--                <dependencies>-->
+<!--                    <dependency>-->
+<!--                        <groupId>com.puppycrawl.tools</groupId>-->
+<!--                        <artifactId>checkstyle</artifactId>-->
+<!--                        <version>8.14</version>-->
+<!--                    </dependency>-->
+<!--                </dependencies>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>check</goal>-->
+<!--                        </goals>-->
+<!--                        <phase>compile</phase>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+<!--    </pluginManagement>-->
 
-        <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>${maven-compiler-plugin.version}</version>
-        </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>${maven-surefire-plugin.version}</version>
-        </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>${maven-checkstyle-plugin.version}</version>
-        </plugin>
-        </plugins>
-  </build>
+<!--        <plugins>-->
+<!--        <plugin>-->
+<!--            <groupId>org.apache.maven.plugins</groupId>-->
+<!--            <artifactId>maven-compiler-plugin</artifactId>-->
+<!--            <version>${maven-compiler-plugin.version}</version>-->
+<!--        </plugin>-->
+<!--        <plugin>-->
+<!--            <groupId>org.apache.maven.plugins</groupId>-->
+<!--            <artifactId>maven-surefire-plugin</artifactId>-->
+<!--            <version>${maven-surefire-plugin.version}</version>-->
+<!--        </plugin>-->
+<!--        <plugin>-->
+<!--            <groupId>org.apache.maven.plugins</groupId>-->
+<!--            <artifactId>maven-checkstyle-plugin</artifactId>-->
+<!--            <version>${maven-checkstyle-plugin.version}</version>-->
+<!--        </plugin>-->
+<!--        </plugins>-->
+<!--  </build>-->
 
 </project>

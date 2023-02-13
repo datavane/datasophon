@@ -2,7 +2,7 @@ PYTHON_COMMAND_INVOKER=python
 #DB_FLAVOR=MYSQL|ORACLE|POSTGRES|MSSQL|SQLA
 DB_FLAVOR=MYSQL
 
-SQL_CONNECTOR_JAR=/opt/datasophon/ranger-2.1.0/mysql-connector-java-5.1.34.jar
+SQL_CONNECTOR_JAR=${rangerHome}/mysql-connector-java-5.1.34.jar
 
 db_root_user=root
 db_root_password=${rootPassword}
@@ -135,16 +135,16 @@ xa_ldap_ad_referral=
 xa_ldap_ad_userSearchFilter=
 
 #------------ Kerberos Config -----------------
-spnego_principal=
-spnego_keytab=
+spnego_principal=<#if spnegoPrincipal??>${spnegoPrincipal}</#if>
+spnego_keytab=<#if spnegoKeytab??>${spnegoKeytab}</#if>
 token_valid=30
 cookie_domain=
 cookie_path=/
-admin_principal=
-admin_keytab=
-lookup_principal=
-lookup_keytab=
-hadoop_conf=/etc/hadoop/conf
+admin_principal=<#if adminPrincipal??>${adminPrincipal}</#if>
+admin_keytab=<#if adminKeytab??>${adminKeytab}</#if>
+lookup_principal=<#if adminPrincipal??>${adminPrincipal}</#if>
+lookup_keytab=<#if adminKeytab??>${adminKeytab}</#if>
+hadoop_conf=<#if hadoopHome??>${hadoopHome}</#if>/etc/hadoop/conf
 #
 #-------- SSO CONFIG - Start ------------------
 #

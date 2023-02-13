@@ -20,10 +20,8 @@ import javax.servlet.http.HttpServletResponse;
  * login interceptor, must login first
  */
 public class LoginHandlerInterceptor implements HandlerInterceptor {
-  private static final Logger logger = LoggerFactory.getLogger(LoginHandlerInterceptor.class);
 
-  @Autowired
-  private SessionService sessionService;
+  private static final Logger logger = LoggerFactory.getLogger(LoginHandlerInterceptor.class);
 
   @Autowired
   private UserInfoMapper userMapper;

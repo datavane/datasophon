@@ -35,4 +35,12 @@ public class ServiceConfig  implements Serializable {
 
     private String configType;
 
+    private boolean configWithKerberos;
+
+    private boolean configWithRack;
+
+    private boolean configWithHA;
+
+    private String separator;
+
 }

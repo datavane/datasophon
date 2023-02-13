@@ -1,5 +1,6 @@
 package com.datasophon.api.configuration;
 
+import com.datasophon.api.interceptor.LocaleChangeInterceptor;
 import com.datasophon.api.interceptor.LoginHandlerInterceptor;
 import com.datasophon.api.interceptor.UserPermissionHandler;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +11,6 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import java.util.Locale;
 
@@ -50,7 +50,7 @@ public class AppConfiguration implements WebMvcConfigurer {
     CookieLocaleResolver localeResolver = new CookieLocaleResolver();
     localeResolver.setCookieName(LOCALE_LANGUAGE_COOKIE);
     /** set default locale **/
-    localeResolver.setDefaultLocale(Locale.US);
+    localeResolver.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
     /** set language tag compliant **/
     localeResolver.setLanguageTagCompliant(false);
     return localeResolver;
@@ -73,7 +73,11 @@ public class AppConfiguration implements WebMvcConfigurer {
     registry.addInterceptor(userPermissionHandler());
     // login
     registry.addInterceptor(loginInterceptor())
-            .addPathPatterns("/**").excludePathPatterns("/login","/error","/service/install/downloadPackage","/cluster/alert/history/save");
+            .addPathPatterns("/**").excludePathPatterns("/login","/error",
+            "/service/install/downloadPackage",
+            "/cluster/alert/history/save",
+            "/cluster/kerberos/downloadKeytab"
+    );
   }
 
   @Override

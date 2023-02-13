@@ -9,12 +9,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * The annotated CharSequence will be checked by {@link com.datasophon.api.utils.HostsValidator HostsValidator} class.
- *
- * @author rwj
- * @date 2022/11/20
- */
+
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = HostsValidator.class)

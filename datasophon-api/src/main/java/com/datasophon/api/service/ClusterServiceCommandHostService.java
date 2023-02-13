@@ -26,5 +26,7 @@ public interface ClusterServiceCommandHostService extends IService<ClusterServic
     Integer getCommandHostTotalProgressByCommandId(String commandId);
 
     List<ClusterServiceCommandHostEntity> findFailedCommandHost(String commandId);
+
+    List<ClusterServiceCommandHostEntity> findCanceledCommandHost(String commandId);
 }
 

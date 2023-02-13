@@ -43,8 +43,8 @@ public class ClusterHostController {
      * 查询集群所有主机
      */
     @RequestMapping("/list")
-    public Result list(Integer clusterId, String hostname, String cpuArchitecture, Integer hostState, String orderField, String orderType, Integer page, Integer pageSize) {
-        return clusterHostService.listByPage(clusterId, hostname, cpuArchitecture, hostState, orderField, orderType, page, pageSize);
+    public Result list(Integer clusterId, String hostname, String ip,String cpuArchitecture, Integer hostState, String orderField, String orderType, Integer page, Integer pageSize) {
+        return clusterHostService.listByPage(clusterId, hostname, ip,cpuArchitecture, hostState, orderField, orderType, page, pageSize);
 
     }
 

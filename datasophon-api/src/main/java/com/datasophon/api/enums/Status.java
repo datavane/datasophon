@@ -52,6 +52,30 @@ public enum Status {
     INSTALL_SERVICE(10006,"Install Service ","安装服务"),
 
     CLUSTER_CODE_EXISTS(10007,"cluster code exists","集群编码已存在"),
+    ALERT_GROUP_TIPS_ONE(10008,"an alarm group has been bound to an alarm indicator, delete the bound alarm indicator first","当前告警组已绑定告警指标，请先删除绑定的告警指标"),
+    GROUP_NAME_DUPLICATION(10009,"group name duplication, delete the bound alarm indicator first","重复组名"),
+    USER_GROUP_TIPS_ONE(10011,"the current user group has users,delete the users first","当前用户组存在用户，请先删除用户"),
+    HOST_EXIT_ONE_RUNNING_ROLE(10012,"at least one role is running on the host:","主机存在正在运行的角色:"),
+    REPEAT_NODE_LABEL(10015,"repeat node label","重复节点标签"),
+    ADD_YARN_NODE_LABEL_FAILED(10016,"add yarn node label failed","添加yarn节点标签失败"),
+    NODE_LABEL_IS_USING(10017,"node label is using","节点标签正在使用"),
+    CONFIG_CAPACITY_SCHEDULER_FAILED(10018,"config capacity-scheduler.xml failed","配置capacity-scheduler.xml失败"),
+    FAILED_REFRESH_THE_QUEUE_TO_YARN(10019,"description Failed to refresh the queue to Yarn","刷新队列到Yarn失败"),
+    RACK_IS_USING(10020,"rack is using","机架正在使用"),
+    NO_SERVICE_EXECUTE(10021,"there is no service to execute","没有要执行的服务"),
+    EXIT_RUNNING_ROLE_INSTANCE (10022,"It has running role instance,stop it first","它有正在运行的角色实例，请先停止它"),
+    REPEAT_ROLE_GROUP_NAME (10023,"repeat role group name","重复角色组名称"),
+    THE_CURRENT_ROLE_GROUP_BE_USING (10024,"the current role group is in use,do not delete it","当前角色组正在使用，请勿删除"),
+    EXIT_RUNNING_INSTANCES (10025,"there are running instances and ignore it when delete","存在正在运行的实例，删除时忽略它"),
+    ROLE_GROUP_HAS_NO_OUTDATED_SERVICE (10026,"this role group has no outdated service","该角色组没有过时服务"),
+    DUPLICATE_USER_NAME (10027,"duplicate user name","用户名重复"),
+    QUEUE_NAME_ALREADY_EXISTS (10028,"the queue name already exists","队列名已存在"),
+    THREE_JOURNALNODE_DEPLOYMENTS_REQUIRED (10030,"three JournalNode deployments are required","JournalNode需要部署三台"),
+    TWO_NAMENODES_NEED_TO_BE_DEPLOYED (10031,"two Namenodes need to be deployed","NameNode需要部署两台"),
+    TWO_ZKFC_DEVICES_ARE_REQUIRED (10032,"two ZKFC devices are required","ZKFC需要部署两台"),
+    TWO_RESOURCEMANAGER_ARE_DEPLOYED (10033,"two ResourceManager are deployed","ResourceManager需要部署两台"),
+    SELECT_LEAST_ONE_HOST (10034,"select at least one host","至少选择一台主机"),
+
     USER_NO_OPERATION_PERM(30001, "user has no operation privilege", "当前用户没有操作权限"),
     ;
 
@@ -61,7 +85,7 @@ public enum Status {
     private final String enMsg;
     private final String zhMsg;
 
-    private Status(int code, String enMsg, String zhMsg) {
+    Status(int code, String enMsg, String zhMsg) {
         this.code = code;
         this.enMsg = enMsg;
         this.zhMsg = zhMsg;
@@ -82,7 +106,7 @@ public enum Status {
         if (Locale.SIMPLIFIED_CHINESE.getLanguage().equals(LocaleContextHolder.getLocale().getLanguage())) {
             return this.zhMsg;
         } else {
-            return this.zhMsg;
+            return this.enMsg;
         }
     }
 }

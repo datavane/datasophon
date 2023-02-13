@@ -3,7 +3,7 @@
   "label": "AlertManager",
   "description": "告警通知管理系统",
   "version": "0.23.0",
-  "sortNum": 12,
+  "sortNum": 15,
   "dependencies": [],
   "packageName": "alertmanager-0.23.0.tar.gz",
   "decompressPackageName": "alertmanager-0.23.0",
@@ -12,6 +12,10 @@
       "name": "AlertManager",
       "label": "AlertManager",
       "roleType": "master",
+      "runAs": {
+        "user": "root",
+        "group": "root"
+      },
       "cardinality": 1,
       "logFile": "logs/alertmanager-${host}.out",
       "jmxPort": 9093,

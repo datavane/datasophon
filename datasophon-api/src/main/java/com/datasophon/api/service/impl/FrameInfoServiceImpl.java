@@ -28,7 +28,9 @@ public class FrameInfoServiceImpl extends ServiceImpl<FrameInfoMapper, FrameInfo
     public Result getAllClusterFrame() {
         List<FrameInfoEntity> list = this.list();
         for (FrameInfoEntity frameInfo : list) {
-            List<FrameServiceEntity> frameServiceList = frameServiceService.list(new QueryWrapper<FrameServiceEntity>().eq(Constants.FRAME_ID, frameInfo.getId()));
+            List<FrameServiceEntity> frameServiceList = frameServiceService.list(new QueryWrapper<FrameServiceEntity>()
+                    .eq(Constants.FRAME_ID, frameInfo.getId())
+                    .orderByAsc(Constants.SORT_NUM));
             frameInfo.setFrameServiceList(frameServiceList);
         }
         return Result.success(list);

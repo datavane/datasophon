@@ -3,6 +3,7 @@ package com.datasophon.api.service.impl;
 import akka.actor.ActorSelection;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.*;
 import com.datasophon.dao.entity.*;
@@ -158,16 +159,19 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
         Collection<ClusterServiceRoleInstanceEntity> list = this.listByIds(idList);
         // is there a running instance
         boolean flag = false;
+        ArrayList<Integer> needRemoveList = new ArrayList<>();
         for (ClusterServiceRoleInstanceEntity instance : list) {
             if (instance.getServiceRoleState() == ServiceRoleState.RUNNING) {
                 flag = true;
             } else {
-                //删除对应的告警
-                alertHistoryService.removeAlertByRoleInstanceId(instance.getId());
-                this.removeById(instance.getId());
+                needRemoveList.add(instance.getId());
             }
         }
-        return flag ? Result.error("There are running instances and ignore it when delete.") : Result.success();
+        if(needRemoveList.size() > 0){
+            alertHistoryService.removeAlertByRoleInstanceIds(needRemoveList);
+            this.removeByIds(needRemoveList);
+        }
+        return flag ? Result.error(Status.EXIT_RUNNING_INSTANCES.getMsg()) : Result.success();
     }
 
     @Override
@@ -194,7 +198,7 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
             List<String> ids = list.stream().map(e -> e.getId() + "").collect(Collectors.toList());
             commandService.generateServiceRoleCommand(roleGroup.getClusterId(), CommandType.RESTART_SERVICE, roleGroup.getServiceInstanceId(), ids);
         }else{
-            return Result.error("该角色组没有过时服务");
+            return Result.error(Status.ROLE_GROUP_HAS_NO_OUTDATED_SERVICE.getMsg());
         }
         return Result.success();
     }
@@ -230,7 +234,7 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
             roleName = "ResourceManager";
         }
         if(hosts.size() > 0){
-            ProcessUtils.hdfsECMethond(serviceInstanceId,this,hosts,"blacklist",roleName);
+            ProcessUtils.hdfsEcMethond(serviceInstanceId,this,hosts,"blacklist",roleName);
         }
         return Result.success();
     }
@@ -260,6 +264,19 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
         this.remove(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                 .eq(Constants.SERVICE_ID,serviceInstanceId)
                 .eq(Constants.SERVICE_ROLE_STATE,ServiceRoleState.STOP));
+    }
+
+    @Override
+    public ClusterServiceRoleInstanceEntity getKAdminRoleIns(Integer clusterId) {
+        return this.getOne(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                .eq(Constants.CLUSTER_ID,clusterId)
+                .eq(Constants.SERVICE_ROLE_NAME,"KAdmin"));
+    }
+
+    @Override
+    public List<ClusterServiceRoleInstanceEntity> listServiceRoleByName(String name) {
+        return this.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                .eq(Constants.SERVICE_ROLE_NAME, name));
     }
 
     @Override
