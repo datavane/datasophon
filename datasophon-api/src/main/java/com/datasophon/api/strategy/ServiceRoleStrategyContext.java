@@ -37,6 +37,7 @@ public class ServiceRoleStrategyContext {
         map.put("HIVE",new HiveServer2HandlerStrategy());
         map.put("KAFKA",new KafkaHandlerStrategy());
         map.put("HBASE",new HBaseHandlerStrategy());
+        map.put("FLINK",new FlinkHandlerStrategy());
     }
 
     public static ServiceRoleStrategy getServiceRoleHandler(String type){

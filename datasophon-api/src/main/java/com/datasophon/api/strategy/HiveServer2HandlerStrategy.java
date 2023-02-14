@@ -33,15 +33,12 @@ public class HiveServer2HandlerStrategy extends ServiceHandlerAbstract implement
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
         boolean enableKerberos = false;
-        boolean enableHiveServer2HA = false;
         Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
         for (ServiceConfig config : list) {
             if("enableKerberos".equals(config.getName())){
                 enableKerberos = isEnableKerberos(clusterId, globalVariables, enableKerberos, config,"HIVE");
             }
-            if("enableHiveServer2HA".equals(config.getName())){
-                enableHiveServer2HA = isEnableHA(clusterId, globalVariables, enableHiveServer2HA, config,"HIVE");
-            }
+
         }
         String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "HIVE" + Constants.CONFIG;
         List<ServiceConfig> configs = ServiceConfigMap.get(key);
@@ -50,11 +47,6 @@ public class HiveServer2HandlerStrategy extends ServiceHandlerAbstract implement
             addConfigWithKerberos(globalVariables, map, configs, kbConfigs);
         }else{
             removeConfigWithKerberos(list, map, configs);
-        }
-        if(enableHiveServer2HA){
-            addConfigWithHA(globalVariables, map, configs, kbConfigs);
-        }else{
-            removeConfigWithHA(list, map, configs);
         }
         list.addAll(kbConfigs);
 

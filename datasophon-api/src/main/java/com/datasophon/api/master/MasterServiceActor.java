@@ -8,6 +8,7 @@ import com.datasophon.api.master.handler.service.*;
 import com.datasophon.api.service.ClusterServiceRoleGroupConfigService;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SpringTool;
+import com.datasophon.common.Constants;
 import com.datasophon.common.command.ExecuteServiceRoleCommand;
 import com.datasophon.common.model.Generators;
 import com.datasophon.common.model.ServiceConfig;
@@ -55,18 +56,18 @@ public class MasterServiceActor extends UntypedActor {
                 Integer serviceInstanceId = serviceRoleInfo.getServiceInstanceId();
                 ClusterServiceRoleInstanceEntity serviceRoleInstance = roleInstanceService.getOneServiceRole(serviceRoleInfo.getName(), serviceRoleInfo.getHostname(), serviceRoleInfo.getClusterId());
                 HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
-                boolean enableRangerPlugin = false;
+                boolean enableRangerPlugin = isEnableRangerPlugin(serviceRoleInfo.getClusterId(),serviceRoleInfo.getParentName());
                 boolean needReConfig = false;
                 if (executeServiceRoleCommand.getCommandType() == CommandType.INSTALL_SERVICE) {
                     Integer roleGroupId = (Integer) CacheUtils.get("UseRoleGroup_" + serviceInstanceId);
                     ClusterServiceRoleGroupConfig config = roleGroupConfigService.getConfigByRoleGroupId(roleGroupId);
-                    enableRangerPlugin = generateConfigFileMap(configFileMap, enableRangerPlugin, config);
+                    generateConfigFileMap(configFileMap, config);
                 } else if (serviceRoleInstance.getNeedRestart() == NeedRestart.YES) {
                     ClusterServiceRoleGroupConfig config = roleGroupConfigService.getConfigByRoleGroupId(serviceRoleInstance.getRoleGroupId());
-                    enableRangerPlugin = generateConfigFileMap(configFileMap, enableRangerPlugin, config);
+                    generateConfigFileMap(configFileMap, config);
                     needReConfig = true;
                 }
-                logger.info("set enable ranger plugin {}", enableRangerPlugin);
+                logger.info("enable ranger plugin is {}", enableRangerPlugin);
                 serviceRoleInfo.setConfigFileMap(configFileMap);
                 serviceRoleInfo.setEnableRangerPlugin(enableRangerPlugin);
                 switch (executeServiceRoleCommand.getCommandType()) {
@@ -185,21 +186,22 @@ public class MasterServiceActor extends UntypedActor {
         }
     }
 
+    private boolean isEnableRangerPlugin(Integer clusterId,String serviceName) {
+        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        if(globalVariables.containsKey("${enable"+serviceName+"Plugin}") && "true".equals(globalVariables.get("${enable"+serviceName+"Plugin}"))){
+            return true;
+        }
+        return false;
+    }
+
     //生成configFileMap
-    private boolean generateConfigFileMap(HashMap<Generators, List<ServiceConfig>> configFileMap, boolean enableRangerPlugin, ClusterServiceRoleGroupConfig config) {
+    private void generateConfigFileMap(HashMap<Generators, List<ServiceConfig>> configFileMap, ClusterServiceRoleGroupConfig config) {
         Map<JSONObject, JSONArray> map = JSONObject.parseObject(config.getConfigFileJson(), Map.class);
         for (JSONObject fileJson : map.keySet()) {
             Generators generators = fileJson.toJavaObject(Generators.class);
             List<ServiceConfig> serviceConfigs = map.get(fileJson).toJavaList(ServiceConfig.class);
-            //判断是否配置了ranger plugin
-            if ("install.properties".equals(generators.getFilename()) && serviceConfigs.size() > 0) {
-                if (serviceConfigs.get(0).isRequired()) {
-                    enableRangerPlugin = true;
-                }
-            }
             configFileMap.put(generators, serviceConfigs);
         }
-        return enableRangerPlugin;
     }
 
 }
