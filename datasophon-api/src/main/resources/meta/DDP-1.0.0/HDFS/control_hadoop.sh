@@ -15,7 +15,8 @@ echo $SH_DIR
 ident=$SH_DIR/ident.id
 export LOG_DIR=$SH_DIR/logs
 export PID_DIR=$SH_DIR/pid
-pid=$PID_DIR/hadoop-root-$command.pid
+user=`whoami`
+pid=$PID_DIR/hadoop-${user}-$command.pid
 
 if [[ "$command" = "namenode"  ||  "$command" = "datanode" || "$command" = "secondarynamenode" ||  "$command" = "journalnode" || "$command" = "zkfc" ]]; then
    cmd=$SH_DIR/bin/hdfs
