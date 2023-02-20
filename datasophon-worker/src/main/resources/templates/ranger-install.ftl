@@ -2,7 +2,7 @@ PYTHON_COMMAND_INVOKER=python
 #DB_FLAVOR=MYSQL|ORACLE|POSTGRES|MSSQL|SQLA
 DB_FLAVOR=MYSQL
 
-SQL_CONNECTOR_JAR=/opt/datasophon/ranger-2.1.0/mysql-connector-java-5.1.34.jar
+SQL_CONNECTOR_JAR=${rangerHome}/mysql-connector-java-5.1.34.jar
 
 db_root_user=root
 db_root_password=${rootPassword}

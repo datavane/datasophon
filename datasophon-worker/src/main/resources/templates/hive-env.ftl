@@ -52,7 +52,7 @@ fi
 
 export HADOOP_HEAPSIZE=${hiveHeapSize}
 # Set HADOOP_HOME to point to a specific hadoop install directory
-HADOOP_HOME=/opt/datasophon/hadoop-3.3.3
+HADOOP_HOME=${hadoopHome}
 
 # Hive Configuration Directory can be controlled by:
 # export HIVE_CONF_DIR=

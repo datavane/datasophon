@@ -149,6 +149,7 @@
         "templateName": "hive-env.ftl",
         "includeParams": [
           "hiveHeapSize",
+          "hadoopHome",
           "custom.hive.env.sh"
         ]
       },
@@ -459,6 +460,30 @@
       "configurableInWizard": true,
       "hidden": true,
       "defaultValue": ""
+    },
+    {
+      "name": "hadoopHome",
+      "label": "HADOOP_HOME",
+      "description": "Hadoop的安装目录",
+      "required": true,
+      "configType": "map",
+      "type": "input",
+      "value": "${HADOOP_HOME}",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${HADOOP_HOME}"
+    },
+    {
+      "name": "hiveHome",
+      "label": "HIVE_HOME",
+      "description": "Hive的安装目录",
+      "required": true,
+      "configType": "map",
+      "type": "input",
+      "value": "${HIVE_HOME}",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${HIVE_HOME}"
     },
     {
       "name": "custom.hive.site.xml",
