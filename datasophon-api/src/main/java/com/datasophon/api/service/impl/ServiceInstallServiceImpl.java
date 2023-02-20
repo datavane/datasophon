@@ -13,6 +13,7 @@ import com.datasophon.api.service.*;
 import com.datasophon.api.strategy.ServiceRoleStrategy;
 import com.datasophon.api.strategy.ServiceRoleStrategyContext;
 import com.datasophon.common.model.*;
+import com.datasophon.common.utils.CollectionUtils;
 import com.datasophon.dao.entity.*;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
@@ -296,6 +297,9 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
                 .map(ServiceRoleHostMapping::getHosts)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
+        if(CollectionUtils.isEmpty(hostnameSet)) {
+            return;
+        }
 
         Set<String> installedHostnameSet = roleInstanceService.lambdaQuery().eq(ClusterServiceRoleInstanceEntity::getClusterId, clusterId)
                 .in(ClusterServiceRoleInstanceEntity::getServiceName, MUST_AT_SAME_NODE_BASIC_SERVICE)
@@ -306,6 +310,27 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
 
         if(hostnameSet.size() > 1) {
             throw new ServiceException(Status.BASIC_SERVICE_SELECT_MOST_ONE_HOST.getMsg());
+        }
+    }
+
+    private void serviceValidation(ServiceRoleHostMapping serviceRoleHostMapping) {
+        String serviceRole = serviceRoleHostMapping.getServiceRole();
+        List<String> hosts = serviceRoleHostMapping.getHosts();
+       
+        if ("JournalNode".equals(serviceRole) && hosts.size() != 3) {
+            throw new ServiceException(Status.THREE_JOURNALNODE_DEPLOYMENTS_REQUIRED.getMsg());
+        }
+        if ("NameNode".equals(serviceRole) && hosts.size() != 2) {
+            throw new ServiceException(Status.TWO_NAMENODES_NEED_TO_BE_DEPLOYED.getMsg());
+        }
+        if ("ZKFC".equals(serviceRole) && hosts.size() != 2) {
+            throw new ServiceException(Status.TWO_ZKFC_DEVICES_ARE_REQUIRED.getMsg());
+        }
+        if ("ResourceManager".equals(serviceRole) && hosts.size() != 2) {
+            throw new ServiceException(Status.TWO_RESOURCEMANAGER_ARE_DEPLOYED.getMsg());
+        }
+        if ("ZkServer".equals(serviceRole) && (hosts.size() & 1) == 0) {
+            throw new ServiceException(Status.ODD_NUMBER_ARE_REQUIRED_FOR_ZKSERVER.getMsg());
         }
     }
 
@@ -322,34 +347,16 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         }
 
         for (ServiceRoleHostMapping serviceRoleHostMapping : list) {
-            if ("JournalNode".equals(serviceRoleHostMapping.getServiceRole())) {
-                if (serviceRoleHostMapping.getHosts().size() != 3) {
-                    return Result.error(Status.THREE_JOURNALNODE_DEPLOYMENTS_REQUIRED.getMsg());
-                }
-            }
-            if ("NameNode".equals(serviceRoleHostMapping.getServiceRole())) {
-                if (serviceRoleHostMapping.getHosts().size() != 2) {
-                    return Result.error(Status.TWO_NAMENODES_NEED_TO_BE_DEPLOYED.getMsg());
-                }
-            }
-            if ("ZKFC".equals(serviceRoleHostMapping.getServiceRole())) {
-                if (serviceRoleHostMapping.getHosts().size() != 2) {
-                    return Result.error(Status.TWO_ZKFC_DEVICES_ARE_REQUIRED.getMsg());
-                }
-            }
-            if ("ResourceManager".equals(serviceRoleHostMapping.getServiceRole())) {
-                if (serviceRoleHostMapping.getHosts().size() != 2) {
-                    return Result.error(Status.TWO_RESOURCEMANAGER_ARE_DEPLOYED.getMsg());
-                }
-            }
+            serviceValidation(serviceRoleHostMapping);
+
             map.put(serviceRoleHostMapping.getServiceRole(), serviceRoleHostMapping.getHosts());
 
             ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceRoleHostMapping.getServiceRole());
             if (Objects.nonNull(serviceRoleHandler)) {
                 serviceRoleHandler.handler(clusterId, serviceRoleHostMapping.getHosts());
             }
-
         }
+
         CacheUtils.put(clusterInfo.getClusterCode() + Constants.UNDERLINE + Constants.SERVICE_ROLE_HOST_MAPPING, map);
         return Result.success();
     }
