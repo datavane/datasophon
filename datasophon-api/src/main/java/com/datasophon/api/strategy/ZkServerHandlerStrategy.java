@@ -100,7 +100,6 @@ public class ZkServerHandlerStrategy implements ServiceRoleStrategy {
 
         if (Objects.nonNull(hostMap)) {
             List<String> zkServers = hostMap.get("ZkServer");
-            HashMap<String, String> hostIpMap = (HashMap<String, String>) CacheUtils.get(Constants.HOST_IP);
 
             Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
 
@@ -109,7 +108,7 @@ public class ZkServerHandlerStrategy implements ServiceRoleStrategy {
                 ServiceConfig serviceConfig = new ServiceConfig();
                 serviceConfig.setName("server." + myid);
                 serviceConfig.setLabel("server." + myid);
-                serviceConfig.setValue(hostIpMap.get(server) + ":2888:3888");
+                serviceConfig.setValue(server + ":2888:3888");
                 serviceConfig.setHidden(false);
                 serviceConfig.setRequired(true);
                 serviceConfig.setType("input");

@@ -25,6 +25,12 @@
             { initialValue: steps1.sshUser,rules: [{ required: true, message: `SSH用户名不能为空!` }] },
           ]" placeholder="请输入SSH用户名" />
         </a-form-item>
+        <a-form-item label="SSH用户密码">
+          <a-input-password v-decorator="[
+            `sshPassword`,
+            { initialValue: steps1.sshPassword,rules: [{ required: true, message: `SSH用户密码不能为空!` }] },
+          ]" placeholder="请输入SSH用户密码" />
+        </a-form-item>
         <a-form-item label="SSH端口">
           <a-input v-decorator="['sshPort', {initialValue: steps1.sshPort, rules: [{ required: true, message: 'SSH端口不能为空!' }] }]" placeholder="请输入SSH端口" />
         </a-form-item>

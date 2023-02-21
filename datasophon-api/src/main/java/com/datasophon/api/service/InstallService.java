@@ -5,7 +5,7 @@ import com.datasophon.common.utils.Result;
 public interface InstallService {
     Result getInstallStep(Integer type);
 
-    Result analysisHostList(Integer clusterId, String hosts, String sshUser, Integer sshPort, Integer page, Integer pageSize);
+    Result analysisHostList(Integer clusterId, String hosts, String sshUser,String sshPassword, Integer sshPort, Integer page, Integer pageSize);
 
     Result getHostCheckStatus(Integer clusterId, String sshUser, Integer sshPort);
 

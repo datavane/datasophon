@@ -512,6 +512,9 @@ CREATE TABLE `t_ddh_cluster_host`  (
   `managed` int(2) NULL DEFAULT NULL COMMENT '1:受管 2：断线',
   `cpu_architecture` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'cpu架构',
   `node_label` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '节点标签',
+  `manage_user` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '节点用户',
+  `manage_password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '节点密码',
+  `manage_port` int  NULL DEFAULT NULL COMMENT '节点ssh端口',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '集群主机表 ' ROW_FORMAT = COMPACT;
 

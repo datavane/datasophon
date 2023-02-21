@@ -139,11 +139,11 @@ public class ProcessUtils {
 
     }
 
-    public static void saveHostInstallInfo(StartWorkerMessage message, String clusterCode, ClusterHostService clusterHostService) {
+    public static void saveHostInstallInfo(StartWorkerMessage message,HostInfo hostInfo, String clusterCode, ClusterHostService clusterHostService) {
         ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
         ClusterHostEntity clusterHostEntity = new ClusterHostEntity();
         BeanUtil.copyProperties(message, clusterHostEntity);
-        Map<String, String> hostIp = (Map<String, String>) CacheUtils.get(Constants.HOST_IP);
+//        Map<String, String> hostIp = (Map<String, String>) CacheUtils.get(Constants.HOST_IP);
 
         ClusterInfoEntity cluster = clusterInfoService.getClusterByClusterCode(clusterCode);
 
@@ -152,9 +152,12 @@ public class ProcessUtils {
         clusterHostEntity.setRack("/default-rack");
         clusterHostEntity.setNodeLabel("default");
         clusterHostEntity.setCreateTime(new Date());
-        clusterHostEntity.setIp(hostIp.get(message.getHostname()));
+        clusterHostEntity.setIp(hostInfo.getIp());
         clusterHostEntity.setHostState(1);
         clusterHostEntity.setManaged(MANAGED.YES);
+        clusterHostEntity.setManageUser(hostInfo.getSshUser());
+        clusterHostEntity.setManagePassword(hostInfo.getSshPassword());
+        clusterHostEntity.setManagePort(hostInfo.getSshPort());
         clusterHostService.save(clusterHostEntity);
     }
 

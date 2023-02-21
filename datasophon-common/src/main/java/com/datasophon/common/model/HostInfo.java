@@ -23,6 +23,8 @@ public class HostInfo {
 
     private String sshUser;
 
+    private String sshPassword;
+
     private Integer sshPort;
     /**
      * 安装进度

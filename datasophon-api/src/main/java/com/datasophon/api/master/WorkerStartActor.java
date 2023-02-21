@@ -53,13 +53,19 @@ public class WorkerStartActor extends UntypedActor {
                     hostInfo.setInstallState(InstallState.SUCCESS);
                     hostInfo.setInstallStateCode(InstallState.SUCCESS.getValue());
                     hostInfo.setManaged(true);
+                    if (ObjectUtil.isNull(hostEntity)) {
+                        //save to db
+                        ProcessUtils.saveHostInstallInfo(msg,hostInfo, cluster.getClusterCode(), clusterHostService);
+                        logger.info("host install save to database");
+                    } else {
+                        hostEntity.setCpuArchitecture(msg.getCpuArchitecture());
+                        hostEntity.setManaged(MANAGED.YES);
+                        clusterHostService.updateById(hostEntity);
+                    }
                 }
+
             }
-            if (ObjectUtil.isNull(hostEntity)) {
-                //save to db
-                ProcessUtils.saveHostInstallInfo(msg, cluster.getClusterCode(), clusterHostService);
-                logger.info("host install save to database");
-            } else {
+            if (ObjectUtil.isNotNull(hostEntity)) {
                 hostEntity.setCpuArchitecture(msg.getCpuArchitecture());
                 hostEntity.setManaged(MANAGED.YES);
                 clusterHostService.updateById(hostEntity);

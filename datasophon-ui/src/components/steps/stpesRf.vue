@@ -58,6 +58,7 @@ export default {
         hosts: "",
         sshUser: "",
         sshPort: "",
+        sshPassword:''
       },
       steps4Data: {
         serviceIds: [],

@@ -90,4 +90,10 @@ public class ClusterHostEntity implements Serializable {
     @TableField(exist = false)
     private Integer serviceRoleNum;
 
+    private String manageUser;
+
+    private String managePassword;
+
+    private int managePort;
+
 }

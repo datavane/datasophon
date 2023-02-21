@@ -101,8 +101,6 @@ public enum HostUtils {;
             ipHost.put(ipStr, hostname);
             hostIp.put(hostname, ipStr);
         }
-        CacheUtils.put(Constants.IP_HOST, ipHost);
-        CacheUtils.put(Constants.HOST_IP, hostIp);
     }
 
     public static String findIp(String hostname) {

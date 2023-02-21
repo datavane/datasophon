@@ -8,14 +8,10 @@ import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.DispatcherHostAgentCommand;
 import com.datasophon.common.model.HostInfo;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.sshd.client.session.ClientSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 
 public class DispatcherWorkerActor extends UntypedActor {
@@ -38,7 +34,7 @@ public class DispatcherWorkerActor extends UntypedActor {
                 hostInfo.getHostname(),
                 hostInfo.getSshPort(),
                 hostInfo.getSshUser(),
-                Constants.SLASH + hostInfo.getSshUser() + Constants.ID_RSA);
+                Constants.SLASH + hostInfo.getSshUser() + Constants.ID_RSA, hostInfo.getSshPassword());
         DispatcherWorkerHandlerChain handlerChain = new DispatcherWorkerHandlerChain();
         handlerChain.addHandler(new UploadWorkerHandler());
         handlerChain.addHandler(new CheckWorkerMd5Handler());

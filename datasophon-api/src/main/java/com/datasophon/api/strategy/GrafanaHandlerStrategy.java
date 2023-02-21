@@ -7,6 +7,8 @@ import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
@@ -14,9 +16,13 @@ public class GrafanaHandlerStrategy implements ServiceRoleStrategy{
     @Override
     public void handler(Integer clusterId,List<String> hosts) {
         Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+clusterId);
-        Map<String,String> hostIp = (Map<String, String>) CacheUtils.get(Constants.HOST_IP);
-        if(hosts.size() == 1 && hostIp.containsKey(hosts.get(0))){
-            ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${grafanaHost}",hostIp.get(hosts.get(0)));
+
+        if(hosts.size() == 1 ){
+            try {
+                ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${grafanaHost}", InetAddress.getByName(hosts.get(0)).getHostAddress());
+            } catch (UnknownHostException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

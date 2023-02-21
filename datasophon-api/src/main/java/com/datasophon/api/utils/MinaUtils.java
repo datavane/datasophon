@@ -27,14 +27,19 @@ public class MinaUtils {
     /**
      * 打开远程会话
      */
-    public static ClientSession openConnection(String sshHost, Integer sshPort, String sshUser, String privateKey_path) {
+    public static ClientSession openConnection(String sshHost, Integer sshPort, String sshUser, String privateKey_path,String sshPassword) {
         SshClient sshClient = SshClient.setUpDefaultClient();
         sshClient.start();
         ClientSession session = null;
         try {
-            String privateKeyContent= new String(Files.readAllBytes(Paths.get(privateKey_path)));
+            Path path = Paths.get(privateKey_path);
+            boolean exists = Files.exists(path);
             session = sshClient.connect(sshUser, sshHost, sshPort).verify().getClientSession();
-            session.addPublicKeyIdentity(getKeyPairFromString(privateKeyContent));
+            session.addPasswordIdentity(sshPassword);
+            if(exists){
+                String privateKeyContent= new String(Files.readAllBytes(path));
+                session.addPublicKeyIdentity(getKeyPairFromString(privateKeyContent));
+            }
             if (session.auth().verify().isFailure()) {
                 LOG.info("验证失败");
                 return null;
@@ -181,10 +186,10 @@ public class MinaUtils {
 
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        ClientSession session = MinaUtils.openConnection("localhost", 22, "liuxin",
-                "/Users/liuxin/.ssh/id_rsa");
+        ClientSession session = MinaUtils.openConnection("192.168.230.131", 22, "root",
+                "~/.ssh/id_rsa","123456");
         for (int i = 0; i < Constants.TEN; i++) {
-            String ls = MinaUtils.execCmdWithResult(session, "arch");
+            String ls = MinaUtils.execCmdWithResult(session, "ls -l");
             System.out.println(ls);
         }
 //        boolean dir = MinaUtils.createDir(session,"/home/shinow/test/");

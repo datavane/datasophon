@@ -35,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import scala.collection.immutable.Stream;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,7 +74,7 @@ public class InstallServiceImpl implements InstallService {
      * @return
      */
     @Override
-    public Result analysisHostList(Integer clusterId, String hosts, String sshUser, Integer sshPort, Integer page, Integer pageSize) {
+    public Result analysisHostList(Integer clusterId, String hosts, String sshUser,String sshPassword, Integer sshPort, Integer page, Integer pageSize) {
 
         List<HostInfo> list = new ArrayList<>();
         hosts = hosts.replace(" ", "");
@@ -87,7 +89,7 @@ public class InstallServiceImpl implements InstallService {
 
         } else {
             logger.info("analysis host list");
-            HostUtils.read();
+//            HostUtils.read();
             String[] hostsArr = hosts.split(",");
             for (String host : hostsArr) {
                 //解析ip域
@@ -101,7 +103,7 @@ public class InstallServiceImpl implements InstallService {
                         String endStr = split[1];
                         List<String> newEquipmentNoList = PlaceholderUtils.getNewEquipmentNoList(preStr, endStr);
                         for (String next : newEquipmentNoList) {
-                            HostInfo hostInfo = createHostInfo(pre + next, sshPort, sshUser, clusterCode);
+                            HostInfo hostInfo = createHostInfo(pre + next, sshPort, sshUser,sshPassword, clusterCode);
                             if (ObjectUtil.isNotNull(hostInfo) ) {
                                 map.put(hostInfo.getHostname(), hostInfo);
                                 if(!hostInfo.isManaged()){
@@ -113,7 +115,7 @@ public class InstallServiceImpl implements InstallService {
                         int offset = Integer.parseInt(split[0]);
                         int limit = Integer.parseInt(split[1]);
                         for (int i = offset; i <= limit; i++) {
-                            HostInfo hostInfo = createHostInfo(pre + i, sshPort, sshUser, clusterCode);
+                            HostInfo hostInfo = createHostInfo(pre + i, sshPort, sshUser,sshPassword, clusterCode);
                             if (ObjectUtil.isNotNull(hostInfo)) {
                                 map.put(hostInfo.getHostname(), hostInfo);
                                 if(!hostInfo.isManaged()){
@@ -123,7 +125,7 @@ public class InstallServiceImpl implements InstallService {
                         }
                     }
                 } else {
-                    HostInfo hostInfo = createHostInfo(host, sshPort, sshUser, clusterCode);
+                    HostInfo hostInfo = createHostInfo(host, sshPort, sshUser,sshPassword, clusterCode);
                     if (ObjectUtil.isNotNull(hostInfo) ) {
                         map.put(hostInfo.getHostname(), hostInfo);
                         if(!hostInfo.isManaged()){
@@ -150,22 +152,14 @@ public class InstallServiceImpl implements InstallService {
         actor.tell(new HostCheckCommand(hostInfo, clusterCode), ActorRef.noSender());
     }
 
-    public HostInfo createHostInfo(String host, Integer sshPort, String sshUser, String clusterCode) {
+    public HostInfo createHostInfo(String host, Integer sshPort, String sshUser,String sshPassword, String clusterCode) {
         HostInfo hostInfo = new HostInfo();
-        Map<String, String> ipHost = (Map<String, String>) CacheUtils.get(Constants.IP_HOST);
-        Map<String, String> hostIp = (Map<String, String>) CacheUtils.get(Constants.HOST_IP);
-        if (host.matches(Constants.HAS_EN)) {
-            if (ObjectUtil.isNull(hostIp) || !hostIp.containsKey(host)) {
-                return null;
-            }
-            hostInfo.setHostname(host);
-            hostInfo.setIp(hostIp.get(host));
-        } else {
-            if (ObjectUtil.isNull(ipHost) || !ipHost.containsKey(host)) {
-                return null;
-            }
-            hostInfo.setIp(host);
-            hostInfo.setHostname(ipHost.get(host));
+        try {
+            InetAddress byName = InetAddress.getByName(host);
+            hostInfo.setHostname(byName.getCanonicalHostName());
+            hostInfo.setIp(byName.getHostAddress());
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
         }
         //判断是否受管
         ClusterHostEntity hostEntity = hostService.getClusterHostByHostname(hostInfo.getHostname());
@@ -184,6 +178,7 @@ public class InstallServiceImpl implements InstallService {
         }
         hostInfo.setSshPort(sshPort);
         hostInfo.setSshUser(sshUser);
+        hostInfo.setSshPassword(sshPassword);
         hostInfo.setClusterCode(clusterCode);
         hostInfo.setCreateTime(new Date());
         return hostInfo;
@@ -272,22 +267,18 @@ public class InstallServiceImpl implements InstallService {
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         String clusterCode = clusterInfo.getClusterCode();
         Map<String, HostInfo> map = (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
-
         for (String hostname : hostnames.split(",")) {
-            ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
-            HostInfo hostInfo = new HostInfo();
+//            ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
             if (Objects.nonNull(map) && map.containsKey(hostname)) {
-                hostInfo = map.get(hostname);
-            }else if (Objects.nonNull(clusterHost)){
-                hostInfo.setHostname(hostname);
-                hostInfo.setSshUser("root");
-                hostInfo.setSshPort(22);
+                HostInfo hostInfo = map.get(hostname);
+                ActorRef hostActor = ActorUtils.getLocalActor(DispatcherWorkerActor.class,"dispatcherWorkerActor-" + hostname);
+                hostInfo.setProgress(0);
+                hostInfo.setErrMsg("");
+                hostInfo.setInstallStateCode(InstallState.RUNNING.getValue());
+                hostInfo.setCreateTime(new Date());
+                hostActor.tell(new DispatcherHostAgentCommand(hostInfo, clusterId, clusterInfo.getClusterFrame()), ActorRef.noSender());
             }
-            ActorRef hostActor = ActorUtils.getLocalActor(DispatcherWorkerActor.class,"dispatcherWorkerActor-" + hostname);
-            hostInfo.setInstallState(InstallState.RUNNING);
-            hostInfo.setErrMsg("");
-            hostInfo.setInstallStateCode(InstallState.RUNNING.getValue());
-            hostActor.tell(new DispatcherHostAgentCommand(hostInfo, clusterId, clusterInfo.getClusterFrame()), ActorRef.noSender());
+
             
         }
         return Result.success();
@@ -345,9 +336,9 @@ public class InstallServiceImpl implements InstallService {
         for (ClusterHostEntity clusterHostEntity : clusterHostList) {
             ClientSession session = MinaUtils.openConnection(
                     clusterHostEntity.getHostname(),
-              22,
-                     Constants.ROOT,
-                    Constants.SLASH + Constants.ROOT + Constants.ID_RSA);
+              clusterHostEntity.getManagePort(),
+                    clusterHostEntity.getManageUser(),
+                    Constants.SLASH + Constants.ROOT + Constants.ID_RSA,clusterHostEntity.getManagePassword());
             MinaUtils.execCmdWithResult( session,"service datasophon-worker "+commandType);
             logger.info("hostAgent command:{}", "service datasophon-worker "+commandType);
             if (ObjectUtil.isNotEmpty(session)) {

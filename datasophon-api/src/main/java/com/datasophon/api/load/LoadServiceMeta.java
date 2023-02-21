@@ -76,7 +76,7 @@ public class LoadServiceMeta implements ApplicationRunner {
     @Transactional(rollbackFor = Exception.class)
     public void run(ApplicationArguments args) throws Exception {
         //load hosts
-        loadHostsFileInEtc();
+//        loadHostsFileInEtc();
         logger.info("put ip host map into cache");
 
         File[] ddps = FileUtil.ls(PATH);

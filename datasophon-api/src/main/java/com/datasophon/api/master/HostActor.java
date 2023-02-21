@@ -32,7 +32,7 @@ public class HostActor extends UntypedActor {
                     hostInfo.getHostname(),
                     hostInfo.getSshPort(),
                     hostInfo.getSshUser(),
-                    Constants.SLASH + hostInfo.getSshUser() + Constants.ID_RSA);
+                    Constants.SLASH + hostInfo.getSshUser() + Constants.ID_RSA,hostInfo.getSshPassword());
             if (ObjectUtil.isNotNull(session)) {
                 hostInfo.setCheckResult(new CheckResult(Status.CHECK_HOST_SUCCESS.getCode(), Status.CHECK_HOST_SUCCESS.getMsg()));
             } else {
