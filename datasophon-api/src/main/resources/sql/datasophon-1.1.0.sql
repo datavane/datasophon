@@ -11,7 +11,7 @@
  Target Server Version : 50722
  File Encoding         : 65001
 
- Date: 29/12/2022 12:05:33
+ Date: 12/02/2023 21:01:22
 */
 
 SET NAMES utf8mb4;
@@ -46,7 +46,7 @@ CREATE TABLE `t_ddh_alert_group`  (
   `alert_group_category` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '告警组类别',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '告警组表' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '告警组表' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of t_ddh_alert_group
@@ -68,6 +68,7 @@ INSERT INTO `t_ddh_alert_group` VALUES (19, 'STARROCKS告警组', 'STARROCKS', '
 INSERT INTO `t_ddh_alert_group` VALUES (20, 'ELASTICSEARCH告警组', 'ELASTICSEARCH', '2022-10-08 16:15:55');
 INSERT INTO `t_ddh_alert_group` VALUES (21, 'DS告警组', 'DS', '2022-11-20 21:00:00');
 INSERT INTO `t_ddh_alert_group` VALUES (22, 'SP告警组', 'STREAMPARK', '2022-11-21 18:20:10');
+INSERT INTO `t_ddh_alert_group` VALUES (23, 'Doris告警组', 'DORIS', '2023-01-07 22:12:36');
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_alert_expression
@@ -262,7 +263,7 @@ CREATE TABLE `t_ddh_cluster_alert_quota`  (
   `quota_state` int(2) NULL DEFAULT NULL COMMENT '1: 启用  2：未启用',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 625 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '集群告警指标表 ' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 628 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '集群告警指标表 ' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_ddh_cluster_alert_quota
@@ -337,6 +338,9 @@ INSERT INTO `t_ddh_cluster_alert_quota` VALUES (621, 'DSMaster存活', 'DS', 'up
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (622, 'DSWorker存活', 'DS', 'up{job=\'workerserver\'}', 2, 21, 1, '重新启动', '!=', 1, 1, 1, 15, 'WorkerServer', 1, '2022-11-20 21:02:10');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (623, 'DSAlert存活', 'DS', 'up{job=\'alertserver\'}', 2, 21, 1, '重新启动', '!=', 1, 1, 1, 15, 'AlertServer', 1, '2022-11-20 21:02:46');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (624, 'StreamPark存活', 'STREAMPARK', 'up{job=\'streampark\'}', 2, 22, 1, '重新启动', '!=', 1, 1, 1, 15, 'StreamPark', 1, '2022-11-21 18:20:51');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (625, 'FE进程存活', 'DORIS', 'up{group=\"fe\",job=\"doris\"}', 2, 23, 1, 'restart', '!=', 1, 1, 1, 15, 'FE', 1, '2023-01-07 22:21:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (626, 'BE进程存活', 'DORIS', 'up{group=\"be\",job=\"doris\"}', 2, 23, 1, 'restart', '!=', 1, 1, 1, 15, 'BE', 1, '2023-01-07 22:22:10');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (627, 'HistoryServer进程存活', 'YARN', 'up{job=\"historyserver\"}', 2, 3, 1, '重新启动', '!=', 1, 1, 1, 15, 'HistoryServer', 1, '2023-01-12 14:20:23');
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_alert_rule
@@ -680,7 +684,7 @@ CREATE TABLE `t_ddh_cluster_service_dashboard`  (
   `service_name` varchar(128) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT '服务名称',
   `dashboard_url` varchar(256) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL COMMENT '总览页面地址',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '集群服务总览仪表盘' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci COMMENT = '集群服务总览仪表盘' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of t_ddh_cluster_service_dashboard
@@ -704,6 +708,8 @@ INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (16, 'ELASTICSEARCH', 'http
 INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (17, 'DS', 'http://${grafanaHost}:3000/d/X_NPpJOVk/dolphinscheduler?refresh=1m&kiosk');
 INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (18, 'STREAMPARK', 'http://${grafanaHost}:3000/d/98U0T1OVz/streampark?kiosk&refresh=1m');
 INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (19, 'DINKY', 'http://${grafanaHost}:3000/d/9qU9T1OVk/dinky?kiosk&refresh=1m');
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (20, 'DORIS', 'http://${grafanaHost}:3000/d/1fFiWJ4mz/doris-overview?orgId=1&from=now-6h&to=now&refresh=1m&kiosk');
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (21, 'KERBEROS', 'http://${grafanaHost}:3000/d/QflaxlA4k/kerberos?orgId=1&refresh=1m&kiosk');
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_service_instance
@@ -939,12 +945,11 @@ CREATE TABLE `t_ddh_frame_info`  (
   `frame_code` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '框架编码',
   `frame_version` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '集群框架表' ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '集群框架表' ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of t_ddh_frame_info
 -- ----------------------------
-INSERT INTO `t_ddh_frame_info` VALUES (9, NULL, 'DDP-1.0.0', NULL);
 
 -- ----------------------------
 -- Table structure for t_ddh_frame_service
@@ -1083,7 +1088,7 @@ CREATE TABLE `t_ddh_session`  (
 -- Records of t_ddh_session
 -- ----------------------------
 INSERT INTO `t_ddh_session` VALUES ('3f229c41-84ee-4a09-a0b9-76e95f0577dc', 2, '192.168.75.12', '2022-09-07 11:52:12');
-INSERT INTO `t_ddh_session` VALUES ('d6a56f30-757e-4717-abbd-4bb17983e697', 1, '192.168.75.12', '2022-12-29 11:45:12');
+INSERT INTO `t_ddh_session` VALUES ('d25dd005-ceb6-4414-bfdf-9279a23c2ba6', 1, '192.168.75.12', '2023-02-12 20:34:57');
 
 -- ----------------------------
 -- Table structure for t_ddh_user_info
