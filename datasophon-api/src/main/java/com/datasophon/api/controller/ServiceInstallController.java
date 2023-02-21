@@ -3,7 +3,6 @@ package com.datasophon.api.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.datasophon.api.service.ServiceInstallService;
 import com.datasophon.api.security.UserPermission;
-import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.model.HostServiceRoleMapping;
 import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.model.ServiceRoleHostMapping;
@@ -45,7 +44,7 @@ public class ServiceInstallController {
      * 保存服务角色与主机对应关系
      */
     @RequestMapping("/saveServiceRoleHostMapping/{clusterId}")
-    public Result saveServiceRoleHostMapping( @RequestBody List<ServiceRoleHostMapping> list,@PathVariable("clusterId") Integer clusterId) {
+    public Result saveServiceRoleHostMapping(@RequestBody List<ServiceRoleHostMapping> list, @PathVariable("clusterId") Integer clusterId) {
         return serviceInstallService.saveServiceRoleHostMapping(clusterId, list);
     }
 
