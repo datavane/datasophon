@@ -7,25 +7,27 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.enums.Status;
+import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.DispatcherWorkerActor;
 import com.datasophon.api.master.HostActor;
+import com.datasophon.api.service.ClusterHostService;
 import com.datasophon.api.service.ClusterInfoService;
-import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.service.InstallService;
 import com.datasophon.api.utils.MessageResolverUtils;
 import com.datasophon.api.utils.MinaUtils;
-import com.datasophon.common.command.DispatcherHostAgentCommand;
-import com.datasophon.common.model.CheckResult;
-import com.datasophon.common.model.HostInfo;
-import com.datasophon.api.service.ClusterHostService;
-import com.datasophon.api.service.InstallService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
+import com.datasophon.common.command.DispatcherHostAgentCommand;
 import com.datasophon.common.command.HostCheckCommand;
-import com.datasophon.common.utils.*;
+import com.datasophon.common.enums.InstallState;
+import com.datasophon.common.model.CheckResult;
+import com.datasophon.common.model.HostInfo;
+import com.datasophon.common.utils.PlaceholderUtils;
+import com.datasophon.common.utils.PropertyUtils;
+import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.InstallStepEntity;
-import com.datasophon.common.enums.InstallState;
 import com.datasophon.dao.mapper.InstallStepMapper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.sshd.client.session.ClientSession;
@@ -33,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import scala.collection.immutable.Stream;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -74,7 +75,7 @@ public class InstallServiceImpl implements InstallService {
      * @return
      */
     @Override
-    public Result analysisHostList(Integer clusterId, String hosts, String sshUser,String sshPassword, Integer sshPort, Integer page, Integer pageSize) {
+    public Result analysisHostList(Integer clusterId, String hosts, String sshUser, String sshPassword, Integer sshPort, Integer page, Integer pageSize) {
 
         List<HostInfo> list = new ArrayList<>();
         hosts = hosts.replace(" ", "");
@@ -103,11 +104,11 @@ public class InstallServiceImpl implements InstallService {
                         String endStr = split[1];
                         List<String> newEquipmentNoList = PlaceholderUtils.getNewEquipmentNoList(preStr, endStr);
                         for (String next : newEquipmentNoList) {
-                            HostInfo hostInfo = createHostInfo(pre + next, sshPort, sshUser,sshPassword, clusterCode);
-                            if (ObjectUtil.isNotNull(hostInfo) ) {
+                            HostInfo hostInfo = createHostInfo(pre + next, sshPort, sshUser, sshPassword, clusterCode);
+                            if (ObjectUtil.isNotNull(hostInfo)) {
                                 map.put(hostInfo.getHostname(), hostInfo);
-                                if(!hostInfo.isManaged()){
-                                    tellHostCheck( clusterCode, hostInfo);
+                                if (!hostInfo.isManaged()) {
+                                    tellHostCheck(clusterCode, hostInfo);
                                 }
                             }
                         }
@@ -115,20 +116,20 @@ public class InstallServiceImpl implements InstallService {
                         int offset = Integer.parseInt(split[0]);
                         int limit = Integer.parseInt(split[1]);
                         for (int i = offset; i <= limit; i++) {
-                            HostInfo hostInfo = createHostInfo(pre + i, sshPort, sshUser,sshPassword, clusterCode);
+                            HostInfo hostInfo = createHostInfo(pre + i, sshPort, sshUser, sshPassword, clusterCode);
                             if (ObjectUtil.isNotNull(hostInfo)) {
                                 map.put(hostInfo.getHostname(), hostInfo);
-                                if(!hostInfo.isManaged()){
+                                if (!hostInfo.isManaged()) {
                                     tellHostCheck(clusterCode, hostInfo);
                                 }
                             }
                         }
                     }
                 } else {
-                    HostInfo hostInfo = createHostInfo(host, sshPort, sshUser,sshPassword, clusterCode);
-                    if (ObjectUtil.isNotNull(hostInfo) ) {
+                    HostInfo hostInfo = createHostInfo(host, sshPort, sshUser, sshPassword, clusterCode);
+                    if (ObjectUtil.isNotNull(hostInfo)) {
                         map.put(hostInfo.getHostname(), hostInfo);
-                        if(!hostInfo.isManaged()){
+                        if (!hostInfo.isManaged()) {
                             tellHostCheck(clusterCode, hostInfo);
                         }
                     }
@@ -148,11 +149,11 @@ public class InstallServiceImpl implements InstallService {
     }
 
     private void tellHostCheck(String clusterCode, HostInfo hostInfo) {
-        ActorRef actor = ActorUtils.getLocalActor(HostActor.class,"hostActor-" + hostInfo.getHostname());
+        ActorRef actor = ActorUtils.getLocalActor(HostActor.class, "hostActor-" + hostInfo.getHostname());
         actor.tell(new HostCheckCommand(hostInfo, clusterCode), ActorRef.noSender());
     }
 
-    public HostInfo createHostInfo(String host, Integer sshPort, String sshUser,String sshPassword, String clusterCode) {
+    public HostInfo createHostInfo(String host, Integer sshPort, String sshUser, String sshPassword, String clusterCode) {
         HostInfo hostInfo = new HostInfo();
         try {
             InetAddress byName = InetAddress.getByName(host);
@@ -168,13 +169,13 @@ public class InstallServiceImpl implements InstallService {
             hostInfo.setInstallState(InstallState.SUCCESS);
             hostInfo.setInstallStateCode(InstallState.SUCCESS.getValue());
             hostInfo.setProgress(Constants.ONE_HUNDRRD);
-            hostInfo.setCheckResult(new CheckResult(Status.CHECK_HOST_SUCCESS.getCode(),Status.CHECK_HOST_SUCCESS.getMsg()));
+            hostInfo.setCheckResult(new CheckResult(Status.CHECK_HOST_SUCCESS.getCode(), Status.CHECK_HOST_SUCCESS.getMsg()));
         } else {
             hostInfo.setManaged(false);
             hostInfo.setInstallState(InstallState.RUNNING);
             hostInfo.setInstallStateCode(InstallState.RUNNING.getValue());
             hostInfo.setProgress(0);
-            hostInfo.setCheckResult(new CheckResult(Status.START_CHECK_HOST.getCode(),Status.START_CHECK_HOST.getMsg()));
+            hostInfo.setCheckResult(new CheckResult(Status.START_CHECK_HOST.getCode(), Status.START_CHECK_HOST.getMsg()));
         }
         hostInfo.setSshPort(sshPort);
         hostInfo.setSshUser(sshUser);
@@ -202,11 +203,11 @@ public class InstallServiceImpl implements InstallService {
         Map<String, HostInfo> map = (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
         for (String hostname : hostnames.split(",")) {
             if (map.containsKey(hostname)) {
-                ActorRef hostActor = ActorUtils.getLocalActor(HostActor.class,"hostActor-" + hostname);
+                ActorRef hostActor = ActorUtils.getLocalActor(HostActor.class, "hostActor-" + hostname);
                 HostInfo hostInfo = map.get(hostname);
                 hostInfo.setCheckResult(new CheckResult(Status.START_CHECK_HOST.getCode(), Status.START_CHECK_HOST.getMsg()));
                 hostActor.tell(new HostCheckCommand(hostInfo, clusterCode), ActorRef.noSender());
-                
+
             }
         }
         return Result.success();
@@ -223,26 +224,26 @@ public class InstallServiceImpl implements InstallService {
                 .map(e -> e.getValue()).filter(e -> e.getCheckResult().getCode() == 10001).collect(Collectors.toList());
 
         for (HostInfo hostInfo : list) {
-            if(hostInfo.isManaged()){
+            if (hostInfo.isManaged()) {
                 hostInfo.setInstallStateCode(InstallState.SUCCESS.getValue());
                 hostInfo.setProgress(Constants.ONE_HUNDRRD);
                 hostInfo.setMessage(MessageResolverUtils.getMessage("distribution.success"));
                 hostInfo.setInstallState(InstallState.SUCCESS);
-            }else if(!CacheUtils.constainsKey(distributeAgentKey+Constants.UNDERLINE+hostInfo.getHostname())){
-                logger.info("start to dispatcher host agent to {}",hostInfo.getHostname());
-                ActorRef hostActor = ActorUtils.getLocalActor(DispatcherWorkerActor.class,"dispatcherWorkerActor-" + hostInfo.getHostname());
+            } else if (!CacheUtils.constainsKey(distributeAgentKey + Constants.UNDERLINE + hostInfo.getHostname())) {
+                logger.info("start to dispatcher host agent to {}", hostInfo.getHostname());
+                ActorRef hostActor = ActorUtils.getLocalActor(DispatcherWorkerActor.class, "dispatcherWorkerActor-" + hostInfo.getHostname());
                 hostInfo.setInstallStateCode(InstallState.RUNNING.getValue());
                 hostInfo.setCreateTime(new Date());
                 hostActor.tell(new DispatcherHostAgentCommand(hostInfo, clusterId, clusterInfo.getClusterFrame()), ActorRef.noSender());
                 //保存主机agent分发历史
-                CacheUtils.put(distributeAgentKey+Constants.UNDERLINE+hostInfo.getHostname(), true);
-                
-            }else {
+                CacheUtils.put(distributeAgentKey + Constants.UNDERLINE + hostInfo.getHostname(), true);
+
+            } else {
                 long timeout = DateUtil.between(hostInfo.getCreateTime(), new Date(), DateUnit.MINUTE);
-                long timeOutPeriodOne=PropertyUtils.getLong("timeOutPeriodOne");
-                long timeOutPeriodTwo=PropertyUtils.getLong("timeOutPeriodTwo");
-                Integer progress=hostInfo.getProgress();
-                if("75".equals(String.valueOf(progress))&&timeout>timeOutPeriodOne){
+                long timeOutPeriodOne = PropertyUtils.getLong("timeOutPeriodOne");
+                long timeOutPeriodTwo = PropertyUtils.getLong("timeOutPeriodTwo");
+                Integer progress = hostInfo.getProgress();
+                if ("75".equals(String.valueOf(progress)) && timeout > timeOutPeriodOne) {
                     hostInfo.setInstallStateCode(InstallState.FAILED.getValue());
                     hostInfo.setProgress(Constants.ONE_HUNDRRD);
                     hostInfo.setMessage(MessageResolverUtils.getMessage("distribution.fail.tips.one"));
@@ -266,20 +267,35 @@ public class InstallServiceImpl implements InstallService {
 
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         String clusterCode = clusterInfo.getClusterCode();
-        Map<String, HostInfo> map = (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
+        Map<String, HostInfo> map = new HashMap<>();
+        if (CacheUtils.constainsKey(clusterCode + Constants.HOST_MAP)) {
+            logger.info("get host list from cache");
+            map = (HashMap<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
+        } else {
+            //主机列表放入缓存
+            CacheUtils.put(clusterCode + Constants.HOST_MAP, map);
+            logger.info("put host list in cache");
+        }
         for (String hostname : hostnames.split(",")) {
-//            ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
             if (Objects.nonNull(map) && map.containsKey(hostname)) {
                 HostInfo hostInfo = map.get(hostname);
-                ActorRef hostActor = ActorUtils.getLocalActor(DispatcherWorkerActor.class,"dispatcherWorkerActor-" + hostname);
+                ActorRef hostActor = ActorUtils.getLocalActor(DispatcherWorkerActor.class, "dispatcherWorkerActor-" + hostname);
                 hostInfo.setProgress(0);
                 hostInfo.setErrMsg("");
                 hostInfo.setInstallStateCode(InstallState.RUNNING.getValue());
                 hostInfo.setCreateTime(new Date());
                 hostActor.tell(new DispatcherHostAgentCommand(hostInfo, clusterId, clusterInfo.getClusterFrame()), ActorRef.noSender());
+            } else {
+                ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
+                HostInfo hostInfo = createHostInfo(clusterHost.getHostname(), clusterHost.getManagePort(), clusterHost.getManageUser(), clusterHost.getManagePassword(), clusterInfo.getClusterCode());
+                hostInfo.setProgress(0);
+                ActorRef hostActor = ActorUtils.getLocalActor(DispatcherWorkerActor.class, "dispatcherWorkerActor-" + hostname);
+                hostInfo.setErrMsg("");
+                hostInfo.setInstallStateCode(InstallState.RUNNING.getValue());
+                hostInfo.setCreateTime(new Date());
+                hostActor.tell(new DispatcherHostAgentCommand(hostInfo, clusterId, clusterInfo.getClusterFrame()), ActorRef.noSender());
+                map.put(hostInfo.getHostname(), hostInfo);
             }
-
-            
         }
         return Result.success();
     }
@@ -311,7 +327,7 @@ public class InstallServiceImpl implements InstallService {
         Map<String, HostInfo> map = (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
         for (Map.Entry<String, HostInfo> hostInfoEntry : map.entrySet()) {
             HostInfo hostInfo = hostInfoEntry.getValue();
-            if(hostInfo.getProgress() == 75 && DateUtil.between(hostInfo.getCreateTime(),new Date(), DateUnit.MINUTE) > 1){
+            if (hostInfo.getProgress() == 75 && DateUtil.between(hostInfo.getCreateTime(), new Date(), DateUnit.MINUTE) > 1) {
                 logger.info("dispatcher host agent timeout");
                 hostInfo.setInstallState(InstallState.FAILED);
                 hostInfo.setInstallStateCode(InstallState.FAILED.getValue());
@@ -327,7 +343,7 @@ public class InstallServiceImpl implements InstallService {
 
     @Override
     public Result generateHostAgentCommand(String clusterHostIds, String commandType) throws Exception {
-        if(StringUtils.isBlank(clusterHostIds)){
+        if (StringUtils.isBlank(clusterHostIds)) {
             return Result.error(Status.SELECT_LEAST_ONE_HOST.getMsg());
         }
         String[] clusterHostIdArray = clusterHostIds.split(Constants.COMMA);
@@ -336,11 +352,11 @@ public class InstallServiceImpl implements InstallService {
         for (ClusterHostEntity clusterHostEntity : clusterHostList) {
             ClientSession session = MinaUtils.openConnection(
                     clusterHostEntity.getHostname(),
-              clusterHostEntity.getManagePort(),
+                    clusterHostEntity.getManagePort(),
                     clusterHostEntity.getManageUser(),
-                    Constants.SLASH + Constants.ROOT + Constants.ID_RSA,clusterHostEntity.getManagePassword());
-            MinaUtils.execCmdWithResult( session,"service datasophon-worker "+commandType);
-            logger.info("hostAgent command:{}", "service datasophon-worker "+commandType);
+                    Constants.SLASH + Constants.ROOT + Constants.ID_RSA, clusterHostEntity.getManagePassword());
+            MinaUtils.execCmdWithResult(session, "service datasophon-worker " + commandType);
+            logger.info("hostAgent command:{}", "service datasophon-worker " + commandType);
             if (ObjectUtil.isNotEmpty(session)) {
                 session.close();
             }
