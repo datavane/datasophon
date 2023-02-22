@@ -186,8 +186,9 @@
         "outputDirectory": "etc/hadoop/",
         "includeParams": [
           "fs.defaultFS",
-          "hadoop.proxyuser.root.hosts",
-          "hadoop.proxyuser.root.groups",
+          "hadoop.proxyuser.hive.hosts",
+          "hadoop.proxyuser.hive.groups",
+          "hadoop.proxyuser.hive.users",
           "hadoop.http.staticuser.user",
           "ha.zookeeper.quorum",
           "hadoop.tmp.dir",
@@ -207,6 +208,7 @@
         "templateName": "hadoop-env.ftl",
         "includeParams": [
           "hadoopLogDir",
+          "hadoopHome",
           "custom.hadoop.env.sh"
         ]
       },
@@ -249,7 +251,11 @@
           "dfs.permissions",
           "dfs.namenode.inode.attributes.provider.class",
           "dfs.hosts",
-          "dfs.hosts.exclude"
+          "dfs.hosts.exclude",
+          "net.topology.table.file.name",
+          "net.topology.node.switch.mapping.impl",
+          "dfs.datanode.address",
+          "dfs.datanode.http.address"
         ]
       },
       {
@@ -258,6 +264,7 @@
         "outputDirectory": "ranger-hdfs-plugin",
         "templateName": "ranger-hdfs.ftl",
         "includeParams": [
+          "hadoopHome",
           "rangerAdminUrl"
         ]
       }
@@ -273,12 +280,13 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "hdfs://${fs.defaultFS}"
+      "defaultValue": "hdfs://nameservice1"
     },
     {
       "name": "hadoop.tmp.dir",
       "label": "Hadoop运行时文件存储目录",
       "description": "Hadoop运行时文件存储目录",
+      "configType": "path",
       "required": true,
       "type": "input",
       "value": "",
@@ -298,9 +306,9 @@
       "defaultValue": "admin"
     },
     {
-      "name": "hadoop.proxyuser.root.hosts",
+      "name": "hadoop.proxyuser.hive.hosts",
       "label": "允许通过代理访问的主机节点",
-      "description": "配置root(超级用户)允许通过代理访问的主机节点",
+      "description": "配置hive允许通过代理访问的主机节点",
       "required": true,
       "type": "input",
       "value": "",
@@ -309,9 +317,20 @@
       "defaultValue": "*"
     },
     {
-      "name": "hadoop.proxyuser.root.groups",
+      "name": "hadoop.proxyuser.hive.groups",
       "label": "允许通过代理用户所属组",
-      "description": "配置root(超级用户)允许通过代理用户所属组",
+      "description": "配置hive允许通过代理用户所属组",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "*"
+    },
+    {
+      "name": "hadoop.proxyuser.hive.users",
+      "label": "允许通过代理的用户",
+      "description": "配置hive允许通过代理的用户",
       "required": true,
       "type": "input",
       "value": "",
@@ -337,6 +356,7 @@
       "description": "用于配置NameNode数据存储目录",
       "configType": "path",
       "required": true,
+      "separator": ",",
       "type": "multiple",
       "value": [
         "/data/dfs/nn"
@@ -389,6 +409,7 @@
       "description": "DataNode数据存储目录，可配置多个，按逗号分隔",
       "configType": "path",
       "required": true,
+      "separator": ",",
       "type": "multiple",
       "value": [
         "/data/dfs/dn"
@@ -585,6 +606,30 @@
       "defaultValue": "/data/dfs/jn"
     },
     {
+      "name": "dfs.datanode.address",
+      "label": "datanode地址",
+      "description": "",
+      "configType": "ha",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "0.0.0.0:1026"
+    },
+    {
+      "name": "dfs.datanode.http.address",
+      "label": "datanode http地址",
+      "description": "",
+      "configType": "ha",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "0.0.0.0:1025"
+    },
+    {
       "name": "dfs.permissions.enabled",
       "label": "开启权限检查",
       "description": "是否开启权限检查",
@@ -693,6 +738,7 @@
       "name": "hadoop.security.authentication",
       "label": "集群认证方式",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "input",
@@ -705,6 +751,7 @@
       "name": "hadoop.security.authorization",
       "label": "启用Hadoop集群授权管理",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "switch",
@@ -717,6 +764,7 @@
       "name": "hadoop.security.auth_to_local.mechanism",
       "label": "Kerberos主体到系统用户的映射机制",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "input",
@@ -729,18 +777,20 @@
       "name": "hadoop.security.auth_to_local",
       "label": "Kerberos主体到系统用户的具体映射规则",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
-      "type": "input",
-      "value": "DEFAULT",
-      "configurableInWizard": true,
+      "separator":"\n",
+      "type": "multiple",
+      "value": ["RULE:[2:$1/$2@$0]([ndj]n\\/.*@HADOOP\\.COM)s/.*/hdfs/","RULE:[2:$1/$2@$0]([rn]m\\/.*@HADOOP\\.COM)s/.*/yarn/","RULE:[2:$1/$2@$0](jhs\\/.*@HADOOP\\.COM)s/.*/mapred/","DEFAULT"],
       "hidden": true,
-      "defaultValue": "DEFAULT"
+      "defaultValue": []
     },
     {
       "name": "hadoop.rpc.protection",
       "label": "Hadoop集群间RPC通讯",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "input",
@@ -753,6 +803,7 @@
       "name": "dfs.block.access.token.enable",
       "label": "访问DataNode数据块时需通过Kerberos认证",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "switch",
@@ -765,6 +816,7 @@
       "name": "dfs.namenode.kerberos.principal",
       "label": "NameNode服务的Kerberos主体",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "input",
@@ -777,6 +829,7 @@
       "name": "dfs.namenode.keytab.file",
       "label": "NameNode服务的Kerberos密钥文件路径",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "input",
@@ -789,6 +842,7 @@
       "name": "dfs.journalnode.kerberos.principal",
       "label": "JournalNode服务的Kerberos主体",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "input",
@@ -801,6 +855,7 @@
       "name": "dfs.journalnode.keytab.file",
       "label": "JournalNode服务的Kerberos密钥文件路径",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "input",
@@ -814,6 +869,7 @@
       "name": "dfs.web.authentication.kerberos.principal",
       "label": "Hadoop Web UI服务的Kerberos主体",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "input",
@@ -826,6 +882,7 @@
       "name": "dfs.web.authentication.keytab.file",
       "label": "Hadoop Web UI服务的Kerberos密钥文件路径",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "input",
@@ -839,6 +896,7 @@
       "name": "dfs.datanode.kerberos.principal",
       "label": "DataNode服务的Kerberos主体",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "input",
@@ -851,6 +909,7 @@
       "name": "dfs.datanode.keytab.file",
       "label": "DataNode服务的Kerberos密钥文件路径",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "input",
@@ -863,6 +922,7 @@
       "name": "dfs.data.transfer.protection",
       "label": "配置DataNode数据传输保护策略为仅认证模式",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "input",
@@ -875,6 +935,7 @@
       "name": "dfs.http.policy",
       "label": "配置NameNode Web UI使用HTTPS协议",
       "description": "",
+      "configWithKerberos": true,
       "required": false,
       "configType": "kb",
       "type": "input",
@@ -883,7 +944,42 @@
       "hidden": true,
       "defaultValue": "HTTPS_ONLY"
     },
-
+    {
+      "name": "net.topology.table.file.name",
+      "label": "net.topology.table.file.name",
+      "description": "",
+      "required": false,
+      "configType": "rack",
+      "type": "input",
+      "value": "${HADOOP_HOME}/etc/hadoop/rack.properties",
+      "configWithRack": true,
+      "hidden": true,
+      "defaultValue": "${HADOOP_HOME}/etc/hadoop/rack.properties"
+    },
+    {
+      "name": "net.topology.node.switch.mapping.impl",
+      "label": "net.topology.node.switch.mapping.impl",
+      "description": "",
+      "required": false,
+      "configType": "rack",
+      "type": "input",
+      "value": "org.apache.hadoop.net.TableMapping",
+      "configWithRack": true,
+      "hidden": true,
+      "defaultValue": "org.apache.hadoop.net.TableMapping"
+    },
+    {
+      "name": "hadoopHome",
+      "label": "HADOOP_HOME",
+      "description": "Hadoop的安装目录",
+      "required": true,
+      "configType": "map",
+      "type": "input",
+      "value": "${HADOOP_HOME}",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "${HADOOP_HOME}"
+    },
     {
       "name": "custom.core.site.xml",
       "label": "自定义配置core-site.xml",

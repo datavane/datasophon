@@ -14,6 +14,8 @@ public final class Constants {
     public static final String INSTALL_TYPE = "install_type";
     public static final String TOTAL = "total";
 
+    public static final String DATASOPHON = "datasophon";
+
     public static final String HOST_MAP = "_host_map";
     public static final String COMMAND_ID = "command_id";
     public static final String COMMAND_HOST_ID = "command_host_id";
@@ -27,10 +29,10 @@ public final class Constants {
 
     public static final String WORKER_PACKAGE_NAME = "datasophon-worker.tar.gz";
     public static final String WORKER_SCRIPT_PATH = INSTALL_PATH + "/datasophon-worker/script/";
+    public static final String WORKER_PATH = INSTALL_PATH + "/datasophon-worker";
 
     public static final String IP_HOST = "ip_host";
     public static final String HOST_IP = "host_ip";
-    public static final String FRAME_ID = "frame_id";
     public static final String SERVICE_ID = "service_id";
     public static final String CLUSTER_ID = "cluster_id";
     public static final String MANAGED = "managed";
@@ -190,6 +192,11 @@ public final class Constants {
     public static final Pattern REGEX_MAIL_NAME = Pattern.compile("^([a-z0-9A-Z]+[_|\\-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$");
 
     /**
+     * 常量-数值100
+     */
+    public static final int ONE_HUNDRRD = 100;
+
+    /**
      * 常量-数值200
      */
     public static final int TWO_HUNDRRD = 200;
@@ -222,5 +229,22 @@ public final class Constants {
     public static final String PROPERTIES2 = "properties2";
     public static final String PROPERTIES3 = "properties3";
 
+    /**
+     * os name properties
+     */
+    public static final String OSNAME_PROPERTIES = "os.name";
 
+    /**
+     * windows os name
+     */
+    public static final String OSNAME_WINDOWS = "Windows";
+
+    /**
+     * windows hosts file basedir
+     */
+    public static final String WINDOWS_HOST_DIR = "C:/Windows/System32/drivers";
+    /**
+     * root user
+     */
+    public static final String   ROOT= "root";
 }

@@ -1,6 +1,7 @@
 package com.datasophon.api;
 
 import com.datasophon.api.master.ActorUtils;
+import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -26,7 +27,7 @@ public class DDHApplicationServer extends SpringBootServletInitializer {
     @PostConstruct
     public void run() throws UnknownHostException {
         String hostName = InetAddress.getLocalHost().getHostName();
-        CacheUtils.put("hostname",hostName);
+        CacheUtils.put(Constants.HOSTNAME,hostName);
         ActorUtils.init();
     }
 }

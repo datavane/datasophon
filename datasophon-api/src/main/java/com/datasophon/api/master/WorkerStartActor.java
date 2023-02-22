@@ -40,15 +40,7 @@ public class WorkerStartActor extends UntypedActor {
 
             ClusterHostService clusterHostService = SpringTool.getApplicationContext().getBean(ClusterHostService.class);
             ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
-            ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
-            ClusterServiceCommandService serviceCommandService = SpringTool.getApplicationContext().getBean(ClusterServiceCommandService.class);
-            //start stopped service
-//            List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.getStoppedRoleInstanceOnHost(msg.getClusterId(),msg.getHostname(),ServiceRoleState.STOP);
-//            for (ClusterServiceRoleInstanceEntity roleInstanceEntity : list) {
-//                Integer serviceId = roleInstanceEntity.getServiceId();
-//                List<String> idList = list.stream().map(e -> e.getId().toString()).collect(Collectors.toList());
-//                serviceCommandService.generateServiceRoleCommand(msg.getClusterId(), CommandType.START_SERVICE, serviceId, idList);
-//            }
+
             //is managed?
             ClusterHostEntity hostEntity = clusterHostService.getClusterHostByHostname(msg.getHostname());
             ClusterInfoEntity cluster = clusterInfoService.getById(msg.getClusterId());
@@ -57,7 +49,7 @@ public class WorkerStartActor extends UntypedActor {
                 HashMap<String, HostInfo> map = (HashMap<String, HostInfo>) CacheUtils.get(cluster.getClusterCode() + Constants.HOST_MAP);
                 HostInfo hostInfo = map.get(msg.getHostname());
                 if (Objects.nonNull(hostInfo)) {
-                    hostInfo.setProgress(100);
+                    hostInfo.setProgress(Constants.ONE_HUNDRRD);
                     hostInfo.setInstallState(InstallState.SUCCESS);
                     hostInfo.setInstallStateCode(InstallState.SUCCESS.getValue());
                     hostInfo.setManaged(true);
@@ -73,7 +65,7 @@ public class WorkerStartActor extends UntypedActor {
                 clusterHostService.updateById(hostEntity);
             }
             //add to prometheus
-            ActorRef prometheusActor = (ActorRef) CacheUtils.get("prometheusActor");
+            ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class,ActorUtils.getActorRefName(PrometheusActor.class));
             GenerateHostPrometheusConfig prometheusConfigCommand = new GenerateHostPrometheusConfig();
             prometheusConfigCommand.setClusterId(cluster.getId());
             prometheusActor.tell(prometheusConfigCommand, getSelf());

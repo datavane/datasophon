@@ -1,6 +1,8 @@
 package com.datasophon.api.service.impl;
 
 import akka.actor.ActorRef;
+import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.master.PrometheusActor;
 import com.datasophon.api.service.AlertGroupService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
@@ -97,7 +99,7 @@ public class ClusterAlertQuotaServiceImpl extends ServiceImpl<ClusterAlertQuotaM
             }
             configFileMap.put(generators,alertItems);
         }
-        ActorRef prometheusActor = (ActorRef) CacheUtils.get("prometheusActor");
+        ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class,ActorUtils.getActorRefName(PrometheusActor.class));
         GenerateAlertConfigCommand alertConfigCommand = new GenerateAlertConfigCommand();
         alertConfigCommand.setClusterId(clusterId);
         alertConfigCommand.setConfigFileMap(configFileMap);

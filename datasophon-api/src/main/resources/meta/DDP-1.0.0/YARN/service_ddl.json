@@ -18,7 +18,7 @@
         "group": "hadoop"
       },
       "sortNum": 1,
-      "logFile": "${hadoopLogDir}/hadoop-yarn-resourcemanager-${host}.log",
+      "logFile": "logs/hadoop-yarn-resourcemanager-${host}.log",
       "jmxPort": 9323,
       "startRunner": {
         "timeout": "60",
@@ -68,7 +68,7 @@
         "group": "hadoop"
       },
       "sortNum": 3,
-      "logFile": "${hadoopLogDir}/hadoop-yarn-nodemanager-${host}.log",
+      "logFile": "logs/hadoop-yarn-nodemanager-${host}.log",
       "jmxPort": 9324,
       "startRunner": {
         "timeout": "60",
@@ -104,7 +104,7 @@
         "group": "hadoop"
       },
       "sortNum": 2,
-      "logFile": "${hadoopLogDir}/hadoop-yarn-historyserver-${host}.log",
+      "logFile": "logs/hadoop-mapred-historyserver-${host}.log",
       "jmxPort": 9325,
       "startRunner": {
         "timeout": "60",
@@ -216,28 +216,6 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": true
-    },
-    {
-      "name": "yarn.node-labels.enabled",
-      "label": "启用YARN标签调度",
-      "description": "开启 YARN Node Labels",
-      "required": true,
-      "type": "switch",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": false
-    },
-    {
-      "name": "enableKerberos",
-      "label": "启用Kerberos认证",
-      "description": "启用Kerberos认证",
-      "required": true,
-      "type": "switch",
-      "value": "",
-      "configurableInWizard": true,
-      "hidden": false,
-      "defaultValue": false
     },
     {
       "name": "yarn.node-labels.fs-store.root-dir",
@@ -408,7 +386,7 @@
       ],
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler"
+      "defaultValue": "org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler"
     },
     {
       "name": "yarn.scheduler.fair.allocation.file",
@@ -441,8 +419,8 @@
       "type": "switch",
       "value":"",
       "configurableInWizard": true,
-      "hidden": true,
-      "defaultValue": false
+      "hidden": false,
+      "defaultValue": true
     },
     {
       "name": "yarn.resourcemanager.cluster-id",
@@ -606,7 +584,7 @@
       "description": "",
       "configType": "ha",
       "required": true,
-      "type": "input",
+      "type": "switch",
       "value":"",
       "configurableInWizard": true,
       "hidden": false,
@@ -674,6 +652,7 @@
       "description": "NodeManager本地存储目录，可配置多个，按逗号分隔",
       "required": true,
       "configType": "path",
+      "separator": ",",
       "type": "multiple",
       "value": [
         "/data/nm"
@@ -688,6 +667,7 @@
       "label": "yarn应用程序加载的classpath",
       "description": "yarn应用程序加载的classpath",
       "required": true,
+      "separator": ",",
       "type": "multiple",
       "value":["${HADOOP_HOME}/etc/hadoop","${HADOOP_HOME}/share/hadoop/common/lib/*","${HADOOP_HOME}/share/hadoop/common/*","${HADOOP_HOME}/share/hadoop/hdfs","${HADOOP_HOME}/share/hadoop/hdfs/lib/*","${HADOOP_HOME}/share/hadoop/hdfs/*","${HADOOP_HOME}/share/hadoop/mapreduce/lib/*","${HADOOP_HOME}/share/hadoop/mapreduce/*","${HADOOP_HOME}/share/hadoop/yarn","${HADOOP_HOME}/share/hadoop/yarn/lib/*","${HADOOP_HOME}/share/hadoop/yarn/*"],
       "configurableInWizard": true,
@@ -700,6 +680,7 @@
       "description": "",
       "required": false,
       "configType": "kb",
+      "configWithKerberos": true,
       "type": "input",
       "value": "rm/_HOST@HADOOP.COM",
       "configurableInWizard": true,
@@ -712,6 +693,7 @@
       "description": "",
       "required": false,
       "configType": "kb",
+      "configWithKerberos": true,
       "type": "input",
       "value": "/etc/security/keytab/rm.service.keytab",
       "configurableInWizard": true,
@@ -724,6 +706,7 @@
       "description": "",
       "required": false,
       "configType": "kb",
+      "configWithKerberos": true,
       "type": "input",
       "value": "nm/_HOST@HADOOP.COM",
       "configurableInWizard": true,
@@ -736,6 +719,7 @@
       "description": "",
       "required": false,
       "configType": "kb",
+      "configWithKerberos": true,
       "type": "input",
       "value": "/etc/security/keytab/nm.service.keytab",
       "configurableInWizard": true,
@@ -748,6 +732,7 @@
       "description": "",
       "required": false,
       "configType": "kb",
+      "configWithKerberos": true,
       "type": "input",
       "value": "jhs/_HOST@HADOOP.COM",
       "configurableInWizard": true,
@@ -760,6 +745,7 @@
       "description": "",
       "required": false,
       "configType": "kb",
+      "configWithKerberos": true,
       "type": "input",
       "value": "/etc/security/keytab/jhs.service.keytab",
       "configurableInWizard": true,
@@ -772,6 +758,7 @@
       "description": "",
       "required": false,
       "configType": "kb",
+      "configWithKerberos": true,
       "type": "input",
       "value": "org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor",
       "configurableInWizard": true,
@@ -784,6 +771,7 @@
       "description": "",
       "required": false,
       "configType": "kb",
+      "configWithKerberos": true,
       "type": "input",
       "value": "hadoop",
       "configurableInWizard": true,
@@ -796,11 +784,34 @@
       "description": "",
       "required": false,
       "configType": "kb",
+      "configWithKerberos": true,
       "type": "input",
       "value": "${HADOOP_HOME}/bin/container-executor",
       "configurableInWizard": true,
       "hidden": true,
       "defaultValue": "${HADOOP_HOME}/bin/container-executor"
+    },
+    {
+      "name": "yarn.node-labels.enabled",
+      "label": "启用YARN标签调度",
+      "description": "开启 YARN Node Labels",
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
+    },
+    {
+      "name": "enableKerberos",
+      "label": "启用Kerberos认证",
+      "description": "启用Kerberos认证",
+      "required": true,
+      "type": "switch",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
     },
     {
       "name": "custom.yarn.site.xml",

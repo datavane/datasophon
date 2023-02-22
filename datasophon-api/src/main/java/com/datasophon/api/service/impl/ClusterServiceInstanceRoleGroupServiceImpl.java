@@ -1,6 +1,7 @@
 package com.datasophon.api.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.ClusterServiceInstanceService;
 import com.datasophon.api.service.ClusterServiceRoleGroupConfigService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
@@ -49,7 +50,7 @@ public class ClusterServiceInstanceRoleGroupServiceImpl extends ServiceImpl<Clus
         ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getById(serviceInstanceId);
         //is repeat name
         if(isRepeatRoleGroupName(serviceInstanceId,roleGroupName)){
-            return Result.error("repeat role group name");
+            return Result.error(Status.REPEAT_ROLE_GROUP_NAME.getMsg());
         }
         ClusterServiceInstanceRoleGroup roleGroup = new ClusterServiceInstanceRoleGroup();
         roleGroup.setRoleGroupType("custom");
@@ -115,7 +116,7 @@ public class ClusterServiceInstanceRoleGroupServiceImpl extends ServiceImpl<Clus
     public Result rename(Integer roleGroupId, String roleGroupName) {
         ClusterServiceInstanceRoleGroup roleGroup = this.getById(roleGroupId);
         if(!roleGroup.getRoleGroupName().equals(roleGroupName) && isRepeatRoleGroupName(roleGroup.getServiceInstanceId(),roleGroupName)){
-            return Result.error("repeat role group name");
+            return Result.error(Status.REPEAT_ROLE_GROUP_NAME.getMsg());
         }
         roleGroup.setRoleGroupName(roleGroupName);
         this.updateById(roleGroup);
@@ -125,7 +126,7 @@ public class ClusterServiceInstanceRoleGroupServiceImpl extends ServiceImpl<Clus
     @Override
     public Result deleteRoleGroup(Integer roleGroupId) {
         if(hasRoleInstanceUse(roleGroupId)){
-            return Result.error("当前角色组正在使用，请勿删除");
+            return Result.error(Status.THE_CURRENT_ROLE_GROUP_BE_USING.getMsg());
         }
         this.removeById(roleGroupId);
         roleGroupConfigService.removeAllByRoleGroupId(roleGroupId);

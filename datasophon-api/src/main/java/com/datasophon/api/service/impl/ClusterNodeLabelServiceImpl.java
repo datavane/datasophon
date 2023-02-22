@@ -4,8 +4,8 @@ import akka.actor.ActorSelection;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.ClusterHostService;
 import com.datasophon.api.service.ClusterInfoService;
@@ -24,10 +24,7 @@ import com.datasophon.dao.mapper.ClusterNodeLabelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
@@ -36,7 +33,6 @@ import scala.concurrent.duration.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -65,7 +61,7 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
 //        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
 
         if (repeatNodeLable(clusterId, nodeLabel)) {
-            return Result.error("repeat node label");
+            return Result.error(Status.REPEAT_NODE_LABEL.getMsg());
         }
         ClusterNodeLabelEntity nodeLabelEntity = new ClusterNodeLabelEntity();
         nodeLabelEntity.setClusterId(clusterId);
@@ -74,7 +70,7 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
         //refresh to yarn
         if(!refreshToYarn(clusterId,"-addToClusterNodeLabels",nodeLabel)){
 //            dataSourceTransactionManager.rollback(transactionStatus);
-            return Result.error("add yarn node label failed");
+            return Result.error(Status.ADD_YARN_NODE_LABEL_FAILED.getMsg());
         }
 //        dataSourceTransactionManager.commit(transactionStatus);
         return Result.success();
@@ -116,12 +112,12 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
         ClusterNodeLabelEntity nodeLabelEntity = this.getById(nodeLabelId);
 
         if (nodeLabelInUse(nodeLabelEntity.getNodeLabel())) {
-            return Result.error("node label is using");
+            return Result.error(Status.NODE_LABEL_IS_USING.getMsg());
         }
         this.removeById(nodeLabelId);
         if(!refreshToYarn(nodeLabelEntity.getClusterId(),"-removeFromClusterNodeLabels",nodeLabelEntity.getNodeLabel())){
 //            dataSourceTransactionManager.rollback(transactionStatus);
-            return Result.error("add yarn node label failed");
+            return Result.error(Status.ADD_YARN_NODE_LABEL_FAILED.getMsg());
         }
 //        dataSourceTransactionManager.commit(transactionStatus);
         return Result.success();
@@ -141,7 +137,7 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
         //refresh to yarn
         if(!refreshToYarn(nodeLabelEntity.getClusterId(),"-replaceLabelsOnNode",assignNodeLabel)){
 //            dataSourceTransactionManager.rollback(transactionStatus);
-            return Result.error("add yarn node label failed");
+            return Result.error(Status.ADD_YARN_NODE_LABEL_FAILED.getMsg());
         }
 //        dataSourceTransactionManager.commit(transactionStatus);
         return Result.success();

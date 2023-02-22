@@ -5,6 +5,10 @@ import cn.hutool.core.date.BetweenFormatter;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.EnumUtil;
+import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.master.DAGBuildActor;
+import com.datasophon.api.master.PrometheusActor;
+import com.datasophon.api.master.SubmitTaskNodeActor;
 import com.datasophon.api.service.*;
 import com.datasophon.dao.entity.*;
 import com.datasophon.api.service.*;
@@ -199,8 +203,8 @@ public class ClusterServiceCommandServiceImpl extends ServiceImpl<ClusterService
             hostCommandService.saveBatch(hostCommandList);
 
             //通知commandActor执行命令
-            ActorRef commandActor = (ActorRef) CacheUtils.get("dagBuildActor");
-            commandActor.tell(new StartExecuteCommandCommand(commandIds,clusterId, commandType),ActorRef.noSender());
+            ActorRef dagBuildActor = ActorUtils.getLocalActor(DAGBuildActor.class,ActorUtils.getActorRefName(DAGBuildActor.class));
+            dagBuildActor.tell(new StartExecuteCommandCommand(commandIds,clusterId, commandType),ActorRef.noSender());
         }
         return Result.success(String.join(",",commandIds));
     }
@@ -240,8 +244,8 @@ public class ClusterServiceCommandServiceImpl extends ServiceImpl<ClusterService
         hostCommandService.saveBatch(hostCommandList);
 
         //通知commandActor执行命令
-        ActorRef commandActor = (ActorRef) CacheUtils.get("dagBuildActor");
-        commandActor.tell(new StartExecuteCommandCommand(commandIds,clusterId, commandType),ActorRef.noSender());
+        ActorRef dagBuildActor = ActorUtils.getLocalActor(DAGBuildActor.class,ActorUtils.getActorRefName(DAGBuildActor.class));
+        dagBuildActor.tell(new StartExecuteCommandCommand(commandIds,clusterId, commandType),ActorRef.noSender());
         return Result.success(String.join(",",commandIds));
     }
 
@@ -250,8 +254,8 @@ public class ClusterServiceCommandServiceImpl extends ServiceImpl<ClusterService
         List<String> list = Arrays.asList(commandIds.split(","));
         CommandType command = EnumUtil.fromString(CommandType.class, commandType);
         //通知commandActor执行命令
-        ActorRef commandActor = (ActorRef) CacheUtils.get("dagBuildActor");
-        commandActor.tell(new StartExecuteCommandCommand(list,clusterId, command),ActorRef.noSender());
+        ActorRef dagBuildActor = ActorUtils.getLocalActor(DAGBuildActor.class,ActorUtils.getActorRefName(DAGBuildActor.class));
+        dagBuildActor.tell(new StartExecuteCommandCommand(list,clusterId, command),ActorRef.noSender());
     }
 
     @Override

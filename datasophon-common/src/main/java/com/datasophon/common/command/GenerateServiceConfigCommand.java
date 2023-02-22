@@ -1,6 +1,7 @@
 package com.datasophon.common.command;
 
 import com.datasophon.common.model.Generators;
+import com.datasophon.common.model.RunAs;
 import com.datasophon.common.model.ServiceConfig;
 import lombok.Data;
 
@@ -22,4 +23,6 @@ public class GenerateServiceConfigCommand implements Serializable {
     Map<Generators, List<ServiceConfig>> cofigFileMap;
 
     private String serviceRoleName;
+
+    private RunAs runAs;
 }

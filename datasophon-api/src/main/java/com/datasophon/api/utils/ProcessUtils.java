@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.ServiceCommandActor;
+import com.datasophon.api.master.ServiceExecuteResultActor;
 import com.datasophon.api.master.handler.service.*;
 import com.datasophon.api.service.*;
 import com.datasophon.api.master.MasterServiceActor;
@@ -148,7 +149,8 @@ public class ProcessUtils {
 
         clusterHostEntity.setClusterId(cluster.getId());
         clusterHostEntity.setCheckTime(new Date());
-        clusterHostEntity.setRack("default");
+        clusterHostEntity.setRack("/default-rack");
+        clusterHostEntity.setNodeLabel("default");
         clusterHostEntity.setCreateTime(new Date());
         clusterHostEntity.setIp(hostIp.get(message.getHostname()));
         clusterHostEntity.setHostState(1);
@@ -164,8 +166,8 @@ public class ProcessUtils {
             ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class, "commandActor");
             List<ClusterServiceCommandHostCommandEntity> hostCommandList = service.getHostCommandListByCommandId(commandId);
             for (ClusterServiceCommandHostCommandEntity hostCommandEntity : hostCommandList) {
-                if (hostCommandEntity.getCommandState() == CommandState.RUNNING) {
-                    logger.info("{} host command  set to failed", hostCommandEntity.getCommandName());
+                if (hostCommandEntity.getCommandState() == CommandState.RUNNING && hostCommandEntity.getServiceRoleType() != RoleType.MASTER) {
+                    logger.info("{} host command  set to cancel", hostCommandEntity.getCommandName());
                     hostCommandEntity.setCommandState(CommandState.CANCEL);
                     hostCommandEntity.setCommandProgress(100);
                     service.updateByHostCommandId(hostCommandEntity);
@@ -190,7 +192,8 @@ public class ProcessUtils {
     }
 
     public static void tellCommandActorResult(String serviceName, ExecuteServiceRoleCommand executeServiceRoleCommand, ServiceExecuteState state) {
-        ActorRef serviceExecuteResult = (ActorRef) CacheUtils.get("serviceExecuteResultActor");
+        ActorRef serviceExecuteResultActor = ActorUtils.getLocalActor(ServiceExecuteResultActor.class, ActorUtils.getActorRefName(ServiceExecuteResultActor.class));
+
         ServiceExecuteResultMessage serviceExecuteResultMessage = new ServiceExecuteResultMessage();
         serviceExecuteResultMessage.setServiceExecuteState(state);
         serviceExecuteResultMessage.setDag(executeServiceRoleCommand.getDag());
@@ -205,8 +208,7 @@ public class ProcessUtils {
         serviceExecuteResultMessage.setReadyToSubmitTaskList(executeServiceRoleCommand.getReadyToSubmitTaskList());
         serviceExecuteResultMessage.setCompleteTaskList(executeServiceRoleCommand.getCompleteTaskList());
 
-
-        serviceExecuteResult.tell(serviceExecuteResultMessage, ActorRef.noSender());
+        serviceExecuteResultActor.tell(serviceExecuteResultMessage, ActorRef.noSender());
     }
 
     public static ClusterServiceCommandHostCommandEntity handleCommandResult(String hostCommandId, Boolean execResult, String execOut) {
@@ -387,7 +389,7 @@ public class ProcessUtils {
 
         List<FrameServiceEntity> frameServiceList = frameServiceService.getAllFrameServiceByFrameCode(clusterInfo.getClusterFrame());
         for (FrameServiceEntity frameServiceEntity : frameServiceList) {
-            //创建服务actor
+            //create service actor
             logger.info("create {} actor", clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
             ActorUtils.actorSystem.actorOf(Props.create(MasterServiceActor.class)
                     .withDispatcher("my-forkjoin-dispatcher"), clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
@@ -544,5 +546,68 @@ public class ProcessUtils {
             command.setCommands(commands);
             execCmdActor.tell(command,ActorRef.noSender());
         }
+    }
+
+    public static void recoverAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity) {
+        ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
+        ClusterAlertHistoryService alertHistoryService = SpringTool.getApplicationContext().getBean(ClusterAlertHistoryService.class);
+        ClusterAlertHistory clusterAlertHistory = alertHistoryService.getOne(new QueryWrapper<ClusterAlertHistory>()
+                .eq(Constants.ALERT_TARGET_NAME, roleInstanceEntity.getServiceRoleName() + " Survive")
+                .eq(Constants.CLUSTER_ID, roleInstanceEntity.getClusterId())
+                .eq(Constants.HOSTNAME, roleInstanceEntity.getHostname())
+                .eq(Constants.IS_ENABLED, 1));
+        if (Objects.nonNull(clusterAlertHistory)) {
+            clusterAlertHistory.setIsEnabled(2);
+            alertHistoryService.updateById(clusterAlertHistory);
+        }
+        //update service role instance state
+        if (roleInstanceEntity.getServiceRoleState() != ServiceRoleState.RUNNING) {
+            roleInstanceEntity.setServiceRoleState(ServiceRoleState.RUNNING);
+            roleInstanceService.updateById(roleInstanceEntity);
+        }
+    }
+
+    public static void saveAlert(ClusterServiceRoleInstanceEntity roleInstanceEntity, String
+            alertTargetName, AlertLevel alertLevel, String alertAdvice) {
+        ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
+        ClusterAlertHistoryService alertHistoryService = SpringTool.getApplicationContext().getBean(ClusterAlertHistoryService.class);
+        ClusterServiceInstanceService serviceInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceInstanceService.class);
+        ClusterAlertHistory clusterAlertHistory = alertHistoryService.getOne(new QueryWrapper<ClusterAlertHistory>()
+                .eq(Constants.ALERT_TARGET_NAME, alertTargetName)
+                .eq(Constants.CLUSTER_ID, roleInstanceEntity.getClusterId())
+                .eq(Constants.HOSTNAME, roleInstanceEntity.getHostname())
+                .eq(Constants.IS_ENABLED, 1));
+
+        ClusterServiceInstanceEntity serviceInstanceEntity = serviceInstanceService.getById(roleInstanceEntity.getServiceId());
+        if (Objects.isNull(clusterAlertHistory)) {
+            clusterAlertHistory = new ClusterAlertHistory();
+            clusterAlertHistory.setClusterId(roleInstanceEntity.getClusterId());
+
+            clusterAlertHistory.setAlertGroupName(roleInstanceEntity.getServiceName().toLowerCase());
+            clusterAlertHistory.setAlertTargetName(alertTargetName);
+            clusterAlertHistory.setCreateTime(new Date());
+            clusterAlertHistory.setUpdateTime(new Date());
+            clusterAlertHistory.setAlertLevel(alertLevel);
+            clusterAlertHistory.setAlertInfo("");
+            clusterAlertHistory.setAlertAdvice(alertAdvice);
+            clusterAlertHistory.setHostname(roleInstanceEntity.getHostname());
+            clusterAlertHistory.setServiceRoleInstanceId(roleInstanceEntity.getId());
+            clusterAlertHistory.setServiceInstanceId(roleInstanceEntity.getServiceId());
+            clusterAlertHistory.setIsEnabled(1);
+
+            clusterAlertHistory.setServiceInstanceId(roleInstanceEntity.getServiceId());
+
+            alertHistoryService.save(clusterAlertHistory);
+        }
+        //update service role instance state
+        serviceInstanceEntity.setServiceState(ServiceState.EXISTS_EXCEPTION);
+        roleInstanceEntity.setServiceRoleState(ServiceRoleState.STOP);
+        if (alertLevel == AlertLevel.WARN) {
+            serviceInstanceEntity.setServiceState(ServiceState.EXISTS_ALARM);
+            roleInstanceEntity.setServiceRoleState(ServiceRoleState.EXISTS_ALARM);
+        }
+        serviceInstanceService.updateById(serviceInstanceEntity);
+        roleInstanceService.updateById(roleInstanceEntity);
+
     }
 }

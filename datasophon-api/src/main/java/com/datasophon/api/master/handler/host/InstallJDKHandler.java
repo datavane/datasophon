@@ -1,5 +1,6 @@
 package com.datasophon.api.master.handler.host;
 
+import com.datasophon.api.utils.MessageResolverUtils;
 import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.model.HostInfo;
@@ -23,14 +24,14 @@ public class InstallJDKHandler implements DispatcherWorkerHandler {
         }
         if ("x86_64".equals(arch)) {
             if (!exists) {
-                hostInfo.setMessage("开始安装jdk");
+                hostInfo.setMessage(MessageResolverUtils.getMessage("start.install.jdk"));
                 MinaUtils.uploadFile(session,"/usr/local", Constants.MASTER_MANAGE_PACKAGE_PATH + Constants.SLASH + Constants.X86JDK);
                 MinaUtils.execCmdWithResult(session,"tar -zxvf /usr/local/jdk-8u333-linux-x64.tar.gz -C /usr/local/");
             }
         }
         if ("aarch64".equals(arch)) {
             if (!exists) {
-                hostInfo.setMessage("开始安装jdk");
+                hostInfo.setMessage(MessageResolverUtils.getMessage("start.install.jdk"));
                 MinaUtils.uploadFile(session,"/usr/local", Constants.MASTER_MANAGE_PACKAGE_PATH + Constants.SLASH + Constants.ARMJDK);
                 MinaUtils.execCmdWithResult(session,"tar -zxvf /usr/local/jdk-8u333-linux-aarch64.tar.gz -C /usr/local/");
             }

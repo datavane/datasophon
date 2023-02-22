@@ -2,6 +2,7 @@ package com.datasophon.api.master.handler.host;
 
 import cn.hutool.core.io.FileUtil;
 import com.datasophon.api.utils.CommonUtils;
+import com.datasophon.api.utils.MessageResolverUtils;
 import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.enums.InstallState;
@@ -26,12 +27,12 @@ public class CheckWorkerMd5Handler implements DispatcherWorkerHandler{
         if(!md5.equals(checkWorkerMd5Result)){
             logger.error("worker package md5 check failed");
             hostInfo.setErrMsg("worker package md5 check failed");
-            hostInfo.setMessage("md5校验失败");
+            hostInfo.setMessage(MessageResolverUtils.getMessage("md5.check.failed"));
             CommonUtils.updateInstallState(InstallState.FAILED, hostInfo);
             return false;
         }
         hostInfo.setProgress(35);
-        hostInfo.setMessage("md5校验成功，开始解压安装包");
+        hostInfo.setMessage(MessageResolverUtils.getMessage("md5.verification.successful.and.installation.package.decompressed"));
         return true;
     }
 }

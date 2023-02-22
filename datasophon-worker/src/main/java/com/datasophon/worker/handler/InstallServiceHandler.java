@@ -18,7 +18,8 @@ import java.util.Objects;
 
 public class InstallServiceHandler {
     private static final Logger logger = LoggerFactory.getLogger(InstallServiceHandler.class);
-    private static final CharSequence HADOOP = "hadoop";
+
+    private static final String HADOOP = "hadoop";
 
     public ExecResult install(String packageName, String decompressPackageName, String packageMd5, RunAs runAs) {
         ExecResult execResult = new ExecResult();
@@ -82,6 +83,7 @@ public class InstallServiceHandler {
                         ShellUtils.exceShell(" chmod -R 755 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/etc");
                         ShellUtils.exceShell(" chmod 6050 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/bin/container-executor");
                         ShellUtils.exceShell(" chmod 400 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/etc/hadoop/container-executor.cfg");
+                        ShellUtils.exceShell(" chown -R yarn:hadoop " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/logs/userlogs");
                     }
                 } else {
                     execResult.setExecOut("install package " + packageName + "failed");

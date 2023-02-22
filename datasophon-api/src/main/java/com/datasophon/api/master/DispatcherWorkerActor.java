@@ -3,6 +3,7 @@ package com.datasophon.api.master;
 import akka.actor.UntypedActor;
 import cn.hutool.core.util.ObjectUtil;
 import com.datasophon.api.master.handler.host.*;
+import com.datasophon.api.utils.MessageResolverUtils;
 import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.DispatcherHostAgentCommand;
@@ -12,6 +13,9 @@ import org.apache.sshd.client.session.ClientSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 
 public class DispatcherWorkerActor extends UntypedActor {
@@ -29,7 +33,7 @@ public class DispatcherWorkerActor extends UntypedActor {
         DispatcherHostAgentCommand command = (DispatcherHostAgentCommand) message;
         HostInfo hostInfo = command.getHostInfo();
         logger.info("start dispatcher host agent :{}", hostInfo.getHostname());
-        hostInfo.setMessage("开始分发主机管理agent安装包");
+        hostInfo.setMessage(MessageResolverUtils.getMessage("distributed.host.management.agent.installation.package"));
         ClientSession session = MinaUtils.openConnection(
                 hostInfo.getHostname(),
                 hostInfo.getSshPort(),

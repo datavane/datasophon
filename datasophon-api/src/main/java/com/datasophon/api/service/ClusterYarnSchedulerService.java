@@ -1,10 +1,7 @@
 package com.datasophon.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.dao.entity.ClusterYarnScheduler;
-
-import java.util.Map;
 
 /**
  * 
@@ -18,6 +15,6 @@ public interface ClusterYarnSchedulerService extends IService<ClusterYarnSchedul
 
     ClusterYarnScheduler getScheduler(Integer clusterId);
 
-    void createYarnScheduler(Integer id);
+    void createDefaultYarnScheduler(Integer clusterId);
 }
 

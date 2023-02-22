@@ -11,9 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @Author ：gaodayu
- */
 public class ShellUtils {
 
     private static ProcessBuilder processBuilder = new ProcessBuilder();
@@ -210,6 +207,15 @@ public class ShellUtils {
         command.add("chmod");
         command.add("-R");
         command.add(chmod);
+        command.add(path);
+        execWithStatus(Constants.INSTALL_PATH,command,60);
+    }
+
+    public static void addChown(String path, String user, String group) {
+        ArrayList<String> command = new ArrayList<>();
+        command.add("chown");
+        command.add("-R");
+        command.add(user+":"+group);
         command.add(path);
         execWithStatus(Constants.INSTALL_PATH,command,60);
     }

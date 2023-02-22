@@ -61,7 +61,7 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
     public Result create(Integer clusterId , String username, Integer mainGroupId,String groupIds) {
 
         if(hasRepeatUserName(clusterId,username)){
-            return Result.error("用户名重复");
+            return Result.error(Status.DUPLICATE_USER_NAME.getMsg());
         }
         List<ClusterHostEntity> hostList = hostService.getHostListByClusterId(clusterId);
 

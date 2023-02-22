@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 
@@ -32,5 +31,7 @@ public class ClusterYarnScheduler implements Serializable {
 	 * 
 	 */
 	private String scheduler;
+
+	private Integer inUse;
 
 }

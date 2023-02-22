@@ -4,17 +4,19 @@ import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.enums.Status;
+import com.datasophon.api.exceptions.ServiceException;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.load.ServiceInfoMap;
 import com.datasophon.api.load.ServiceRoleMap;
 import com.datasophon.api.service.*;
-import com.datasophon.api.service.strategy.ServiceRoleStrategy;
-import com.datasophon.api.service.strategy.ServiceRoleStrategyContext;
+import com.datasophon.api.strategy.ServiceRoleStrategy;
+import com.datasophon.api.strategy.ServiceRoleStrategyContext;
 import com.datasophon.common.model.*;
+import com.datasophon.common.utils.CollectionUtils;
 import com.datasophon.dao.entity.*;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
-import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.enums.NeedRestart;
@@ -36,6 +38,8 @@ import java.util.stream.Collectors;
 public class ServiceInstallServiceImpl implements ServiceInstallService {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceInstallServiceImpl.class);
+
+    private static final List<String> MUST_AT_SAME_NODE_BASIC_SERVICE = Arrays.asList("Grafana", "AlertManager", "Prometheus");
 
     @Autowired
     private ClusterInfoService clusterInfoService;
@@ -139,7 +143,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             map.put(serviceConfig.getName(), serviceConfig);
         }
 
-        //更新config-file
+        //update config-file
         HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
         FrameServiceEntity frameService = this.frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);
         if (StringUtils.isNotBlank(frameService.getConfigFileJson())) {
@@ -207,9 +211,8 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             serviceInstanceEntity.setNeedRestart(NeedRestart.NO);
             serviceInstanceEntity.setFrameServiceId(frameServiceEntity.getId());
             serviceInstanceEntity.setSortNum(frameServiceEntity.getSortNum());
-            //服务实例持久化
             serviceInstanceService.save(serviceInstanceEntity);
-            //保存角色组，生成默认角色组
+
             ClusterServiceInstanceRoleGroup clusterServiceInstanceRoleGroup = new ClusterServiceInstanceRoleGroup();
             clusterServiceInstanceRoleGroup.setServiceInstanceId(serviceInstanceEntity.getId());
             clusterServiceInstanceRoleGroup.setClusterId(clusterId);
@@ -217,7 +220,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             clusterServiceInstanceRoleGroup.setServiceName(serviceName);
             clusterServiceInstanceRoleGroup.setRoleGroupType("default");
             roleGroupService.save(clusterServiceInstanceRoleGroup);
-            //角色组配置持久化
+
             ClusterServiceRoleGroupConfig roleGroupConfig = new ClusterServiceRoleGroupConfig();
             roleGroupConfig.setRoleGroupId(clusterServiceInstanceRoleGroup.getId());
             roleGroupConfig.setClusterId(clusterId);
@@ -266,6 +269,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
                 newRoleGroupConfig.setClusterId(clusterId);
                 newRoleGroupConfig.setCreateTime(new Date());
                 newRoleGroupConfig.setUpdateTime(new Date());
+                newRoleGroupConfig.setServiceName(serviceInstanceEntity.getServiceName());
                 buildConfig(list, configFileMap, newRoleGroupConfig);
                 groupConfigService.save(newRoleGroupConfig);
                 serviceInstanceEntity.setNeedRestart(NeedRestart.YES);
@@ -287,8 +291,54 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         roleGroupConfig.setConfigFileJsonMd5(SecureUtil.md5(configFileJson));
     }
 
+    private void checkOnSameNode(Integer clusterId, List<ServiceRoleHostMapping> list) {
+        Set<String> hostnameSet = list.stream()
+                .filter(s -> MUST_AT_SAME_NODE_BASIC_SERVICE.contains(s.getServiceRole()))
+                .map(ServiceRoleHostMapping::getHosts)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+        if(CollectionUtils.isEmpty(hostnameSet)) {
+            return;
+        }
+
+        Set<String> installedHostnameSet = roleInstanceService.lambdaQuery().eq(ClusterServiceRoleInstanceEntity::getClusterId, clusterId)
+                .in(ClusterServiceRoleInstanceEntity::getServiceName, MUST_AT_SAME_NODE_BASIC_SERVICE)
+                .list()
+                .stream().map(ClusterServiceRoleInstanceEntity::getHostname)
+                .collect(Collectors.toSet());
+        hostnameSet.addAll(installedHostnameSet);
+
+        if(hostnameSet.size() > 1) {
+            throw new ServiceException(Status.BASIC_SERVICE_SELECT_MOST_ONE_HOST.getMsg());
+        }
+    }
+
+    private void serviceValidation(ServiceRoleHostMapping serviceRoleHostMapping) {
+        String serviceRole = serviceRoleHostMapping.getServiceRole();
+        List<String> hosts = serviceRoleHostMapping.getHosts();
+       
+        if ("JournalNode".equals(serviceRole) && hosts.size() != 3) {
+            throw new ServiceException(Status.THREE_JOURNALNODE_DEPLOYMENTS_REQUIRED.getMsg());
+        }
+        if ("NameNode".equals(serviceRole) && hosts.size() != 2) {
+            throw new ServiceException(Status.TWO_NAMENODES_NEED_TO_BE_DEPLOYED.getMsg());
+        }
+        if ("ZKFC".equals(serviceRole) && hosts.size() != 2) {
+            throw new ServiceException(Status.TWO_ZKFC_DEVICES_ARE_REQUIRED.getMsg());
+        }
+        if ("ResourceManager".equals(serviceRole) && hosts.size() != 2) {
+            throw new ServiceException(Status.TWO_RESOURCEMANAGER_ARE_DEPLOYED.getMsg());
+        }
+        if ("ZkServer".equals(serviceRole) && (hosts.size() & 1) == 0) {
+            throw new ServiceException(Status.ODD_NUMBER_ARE_REQUIRED_FOR_ZKSERVER.getMsg());
+        }
+    }
+
     @Override
     public Result saveServiceRoleHostMapping(Integer clusterId, List<ServiceRoleHostMapping> list) {
+
+        checkOnSameNode(clusterId, list);
+
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         String hostMapKey = clusterInfo.getClusterCode() + Constants.UNDERLINE + Constants.SERVICE_ROLE_HOST_MAPPING;
         HashMap<String, List<String>> map = new HashMap<>();
@@ -297,34 +347,16 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         }
 
         for (ServiceRoleHostMapping serviceRoleHostMapping : list) {
-            if ("JournalNode".equals(serviceRoleHostMapping.getServiceRole())) {
-                if (serviceRoleHostMapping.getHosts().size() != 3) {
-                    return Result.error("JournalNode需要部署三台");
-                }
-            }
-            if ("NameNode".equals(serviceRoleHostMapping.getServiceRole())) {
-                if (serviceRoleHostMapping.getHosts().size() != 2) {
-                    return Result.error("NameNode需要部署两台");
-                }
-            }
-            if ("ZKFC".equals(serviceRoleHostMapping.getServiceRole())) {
-                if (serviceRoleHostMapping.getHosts().size() != 2) {
-                    return Result.error("ZKFC需要部署两台");
-                }
-            }
-            if ("ResourceManager".equals(serviceRoleHostMapping.getServiceRole())) {
-                if (serviceRoleHostMapping.getHosts().size() != 2) {
-                    return Result.error("ResourceManager需要部署两台");
-                }
-            }
+            serviceValidation(serviceRoleHostMapping);
+
             map.put(serviceRoleHostMapping.getServiceRole(), serviceRoleHostMapping.getHosts());
 
             ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceRoleHostMapping.getServiceRole());
             if (Objects.nonNull(serviceRoleHandler)) {
                 serviceRoleHandler.handler(clusterId, serviceRoleHostMapping.getHosts());
             }
-
         }
+
         CacheUtils.put(clusterInfo.getClusterCode() + Constants.UNDERLINE + Constants.SERVICE_ROLE_HOST_MAPPING, map);
         return Result.success();
     }

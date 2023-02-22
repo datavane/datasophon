@@ -12,10 +12,6 @@
       "name": "ZkServer",
       "label": "ZkServer",
       "roleType": "master",
-      "runAs": {
-        "user": "root",
-        "group": "root"
-      },
       "cardinality": "1+",
       "logFile": "logs/zookeeper-root-server-${host}.out",
       "jmxPort": 2191,
@@ -70,6 +66,7 @@
           "server.5",
           "authProvider.1",
           "jaasLoginRenew",
+          "skipACL",
           "custom.zoo.cfg"
         ]
       },
@@ -179,6 +176,17 @@
       "defaultValue": "1"
     },
     {
+      "name": "skipACL",
+      "label": "skipACL",
+      "description": "",
+      "required": true,
+      "type": "input",
+      "value": "yes",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "yes"
+    },
+    {
       "name": "enableKerberos",
       "label": "启用Kerberos认证",
       "description": "启用Kerberos认证",
@@ -249,10 +257,10 @@
       "configWithKerberos": true,
       "required": false,
       "type": "input",
-      "value": "-Djava.security.auth.login.config=${ZK_HOME}/conf/jaas.conf",
+      "value": "-Djava.security.auth.login.config=${ZOOKEEPER_HOME}/conf/jaas.conf",
       "configurableInWizard": true,
       "hidden": true,
-      "defaultValue": "-Djava.security.auth.login.config=${ZK_HOME}/conf/jaas.conf"
+      "defaultValue": "-Djava.security.auth.login.config=${ZOOKEEPER_HOME}/conf/jaas.conf"
     },
     {
       "name": "server.1",

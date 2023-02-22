@@ -3,7 +3,7 @@
   "label": "StreamPark",
   "description": "流处理极速开发框架,流批一体&湖仓一体的云原生平台,一站式流处理计算平台",
   "version": "1.2.3",
-  "sortNum": 6,
+  "sortNum": 13,
   "dependencies":[],
   "packageName": "streampark-1.2.3.tar.gz",
   "decompressPackageName": "streampark-1.2.3",

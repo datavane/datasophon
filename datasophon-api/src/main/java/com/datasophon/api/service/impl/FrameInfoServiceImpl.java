@@ -1,15 +1,17 @@
 package com.datasophon.api.service.impl;
 
 import com.datasophon.api.service.FrameServiceService;
-import com.datasophon.common.Constants;
+import com.datasophon.common.utils.CollectionUtils;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.FrameServiceEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 
@@ -26,11 +28,19 @@ public class FrameInfoServiceImpl extends ServiceImpl<FrameInfoMapper, FrameInfo
 
     @Override
     public Result getAllClusterFrame() {
-        List<FrameInfoEntity> list = this.list();
-        for (FrameInfoEntity frameInfo : list) {
-            List<FrameServiceEntity> frameServiceList = frameServiceService.list(new QueryWrapper<FrameServiceEntity>().eq(Constants.FRAME_ID, frameInfo.getId()));
-            frameInfo.setFrameServiceList(frameServiceList);
+        List<FrameInfoEntity> frameInfoEntities = this.list();
+        if(CollectionUtils.isEmpty(frameInfoEntities)) {
+            return Result.success();
         }
-        return Result.success(list);
+
+        Set<Integer> frameInfoIds = frameInfoEntities.stream().map(FrameInfoEntity::getId).collect(Collectors.toSet());
+        Map<Integer, List<FrameServiceEntity>> frameServiceGroupBys = frameServiceService.lambdaQuery()
+                .in(FrameServiceEntity::getFrameId, frameInfoIds)
+                .list()
+                .stream()
+                .collect(Collectors.groupingBy(FrameServiceEntity::getFrameId));
+        frameInfoEntities.forEach(f -> f.setFrameServiceList(frameServiceGroupBys.get(f.getId())));
+
+        return Result.success(frameInfoEntities);
     }
 }

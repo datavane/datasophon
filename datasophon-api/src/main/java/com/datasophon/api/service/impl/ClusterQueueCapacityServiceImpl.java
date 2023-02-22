@@ -2,6 +2,10 @@ package com.datasophon.api.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.datasophon.api.enums.Status;
+import com.datasophon.api.service.ClusterQueueCapacityService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.api.utils.HadoopUtils;
 import com.datasophon.api.utils.ProcessUtils;
@@ -11,7 +15,9 @@ import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterInfoEntity;
+import com.datasophon.dao.entity.ClusterQueueCapacity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
+import com.datasophon.dao.mapper.ClusterQueueCapacityMapper;
 import com.datasophon.dao.model.ClusterQueueCapacityList;
 import com.datasophon.dao.model.Links;
 import org.apache.commons.lang.StringUtils;
@@ -23,14 +29,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
-
-import com.datasophon.dao.mapper.ClusterQueueCapacityMapper;
-import com.datasophon.dao.entity.ClusterQueueCapacity;
-import com.datasophon.api.service.ClusterQueueCapacityService;
 
 
 @Service("clusterQueueCapacityService")
@@ -89,7 +87,7 @@ public class ClusterQueueCapacityServiceImpl extends ServiceImpl<ClusterQueueCap
             logger.info("yarn dfsadmin -refreshQueues success at {}", hostname);
         } else {
             logger.info(execResult.getExecOut());
-            return Result.error("刷新队列到Yarn失败");
+            return Result.error(Status.FAILED_REFRESH_THE_QUEUE_TO_YARN.getMsg());
         }
         return Result.success();
     }

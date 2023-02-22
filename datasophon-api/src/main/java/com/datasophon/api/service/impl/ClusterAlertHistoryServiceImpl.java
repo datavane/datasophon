@@ -3,6 +3,8 @@ package com.datasophon.api.service.impl;
 import akka.actor.ActorRef;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.master.PrometheusActor;
 import com.datasophon.api.service.*;
 import com.datasophon.dao.entity.*;
 import com.datasophon.api.service.*;
@@ -228,7 +230,7 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
                 .eq(Constants.IS_ENABLED,1)
                 .in(Constants.SERVICE_ROLE_INSTANCE_ID,ids));
         //重新配置prometheus
-        ActorRef prometheusActor = (ActorRef) CacheUtils.get("prometheusActor");
+        ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class,ActorUtils.getActorRefName(PrometheusActor.class));
         GeneratePrometheusConfigCommand prometheusConfigCommand = new GeneratePrometheusConfigCommand();
         prometheusConfigCommand.setServiceInstanceId(roleInstanceEntity.getServiceId());
         prometheusConfigCommand.setClusterFrame(clusterInfoEntity.getClusterFrame());

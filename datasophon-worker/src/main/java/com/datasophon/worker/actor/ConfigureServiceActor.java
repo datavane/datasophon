@@ -20,7 +20,8 @@ public class ConfigureServiceActor extends UntypedActor {
             ExecResult startResult = serviceHandler.configure(command.getCofigFileMap(),
                                                               command.getDecompressPackageName(),
                                                               command.getMyid(),
-                                                              command.getServiceRoleName());
+                                                              command.getServiceRoleName(),
+                                                              command.getRunAs());
             getSender().tell(startResult,getSelf());
 
             logger.info("{} configure result {}",command.getServiceName(),startResult.getExecResult()?"success":"failed");

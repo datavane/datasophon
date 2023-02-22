@@ -85,6 +85,10 @@
             <artifactId>commons-compress</artifactId>
             <version>1.9</version>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
