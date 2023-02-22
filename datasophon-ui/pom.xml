@@ -70,6 +70,7 @@
                     <npmVersion>${build.npm.version}</npmVersion>
 
                     <nodeDownloadRoot>https://npm.taobao.org/mirrors/node/</nodeDownloadRoot>
+                    <npmDownloadRoot>https://registry.npm.taobao.org/npm/-/</npmDownloadRoot>
                 </configuration>
             </plugin>
         </plugins>
