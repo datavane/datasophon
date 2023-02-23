@@ -17,7 +17,6 @@ public final class Constants {
     public static final String DATASOPHON = "datasophon";
 
     public static final String HOST_MAP = "_host_map";
-    public static final String COMMAND_ID = "command_id";
     public static final String COMMAND_HOST_ID = "command_host_id";
     public static final String HOST_MD5 = "_host_md5";
     public static final String ID_RSA = "/.ssh/id_rsa";

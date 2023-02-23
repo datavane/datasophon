@@ -77,7 +77,7 @@ public class ClusterServiceCommandHostCommandServiceImpl extends ServiceImpl<Clu
 
     @Override
     public List<ClusterServiceCommandHostCommandEntity> getHostCommandListByCommandId(String commandId) {
-        return this.list(new QueryWrapper<ClusterServiceCommandHostCommandEntity>().eq(Constants.COMMAND_ID, commandId));
+        return this.lambdaQuery().eq(ClusterServiceCommandHostCommandEntity::getCommandId, commandId).list();
     }
 
     @Override
