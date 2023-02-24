@@ -163,7 +163,7 @@ module.exports = {
   },
   publicPath:
     process.env.NODE_ENV === 'production'
-      ? '/${path}'
+      ? '/ddh'
       : process.env.VUE_APP_PUBLIC_PATH,
   outputDir: 'dist',
   assetsDir: 'static',
