@@ -68,7 +68,7 @@ public class ServiceCommandActor extends UntypedActor {
             Integer size1 = commandHostService.getCommandHostSizeByCommandId(message.getCommandId());
             Integer totalProgress1 = commandHostService.getCommandHostTotalProgressByCommandId(message.getCommandId());
             Integer progress1 = totalProgress1 / size1;
-            ClusterServiceCommandEntity command = commandService.getOne(new QueryWrapper<ClusterServiceCommandEntity>().eq(Constants.COMMAND_ID, message.getCommandId()));
+            ClusterServiceCommandEntity command = commandService.lambdaQuery().eq(ClusterServiceCommandEntity::getCommandId, message.getCommandId()).one();
             command.setCommandProgress(progress1);
             if (progress1 == 100) {
                 command.setCommandState(CommandState.SUCCESS);
@@ -125,7 +125,7 @@ public class ServiceCommandActor extends UntypedActor {
                     command.setEndTime(new Date());
                 }
             }
-            commandService.update(command, new QueryWrapper<ClusterServiceCommandEntity>().eq(Constants.COMMAND_ID, command.getCommandId()));
+            commandService.lambdaUpdate().eq(ClusterServiceCommandEntity::getCommandId, command.getCommandId()).update(command);
         }
     }
 

@@ -48,7 +48,7 @@ public class DAGBuildActor extends UntypedActor {
             ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
 
             ClusterInfoEntity clusterInfo = clusterInfoService.getById(executeCommandCommand.getClusterId());
-            List<ClusterServiceCommandEntity> commandList = commandService.list(new QueryWrapper<ClusterServiceCommandEntity>().in(Constants.COMMAND_ID, executeCommandCommand.getCommandIds()));
+            List<ClusterServiceCommandEntity> commandList = commandService.lambdaQuery().in(ClusterServiceCommandEntity::getCommandId, executeCommandCommand.getCommandIds()).list();
 
             ArrayList<FrameServiceEntity> frameServiceList = new ArrayList<>();
             if (ArrayUtil.isNotEmpty(commandList)) {
