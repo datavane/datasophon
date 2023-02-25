@@ -131,7 +131,7 @@ export default {
       let arr = [];
       for (let k in a) {
         if (k.includes("multiple")) {
-          let key = k.split("multiple")[0];y
+          let key = k.split("multiple")[0];
           arr.push(key);
           arr = [...new Set(arr)];
         }
