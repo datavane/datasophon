@@ -4,7 +4,6 @@ import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.api.service.FrameServiceRoleService;
 import com.datasophon.api.service.FrameServiceService;
-import com.datasophon.api.service.*;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.utils.Result;
@@ -40,10 +39,10 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
     @Override
     public Result getServiceRoleList(Integer clusterId, String serviceIds, Integer serviceRoleType) {
         List<String> ids = Arrays.asList(serviceIds.split(","));
-        List<FrameServiceRoleEntity> list = this.list(new QueryWrapper<FrameServiceRoleEntity>()
-                .eq(Objects.nonNull(serviceRoleType), Constants.SERVICE_ROLE_TYPE, serviceRoleType)
-                .in(Constants.SERVICE_ID, ids)
-        );
+        List<FrameServiceRoleEntity> list = this.lambdaQuery()
+                .eq(Objects.nonNull(serviceRoleType), FrameServiceRoleEntity::getServiceRoleType, serviceRoleType)
+                .in(FrameServiceRoleEntity::getServiceId, ids)
+                .list();
         //校验是否已安装依赖的服务
         //校验是否已安装Prometheus,Grafana,AlertManager
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
@@ -70,8 +69,10 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
 
     @Override
     public FrameServiceRoleEntity getServiceRoleByServiceIdAndServiceRoleName(Integer serviceId, String roleName) {
-        return this.getOne(new QueryWrapper<FrameServiceRoleEntity>()
-                .eq(Constants.SERVICE_ID, serviceId).eq(Constants.SERVICE_ROLE_NAME, roleName));
+        return this.lambdaQuery()
+                .eq(FrameServiceRoleEntity::getServiceId, serviceId)
+                .eq(FrameServiceRoleEntity::getServiceRoleName, roleName)
+                .one();
     }
 
     @Override
@@ -83,10 +84,10 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
     @Override
     public Result getNonMasterRoleList(Integer clusterId, String serviceIds) {
         List<String> ids = Arrays.asList(serviceIds.split(","));
-        List<FrameServiceRoleEntity> list = this.list(new QueryWrapper<FrameServiceRoleEntity>()
-                .ne(Constants.SERVICE_ROLE_TYPE, RoleType.MASTER)
-                .in(Constants.SERVICE_ID, ids)
-        );
+        List<FrameServiceRoleEntity> list = this.lambdaQuery()
+                .ne(FrameServiceRoleEntity::getServiceRoleType, RoleType.MASTER)
+                .in(FrameServiceRoleEntity::getServiceId, ids)
+                .list();
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         String key = clusterInfo.getClusterCode() + Constants.UNDERLINE + Constants.SERVICE_ROLE_HOST_MAPPING;
         List<String> hosts = new ArrayList<>();
@@ -121,13 +122,15 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
         }
         ClusterInfoEntity clusterInfoEntity = clusterInfoService.getById(clusterId);
         FrameServiceEntity frameServiceEntity = frameService.getServiceByFrameCodeAndServiceName(clusterInfoEntity.getClusterFrame(), serviceName);
-        List<FrameServiceRoleEntity> list = this.list(new QueryWrapper<FrameServiceRoleEntity>().eq(Constants.SERVICE_ID, frameServiceEntity.getId()));
+        List<FrameServiceRoleEntity> list = this.lambdaQuery()
+                .eq(FrameServiceRoleEntity::getServiceId, frameServiceEntity.getId())
+                .list();
         return Result.success(list);
     }
 
     @Override
     public List<FrameServiceRoleEntity> getAllServiceRoleList(Integer frameServiceId) {
-        return this.list(new QueryWrapper<FrameServiceRoleEntity>().eq(Constants.SERVICE_ID, frameServiceId));
+        return this.lambdaQuery().eq(FrameServiceRoleEntity::getServiceId, frameServiceId).list();
     }
 
 

@@ -40,6 +40,7 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.*;
@@ -71,7 +72,7 @@ public class ProcessUtils {
             clusterServiceInstance.setUpdateTime(new Date());
             serviceInstanceService.save(clusterServiceInstance);
             //保存服务实例配置
-            List<ServiceConfig> list =  ServiceConfigMap.get(clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceRoleInfo.getParentName() + Constants.CONFIG);
+            List<ServiceConfig> list = ServiceConfigMap.get(clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceRoleInfo.getParentName() + Constants.CONFIG);
             String config = JSON.toJSONString(list);
             ClusterServiceInstanceConfigEntity clusterServiceInstanceConfig = new ClusterServiceInstanceConfigEntity();
             clusterServiceInstanceConfig.setClusterId(serviceRoleInfo.getClusterId());
@@ -352,9 +353,10 @@ public class ProcessUtils {
 
     public static void hdfsEcMethond(Integer serviceInstanceId, ClusterServiceRoleInstanceService roleInstanceService, TreeSet<String> list, String type, String roleName) throws Exception {
 
-        List<ClusterServiceRoleInstanceEntity> namenodes = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                .eq(Constants.SERVICE_ID, serviceInstanceId)
-                .eq(Constants.SERVICE_ROLE_NAME, roleName));
+        List<ClusterServiceRoleInstanceEntity> namenodes = roleInstanceService.lambdaQuery()
+                .eq(ClusterServiceRoleInstanceEntity::getServiceId, serviceInstanceId)
+                .eq(ClusterServiceRoleInstanceEntity::getServiceRoleName, roleName)
+                .list();
 
         //更新namenode节点的whitelist白名单
         for (ClusterServiceRoleInstanceEntity namenode : namenodes) {
@@ -447,11 +449,10 @@ public class ProcessUtils {
     }
 
 
-
     /**
-     *@Description: 生成configFileMap
      * @param configFileMap
      * @param config
+     * @Description: 生成configFileMap
      */
     public static void generateConfigFileMap(HashMap<Generators, List<ServiceConfig>> configFileMap, ClusterServiceRoleGroupConfig config) {
         Map<JSONObject, JSONArray> map = JSONObject.parseObject(config.getConfigFileJson(), Map.class);
@@ -462,7 +463,7 @@ public class ProcessUtils {
         }
     }
 
-    public static ServiceConfig createServiceConfig(String configName,Object configValue,String type) {
+    public static ServiceConfig createServiceConfig(String configName, Object configValue, String type) {
         ServiceConfig serviceConfig = new ServiceConfig();
         serviceConfig.setName(configName);
         serviceConfig.setLabel(configName);
@@ -512,7 +513,7 @@ public class ProcessUtils {
         return left;
     }
 
-    public static void syncUserGroupToHosts(List<ClusterHostEntity> hostList, String groupName,String operate) {
+    public static void syncUserGroupToHosts(List<ClusterHostEntity> hostList, String groupName, String operate) {
         for (ClusterHostEntity hostEntity : hostList) {
             ActorRef execCmdActor = ActorUtils.getRemoteActor(hostEntity.getHostname(), "unixGroupActor");
             ExecuteCmdCommand command = new ExecuteCmdCommand();
@@ -520,31 +521,31 @@ public class ProcessUtils {
             commands.add(operate);
             commands.add(groupName);
             command.setCommands(commands);
-            execCmdActor.tell(command,ActorRef.noSender());
+            execCmdActor.tell(command, ActorRef.noSender());
         }
     }
 
     public static Map<String, ServiceConfig> translateToMap(List<ServiceConfig> list) {
-        return  list.stream().collect(Collectors.toMap(ServiceConfig::getName, serviceConfig -> serviceConfig, (v1, v2) -> v1));
+        return list.stream().collect(Collectors.toMap(ServiceConfig::getName, serviceConfig -> serviceConfig, (v1, v2) -> v1));
     }
 
-    public static void syncUserToHosts(List<ClusterHostEntity> hostList, String username,String mainGroup,String otherGroup,String operate) {
+    public static void syncUserToHosts(List<ClusterHostEntity> hostList, String username, String mainGroup, String otherGroup, String operate) {
         for (ClusterHostEntity hostEntity : hostList) {
             ActorRef execCmdActor = ActorUtils.getRemoteActor(hostEntity.getHostname(), "executeCmdActor");
             ExecuteCmdCommand command = new ExecuteCmdCommand();
             ArrayList<String> commands = new ArrayList<>();
             commands.add(operate);
             commands.add(username);
-            if(StringUtils.isNotBlank(mainGroup)){
+            if (StringUtils.isNotBlank(mainGroup)) {
                 commands.add("-g");
                 commands.add(mainGroup);
             }
-            if(StringUtils.isNotBlank(otherGroup)){
+            if (StringUtils.isNotBlank(otherGroup)) {
                 commands.add("-G");
                 commands.add(otherGroup);
             }
             command.setCommands(commands);
-            execCmdActor.tell(command,ActorRef.noSender());
+            execCmdActor.tell(command, ActorRef.noSender());
         }
     }
 
