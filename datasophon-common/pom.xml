@@ -54,9 +54,9 @@
             <version>5.8.0.M2</version>
         </dependency>
         <dependency>
-            <groupId>com.jcraft</groupId>
+            <groupId>com.github.mwiede</groupId>
             <artifactId>jsch</artifactId>
-            <version>0.1.55</version>
+            <version>0.2.7</version>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
