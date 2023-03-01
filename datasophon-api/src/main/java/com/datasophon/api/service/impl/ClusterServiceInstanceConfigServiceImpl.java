@@ -40,9 +40,11 @@ public class ClusterServiceInstanceConfigServiceImpl extends ServiceImpl<Cluster
 
     @Override
     public ClusterServiceInstanceConfigEntity getServiceConfigByServiceId(Integer id) {
-        return this.getOne(new QueryWrapper<ClusterServiceInstanceConfigEntity>()
-                .eq(Constants.SERVICE_ID, id)
-                .orderByDesc(Constants.CONFIG_VERSION).last("limit 1"));
+        return this.lambdaQuery()
+                .eq(ClusterServiceInstanceConfigEntity::getServiceId, id)
+                .orderByDesc(ClusterServiceInstanceConfigEntity::getConfigVersion)
+                .last("limit 1")
+                .one();
     }
 
     @Override

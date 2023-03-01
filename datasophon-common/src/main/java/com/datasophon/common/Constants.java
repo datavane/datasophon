@@ -17,7 +17,6 @@ public final class Constants {
     public static final String DATASOPHON = "datasophon";
 
     public static final String HOST_MAP = "_host_map";
-    public static final String COMMAND_ID = "command_id";
     public static final String COMMAND_HOST_ID = "command_host_id";
     public static final String HOST_MD5 = "_host_md5";
     public static final String ID_RSA = "/.ssh/id_rsa";
@@ -33,10 +32,8 @@ public final class Constants {
 
     public static final String IP_HOST = "ip_host";
     public static final String HOST_IP = "host_ip";
-    public static final String SERVICE_ID = "service_id";
     public static final String CLUSTER_ID = "cluster_id";
     public static final String MANAGED = "managed";
-    public static final String SERVICE_ROLE_TYPE = "service_role_type";
     public static final String JSON = "json";
     public static final String CONFIG = "_config";
     public static final String SERVICE_ROLE_HOST_MAPPING = "service_role_host_mapping";
@@ -47,9 +44,6 @@ public final class Constants {
     public static final String CONFIG_FILE = "_config_file";
     public static final String QUERY = "query";
     public static final String SUCCESS = "success";
-    public static final String FRAME_CODE = "frameCode";
-    public static final String FRAME_VERSION = "frameVersion";
-    public static final String SCRIPT = "script";
     public static final String SERVICE_NAME = "service_name";
     public static final String SERVICE_ROLE_STATE = "service_role_state";
     public static final String LOCALE_LANGUAGE = "language";
