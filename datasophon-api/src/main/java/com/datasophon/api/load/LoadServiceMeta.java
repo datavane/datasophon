@@ -16,7 +16,6 @@ import com.datasophon.api.utils.CommonUtils;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
-import com.datasophon.common.utils.HostUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,10 +74,6 @@ public class LoadServiceMeta implements ApplicationRunner {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void run(ApplicationArguments args) throws Exception {
-        //load hosts
-        loadHostsFileInEtc();
-        logger.info("put ip host map into cache");
-
         File[] ddps = FileUtil.ls(PATH);
         //load global variable
         List<ClusterInfoEntity> clusters = clusterInfoService.list();
@@ -228,9 +223,6 @@ public class LoadServiceMeta implements ApplicationRunner {
         }
     }
 
-    private void loadHostsFileInEtc() {
-        HostUtils.read();
-    }
 
     private void updateServiceInstanceConfig(String frameCode, String serviceName, List<ServiceConfig> parameters, Map<Generators, List<ServiceConfig>> configFileMap) {
         //查询frameCode相同的集群

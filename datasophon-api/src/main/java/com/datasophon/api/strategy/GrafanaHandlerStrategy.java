@@ -5,6 +5,7 @@ import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.model.ServiceRoleInfo;
+import com.datasophon.common.utils.HostUtils;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 
 import java.util.List;
@@ -14,9 +15,8 @@ public class GrafanaHandlerStrategy implements ServiceRoleStrategy{
     @Override
     public void handler(Integer clusterId,List<String> hosts) {
         Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+clusterId);
-        Map<String,String> hostIp = (Map<String, String>) CacheUtils.get(Constants.HOST_IP);
-        if(hosts.size() == 1 && hostIp.containsKey(hosts.get(0))){
-            ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${grafanaHost}",hostIp.get(hosts.get(0)));
+        if(hosts.size() == 1 ){
+            ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${grafanaHost}", HostUtils.getIp(hosts.get(0)));
         }
     }
 

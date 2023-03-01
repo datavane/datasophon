@@ -33,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import scala.collection.immutable.Stream;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -87,7 +86,6 @@ public class InstallServiceImpl implements InstallService {
 
         } else {
             logger.info("analysis host list");
-            HostUtils.read();
             String[] hostsArr = hosts.split(",");
             for (String host : hostsArr) {
                 //解析ip域
@@ -152,21 +150,10 @@ public class InstallServiceImpl implements InstallService {
 
     public HostInfo createHostInfo(String host, Integer sshPort, String sshUser, String clusterCode) {
         HostInfo hostInfo = new HostInfo();
-        Map<String, String> ipHost = (Map<String, String>) CacheUtils.get(Constants.IP_HOST);
-        Map<String, String> hostIp = (Map<String, String>) CacheUtils.get(Constants.HOST_IP);
-        if (host.matches(Constants.HAS_EN)) {
-            if (ObjectUtil.isNull(hostIp) || !hostIp.containsKey(host)) {
-                return null;
-            }
-            hostInfo.setHostname(host);
-            hostInfo.setIp(hostIp.get(host));
-        } else {
-            if (ObjectUtil.isNull(ipHost) || !ipHost.containsKey(host)) {
-                return null;
-            }
-            hostInfo.setIp(host);
-            hostInfo.setHostname(ipHost.get(host));
-        }
+
+        hostInfo.setHostname(HostUtils.getHostName(host));
+        hostInfo.setIp(HostUtils.getIp(host));
+
         //判断是否受管
         ClusterHostEntity hostEntity = hostService.getClusterHostByHostname(hostInfo.getHostname());
         if (ObjectUtil.isNotNull(hostEntity)) {
