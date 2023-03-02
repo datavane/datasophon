@@ -10,17 +10,21 @@ security:
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://ddp2:3306/datasophon?useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://172.31.1.90:3306/datasophon?useUnicode=true&characterEncoding=utf-8
     username: root
-    password: root
+    password: Ew2VqDkDt7n6
     driver-class-name: com.mysql.jdbc.Driver
-#json格式化全局配置
+  resources:
+    static-locations: classpath:/front/views/
+  #json格式化全局配置
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
   mvc:
     date-format: yyyy-MM-dd HH:mm:ss
-#国际化配置
+    view:
+      suffix: .html
+  #国际化配置
   messages:
     basename: i18n/messages
     encoding: UTF-8

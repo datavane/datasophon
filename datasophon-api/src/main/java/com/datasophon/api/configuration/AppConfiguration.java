@@ -9,7 +9,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 import java.util.Locale;
@@ -76,13 +80,16 @@ public class AppConfiguration implements WebMvcConfigurer {
             .addPathPatterns("/**").excludePathPatterns("/login","/error",
             "/service/install/downloadPackage",
             "/cluster/alert/history/save",
-            "/cluster/kerberos/downloadKeytab"
+            "/cluster/kerberos/downloadKeytab",
+            "/index.html",
+            "/",
+            "/static/**"
     );
   }
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+    registry.addResourceHandler("/static/**").addResourceLocations("classpath:/front/static/resources/bundle-main/static/");
     registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
     registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
     registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
@@ -92,7 +99,7 @@ public class AppConfiguration implements WebMvcConfigurer {
   @Override
   public void addViewControllers(ViewControllerRegistry registry) {
     registry.addViewController("/ui/").setViewName("forward:/ui/index.html");
-    registry.addViewController("/").setViewName("forward:/ui/index.html");
+    registry.addViewController("/").setViewName("index");
   }
 
   /**
