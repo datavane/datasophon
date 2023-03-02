@@ -1,3 +1,20 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.datasophon.api.utils;
 
 import akka.actor.ActorRef;
@@ -20,6 +37,7 @@ import com.datasophon.api.master.handler.service.*;
 import com.datasophon.api.service.*;
 import com.datasophon.api.master.MasterServiceActor;
 import com.datasophon.common.model.*;
+import com.datasophon.common.utils.HostUtils;
 import com.datasophon.dao.entity.*;
 import com.datasophon.dao.enums.*;
 import com.datasophon.common.Constants;
@@ -144,7 +162,6 @@ public class ProcessUtils {
         ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
         ClusterHostEntity clusterHostEntity = new ClusterHostEntity();
         BeanUtil.copyProperties(message, clusterHostEntity);
-        Map<String, String> hostIp = (Map<String, String>) CacheUtils.get(Constants.HOST_IP);
 
         ClusterInfoEntity cluster = clusterInfoService.getClusterByClusterCode(clusterCode);
 
@@ -153,7 +170,7 @@ public class ProcessUtils {
         clusterHostEntity.setRack("/default-rack");
         clusterHostEntity.setNodeLabel("default");
         clusterHostEntity.setCreateTime(new Date());
-        clusterHostEntity.setIp(hostIp.get(message.getHostname()));
+        clusterHostEntity.setIp(HostUtils.getIp(message.getHostname()));
         clusterHostEntity.setHostState(1);
         clusterHostEntity.setManaged(MANAGED.YES);
         clusterHostService.save(clusterHostEntity);
