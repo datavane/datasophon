@@ -37,6 +37,7 @@ import com.datasophon.api.master.handler.service.*;
 import com.datasophon.api.service.*;
 import com.datasophon.api.master.MasterServiceActor;
 import com.datasophon.common.model.*;
+import com.datasophon.common.utils.HostUtils;
 import com.datasophon.dao.entity.*;
 import com.datasophon.dao.enums.*;
 import com.datasophon.common.Constants;
@@ -161,7 +162,6 @@ public class ProcessUtils {
         ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
         ClusterHostEntity clusterHostEntity = new ClusterHostEntity();
         BeanUtil.copyProperties(message, clusterHostEntity);
-        Map<String, String> hostIp = (Map<String, String>) CacheUtils.get(Constants.HOST_IP);
 
         ClusterInfoEntity cluster = clusterInfoService.getClusterByClusterCode(clusterCode);
 
@@ -170,7 +170,7 @@ public class ProcessUtils {
         clusterHostEntity.setRack("/default-rack");
         clusterHostEntity.setNodeLabel("default");
         clusterHostEntity.setCreateTime(new Date());
-        clusterHostEntity.setIp(hostIp.get(message.getHostname()));
+        clusterHostEntity.setIp(HostUtils.getIp(message.getHostname()));
         clusterHostEntity.setHostState(1);
         clusterHostEntity.setManaged(MANAGED.YES);
         clusterHostService.save(clusterHostEntity);

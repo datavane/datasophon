@@ -47,8 +47,7 @@ public final class Constants {
     public static final String WORKER_SCRIPT_PATH = INSTALL_PATH + "/datasophon-worker/script/";
     public static final String WORKER_PATH = INSTALL_PATH + "/datasophon-worker";
 
-    public static final String IP_HOST = "ip_host";
-    public static final String HOST_IP = "host_ip";
+
     public static final String CLUSTER_ID = "cluster_id";
     public static final String MANAGED = "managed";
     public static final String JSON = "json";
