@@ -1,10 +1,26 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.datasophon.api.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.*;
 import com.datasophon.dao.entity.*;
-import com.datasophon.api.service.*;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.SimpleServiceConfig;
@@ -74,7 +90,6 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
 
     @Override
     public Result listAll(Integer clusterId) {
-
         HashMap<String, String> globalVariables = (HashMap<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
         List<ClusterServiceInstanceEntity> list = this.list(new QueryWrapper<ClusterServiceInstanceEntity>()
                 .eq(Constants.CLUSTER_ID, clusterId).orderByAsc(Constants.SORT_NUM));
@@ -92,17 +107,19 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
             int alertNum = alertHistoryService.count(new QueryWrapper<ClusterAlertHistory>()
                     .eq(Constants.SERVICE_INSTANCE_ID, serviceInstance.getId()).eq(Constants.IS_ENABLED, 1));
             serviceInstance.setAlertNum(alertNum);
-            List<ClusterServiceRoleInstanceEntity> totalRoleList = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                    .eq(Constants.SERVICE_ID, serviceInstance.getId()));
+            List<ClusterServiceRoleInstanceEntity> totalRoleList = roleInstanceService.lambdaQuery()
+                    .eq(ClusterServiceRoleInstanceEntity::getServiceId, serviceInstance.getId())
+                    .list();
             if (Objects.nonNull(totalRoleList) && totalRoleList.size() == 0) {
                 serviceInstance.setServiceState(ServiceState.WAIT_INSTALL);
                 needUpdate = true;
             }
 
             //查询停止状态角色
-            List<ClusterServiceRoleInstanceEntity> roleList = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                    .eq(Constants.SERVICE_ID, serviceInstance.getId())
-                    .eq(Constants.SERVICE_ROLE_STATE, ServiceRoleState.STOP));
+            List<ClusterServiceRoleInstanceEntity> roleList = roleInstanceService.lambdaQuery()
+                    .eq(ClusterServiceRoleInstanceEntity::getServiceId, serviceInstance.getId())
+                    .eq(ClusterServiceRoleInstanceEntity::getServiceRoleState, ServiceRoleState.STOP)
+                    .list();
             if (Objects.nonNull(roleList) && roleList.size() > 0) {
                 if (!ServiceState.EXISTS_EXCEPTION.equals(serviceInstance.getServiceState())) {
                     serviceInstance.setServiceState(ServiceState.EXISTS_EXCEPTION);
@@ -117,9 +134,10 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
                 }
             }
             //查询告警状态角色
-            List<ClusterServiceRoleInstanceEntity> alarmRoleList = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                    .eq(Constants.SERVICE_ID, serviceInstance.getId())
-                    .eq(Constants.SERVICE_ROLE_STATE, ServiceRoleState.EXISTS_ALARM));
+            List<ClusterServiceRoleInstanceEntity> alarmRoleList = roleInstanceService.lambdaQuery()
+                    .eq(ClusterServiceRoleInstanceEntity::getServiceId, serviceInstance.getId())
+                    .eq(ClusterServiceRoleInstanceEntity::getServiceRoleState, ServiceRoleState.EXISTS_ALARM)
+                    .list();
             if (Objects.nonNull(alarmRoleList) && alarmRoleList.size() > 0) {
                 if (!ServiceState.EXISTS_ALARM.equals(serviceInstance.getServiceState())) {
                     serviceInstance.setServiceState(ServiceState.EXISTS_ALARM);
@@ -188,7 +206,7 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
 
     @Override
     public Result delServiceInstance(Integer serviceInstanceId) {
-        if(hasRunningRoleInstance(serviceInstanceId)){
+        if (hasRunningRoleInstance(serviceInstanceId)) {
             return Result.error(Status.EXIT_RUNNING_ROLE_INSTANCE.getMsg());
         }
         List<ClusterServiceInstanceRoleGroup> roleGroups = roleGroupService.listRoleGroupByServiceInstanceId(serviceInstanceId);
@@ -201,7 +219,7 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
         //del role group config
         roleGroupConfigService.removeByIds(roleGroupConfigList.stream().map(e -> e.getId()).collect(Collectors.toList()));
         //del service role instance
-        if(roleInstanceList.size() > 0){
+        if (roleInstanceList.size() > 0) {
             List<String> roleInsIds = roleInstanceList.stream().map(e -> e.getId().toString()).collect(Collectors.toList());
             roleInstanceService.deleteServiceRole(roleInsIds);
         }
@@ -216,13 +234,13 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
     @Override
     public List<ClusterServiceInstanceEntity> listRunningServiceInstance(Integer clusterId) {
         return this.list(new QueryWrapper<ClusterServiceInstanceEntity>()
-                .eq(Constants.CLUSTER_ID,clusterId)
-                .eq(Constants.SERVICE_STATE,ServiceState.RUNNING));
+                .eq(Constants.CLUSTER_ID, clusterId)
+                .eq(Constants.SERVICE_STATE, ServiceState.RUNNING));
     }
 
     private boolean hasRunningRoleInstance(Integer serviceInstanceId) {
         List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.getRunningServiceRoleInstanceListByServiceId(serviceInstanceId);
-        if(list.size() > 0){
+        if (list.size() > 0) {
             return true;
         }
         return false;

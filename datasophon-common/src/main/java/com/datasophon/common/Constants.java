@@ -1,3 +1,20 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.datasophon.common;
 
 import com.datasophon.common.utils.PropertyUtils;
@@ -17,7 +34,6 @@ public final class Constants {
     public static final String DATASOPHON = "datasophon";
 
     public static final String HOST_MAP = "_host_map";
-    public static final String COMMAND_ID = "command_id";
     public static final String COMMAND_HOST_ID = "command_host_id";
     public static final String HOST_MD5 = "_host_md5";
     public static final String ID_RSA = "/.ssh/id_rsa";
@@ -31,12 +47,9 @@ public final class Constants {
     public static final String WORKER_SCRIPT_PATH = INSTALL_PATH + "/datasophon-worker/script/";
     public static final String WORKER_PATH = INSTALL_PATH + "/datasophon-worker";
 
-    public static final String IP_HOST = "ip_host";
-    public static final String HOST_IP = "host_ip";
-    public static final String SERVICE_ID = "service_id";
+
     public static final String CLUSTER_ID = "cluster_id";
     public static final String MANAGED = "managed";
-    public static final String SERVICE_ROLE_TYPE = "service_role_type";
     public static final String JSON = "json";
     public static final String CONFIG = "_config";
     public static final String SERVICE_ROLE_HOST_MAPPING = "service_role_host_mapping";
@@ -47,9 +60,6 @@ public final class Constants {
     public static final String CONFIG_FILE = "_config_file";
     public static final String QUERY = "query";
     public static final String SUCCESS = "success";
-    public static final String FRAME_CODE = "frameCode";
-    public static final String FRAME_VERSION = "frameVersion";
-    public static final String SCRIPT = "script";
     public static final String SERVICE_NAME = "service_name";
     public static final String SERVICE_ROLE_STATE = "service_role_state";
     public static final String LOCALE_LANGUAGE = "language";
