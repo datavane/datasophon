@@ -1,4 +1,5 @@
 /*
+ *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -13,19 +14,25 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.datasophon.api.utils;
 
 import com.datasophon.common.Constants;
+
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ChannelExec;
 import org.apache.sshd.client.channel.ClientChannelEvent;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.sftp.client.SftpClientFactory;
 import org.apache.sshd.sftp.client.fs.SftpFileSystem;
-import org.slf4j.LoggerFactory;
-import java.io.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,20 +43,19 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.LoggerFactory;
 
 public class MinaUtils {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MinaUtils.class);
 
-
-    /**
-     * 打开远程会话
-     */
-    public static ClientSession openConnection(String sshHost, Integer sshPort, String sshUser, String privateKey_path) {
+    /** 打开远程会话 */
+    public static ClientSession openConnection(String sshHost, Integer sshPort, String sshUser) {
         SshClient sshClient = SshClient.setUpDefaultClient();
         sshClient.start();
         ClientSession session = null;
+        String privateKeyPath = System.getProperty("user.home") + Constants.ID_RSA;
         try {
-            String privateKeyContent= new String(Files.readAllBytes(Paths.get(privateKey_path)));
+            String privateKeyContent = new String(Files.readAllBytes(Paths.get(privateKeyPath)));
             session = sshClient.connect(sshUser, sshHost, sshPort).verify().getClientSession();
             session.addPublicKeyIdentity(getKeyPairFromString(privateKeyContent));
             if (session.auth().verify().isFailure()) {
@@ -63,10 +69,7 @@ public class MinaUtils {
         return session;
     }
 
-
-    /**
-     * 关闭远程会话
-     */
+    /** 关闭远程会话 */
     public static void closeConnection(ClientSession session) {
         try {
             session.close();
@@ -75,9 +78,7 @@ public class MinaUtils {
         }
     }
 
-    /**
-     * 获取密钥对
-     */
+    /** 获取密钥对 */
     static KeyPair getKeyPairFromString(String pk) {
         final KeyPairGenerator rsa;
         try {
@@ -92,7 +93,6 @@ public class MinaUtils {
             throw new RuntimeException(e);
         }
     }
-
 
     /**
      * 同步执行,需要获取执行完的结果
@@ -117,7 +117,9 @@ public class MinaUtils {
             // 执行并等待
             ce.open();
             Set<ClientChannelEvent> events =
-                    ce.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), TimeUnit.SECONDS.toMillis(100000));
+                    ce.waitFor(
+                            EnumSet.of(ClientChannelEvent.CLOSED),
+                            TimeUnit.SECONDS.toMillis(100000));
             //  检查请求是否超时
             if (events.contains(ClientChannelEvent.TIMEOUT)) {
                 throw new Exception("mina 连接超时");
@@ -146,9 +148,9 @@ public class MinaUtils {
     /**
      * 上传文件,相同路径ui覆盖
      *
-     * @param session    连接
+     * @param session 连接
      * @param remotePath 远程目录地址
-     * @param inputFile  文件 File
+     * @param inputFile 文件 File
      */
     public static boolean uploadFile(ClientSession session, String remotePath, String inputFile) {
         File uploadFile = new File(inputFile);
@@ -196,18 +198,16 @@ public class MinaUtils {
         return false;
     }
 
-
     public static void main(String[] args) throws IOException, InterruptedException {
-        ClientSession session = MinaUtils.openConnection("localhost", 22, "liuxin",
-                "/Users/liuxin/.ssh/id_rsa");
+        ClientSession session = MinaUtils.openConnection("localhost", 22, "liuxin");
         for (int i = 0; i < Constants.TEN; i++) {
             String ls = MinaUtils.execCmdWithResult(session, "arch");
             System.out.println(ls);
         }
-//        boolean dir = MinaUtils.createDir(session,"/home/shinow/test/");
-//        System.out.println(dir);
-//        boolean uploadFile = MinaUtils.uploadFile(session, "/Users/liuxin/opt/test", "/Users/liuxin/Downloads/yarn-default.xml");
-//        System.out.println(uploadFile);
+        //        boolean dir = MinaUtils.createDir(session,"/home/shinow/test/");
+        //        System.out.println(dir);
+        //        boolean uploadFile = MinaUtils.uploadFile(session, "/Users/liuxin/opt/test",
+        // "/Users/liuxin/Downloads/yarn-default.xml");
+        //        System.out.println(uploadFile);
     }
-
 }
