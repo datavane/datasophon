@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQu
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.*;
+import com.datasophon.common.utils.CollectionUtils;
 import com.datasophon.dao.entity.*;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
@@ -121,17 +122,24 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
                 .eq(StringUtils.isNotBlank(serviceRoleName), ClusterServiceRoleInstanceEntity::getServiceRoleName, serviceRoleName)
                 .eq(Objects.nonNull(roleGroupId), ClusterServiceRoleInstanceEntity::getRoleGroupId, roleGroupId)
                 .like(StringUtils.isNotBlank(hostname), ClusterServiceRoleInstanceEntity::getHostname, hostname);
-        List<ClusterServiceRoleInstanceEntity> list = wrapper
+
+        List<ClusterServiceRoleInstanceEntity> cluServiceRoleInstList = wrapper
                 .last("limit " + offset + "," + pageSize)
                 .list();
-        for (ClusterServiceRoleInstanceEntity roleInstanceEntity : list) {
+        if(CollectionUtils.isEmpty(cluServiceRoleInstList)) {
+            return Result.successEmptyCount();
+        }
+
+        for (ClusterServiceRoleInstanceEntity roleInstanceEntity : cluServiceRoleInstList) {
             ClusterServiceInstanceRoleGroup roleGroup = roleGroupService.getById(roleInstanceEntity.getRoleGroupId());
-            roleInstanceEntity.setRoleGroupName(roleGroup.getRoleGroupName());
+            if(Objects.nonNull(roleGroup)) {
+                roleInstanceEntity.setRoleGroupName(roleGroup.getRoleGroupName());
+            }
             roleInstanceEntity.setServiceRoleStateCode(roleInstanceEntity.getServiceRoleState().getValue());
         }
 
-        int count = wrapper.count();
-        return Result.success(list).put(Constants.TOTAL, count);
+        int count = wrapper.count() == null ? 0 : wrapper.count();
+        return Result.success(cluServiceRoleInstList).put(Constants.TOTAL, count);
     }
 
     @Override
