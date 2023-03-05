@@ -21,6 +21,7 @@ package com.datasophon.common.utils;
 import com.datasophon.common.Constants;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,6 +78,12 @@ public class Result extends HashMap<String, Object> {
         Result result = new Result();
         result.put(Constants.CODE,200);
         result.put(Constants.MSG,"success");
+        return result;
+    }
+
+    public static Result successEmptyCount() {
+        Result result = success(new ArrayList<>(0));
+        result.put(Constants.TOTAL, 0);
         return result;
     }
 
