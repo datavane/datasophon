@@ -238,16 +238,17 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
             }
         }
         //查询已退役节点
-        List<ClusterServiceRoleInstanceEntity> list = this.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                .eq(Constants.SERVICE_ROLE_STATE, ServiceRoleState.DECOMMISSIONING)
-                .in(Constants.ID, serviceRoleInstanceIds));
+        List<ClusterServiceRoleInstanceEntity> list = this.lambdaQuery()
+                .eq(ClusterServiceRoleInstanceEntity::getServiceRoleState, ServiceRoleState.DECOMMISSIONING)
+                .in(ClusterServiceRoleInstanceEntity::getId, serviceRoleInstanceIds)
+                .list();
         //添加已退役节点到黑名单
         for (ClusterServiceRoleInstanceEntity roleInstanceEntity : list) {
             hosts.add(roleInstanceEntity.getHostname());
         }
         String type = "blacklist";
         String roleName = "NameNode";
-        if ("nodemanager".equals(serviceRoleName.toLowerCase())) {
+        if ("nodemanager".equalsIgnoreCase(serviceRoleName)) {
             type = "nmexclude";
             roleName = "ResourceManager";
         }
