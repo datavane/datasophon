@@ -19,11 +19,9 @@ package com.datasophon.api.controller;
 
 import java.util.*;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.AlertGroupService;
 import com.datasophon.api.service.ClusterAlertQuotaService;
-import com.datasophon.common.Constants;
 import com.datasophon.dao.entity.ClusterAlertQuota;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -96,7 +94,7 @@ public class AlertGroupController {
     public Result delete(@RequestBody Integer[] ids) {
 
         //校验是否绑定告警指标
-        List<ClusterAlertQuota> list = alertQuotaService.list(new QueryWrapper<ClusterAlertQuota>().in(Constants.ALERT_GROUP_ID, ids));
+        List<ClusterAlertQuota> list = alertQuotaService.lambdaQuery().in(ClusterAlertQuota::getAlertGroupId, ids).list();
         if(list.size() > 0){
             return Result.error(Status.ALERT_GROUP_TIPS_ONE.getMsg());
         }
