@@ -200,7 +200,8 @@
         "outputDirectory": "etc/hadoop/",
         "includeParams": [
           "mapreduce.jobhistory.keytab",
-          "mapreduce.jobhistory.principal"
+          "mapreduce.jobhistory.principal",
+          "mapreduce.cluster.local.dir"
         ]
       }
     ]
@@ -661,7 +662,19 @@
       "hidden": false,
       "defaultValue": ""
     },
-
+    {
+      "name": "mapreduce.cluster.local.dir",
+      "label": "MapReduce本地存储目录",
+      "description": "MapReduce本地存储目录",
+      "required": true,
+      "configType": "path",
+      "separator": ",",
+      "type": "input",
+      "value": "/data/mapred/local",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "/data/mapred/local"
+    },
     {
       "name": "yarn.application.classpath",
       "label": "yarn应用程序加载的classpath",
