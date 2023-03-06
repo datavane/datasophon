@@ -107,7 +107,7 @@ public class FrameServiceServiceImpl extends ServiceImpl<FrameServiceMapper, Fra
     @Override
     public List<FrameServiceEntity> listServices(String serviceIds) {
         List<String> ids = Arrays.stream(serviceIds.split(",")).collect(Collectors.toList());
-        return this.list(new QueryWrapper<FrameServiceEntity>().in(Constants.ID, ids));
+        return this.lambdaQuery().in(FrameServiceEntity::getId, ids).list();
     }
 
 
