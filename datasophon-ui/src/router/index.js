@@ -49,7 +49,6 @@ const loginIgnore = {
  */
 function initRouter(isAsync) {
   const options = isAsync ? require('./config-cluster').default : require('./config').default;
-  options.mode = 'history'
   formatRoutes(options.routes)
   return new Router(options)
 }
