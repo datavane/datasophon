@@ -55,7 +55,7 @@
         <a-button class="mgr10" type="primary" @click="handleSubmit">保存</a-button>
       </div>
      </a-spin>
-  
+
     </div>
 
   </div>
@@ -210,7 +210,7 @@ export default {
     },
     handlerClick(item,childIndex){
       console.log(item);
-      this.currentId = item.id  
+      this.currentId = item.id
       this.getConfigVersion()
     },
     handlearrayWithData(a) {
@@ -349,7 +349,7 @@ export default {
       this.currentId = val.target.value
       this.getConfigVersion()
     },
-  
+
     //获取角色组
     getServiceRoleType() {
       this.loading = true;
@@ -492,4 +492,4 @@ export default {
     }
   }
 }
-</style> 
+</style>
