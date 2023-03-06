@@ -1,4 +1,5 @@
 /*
+ *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -13,21 +14,24 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.datasophon.api.master;
 
-import akka.actor.UntypedActor;
-import cn.hutool.core.util.ObjectUtil;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.utils.MinaUtils;
-import com.datasophon.common.Constants;
 import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.model.CheckResult;
 import com.datasophon.common.model.HostInfo;
+
 import org.apache.sshd.client.session.ClientSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import akka.actor.UntypedActor;
+import cn.hutool.core.util.ObjectUtil;
 import scala.Option;
 
 public class HostActor extends UntypedActor {
@@ -45,15 +49,19 @@ public class HostActor extends UntypedActor {
             HostCheckCommand hostCheckCommand = (HostCheckCommand) message;
             HostInfo hostInfo = hostCheckCommand.getHostInfo();
             logger.info("start host check:{}", hostInfo.getHostname());
-            ClientSession session =  MinaUtils.openConnection(
-                    hostInfo.getHostname(),
-                    hostInfo.getSshPort(),
-                    hostInfo.getSshUser(),
-                    Constants.SLASH + hostInfo.getSshUser() + Constants.ID_RSA);
+            ClientSession session =
+                    MinaUtils.openConnection(
+                            hostInfo.getHostname(), hostInfo.getSshPort(), hostInfo.getSshUser());
             if (ObjectUtil.isNotNull(session)) {
-                hostInfo.setCheckResult(new CheckResult(Status.CHECK_HOST_SUCCESS.getCode(), Status.CHECK_HOST_SUCCESS.getMsg()));
+                hostInfo.setCheckResult(
+                        new CheckResult(
+                                Status.CHECK_HOST_SUCCESS.getCode(),
+                                Status.CHECK_HOST_SUCCESS.getMsg()));
             } else {
-                hostInfo.setCheckResult(new CheckResult(Status.CONNECTION_FAILED.getCode(), Status.CONNECTION_FAILED.getMsg()));
+                hostInfo.setCheckResult(
+                        new CheckResult(
+                                Status.CONNECTION_FAILED.getCode(),
+                                Status.CONNECTION_FAILED.getMsg()));
                 MinaUtils.closeConnection(session);
             }
             logger.info("end host check:{}", hostInfo.getHostname());
