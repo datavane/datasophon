@@ -17,7 +17,7 @@
 
 /*
  * @Author: mjzhu
- * @describe: 
+ * @describe:
  * @Date: 2022-05-24 10:22:10
  * @LastEditTime: 2022-06-20 15:29:03
  * @FilePath: \ddh-ui\src\router\index.js
@@ -49,6 +49,7 @@ const loginIgnore = {
  */
 function initRouter(isAsync) {
   const options = isAsync ? require('./config-cluster').default : require('./config').default
+  options.mode = 'history'
   formatRoutes(options.routes)
   return new Router(options)
 }
