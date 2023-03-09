@@ -29,8 +29,119 @@
     <artifactId>datasophon-ui</artifactId>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <build.node.version>v12.16.3</build.node.version>
+        <build.npm.version>6.14.4</build.npm.version>
+        <nodemodules.dir>node_modules</nodemodules.dir>
+        <dist.dir>dist</dist.dir>
+        <deployed.dir>.deployed</deployed.dir>
     </properties>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.10.3</version>
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                    </execution>
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <arguments>install --registry=https://registry.npm.taobao.org --sass-binary-site=https://npm.taobao.org/mirrors/node-sass
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm run build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>install</phase>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm run deploy</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>install</phase>
+                        <configuration>
+                            <arguments>run deploy</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <nodeVersion>${build.node.version}</nodeVersion>
+                    <npmVersion>${build.npm.version}</npmVersion>
+
+                    <nodeDownloadRoot>https://npm.taobao.org/mirrors/node/</nodeDownloadRoot>
+                    <npmDownloadRoot>https://registry.npm.taobao.org/npm/-/</npmDownloadRoot>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>win</family>
+                </os>
+            </activation>
+            <properties>
+                <envClassifier>win</envClassifier>
+                <dirsep>\</dirsep>
+                <executable.brunch>cmd</executable.brunch>
+                <executable.gzip>${basedir}\gzip-content.cmd</executable.gzip>
+                <args.brunch>/C brunch</args.brunch>
+                <node.executable>node.exe</node.executable>
+                <executable.mkdir>cmd</executable.mkdir>
+                <args.mkdir>/C mkdir</args.mkdir>
+                <executable.npm>cmd</executable.npm>
+                <args.npm>/C npm</args.npm>
+                <executable.rmdir>cmd</executable.rmdir>
+                <args.rm.clean>/C rmdir /S /Q</args.rm.clean>
+                <executable.shell>cmd</executable.shell>
+                <fileextension.shell>cmd</fileextension.shell>
+                <args.shell>/C</args.shell>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <properties>
+                <envClassifier>linux</envClassifier>
+                <dirsep>/</dirsep>
+                <executable.brunch>brunch</executable.brunch>
+                <executable.gzip>gzip</executable.gzip>
+                <args.brunch/>
+                <node.executable>node</node.executable>
+                <executable.mkdir>mkdir</executable.mkdir>
+                <args.mkdir/>
+                <executable.npm>npm</executable.npm>
+                <args.npm/>
+                <executable.rmdir>rm</executable.rmdir>
+                <args.rm.clean>-rf</args.rm.clean>
+                <executable.shell>sh</executable.shell>
+                <fileextension.shell>sh</fileextension.shell>
+                <args.shell/>
+            </properties>
+        </profile>
+    </profiles>
 </project>

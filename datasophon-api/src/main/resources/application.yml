@@ -14,13 +14,17 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.jdbc.Driver
-#json格式化全局配置
+  resources:
+    static-locations: classpath:/front/views/
+  #json格式化全局配置
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
   mvc:
     date-format: yyyy-MM-dd HH:mm:ss
-#国际化配置
+    view:
+      suffix: .html
+  #国际化配置
   messages:
     basename: i18n/messages
     encoding: UTF-8
