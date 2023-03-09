@@ -53,13 +53,17 @@ public class ServiceStopHandler extends ServiceHandler{
         ActorSelection stopActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + serviceRoleInfo.getHostname() + ":2552/user/worker/stopServiceActor");
         Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
         Future<Object> startFuture = Patterns.ask(stopActor, serviceRoleOperateCommand, timeout);
-        ExecResult execResult = (ExecResult) Await.result(startFuture, timeout.duration());
-        if (Objects.nonNull(execResult) && execResult.getExecResult()) {
-            //角色安装成功
-            if(Objects.nonNull(getNext())){
-                return getNext().handlerRequest(serviceRoleInfo);
+        try{
+            ExecResult execResult = (ExecResult) Await.result(startFuture, timeout.duration());
+            if (Objects.nonNull(execResult) && execResult.getExecResult()) {
+                //角色安装成功
+                if(Objects.nonNull(getNext())){
+                    return getNext().handlerRequest(serviceRoleInfo);
+                }
             }
+            return execResult;
+        }catch (Exception e){
+            return new ExecResult();
         }
-        return execResult;
     }
 }

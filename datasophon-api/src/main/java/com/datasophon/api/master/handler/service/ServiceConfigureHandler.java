@@ -49,12 +49,16 @@ public class ServiceConfigureHandler extends ServiceHandler{
 
         Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
         Future<Object> configureFuture = Patterns.ask(configActor, generateServiceConfigCommand, timeout);
-        ExecResult configResult = (ExecResult) Await.result(configureFuture, timeout.duration());
-        if(Objects.nonNull(configResult) && configResult.getExecResult()){
-            if(Objects.nonNull(getNext()) ){
-                return getNext().handlerRequest(serviceRoleInfo);
+        try{
+            ExecResult configResult = (ExecResult) Await.result(configureFuture, timeout.duration());
+            if(Objects.nonNull(configResult) && configResult.getExecResult()){
+                if(Objects.nonNull(getNext()) ){
+                    return getNext().handlerRequest(serviceRoleInfo);
+                }
             }
+            return configResult;
+        }catch (Exception e){
+            return new ExecResult();
         }
-        return configResult;
     }
 }
