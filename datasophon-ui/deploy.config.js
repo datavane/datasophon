@@ -9,6 +9,6 @@ module.exports = [
   {
     source: './dist/index.html',
     target: `${PATH}/views/index.html`,
-    replace: [{ pattern: /\/static\//g, replacement: '/ddh/static/' }],
+    replace: [{ pattern: /\/static\//g, replacement: '/static/' }],
   },
 ]
