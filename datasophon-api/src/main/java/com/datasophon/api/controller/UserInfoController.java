@@ -64,7 +64,7 @@ public class UserInfoController {
      */
     @RequestMapping("/all")
     public Result all() {
-        List<UserInfoEntity> list = userInfoService.list(new QueryWrapper<UserInfoEntity>().ne(Constants.ID,1));
+        List<UserInfoEntity> list = userInfoService.lambdaQuery().eq(UserInfoEntity::getId, 1).list();
         return Result.success(list);
     }
 

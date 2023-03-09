@@ -65,7 +65,6 @@ public final class Constants {
     public static final String LOCALE_LANGUAGE = "language";
     public static final String CODE = "code";
     public static final String CLUSTER_CODE = "cluster_code";
-    public static final String ID = "id";
     public static final String START_DISTRIBUTE_AGENT = "start_distribute_agent";
     public static final String CHECK_WORKER_MD5_CMD = "md5sum "+INSTALL_PATH+"/datasophon-worker.tar.gz | awk '{print $1}'";
     public static final String CREATE_TIME = "create_time";
@@ -92,8 +91,6 @@ public final class Constants {
     public static final String IS_ENABLED = "is_enabled";
     public static final String SORT_NUM = "sort_num";
     public static final String CN = "chinese";
-    public static final String ALERT_GROUP_ID = "alert_group_id";
-    public static final String ALERT_QUOTA_NAME = "alert_quota_name";
     public static final String NAME = "name";
     public static final String QUEUE_NAME = "queue_name";
     public static final String ROLE_TYPE = "role_type";
@@ -107,8 +104,6 @@ public final class Constants {
     public static final String ROLE_GROUP_TYPE = "role_group_type";
     public static final String NEET_RESTART = "need_restart";
 
-    public static final String ALERT_GROUP_NAME = "alert_group_name";
-    public static final String ALERT_LEVEL = "alert_level";
     public static final String CPU_ARCHITECTURE = "cpu_architecture";
     public static final String HOST_STATE = "host_state";
     public static final String FAILED = "failed";

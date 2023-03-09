@@ -45,6 +45,9 @@ public class NameNodeHandlerStrategy implements ServiceRoleStrategy {
                 //执行hdfs namenode -bootstrapStandby
                 logger.info("start to execute hdfs namenode -bootstrapStandby");
                 ArrayList<String> commands = new ArrayList<>();
+                commands.add("echo");
+                commands.add("Y");
+                commands.add("|");
                 commands.add(workPath + "/bin/hdfs");
                 commands.add("namenode");
                 commands.add("-bootstrapStandby");

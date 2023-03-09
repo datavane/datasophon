@@ -164,12 +164,13 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
             if ("resolved".equals(status)) {
                 if (Objects.nonNull(clusterAlertHistory)) {
                     clusterAlertHistory.setIsEnabled(2);
-                    List<ClusterAlertHistory> warnAlertList = this.list(new QueryWrapper<ClusterAlertHistory>()
-                            .eq(Constants.HOSTNAME, hostname)
-                            .eq(Constants.ALERT_GROUP_NAME, serviceRoleName.toLowerCase())
-                            .eq(Constants.IS_ENABLED, 1)
-                            .eq(Constants.ALERT_LEVEL, AlertLevel.WARN)
-                            .ne(Constants.ID,clusterAlertHistory.getId()));
+                    List<ClusterAlertHistory> warnAlertList = this.lambdaQuery()
+                            .eq(ClusterAlertHistory::getHostname, hostname)
+                            .eq(ClusterAlertHistory::getAlertGroupName, serviceRoleName.toLowerCase())
+                            .eq(ClusterAlertHistory::getIsEnabled, 1)
+                            .eq(ClusterAlertHistory::getAlertLevel, AlertLevel.WARN)
+                            .ne(ClusterAlertHistory::getId,clusterAlertHistory.getId())
+                            .list();
                     if("exception".equals(labels.getSeverity())){//异常告警处理
                         if("node".equals(serviceRoleName)){
                             //置为正常

@@ -148,7 +148,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "2"
+      "defaultValue": "3"
     },{
       "name": "log.retention.hours",
       "label": "数据保留的最长时间",
