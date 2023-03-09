@@ -1,3 +1,22 @@
+/*
+ *
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package com.datasophon.api.service.impl;
 
 import com.datasophon.api.service.SystemSettingService;
@@ -16,19 +35,17 @@ import java.nio.file.Path;
 @Service("SystemSettingService")
 public class SystemSettingServiceImpl implements SystemSettingService {
     private static final Logger logger = LoggerFactory.getLogger(SystemSettingServiceImpl.class);
+
     @Override
     public void powerOn(Boolean isPowerOn) throws IOException {
-        //todo 设置状态
+        // todo 设置状态
 
-        //todo 创建脚本
+        // todo 创建脚本
         File file = new File("/etc/profile.d/enable_start_datasophon.sh");
         Path path = file.toPath();
-        ShellUtils.addChmod(file.getPath(),"-x");
+        ShellUtils.addChmod(file.getPath(), "-x");
 
-
-        if (Files.exists(path)) {
-
-        }
+        if (Files.exists(path)) {}
 
         logger.info(System.getProperty("user.dir"));
         StringBuilder sb = new StringBuilder();
@@ -39,20 +56,16 @@ public class SystemSettingServiceImpl implements SystemSettingService {
         // write data to file
         FileUtils.writeStringToFile(file, sb.toString(), StandardCharsets.UTF_8);
 
-        //todo 添加执行权限
-
+        // todo 添加执行权限
 
     }
-
 
     public static void main(String[] args) throws IOException {
 
         File file = new File("D:\\pro\\datasophon\\enable_start_datasophon.sh");
         Path path = file.toPath();
 
-        if (Files.exists(path)) {
-
-        }
+        if (Files.exists(path)) {}
 
         System.out.println(System.getProperty("user.dir"));
 
@@ -63,7 +76,5 @@ public class SystemSettingServiceImpl implements SystemSettingService {
 
         // write data to file
         FileUtils.writeStringToFile(file, sb.toString(), StandardCharsets.UTF_8);
-
-
     }
 }

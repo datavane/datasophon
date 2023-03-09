@@ -1,8 +1,30 @@
+/*
+ *
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package com.datasophon.api.configuration;
 
 import com.datasophon.api.interceptor.LocaleChangeInterceptor;
 import com.datasophon.api.interceptor.LoginHandlerInterceptor;
 import com.datasophon.api.interceptor.UserPermissionHandler;
+
+import java.util.Locale;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -16,11 +38,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
-import java.util.Locale;
-
-/**
- * application configuration
- */
+/** application configuration */
 @Configuration
 public class AppConfiguration implements WebMvcConfigurer {
 
@@ -54,9 +72,9 @@ public class AppConfiguration implements WebMvcConfigurer {
     public LocaleResolver localeResolver() {
         CookieLocaleResolver localeResolver = new CookieLocaleResolver();
         localeResolver.setCookieName(LOCALE_LANGUAGE_COOKIE);
-        /** set default locale **/
+        /** set default locale * */
         localeResolver.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
-        /** set language tag compliant **/
+        /** set language tag compliant * */
         localeResolver.setLanguageTagCompliant(false);
         return localeResolver;
     }
@@ -71,53 +89,46 @@ public class AppConfiguration implements WebMvcConfigurer {
         return new UserPermissionHandler();
     }
 
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    // i18n
-    registry.addInterceptor(localeChangeInterceptor());
-    registry.addInterceptor(userPermissionHandler());
-    // login
-    registry.addInterceptor(loginInterceptor())
-            .addPathPatterns("/**").excludePathPatterns("/login","/error",
-            "/service/install/downloadPackage",
-            "/cluster/alert/history/save",
-            "/cluster/kerberos/downloadKeytab",
-            "/index.html",
-            "/",
-            "/static/**"
-    );
-  }
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // i18n
         registry.addInterceptor(localeChangeInterceptor());
-        registry.addInterceptor(userPermissionHandler()).excludePathPatterns(
-                "/doc.html", "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**"
-        );
+        registry.addInterceptor(userPermissionHandler())
+                .excludePathPatterns(
+                        "/doc.html",
+                        "/swagger-resources/**",
+                        "/webjars/**",
+                        "/v2/**",
+                        "/swagger-ui.html/**");
         // login
         registry.addInterceptor(loginInterceptor())
-                .addPathPatterns("/**").excludePathPatterns("/login", "/error",
+                .addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/login",
+                        "/error",
                         "/service/install/downloadPackage",
                         "/cluster/alert/history/save",
                         "/cluster/kerberos/downloadKeytab",
-                        "/doc.html", "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**"
-                );
+                        "/index.html",
+                        "/",
+                        "/static/**",
+                        "/doc.html",
+                        "/swagger-resources/**",
+                        "/webjars/**",
+                        "/v2/**",
+                        "/swagger-ui.html/**");
     }
 
-  @Override
-  public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("/static/**").addResourceLocations("classpath:/front/static/resources/bundle-main/static/");
-    registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
-    registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-    registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-    registry.addResourceHandler("/ui/**").addResourceLocations("file:ui/");
-  }
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
-        registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/front/static/resources/bundle-main/static/");
+        registry.addResourceHandler("doc.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
         registry.addResourceHandler("/ui/**").addResourceLocations("file:ui/");
     }
 
@@ -126,11 +137,6 @@ public class AppConfiguration implements WebMvcConfigurer {
         registry.addViewController("/ui/").setViewName("forward:/ui/index.html");
         registry.addViewController("/").setViewName("forward:/ui/index.html");
     }
-  @Override
-  public void addViewControllers(ViewControllerRegistry registry) {
-    registry.addViewController("/ui/").setViewName("forward:/ui/index.html");
-    registry.addViewController("/").setViewName("index");
-  }
 
     /**
      * Turn off suffix-based content negotiation
@@ -141,7 +147,4 @@ public class AppConfiguration implements WebMvcConfigurer {
     public void configureContentNegotiation(final ContentNegotiationConfigurer configurer) {
         configurer.favorPathExtension(false);
     }
-
-
-
 }
