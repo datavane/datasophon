@@ -72,13 +72,17 @@ public class ServiceStartHandler extends ServiceHandler {
         ActorSelection startActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + serviceRoleInfo.getHostname() + ":2552/user/worker/startServiceActor");
         Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
         Future<Object> startFuture = Patterns.ask(startActor, serviceRoleOperateCommand, timeout);
-        ExecResult startResult = (ExecResult) Await.result(startFuture, timeout.duration());
-        if (Objects.nonNull(startResult) && startResult.getExecResult()) {
-            //角色启动成功
-            if (Objects.nonNull(getNext())) {
-                return getNext().handlerRequest(serviceRoleInfo);
+        try{
+            ExecResult startResult = (ExecResult) Await.result(startFuture, timeout.duration());
+            if (Objects.nonNull(startResult) && startResult.getExecResult()) {
+                //角色启动成功
+                if (Objects.nonNull(getNext())) {
+                    return getNext().handlerRequest(serviceRoleInfo);
+                }
             }
+            return startResult;
+        }catch (Exception e){
+            return new ExecResult();
         }
-        return startResult;
     }
 }
