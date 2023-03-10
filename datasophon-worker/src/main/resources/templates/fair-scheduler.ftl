@@ -12,6 +12,6 @@
 	</#list>
 	<queuePlacementPolicy>
 		<rule name="specified" create="false"/>
-		<rule name="reject" />
+		<rule name="default" />
 	</queuePlacementPolicy>
 </allocations>
