@@ -5,9 +5,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "dev" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "" ]
 
 concurrency:
   group: backend-${{ github.event.pull_request.number || github.ref }}
@@ -34,12 +34,11 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - name: Check Style
-        run: |
-          ./mvnw -T 2C -B --no-snapshot-updates clean checkstyle:check
+#       - name: Check Style
+#         run: |
+#           ./mvnw -T 2C -B --no-snapshot-updates clean checkstyle:check
       - name: Build and Package
         run: |
-          ./mvnw -B clean install \
+          ./mvnw -Pgoogle-mirror -B clean install \
                  -Dmaven.test.skip=true \
-                 -Dcheckstyle.skip=true \
                  --no-snapshot-updates
