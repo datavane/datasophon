@@ -9,9 +9,13 @@ import java.util.List;
 public class SRUtilsTest {
     @Test
     public void testAddBackend() throws SQLException, ClassNotFoundException {
-        StarRocksUtils.allBackend("ddp4","ddp5");
+        StarRocksUtils.addBackend("ddp4","ddp5");
     }
 
+    @Test
+    public void testAddFrontend() throws SQLException, ClassNotFoundException {
+        StarRocksUtils.addFollower("ddp4","ddp5");
+    }
     @Test
     public void testShowfrontends() throws SQLException, ClassNotFoundException {
         List<ProcInfo> list = StarRocksUtils.showFrontends("ddp4");

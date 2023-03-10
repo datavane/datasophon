@@ -29,13 +29,13 @@ import java.util.Objects;
 public class StarRocksUtils {
     private static final Logger logger = LoggerFactory.getLogger(StarRocksUtils.class);
 
-    public static void allFollower(String feMaster, String hostname) throws SQLException, ClassNotFoundException {
+    public static void addFollower(String feMaster, String hostname) throws SQLException, ClassNotFoundException {
         String sql = "ALTER SYSTEM add FOLLOWER \""+hostname+":9010\";";
         logger.info("sql is {}",sql);
         executeSql(feMaster, hostname,sql);
     }
 
-    public static void allBackend(String feMaster, String hostname) throws SQLException, ClassNotFoundException {
+    public static void addBackend(String feMaster, String hostname) throws SQLException, ClassNotFoundException {
         String sql = "ALTER SYSTEM add BACKEND  \""+hostname+":9050\";";
         logger.info("sql is {}",sql);
         executeSql(feMaster, hostname,sql);
