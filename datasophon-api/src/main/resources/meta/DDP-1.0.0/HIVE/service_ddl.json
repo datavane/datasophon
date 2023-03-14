@@ -66,7 +66,7 @@
         "user": "hive",
         "group": "hadoop"
       },
-      "cardinality": "1",
+      "cardinality": "1+",
       "logFile": "logs/hivemetastore.out",
       "jmxPort": 12000,
       "sortNum": 2,

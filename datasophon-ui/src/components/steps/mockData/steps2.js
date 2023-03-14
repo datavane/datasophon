@@ -30,7 +30,7 @@ export const data = {
     "code": 200,
 
     "data": [{
-            "hostname": "iflytek016",
+            "hostname": "ddp016",
 
             "ip": "172.31.96.16",
 
@@ -55,7 +55,7 @@ export const data = {
 
         },
         {
-            "hostname": "iflytek017",
+            "hostname": "ddp017",
 
             "ip": "172.31.96.17",
 

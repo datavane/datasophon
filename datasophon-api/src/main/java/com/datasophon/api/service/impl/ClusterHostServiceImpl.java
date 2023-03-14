@@ -148,7 +148,7 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
 
     @Override
     public void updateBatchNodeLabel(List<String> hostIds, String nodeLabel) {
-        List<ClusterHostEntity> list = this.list(new QueryWrapper<ClusterHostEntity>().in(Constants.ID, hostIds));
+        List<ClusterHostEntity> list = this.lambdaQuery().in(ClusterHostEntity::getId, hostIds).list();
         for (ClusterHostEntity clusterHostEntity : list) {
             clusterHostEntity.setNodeLabel(nodeLabel);
         }
@@ -157,13 +157,13 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
 
     @Override
     public List<ClusterHostEntity> getHostListByIds(List<String> ids) {
-        return this.list(new QueryWrapper<ClusterHostEntity>().in(Constants.ID, ids));
+        return this.lambdaQuery().in(ClusterHostEntity::getId, ids).list();
     }
 
     @Override
     public Result assignRack(Integer clusterId, String rack, String hostIds) {
         List<String> ids = Arrays.asList(hostIds.split(","));
-        List<ClusterHostEntity> list = this.list(new QueryWrapper<ClusterHostEntity>().in(Constants.ID, ids));
+        List<ClusterHostEntity> list = this.lambdaQuery().in(ClusterHostEntity::getId, ids).list();
         for (ClusterHostEntity clusterHostEntity : list) {
             clusterHostEntity.setRack(rack);
         }
