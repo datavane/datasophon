@@ -31,11 +31,34 @@ shift
 
 echo "Begin $startStop $command......"
 
-BIN_DIR=`dirname $0`
-BIN_DIR=`cd "$BIN_DIR"; pwd`
-DDH_HOME=$BIN_DIR/..
-
 source /etc/profile
+
+SCRIPT="$0"
+# SCRIPT may be an arbitrarily deep series of symlinks. Loop until we have the concrete path.
+while [ -h "$SCRIPT" ] ; do
+  ls=`ls -ld "$SCRIPT"`
+  # Drop everything prior to ->
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '/.*' > /dev/null; then
+    SCRIPT="$link"
+  else
+    SCRIPT=`dirname "$SCRIPT"`/"$link"
+  fi
+done
+
+# some Java parameters
+JAVA=`which java 2>/dev/null`
+if [[ $JAVA_HOME != "" ]]; then
+    JAVA=$JAVA_HOME/bin/java
+fi
+if test -z "$JAVA"; then
+    echo "No java found in the PATH. Please set JAVA_HOME."
+    exit 1
+fi
+
+BIN_DIR=`dirname "$SCRIPT"`/..
+BIN_DIR=`cd "$BIN_DIR"; pwd`
+export DDH_HOME=$BIN_DIR
 
 export JAVA_HOME=$JAVA_HOME
 #export JAVA_HOME=/opt/soft/jdk
@@ -46,7 +69,7 @@ export DDH_LOG_DIR=$DDH_HOME/logs
 export DDH_CONF_DIR=$DDH_HOME/conf
 export DDH_LIB_JARS=$DDH_HOME/lib/*
 
-export DDH_OPTS="-server -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m -Xss512k -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:LargePageSizeInBytes=128m -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -XX:+PrintGCDetails -Xloggc:$DOLPHINSCHEDULER_LOG_DIR/gc.log -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump.hprof -XshowSettings:vm $DDH_OPTS"
+export DDH_OPTS="-server $DDH_OPTS"
 export STOP_TIMEOUT=5
 
 if [ ! -d "$DDH_LOG_DIR" ]; then
@@ -86,8 +109,8 @@ case $startStop in
 
     exec_command="$LOG_FILE $DDH_OPTS -classpath $DDH_CONF_DIR:$DDH_LIB_JARS $CLASS"
 
-    echo "nohup $JAVA_HOME/bin/java $exec_command > $log 2>&1 &"
-    nohup $JAVA_HOME/bin/java $exec_command > $log 2>&1 &
+    echo "nohup $JAVA $exec_command > $log 2>&1 &"
+    nohup $JAVA $exec_command > $log 2>&1 &
     echo $! > $pid
     ;;
 
@@ -140,8 +163,8 @@ case $startStop in
 
       exec_command="$LOG_FILE $DDH_OPTS -classpath $DDH_CONF_DIR:$DDH_LIB_JARS $CLASS"
 
-      echo "nohup $JAVA_HOME/bin/java $exec_command > $log 2>&1 &"
-      nohup $JAVA_HOME/bin/java $exec_command > $log 2>&1 &
+      echo "nohup $JAVA $exec_command > $log 2>&1 &"
+      nohup $JAVA $exec_command > $log 2>&1 &
       echo $! > $pid
       ;;
   (*)
