@@ -20,12 +20,13 @@ package com.datasophon.api.controller;
 import com.datasophon.api.service.ClusterGroupService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterGroup;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
+@Api(tags = "集群组")
 @RestController
 @RequestMapping("cluster/group")
 public class ClusterGroupController {
@@ -35,7 +36,8 @@ public class ClusterGroupController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list(String groupName, Integer page, Integer pageSize){
 
 
@@ -46,7 +48,8 @@ public class ClusterGroupController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @GetMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         ClusterGroup clusterGroup = clusterGroupService.getById(id);
 
@@ -56,14 +59,16 @@ public class ClusterGroupController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
+    @ApiOperation(value = "保存")
     public Result save(Integer clusterId, String groupName){
         return  clusterGroupService.saveClusterGroup(clusterId,groupName);
     }
     /**
      * 删除用户组
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除用户组")
+    @PostMapping("/delete")
     public Result delete(Integer id){
         return clusterGroupService.deleteUserGroup(id);
     }
@@ -72,7 +77,8 @@ public class ClusterGroupController {
     /**
      * 刷新用户组到主机
      */
-    @RequestMapping("/refreshUserGroupToHost")
+    @ApiOperation(value = "刷新用户组到主机")
+    @PostMapping("/refreshUserGroupToHost")
     public Result refreshUserGroupToHost(Integer clusterId){
 
         clusterGroupService.refreshUserGroupToHost(clusterId);

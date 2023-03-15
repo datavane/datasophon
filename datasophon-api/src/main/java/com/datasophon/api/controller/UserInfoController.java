@@ -27,11 +27,10 @@ import com.datasophon.api.security.UserPermission;
 import com.datasophon.api.utils.SecurityUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.utils.EncryptionUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.datasophon.dao.entity.UserInfoEntity;
 import com.datasophon.api.service.UserInfoService;
@@ -45,6 +44,7 @@ import com.datasophon.common.utils.Result;
  * @email gaodayu2022@163.com
  * @date 2022-03-15 17:36:08
  */
+@Api(tags = "用户信息")
 @RestController
 @RequestMapping("api/user")
 public class UserInfoController {
@@ -54,7 +54,8 @@ public class UserInfoController {
     /**
      * 列表带分页
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表带分页")
+    @PostMapping("/list")
     public Result list(String username,Integer page,Integer pageSize) {
         return userInfoService.getUserListByPage(username,page,pageSize);
     }
@@ -62,7 +63,8 @@ public class UserInfoController {
     /**
      * 查询所有用户
      */
-    @RequestMapping("/all")
+    @ApiOperation(value = "查询所有用户")
+    @PostMapping("/all")
     public Result all() {
         List<UserInfoEntity> list = userInfoService.lambdaQuery().eq(UserInfoEntity::getId, 1).list();
         return Result.success(list);
@@ -71,7 +73,8 @@ public class UserInfoController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id) {
         UserInfoEntity userInfo = userInfoService.getById(id);
 
@@ -81,7 +84,8 @@ public class UserInfoController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     @UserPermission
     public Result save(@RequestBody UserInfoEntity userInfo) {
 
@@ -91,7 +95,8 @@ public class UserInfoController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     @UserPermission
     public Result update(@RequestBody UserInfoEntity userInfo) {
         //用户名判重
@@ -112,7 +117,8 @@ public class UserInfoController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     @UserPermission
     public Result delete(@RequestBody Integer[] ids) {
 //        UserInfoEntity authUser = SecurityUtils.getAuthUser();

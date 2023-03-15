@@ -20,11 +20,10 @@ package com.datasophon.api.controller;
 import java.util.Arrays;
 
 import com.datasophon.api.service.ClusterServiceInstanceService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
 import com.datasophon.common.utils.Result;
@@ -38,6 +37,7 @@ import com.datasophon.common.utils.Result;
  * @email gaodayu2022@163.com
  * @date 2022-04-24 16:25:17
  */
+@Api(tags = "集群服务")
 @RestController
 @RequestMapping("cluster/service/instance")
 public class ClusterServiceInstanceController {
@@ -47,7 +47,8 @@ public class ClusterServiceInstanceController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "服务实例列表")
+    @PostMapping("/list")
     public Result list(Integer clusterId){
         return clusterServiceInstanceService.listAll(clusterId);
     }
@@ -55,7 +56,8 @@ public class ClusterServiceInstanceController {
     /**
      * 获取服务角色类型列表
      */
-    @RequestMapping("/getServiceRoleType")
+    @ApiOperation(value = "获取服务角色类型列表")
+    @PostMapping("/getServiceRoleType")
     public Result getServiceRoleType(Integer serviceInstanceId){
         return clusterServiceInstanceService.getServiceRoleType(serviceInstanceId);
     }
@@ -64,7 +66,8 @@ public class ClusterServiceInstanceController {
     /**
      * 获取服务角色类型列表
      */
-    @RequestMapping("/configVersionCompare")
+    @ApiOperation(value = "配置版本比较")
+    @PostMapping("/configVersionCompare")
     public Result configVersionCompare(Integer serviceInstanceId,Integer roleGroupId){
         return clusterServiceInstanceService.configVersionCompare(serviceInstanceId,roleGroupId);
     }
@@ -72,7 +75,8 @@ public class ClusterServiceInstanceController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "服务实例信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         ClusterServiceInstanceEntity clusterServiceInstance = clusterServiceInstanceService.getById(id);
 
@@ -82,7 +86,8 @@ public class ClusterServiceInstanceController {
     /**
      * 信息
      */
-    @RequestMapping("/downloadClientConfig")
+    @ApiOperation(value = "下载客户端配置")
+    @PostMapping("/downloadClientConfig")
     public Result downloadClientConfig(Integer clusterId,String serviceName){
 
         return clusterServiceInstanceService.downloadClientConfig(clusterId,serviceName);
@@ -91,7 +96,8 @@ public class ClusterServiceInstanceController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存服务实例")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterServiceInstanceEntity clusterServiceInstance){
         clusterServiceInstanceService.save(clusterServiceInstance);
 
@@ -101,7 +107,8 @@ public class ClusterServiceInstanceController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改服务实例")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterServiceInstanceEntity clusterServiceInstance){
         clusterServiceInstanceService.updateById(clusterServiceInstance);
         
@@ -111,7 +118,8 @@ public class ClusterServiceInstanceController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除服务实例")
+    @PostMapping("/delete")
     public Result delete(Integer serviceInstanceId){
         return clusterServiceInstanceService.delServiceInstance(serviceInstanceId);
     }

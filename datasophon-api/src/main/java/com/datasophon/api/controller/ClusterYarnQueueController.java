@@ -23,11 +23,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.ClusterYarnQueueService;
 import com.datasophon.common.Constants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterYarnQueue;
 
@@ -38,6 +37,7 @@ import com.datasophon.dao.entity.ClusterYarnQueue;
  * @email gaodayu2022@163.com
  * @date 2022-07-13 19:34:14
  */
+@Api(tags = "集群Yarn队列")
 @RestController
 @RequestMapping("cluster/yarn/queue")
 public class ClusterYarnQueueController {
@@ -47,7 +47,8 @@ public class ClusterYarnQueueController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list(Integer clusterId, Integer page,Integer pageSize){
         return clusterYarnQueueService.listByPage(clusterId,page,pageSize);
     }
@@ -55,7 +56,8 @@ public class ClusterYarnQueueController {
     /**
      * 刷新队列
      */
-    @RequestMapping("/refreshQueues")
+    @ApiOperation(value = "刷新队列")
+    @PostMapping("/refreshQueues")
     public Result refreshQueues(Integer clusterId) throws Exception {
         return clusterYarnQueueService.refreshQueues(clusterId);
     }
@@ -63,7 +65,8 @@ public class ClusterYarnQueueController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         ClusterYarnQueue clusterYarnQueue = clusterYarnQueueService.getById(id);
 
@@ -73,7 +76,8 @@ public class ClusterYarnQueueController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterYarnQueue clusterYarnQueue){
         List<ClusterYarnQueue> list = clusterYarnQueueService.list(new QueryWrapper<ClusterYarnQueue>().eq(Constants.QUEUE_NAME, clusterYarnQueue.getQueueName()));
         if(Objects.nonNull(list) && list.size() == 1){
@@ -88,7 +92,8 @@ public class ClusterYarnQueueController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterYarnQueue clusterYarnQueue){
 
         clusterYarnQueueService.updateById(clusterYarnQueue);
@@ -99,7 +104,8 @@ public class ClusterYarnQueueController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids){
         clusterYarnQueueService.removeByIds(Arrays.asList(ids));
 

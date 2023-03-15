@@ -20,12 +20,14 @@ package com.datasophon.api.controller;
 import com.datasophon.api.service.ClusterNodeLabelService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterNodeLabelEntity;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Api(tags = "集群节点")
 @RestController
 @RequestMapping("cluster/node/label")
 public class ClusterNodeLabelController {
@@ -36,7 +38,8 @@ public class ClusterNodeLabelController {
     /**
      * save node label
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "节点标签列表")
+    @PostMapping("/list")
     public Result list(Integer clusterId) {
         List<ClusterNodeLabelEntity> list = nodeLabelService.queryClusterNodeLabel(clusterId);
         return Result.success(list);
@@ -45,7 +48,8 @@ public class ClusterNodeLabelController {
     /**
      * save node label
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存节点标签")
+    @PostMapping("/save")
     public Result save(Integer clusterId, String nodeLabel) {
         return nodeLabelService.saveNodeLabel(clusterId, nodeLabel);
     }
@@ -53,7 +57,8 @@ public class ClusterNodeLabelController {
     /**
      * delete node label
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除节点标签")
+    @PostMapping("/delete")
     public Result delete(Integer nodeLabelId) {
         return nodeLabelService.deleteNodeLabel(nodeLabelId);
     }
@@ -61,7 +66,8 @@ public class ClusterNodeLabelController {
     /**
      * assign node label
      */
-    @RequestMapping("/assign")
+    @ApiOperation(value = "分配")
+    @PostMapping("/assign")
     public Result assign(Integer nodeLabelId, String hostIds) {
         return nodeLabelService.assignNodeLabel(nodeLabelId, hostIds);
     }

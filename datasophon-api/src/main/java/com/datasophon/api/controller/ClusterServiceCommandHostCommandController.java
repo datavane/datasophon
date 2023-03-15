@@ -19,11 +19,10 @@ package com.datasophon.api.controller;
 
 import java.util.Arrays;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
 import com.datasophon.api.service.ClusterServiceCommandHostCommandService;
@@ -37,6 +36,7 @@ import com.datasophon.common.utils.Result;
  * @email gaodayu2022@163.com
  * @date 2022-04-12 11:28:06
  */
+@Api(tags = "集群服务操作指令主机指令")
 @RestController
 @RequestMapping("api/cluster/service/command/host/command")
 public class ClusterServiceCommandHostCommandController {
@@ -47,13 +47,15 @@ public class ClusterServiceCommandHostCommandController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list(String hostname, String commandHostId, Integer page, Integer pageSize) {
 
         return clusterServiceCommandHostCommandService.getHostCommandList(hostname, commandHostId, page, pageSize);
     }
 
-    @RequestMapping("/getHostCommandLog")
+    @ApiOperation(value = "获取主机命令日志")
+    @PostMapping("/getHostCommandLog")
     public Result getHostCommandLog(Integer clusterId, String hostCommandId) throws Exception {
         return clusterServiceCommandHostCommandService.getHostCommandLog(clusterId, hostCommandId);
     }
@@ -61,7 +63,8 @@ public class ClusterServiceCommandHostCommandController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id) {
         ClusterServiceCommandHostCommandEntity clusterServiceCommandHostCommand = clusterServiceCommandHostCommandService.getById(id);
 
@@ -71,7 +74,8 @@ public class ClusterServiceCommandHostCommandController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterServiceCommandHostCommandEntity clusterServiceCommandHostCommand) {
         clusterServiceCommandHostCommandService.save(clusterServiceCommandHostCommand);
 
@@ -81,7 +85,8 @@ public class ClusterServiceCommandHostCommandController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterServiceCommandHostCommandEntity clusterServiceCommandHostCommand) {
         clusterServiceCommandHostCommandService.updateById(clusterServiceCommandHostCommand);
 
@@ -91,7 +96,8 @@ public class ClusterServiceCommandHostCommandController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids) {
         clusterServiceCommandHostCommandService.removeByIds(Arrays.asList(ids));
 

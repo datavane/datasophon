@@ -23,11 +23,10 @@ import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.AlertGroupService;
 import com.datasophon.api.service.ClusterAlertQuotaService;
 import com.datasophon.dao.entity.ClusterAlertQuota;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.datasophon.dao.entity.AlertGroupEntity;
 import com.datasophon.common.utils.Result;
@@ -40,6 +39,7 @@ import com.datasophon.common.utils.Result;
  * @email gaodayu2022@163.com
  * @date 2022-03-15 17:36:08
  */
+@Api(tags = "告警组")
 @RestController
 @RequestMapping("alert/group")
 public class AlertGroupController {
@@ -52,7 +52,8 @@ public class AlertGroupController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list(Integer clusterId,String alertGroupName,Integer page,Integer pageSize) {
        return alertGroupService.getAlertGroupList(clusterId,alertGroupName,page,pageSize);
     }
@@ -61,7 +62,8 @@ public class AlertGroupController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @GetMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id) {
         AlertGroupEntity alertGroup = alertGroupService.getById(id);
 
@@ -71,7 +73,8 @@ public class AlertGroupController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody AlertGroupEntity alertGroup) {
         alertGroup.setCreateTime(new Date());
         return alertGroupService.saveAlertGroup(alertGroup);
@@ -80,7 +83,8 @@ public class AlertGroupController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody AlertGroupEntity alertGroup) {
         alertGroupService.updateById(alertGroup);
 
@@ -90,7 +94,8 @@ public class AlertGroupController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids) {
 
         //校验是否绑定告警指标

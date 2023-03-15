@@ -21,11 +21,10 @@ import java.util.Arrays;
 
 import com.datasophon.api.service.ClusterAlertHistoryService;
 import com.datasophon.common.utils.Result;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.datasophon.dao.entity.ClusterAlertHistory;
 
@@ -36,6 +35,7 @@ import com.datasophon.dao.entity.ClusterAlertHistory;
  * @email gaodayu2022@163.com
  * @date 2022-06-07 12:04:38
  */
+@Api(tags = "集群告警历史")
 @RestController
 @RequestMapping("cluster/alert/history")
 public class ClusterAlertHistoryController {
@@ -48,7 +48,7 @@ public class ClusterAlertHistoryController {
     /**
      * 列表
      */
-    @RequestMapping("/getAlertList")
+    @PostMapping("/getAlertList")
     public Result getAlertList(Integer serviceInstanceId){
         return clusterAlertHistoryService.getAlertList(serviceInstanceId);
     }
@@ -56,7 +56,8 @@ public class ClusterAlertHistoryController {
     /**
      * 列表
      */
-    @RequestMapping("/getAllAlertList")
+    @ApiOperation(value = "列表")
+    @PostMapping("/getAllAlertList")
     public Result getAllAlertList(Integer clusterId, Integer page,Integer pageSize){
         return clusterAlertHistoryService.getAllAlertList(clusterId,page,pageSize);
     }
@@ -65,7 +66,8 @@ public class ClusterAlertHistoryController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         ClusterAlertHistory clusterAlertHistory = clusterAlertHistoryService.getById(id);
 
@@ -75,7 +77,8 @@ public class ClusterAlertHistoryController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody String alertMessage){
         clusterAlertHistoryService.saveAlertHistory(alertMessage);
         return Result.success();
@@ -84,7 +87,8 @@ public class ClusterAlertHistoryController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterAlertHistory clusterAlertHistory){
 
         clusterAlertHistoryService.updateById(clusterAlertHistory);
@@ -95,7 +99,8 @@ public class ClusterAlertHistoryController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids){
         clusterAlertHistoryService.removeByIds(Arrays.asList(ids));
 

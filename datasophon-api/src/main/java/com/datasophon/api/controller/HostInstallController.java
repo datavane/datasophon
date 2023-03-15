@@ -21,13 +21,15 @@ import com.datasophon.api.annotation.Hosts;
 import com.datasophon.api.security.UserPermission;
 import com.datasophon.api.service.InstallService;
 import com.datasophon.common.utils.Result;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.*;
 
-
+@Api(tags = "主机安装")
 @Validated
 @RestController
 @RequestMapping("host/install")
@@ -39,6 +41,7 @@ public class HostInstallController {
     /**
      * 获取安装步骤
      */
+    @ApiOperation(value = "获取安装步骤", notes = "INSTALL_STEP")
     @GetMapping("/getInstallStep")
     public Result getInstallStep(Integer type) {
         return installService.getInstallStep(type);
@@ -47,6 +50,7 @@ public class HostInstallController {
     /**
      * 解析主机列表
      */
+    @ApiOperation(value = "解析主机列表")
     @PostMapping("/analysisHostList")
     @UserPermission
     public Result analysisHostList(@RequestParam Integer clusterId,
@@ -61,6 +65,7 @@ public class HostInstallController {
     /**
      * 查询主机校验状态
      */
+    @ApiOperation(value = "查询主机校验状态")
     @PostMapping("/getHostCheckStatus")
     @UserPermission
     public Result getHostCheckStatus(Integer clusterId, String sshUser, Integer sshPort) {
@@ -70,6 +75,7 @@ public class HostInstallController {
     /**
      * 重新进行主机环境校验
      */
+    @ApiOperation(value = "重新进行主机环境校验")
     @PostMapping("/rehostCheck")
     @UserPermission
     public Result rehostCheck(Integer clusterId, String hostnames, String sshUser, Integer sshPort) {
@@ -79,6 +85,7 @@ public class HostInstallController {
     /**
      * 查询主机校验是否全部完成
      */
+    @ApiOperation(value = "查询主机校验是否全部完成")
     @PostMapping("/hostCheckCompleted")
     @UserPermission
     public Result hostCheckCompleted(Integer clusterId) {
@@ -88,12 +95,14 @@ public class HostInstallController {
     /**
      * 主机管理agent分发安装进度列表
      */
+    @ApiOperation(value = "主机管理agent分发安装进度列表")
     @PostMapping("/dispatcherHostAgentList")
     @UserPermission
     public Result dispatcherHostAgentList(Integer clusterId, Integer installStateCode, Integer page, Integer pageSize) {
         return installService.dispatcherHostAgentList(clusterId, installStateCode, page, pageSize);
     }
 
+    @ApiOperation(value = "主机管理agent分发完成状态")
     @PostMapping("/dispatcherHostAgentCompleted")
     public Result dispatcherHostAgentCompleted(Integer clusterId) {
         return installService.dispatcherHostAgentCompleted(clusterId);
@@ -102,6 +111,7 @@ public class HostInstallController {
     /**
      * 主机管理agent分发取消
      */
+    @ApiOperation(value = "主机管理agent分发取消")
     @PostMapping("/cancelDispatcherHostAgent")
     public Result cancelDispatcherHostAgent(Integer clusterId, String hostname, Integer installStateCode) {
         return installService.cancelDispatcherHostAgent(clusterId, hostname, installStateCode);
@@ -114,6 +124,7 @@ public class HostInstallController {
      * @param hostnames
      * @return
      */
+    @ApiOperation(value = "主机管理agent分发安装重试")
     @PostMapping("/reStartDispatcherHostAgent")
     public Result reStartDispatcherHostAgent(Integer clusterId, String hostnames) {
         return installService.reStartDispatcherHostAgent(clusterId, hostnames);
@@ -125,6 +136,7 @@ public class HostInstallController {
      * @param commandType
      * @return
      */
+    @ApiOperation(value = "主机管理agent操作")
     @PostMapping("/generateHostAgentCommand")
     public Result generateHostAgentCommand(
                                            @RequestParam String clusterHostIds,

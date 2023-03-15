@@ -20,11 +20,10 @@ package com.datasophon.api.controller;
 import com.datasophon.api.service.ClusterQueueCapacityService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterQueueCapacity;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 
@@ -33,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @email dygao2@datasophon.com
  * @date 2022-11-25 14:30:11
  */
+@Api(tags = "集群队列")
 @RestController
 @RequestMapping("cluster/queue/capacity")
 public class ClusterQueueCapacityController {
@@ -43,7 +43,8 @@ public class ClusterQueueCapacityController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list(Integer clusterId){
 
         return clusterQueueCapacityService.listCapacityQueue(clusterId);
@@ -54,7 +55,8 @@ public class ClusterQueueCapacityController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @GetMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         ClusterQueueCapacity clusterQueueCapacity = clusterQueueCapacityService.getById(id);
 
@@ -64,7 +66,8 @@ public class ClusterQueueCapacityController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterQueueCapacity clusterQueueCapacity){
         clusterQueueCapacityService.save(clusterQueueCapacity);
 
@@ -74,7 +77,8 @@ public class ClusterQueueCapacityController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterQueueCapacity clusterQueueCapacity){
 
         clusterQueueCapacityService.updateById(clusterQueueCapacity);
@@ -85,7 +89,8 @@ public class ClusterQueueCapacityController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete( Integer id){
         clusterQueueCapacityService.removeById(id);
 
@@ -95,7 +100,8 @@ public class ClusterQueueCapacityController {
     /**
      * 删除
      */
-    @RequestMapping("/refreshToYarn")
+    @ApiOperation(value = "刷新到yarn")
+    @PostMapping("/refreshToYarn")
     public Result refreshToYarn( Integer clusterId) throws Exception {
         return clusterQueueCapacityService.refreshToYarn(clusterId);
     }

@@ -20,7 +20,10 @@ package com.datasophon.api.controller;
 import java.util.Arrays;
 import java.util.List;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +40,7 @@ import com.datasophon.common.utils.Result;
  * @email gaodayu2022@163.com
  * @date 2022-04-24 16:25:17
  */
+@Api(tags = "集群服务角色实例")
 @RestController
 @RequestMapping("cluster/service/role/instance")
 public class ClusterServiceRoleInstanceController {
@@ -46,7 +50,8 @@ public class ClusterServiceRoleInstanceController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list(Integer serviceInstanceId,String hostname,Integer serviceRoleState, String serviceRoleName,Integer roleGroupId,Integer page, Integer pageSize) {
         return clusterServiceRoleInstanceService.listAll(serviceInstanceId,hostname,serviceRoleState,serviceRoleName,roleGroupId,page,pageSize);
     }
@@ -55,7 +60,8 @@ public class ClusterServiceRoleInstanceController {
     /**
      * 信息
      */
-    @RequestMapping("/getLog")
+    @ApiOperation(value = "获取日志")
+    @PostMapping("/getLog")
     public Result getLog(Integer serviceRoleInstanceId) throws Exception {
         return clusterServiceRoleInstanceService.getLog(serviceRoleInstanceId);
     }
@@ -63,7 +69,8 @@ public class ClusterServiceRoleInstanceController {
     /**
      * 退役
      */
-    @RequestMapping("/decommissionNode")
+    @ApiOperation(value = "退役")
+    @PostMapping("/decommissionNode")
     public Result decommissionNode(String serviceRoleInstanceIds,String serviceName) throws Exception {
         return clusterServiceRoleInstanceService.decommissionNode(serviceRoleInstanceIds,serviceName);
     }
@@ -71,7 +78,8 @@ public class ClusterServiceRoleInstanceController {
     /**
      * 重启过时服务
      */
-    @RequestMapping("/restartObsoleteService")
+    @ApiOperation(value = "重启过时服务")
+    @PostMapping("/restartObsoleteService")
     public Result restartObsoleteService(Integer roleGroupId) throws Exception {
         return clusterServiceRoleInstanceService.restartObsoleteService(roleGroupId);
     }
@@ -79,7 +87,8 @@ public class ClusterServiceRoleInstanceController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterServiceRoleInstanceEntity clusterServiceRoleInstance) {
         clusterServiceRoleInstanceService.save(clusterServiceRoleInstance);
 
@@ -89,7 +98,8 @@ public class ClusterServiceRoleInstanceController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterServiceRoleInstanceEntity clusterServiceRoleInstance) {
         clusterServiceRoleInstanceService.updateById(clusterServiceRoleInstance);
         return Result.success();
@@ -98,7 +108,8 @@ public class ClusterServiceRoleInstanceController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(String serviceRoleInstancesIds) {
         List<String> idList = Arrays.asList(serviceRoleInstancesIds.split(","));
         return clusterServiceRoleInstanceService.deleteServiceRole(idList);

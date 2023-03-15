@@ -22,11 +22,10 @@ import java.util.Arrays;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.security.UserPermission;
 import com.datasophon.common.Constants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.common.utils.Result;
@@ -39,6 +38,7 @@ import com.datasophon.common.utils.Result;
  * @email gaodayu2022@163.com
  * @date 2022-03-15 17:36:08
  */
+@Api(tags = "集群信息")
 @RestController
 @RequestMapping("api/cluster")
 public class ClusterInfoController {
@@ -48,14 +48,15 @@ public class ClusterInfoController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list() {
         return clusterInfoService.getClusterList();
     }
     /**
      * 配置好的集群列表
      */
-    @RequestMapping("/runningClusterList")
+    @GetMapping("/runningClusterList")
     public Result runningClusterList() {
         return clusterInfoService.runningClusterList();
     }
@@ -64,7 +65,8 @@ public class ClusterInfoController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @GetMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id) {
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(id);
 
@@ -74,13 +76,15 @@ public class ClusterInfoController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     @UserPermission
     public Result save(@RequestBody ClusterInfoEntity clusterInfo)  {
         return clusterInfoService.saveCluster(clusterInfo);
     }
 
-    @RequestMapping("/updateClusterState")
+    @ApiOperation(value = "修改集群状态")
+    @PostMapping("/updateClusterState")
     public Result updateClusterState(Integer clusterId,Integer clusterState) {
 
         return clusterInfoService.updateClusterState(clusterId,clusterState);
@@ -89,7 +93,8 @@ public class ClusterInfoController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     @UserPermission
     public Result update(@RequestBody ClusterInfoEntity clusterInfo) {
         return clusterInfoService.updateCluster(clusterInfo);
@@ -99,7 +104,8 @@ public class ClusterInfoController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     @UserPermission
     public Result delete(@RequestBody Integer[] ids) {
         clusterInfoService.deleteCluster(Arrays.asList(ids));

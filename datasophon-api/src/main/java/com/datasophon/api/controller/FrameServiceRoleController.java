@@ -22,11 +22,10 @@ import java.util.Arrays;
 import com.datasophon.api.service.AlertGroupService;
 import com.datasophon.api.service.FrameServiceRoleService;
 import com.datasophon.dao.entity.AlertGroupEntity;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.datasophon.dao.entity.FrameServiceRoleEntity;
 import com.datasophon.common.utils.Result;
@@ -39,6 +38,7 @@ import com.datasophon.common.utils.Result;
  * @email gaodayu2022@163.com
  * @date 2022-04-18 14:38:53
  */
+@Api(tags = "框架服务角色")
 @RestController
 @RequestMapping("api/frame/service/role")
 public class FrameServiceRoleController {
@@ -51,17 +51,20 @@ public class FrameServiceRoleController {
     /**
      * 查询服务对应的角色列表
      */
-    @RequestMapping("/getServiceRoleList")
+    @ApiOperation(value = "查询服务对应的角色列表")
+    @PostMapping("/getServiceRoleList")
     public Result getServiceRoleOfMaster(Integer clusterId,String serviceIds,Integer serviceRoleType){
         return frameServiceRoleService.getServiceRoleList(clusterId,serviceIds,serviceRoleType);
     }
 
-    @RequestMapping("/getNonMasterRoleList")
+    @ApiOperation(value = "获取非主角色列表")
+    @PostMapping("/getNonMasterRoleList")
     public Result getNonMasterRoleList(Integer clusterId,String serviceIds){
         return frameServiceRoleService.getNonMasterRoleList(clusterId,serviceIds);
     }
 
-    @RequestMapping("/getServiceRoleByServiceName")
+    @ApiOperation(value = "按服务名称获取服务角色")
+    @PostMapping("/getServiceRoleByServiceName")
     public Result getServiceRoleByServiceName(Integer clusterId,Integer alertGroupId){
         AlertGroupEntity alertGroupEntity = alertGroupService.getById(alertGroupId);
         return frameServiceRoleService.getServiceRoleByServiceName(clusterId,alertGroupEntity.getAlertGroupCategory());
@@ -70,7 +73,8 @@ public class FrameServiceRoleController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         FrameServiceRoleEntity frameServiceRole = frameServiceRoleService.getById(id);
 
@@ -80,7 +84,8 @@ public class FrameServiceRoleController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody FrameServiceRoleEntity frameServiceRole){
         frameServiceRoleService.save(frameServiceRole);
 
@@ -90,7 +95,8 @@ public class FrameServiceRoleController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody FrameServiceRoleEntity frameServiceRole){
         frameServiceRoleService.updateById(frameServiceRole);
         
@@ -100,7 +106,8 @@ public class FrameServiceRoleController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids){
         frameServiceRoleService.removeByIds(Arrays.asList(ids));
 

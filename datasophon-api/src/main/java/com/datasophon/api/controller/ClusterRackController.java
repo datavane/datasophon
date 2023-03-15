@@ -20,8 +20,11 @@ package com.datasophon.api.controller;
 import com.datasophon.api.service.ClusterRackService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterRack;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,6 +37,7 @@ import java.util.List;
  * @email dygao2@datasophon.com
  * @date 2022-11-25 11:31:59
  */
+@Api(tags = "集群机架")
 @RestController
 @RequestMapping("cluster/rack")
 public class ClusterRackController {
@@ -43,7 +47,8 @@ public class ClusterRackController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list(Integer clusterId){
         List<ClusterRack> list = clusterRackService.queryClusterRack(clusterId);
         return Result.success(list);
@@ -53,7 +58,8 @@ public class ClusterRackController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         ClusterRack clusterRack = clusterRackService.getById(id);
 
@@ -63,7 +69,8 @@ public class ClusterRackController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(Integer clusterId , String rack){
         clusterRackService.saveRack(clusterId,rack);
         return Result.success();
@@ -74,7 +81,8 @@ public class ClusterRackController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(Integer clusterId ,Integer rackId){
         return clusterRackService.deleteRack(rackId);
     }

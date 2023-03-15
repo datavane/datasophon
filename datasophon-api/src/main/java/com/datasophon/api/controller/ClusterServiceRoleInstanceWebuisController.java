@@ -20,11 +20,10 @@ package com.datasophon.api.controller;
 import java.util.Arrays;
 
 import com.datasophon.api.service.ClusterServiceRoleInstanceWebuisService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceWebuis;
 
@@ -35,6 +34,7 @@ import com.datasophon.dao.entity.ClusterServiceRoleInstanceWebuis;
  * @email gaodayu2022@163.com
  * @date 2022-06-30 09:35:40
  */
+@Api(tags = "集群服务角色对应web ui")
 @RestController
 @RequestMapping("cluster/webuis")
 public class ClusterServiceRoleInstanceWebuisController {
@@ -44,7 +44,8 @@ public class ClusterServiceRoleInstanceWebuisController {
     /**
      * 列表
      */
-    @RequestMapping("/getWebUis")
+    @ApiOperation(value = "ui列表")
+    @PostMapping("/getWebUis")
     public Result getWebUis(Integer serviceInstanceId){
 
         return clusterServiceRoleInstanceWebuisService.getWebUis(serviceInstanceId);
@@ -54,7 +55,8 @@ public class ClusterServiceRoleInstanceWebuisController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         ClusterServiceRoleInstanceWebuis clusterServiceRoleInstanceWebuis = clusterServiceRoleInstanceWebuisService.getById(id);
 
@@ -64,7 +66,8 @@ public class ClusterServiceRoleInstanceWebuisController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterServiceRoleInstanceWebuis clusterServiceRoleInstanceWebuis){
         clusterServiceRoleInstanceWebuisService.save(clusterServiceRoleInstanceWebuis);
 
@@ -74,7 +77,8 @@ public class ClusterServiceRoleInstanceWebuisController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterServiceRoleInstanceWebuis clusterServiceRoleInstanceWebuis){
 
         clusterServiceRoleInstanceWebuisService.updateById(clusterServiceRoleInstanceWebuis);
@@ -85,7 +89,8 @@ public class ClusterServiceRoleInstanceWebuisController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids){
         clusterServiceRoleInstanceWebuisService.removeByIds(Arrays.asList(ids));
 

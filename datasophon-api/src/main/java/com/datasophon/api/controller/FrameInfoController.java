@@ -19,11 +19,10 @@ package com.datasophon.api.controller;
 
 import java.util.Arrays;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.datasophon.dao.entity.FrameInfoEntity;
 import com.datasophon.api.service.FrameInfoService;
@@ -38,6 +37,7 @@ import com.datasophon.common.utils.Result;
  * @email gaodayu2022@163.com
  * @date 2022-03-15 17:36:08
  */
+@Api(tags = "集群框架")
 @RestController
 @RequestMapping("api/frame")
 public class FrameInfoController {
@@ -47,7 +47,8 @@ public class FrameInfoController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list(){
         return frameInfoService.getAllClusterFrame();
     }
@@ -56,7 +57,8 @@ public class FrameInfoController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         FrameInfoEntity frameInfo = frameInfoService.getById(id);
 
@@ -66,7 +68,8 @@ public class FrameInfoController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody FrameInfoEntity frameInfo){
         frameInfoService.save(frameInfo);
 
@@ -76,7 +79,8 @@ public class FrameInfoController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody FrameInfoEntity frameInfo){
         frameInfoService.updateById(frameInfo);
         
@@ -86,7 +90,8 @@ public class FrameInfoController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids){
         frameInfoService.removeByIds(Arrays.asList(ids));
 

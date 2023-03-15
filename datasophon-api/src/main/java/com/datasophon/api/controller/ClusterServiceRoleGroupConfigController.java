@@ -20,11 +20,10 @@ package com.datasophon.api.controller;
 import java.util.Arrays;
 
 import com.datasophon.api.service.ClusterServiceRoleGroupConfigService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 
@@ -35,6 +34,7 @@ import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
  * @email gaodayu2022@163.com
  * @date 2022-08-16 16:56:01
  */
+@Api(tags = "集群服务角色组")
 @RestController
 @RequestMapping("cluster/service/role/group/config")
 public class ClusterServiceRoleGroupConfigController {
@@ -44,7 +44,8 @@ public class ClusterServiceRoleGroupConfigController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list(){
 
 
@@ -55,7 +56,8 @@ public class ClusterServiceRoleGroupConfigController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         ClusterServiceRoleGroupConfig clusterServiceRoleGroupConfig = clusterServiceRoleGroupConfigService.getById(id);
 
@@ -65,7 +67,8 @@ public class ClusterServiceRoleGroupConfigController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterServiceRoleGroupConfig clusterServiceRoleGroupConfig){
         clusterServiceRoleGroupConfigService.save(clusterServiceRoleGroupConfig);
 
@@ -75,7 +78,8 @@ public class ClusterServiceRoleGroupConfigController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterServiceRoleGroupConfig clusterServiceRoleGroupConfig){
 
         clusterServiceRoleGroupConfigService.updateById(clusterServiceRoleGroupConfig);
@@ -86,7 +90,8 @@ public class ClusterServiceRoleGroupConfigController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids){
         clusterServiceRoleGroupConfigService.removeByIds(Arrays.asList(ids));
 

@@ -10,9 +10,9 @@ security:
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://ddp2:3306/datasophon?useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://10.1.4.103:3306/datasophon?useUnicode=true&characterEncoding=utf-8
     username: root
-    password: root
+    password: 123456
     driver-class-name: com.mysql.jdbc.Driver
   resources:
     static-locations: classpath:/front/views/
@@ -28,6 +28,8 @@ spring:
   messages:
     basename: i18n/messages
     encoding: UTF-8
+    cache-duration: 3600
+
 #mybatis
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
@@ -53,3 +55,9 @@ mybatis-plus:
     call-setters-on-nulls: true
     jdbc-type-for-null: 'null'
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+knife4j:
+  enable: true
+  setting:
+    # Knife4j默认显示中文(zh-CN),如果开发者想直接显示英文(en-US)，在通过该配置进行设置即可
+    language: zh-CN

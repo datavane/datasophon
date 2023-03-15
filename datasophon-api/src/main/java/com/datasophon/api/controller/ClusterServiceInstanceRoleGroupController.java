@@ -23,11 +23,10 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.service.ClusterServiceInstanceRoleGroupService;
 import com.datasophon.common.Constants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceInstanceRoleGroup;
 
@@ -38,6 +37,7 @@ import com.datasophon.dao.entity.ClusterServiceInstanceRoleGroup;
  * @email gaodayu2022@163.com
  * @date 2022-08-16 16:56:00
  */
+@Api(tags = "集群服务实例角色组")
 @RestController
 @RequestMapping("cluster/service/instance/role/group")
 public class ClusterServiceInstanceRoleGroupController {
@@ -47,7 +47,8 @@ public class ClusterServiceInstanceRoleGroupController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "实例角色组列表")
+    @PostMapping("/list")
     public Result list(Integer serviceInstanceId){
         List<ClusterServiceInstanceRoleGroup> list = clusterServiceInstanceRoleGroupService.list(new QueryWrapper<ClusterServiceInstanceRoleGroup>()
                 .eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceId));
@@ -58,7 +59,8 @@ public class ClusterServiceInstanceRoleGroupController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "实例角色组信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         ClusterServiceInstanceRoleGroup clusterServiceInstanceRoleGroup = clusterServiceInstanceRoleGroupService.getById(id);
 
@@ -68,7 +70,8 @@ public class ClusterServiceInstanceRoleGroupController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(Integer serviceInstanceId,Integer roleGroupId,String roleGroupName){
         clusterServiceInstanceRoleGroupService.saveRoleGroup(serviceInstanceId,roleGroupId,roleGroupName);
         return Result.success();
@@ -77,7 +80,8 @@ public class ClusterServiceInstanceRoleGroupController {
     /**
      * 分配角色组
      */
-    @RequestMapping("/bind")
+    @ApiOperation(value = "分配角色组")
+    @PostMapping("/bind")
     public Result bind(String roleInstanceIds,Integer roleGroupId){
         clusterServiceInstanceRoleGroupService.bind(roleInstanceIds,roleGroupId);
         return Result.success();
@@ -86,7 +90,8 @@ public class ClusterServiceInstanceRoleGroupController {
     /**
      * 修改
      */
-    @RequestMapping("/rename")
+    @ApiOperation(value = "重命名")
+    @PostMapping("/rename")
     public Result update(Integer roleGroupId,String roleGroupName){
 
         return clusterServiceInstanceRoleGroupService.rename(roleGroupId,roleGroupName);
@@ -96,7 +101,8 @@ public class ClusterServiceInstanceRoleGroupController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除角色组")
+    @PostMapping("/delete")
     public Result delete(Integer roleGroupId){
 //        clusterServiceInstanceRoleGroupService.removeByIds(Arrays.asList(ids));
 

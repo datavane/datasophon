@@ -21,11 +21,10 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.common.Constants;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.api.service.ClusterHostService;
@@ -39,6 +38,7 @@ import com.datasophon.common.utils.Result;
  * @email gaodayu2022@163.com
  * @date 2022-04-14 20:32:39
  */
+@Api(tags = "集群主机")
 @RestController
 @RequestMapping("api/cluster/host")
 public class ClusterHostController {
@@ -48,7 +48,8 @@ public class ClusterHostController {
     /**
      * 查询集群所有主机
      */
-    @RequestMapping("/all")
+    @ApiOperation(value = "查询集群所有主机")
+    @PostMapping("/all")
     public Result all(Integer clusterId) {
         List<ClusterHostEntity> list = clusterHostService.list(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.MANAGED, 1)
@@ -59,25 +60,29 @@ public class ClusterHostController {
     /**
      * 查询集群所有主机
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "查询集群所有主机")
+    @PostMapping("/list")
     public Result list(Integer clusterId, String hostname, String ip,String cpuArchitecture, Integer hostState, String orderField, String orderType, Integer page, Integer pageSize) {
         return clusterHostService.listByPage(clusterId, hostname, ip,cpuArchitecture, hostState, orderField, orderType, page, pageSize);
 
     }
 
-    @RequestMapping("/getRoleListByHostname")
+    @ApiOperation(value = "按主机名获取角色列表")
+    @PostMapping("/getRoleListByHostname")
     public Result getRoleListByHostname(Integer clusterId, String hostname) {
         return clusterHostService.getRoleListByHostname(clusterId, hostname);
 
     }
 
-    @RequestMapping("/getRack")
+    @ApiOperation(value = "获取机架")
+    @PostMapping("/getRack")
     public Result getRack(Integer clusterId) {
         return clusterHostService.getRack(clusterId);
 
     }
 
-    @RequestMapping("/assignRack")
+    @ApiOperation(value = "分配机架")
+    @PostMapping("/assignRack")
     public Result assignRack(Integer clusterId, String rack, String hostIds) {
         return clusterHostService.assignRack(clusterId, rack, hostIds);
 
@@ -87,7 +92,8 @@ public class ClusterHostController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @GetMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id) {
         ClusterHostEntity clusterHost = clusterHostService.getById(id);
 
@@ -97,7 +103,8 @@ public class ClusterHostController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterHostEntity clusterHost) {
         clusterHostService.save(clusterHost);
 
@@ -107,7 +114,8 @@ public class ClusterHostController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterHostEntity clusterHost) {
         clusterHostService.updateById(clusterHost);
 
@@ -117,7 +125,8 @@ public class ClusterHostController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(Integer hostId) {
 
         return clusterHostService.deleteHost(hostId);

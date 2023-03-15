@@ -25,6 +25,8 @@ import com.datasophon.api.service.SessionService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.UserInfoEntity;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.httpclient.HttpStatus;
 
 import org.apache.commons.lang.StringUtils;
@@ -40,7 +42,7 @@ import java.util.Map;
 
 import static com.datasophon.api.enums.Status.IP_IS_EMPTY;
 
-
+@Api(tags = "登录")
 @RestController
 @RequestMapping("")
 public class LoginController{
@@ -65,7 +67,8 @@ public class LoginController{
      * @return login result
      */
 
-    @RequestMapping("/login")
+    @ApiOperation(value = "登录")
+    @PostMapping("/login")
     public Result login(@RequestParam(value = "username") String userName,
                         @RequestParam(value = "password") String userPassword,
                         HttpServletRequest request,
@@ -108,6 +111,7 @@ public class LoginController{
      * @param request   request
      * @return sign out result
      */
+    @ApiOperation(value = "登出")
     @PostMapping(value = "/signOut")
     public Result signOut(@RequestAttribute(value = Constants.SESSION_USER) UserInfoEntity loginUser,
                           HttpServletRequest request) {

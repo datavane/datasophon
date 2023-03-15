@@ -20,7 +20,10 @@ package com.datasophon.api.controller;
 import com.datasophon.api.service.ClusterYarnSchedulerService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterYarnScheduler;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +37,7 @@ import java.util.Arrays;
  * @email dygao2@datasophon.com
  * @date 2022-11-25 15:02:11
  */
+@Api(tags = "集群Yarn调度")
 @RestController
 @RequestMapping("cluster/yarn/scheduler")
 public class ClusterYarnSchedulerController {
@@ -43,7 +47,8 @@ public class ClusterYarnSchedulerController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list(){
 
 
@@ -54,7 +59,8 @@ public class ClusterYarnSchedulerController {
     /**
      * 信息
      */
-    @RequestMapping("/info")
+    @ApiOperation(value = "信息")
+    @PostMapping("/info")
     public Result info(Integer clusterId){
         ClusterYarnScheduler clusterYarnScheduler = clusterYarnSchedulerService.getScheduler(clusterId);
 
@@ -64,7 +70,8 @@ public class ClusterYarnSchedulerController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterYarnScheduler clusterYarnScheduler){
         clusterYarnSchedulerService.save(clusterYarnScheduler);
 
@@ -74,7 +81,8 @@ public class ClusterYarnSchedulerController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterYarnScheduler clusterYarnScheduler){
 
         clusterYarnSchedulerService.updateById(clusterYarnScheduler);
@@ -85,7 +93,8 @@ public class ClusterYarnSchedulerController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids){
         clusterYarnSchedulerService.removeByIds(Arrays.asList(ids));
 

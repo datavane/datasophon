@@ -21,12 +21,10 @@ import java.util.Arrays;
 import java.util.Map;
 
 import com.datasophon.api.service.RoleInfoService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.datasophon.dao.entity.RoleInfoEntity;
 import com.datasophon.common.utils.Result;
@@ -40,6 +38,7 @@ import com.datasophon.common.utils.Result;
  * @email gaodayu2022@163.com
  * @date 2022-03-15 17:36:08
  */
+@Api(tags = "角色信息")
 @RestController
 @RequestMapping("/api/role/info")
 public class RoleInfoController {
@@ -49,7 +48,8 @@ public class RoleInfoController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list(@RequestParam Map<String, Object> params){
 
         return Result.success();
@@ -59,7 +59,8 @@ public class RoleInfoController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         RoleInfoEntity roleInfo = roleInfoService.getById(id);
 
@@ -69,7 +70,8 @@ public class RoleInfoController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody RoleInfoEntity roleInfo){
         roleInfoService.save(roleInfo);
 
@@ -79,7 +81,8 @@ public class RoleInfoController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody RoleInfoEntity roleInfo){
         roleInfoService.updateById(roleInfo);
         
@@ -89,7 +92,8 @@ public class RoleInfoController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids){
         roleInfoService.removeByIds(Arrays.asList(ids));
 

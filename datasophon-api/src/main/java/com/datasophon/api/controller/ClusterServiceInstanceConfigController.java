@@ -19,7 +19,10 @@ package com.datasophon.api.controller;
 
 import java.util.Arrays;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +40,7 @@ import com.datasophon.common.utils.Result;
  * @email gaodayu2022@163.com
  * @date 2022-04-24 16:25:17
  */
+@Api(tags = "集群服务实例配置")
 @RestController
 @RequestMapping("cluster/service/instance/config")
 public class ClusterServiceInstanceConfigController {
@@ -46,7 +50,8 @@ public class ClusterServiceInstanceConfigController {
     /**
      * 列表
      */
-    @RequestMapping("/getConfigVersion")
+    @ApiOperation(value = "获取配置版本")
+    @PostMapping("/getConfigVersion")
     public Result getConfigVersion(Integer serviceInstanceId,Integer roleGroupId){
         return clusterServiceInstanceConfigService.getConfigVersion(serviceInstanceId,roleGroupId);
     }
@@ -55,7 +60,8 @@ public class ClusterServiceInstanceConfigController {
     /**
      * 信息
      */
-    @RequestMapping("/info")
+    @ApiOperation(value = "服务实例配置信息")
+    @PostMapping("/info")
     public Result info(Integer serviceInstanceId,Integer version,Integer roleGroupId,Integer page,Integer pageSize){
         return clusterServiceInstanceConfigService.getServiceInstanceConfig(serviceInstanceId,version,roleGroupId,page,pageSize);
     }
@@ -63,7 +69,8 @@ public class ClusterServiceInstanceConfigController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存服务实例配置")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterServiceInstanceConfigEntity clusterServiceInstanceConfig){
         clusterServiceInstanceConfigService.save(clusterServiceInstanceConfig);
 
@@ -73,7 +80,8 @@ public class ClusterServiceInstanceConfigController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改服务实例配置")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterServiceInstanceConfigEntity clusterServiceInstanceConfig){
         clusterServiceInstanceConfigService.updateById(clusterServiceInstanceConfig);
         
@@ -83,7 +91,8 @@ public class ClusterServiceInstanceConfigController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除服务实例配置")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids){
         clusterServiceInstanceConfigService.removeByIds(Arrays.asList(ids));
 

@@ -25,12 +25,11 @@ import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.ClusterServiceCommandService;
 import com.datasophon.api.security.UserPermission;
 import com.datasophon.common.enums.CommandType;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.datasophon.dao.entity.ClusterServiceCommandEntity;
 import com.datasophon.common.utils.Result;
@@ -43,6 +42,7 @@ import com.datasophon.common.utils.Result;
  * @email gaodayu2022@163.com
  * @date 2022-04-12 11:28:06
  */
+@Api(tags = "集群服务操作指令")
 @RestController
 @RequestMapping("api/cluster/service/command")
 public class ClusterServiceCommandController {
@@ -52,7 +52,8 @@ public class ClusterServiceCommandController {
     /**
      * 查询集群服务指令列表
      */
-    @RequestMapping("/getServiceCommandlist")
+    @ApiOperation(value = "查询集群服务指令列表")
+    @PostMapping("/getServiceCommandlist")
     public Result list(Integer clusterId, Integer page, Integer pageSize) {
         return clusterServiceCommandService.getServiceCommandlist(clusterId, page, pageSize);
     }
@@ -61,8 +62,9 @@ public class ClusterServiceCommandController {
     /**
      * 生成服务安装操作指令
      */
+    @ApiOperation(value = "生成服务安装操作指令")
     @UserPermission
-    @RequestMapping("/generateCommand")
+    @PostMapping("/generateCommand")
     public Result generateCommand(Integer clusterId, String commandType, String serviceNames) {
         CommandType command = EnumUtil.fromString(CommandType.class, commandType);
         List<String> list = Arrays.asList(serviceNames.split(","));
@@ -72,7 +74,8 @@ public class ClusterServiceCommandController {
     /**
      * 生成服务实例操作指令
      */
-    @RequestMapping("/generateServiceCommand")
+    @ApiOperation(value = "生成服务实例操作指令")
+    @PostMapping("/generateServiceCommand")
     @UserPermission
     public Result generateServiceCommand(Integer clusterId, String commandType, String serviceInstanceIds) {
         CommandType command = EnumUtil.fromString(CommandType.class, commandType);
@@ -89,7 +92,8 @@ public class ClusterServiceCommandController {
     /**
      * 生成服务角色实例操作指令
      */
-    @RequestMapping("/generateServiceRoleCommand")
+    @ApiOperation(value = "生成服务角色实例操作指令")
+    @PostMapping("/generateServiceRoleCommand")
     @UserPermission
     public Result generateServiceRoleCommand(Integer clusterId, String commandType, Integer serviceInstanceId, String serviceRoleInstancesIds) {
         CommandType command = EnumUtil.fromString(CommandType.class, commandType);
@@ -101,14 +105,16 @@ public class ClusterServiceCommandController {
     /**
      * 启动执行指令
      */
-    @RequestMapping("/startExecuteCommand")
+    @ApiOperation(value = "启动执行指令")
+    @PostMapping("/startExecuteCommand")
     @UserPermission
     public Result startExecuteCommand(Integer clusterId, String commandType, String commandIds) {
         clusterServiceCommandService.startExecuteCommand(clusterId,commandType,commandIds);
         return Result.success();
     }
 
-    @RequestMapping("/cancelCommand")
+    @ApiOperation(value = "取消命令")
+    @PostMapping("/cancelCommand")
     public Result cancelCommand(String commandId) {
         clusterServiceCommandService.cancelCommand(commandId);
         return Result.success();
@@ -119,7 +125,7 @@ public class ClusterServiceCommandController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id) {
         ClusterServiceCommandEntity clusterServiceCommand = clusterServiceCommandService.getById(id);
 
@@ -129,7 +135,7 @@ public class ClusterServiceCommandController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterServiceCommandEntity clusterServiceCommand) {
         clusterServiceCommandService.save(clusterServiceCommand);
 
@@ -139,7 +145,7 @@ public class ClusterServiceCommandController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterServiceCommandEntity clusterServiceCommand) {
         clusterServiceCommandService.updateById(clusterServiceCommand);
 
@@ -149,7 +155,7 @@ public class ClusterServiceCommandController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids) {
         clusterServiceCommandService.removeByIds(Arrays.asList(ids));
 

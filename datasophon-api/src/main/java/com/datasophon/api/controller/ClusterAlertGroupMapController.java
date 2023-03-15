@@ -19,11 +19,10 @@ package com.datasophon.api.controller;
 
 import java.util.Arrays;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterAlertGroupMap;
 import com.datasophon.api.service.ClusterAlertGroupMapService;
@@ -35,6 +34,7 @@ import com.datasophon.api.service.ClusterAlertGroupMapService;
  * @email gaodayu2022@163.com
  * @date 2022-07-13 10:01:06
  */
+@Api(tags = "告警组")
 @RestController
 @RequestMapping("cluster/alert/group/map")
 public class ClusterAlertGroupMapController {
@@ -44,7 +44,8 @@ public class ClusterAlertGroupMapController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list(){
 
         return Result.success();
@@ -54,7 +55,8 @@ public class ClusterAlertGroupMapController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @GetMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         ClusterAlertGroupMap clusterAlertGroupMap = clusterAlertGroupMapService.getById(id);
 
@@ -64,7 +66,8 @@ public class ClusterAlertGroupMapController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterAlertGroupMap clusterAlertGroupMap){
         clusterAlertGroupMapService.save(clusterAlertGroupMap);
 
@@ -74,7 +77,8 @@ public class ClusterAlertGroupMapController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterAlertGroupMap clusterAlertGroupMap){
 
         clusterAlertGroupMapService.updateById(clusterAlertGroupMap);
@@ -85,7 +89,8 @@ public class ClusterAlertGroupMapController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids){
         clusterAlertGroupMapService.removeByIds(Arrays.asList(ids));
 

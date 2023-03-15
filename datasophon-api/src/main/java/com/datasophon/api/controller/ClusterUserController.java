@@ -23,15 +23,12 @@ import java.util.Map;
 import com.datasophon.api.service.ClusterUserService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterUser;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-
-
+@Api(tags = "集群用户")
 @RestController
 @RequestMapping("cluster/user")
 public class ClusterUserController {
@@ -41,7 +38,8 @@ public class ClusterUserController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "用户列表")
+    @PostMapping("/list")
     public Result list(Integer clusterId, String username, Integer page, Integer pageSize){
 
 
@@ -52,7 +50,8 @@ public class ClusterUserController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "用户信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id){
         ClusterUser clusterUser = clusterUserService.getById(id);
 
@@ -62,7 +61,8 @@ public class ClusterUserController {
     /**
      * 保存
      */
-    @RequestMapping("/create")
+    @ApiOperation(value = "创建用户")
+    @PostMapping("/create")
     public Result save(Integer clusterId ,String username,Integer mainGroupId,String otherGroupIds){
 
         return clusterUserService.create(clusterId,username,mainGroupId,otherGroupIds);
@@ -71,7 +71,8 @@ public class ClusterUserController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改用户信息")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterUser clusterUser){
 
         clusterUserService.updateById(clusterUser);
@@ -82,7 +83,8 @@ public class ClusterUserController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除用户")
+    @PostMapping("/delete")
     public Result delete(Integer id){
         return clusterUserService.deleteClusterUser(id);
     }

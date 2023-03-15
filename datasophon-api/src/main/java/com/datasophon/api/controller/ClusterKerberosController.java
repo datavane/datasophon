@@ -19,6 +19,8 @@ package com.datasophon.api.controller;
 
 import com.datasophon.api.security.UserPermission;
 import com.datasophon.api.service.ClusterKerberosService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Api(tags = "k8s集群")
 @RestController
 @RequestMapping("cluster/kerberos")
 public class ClusterKerberosController {
@@ -37,6 +40,7 @@ public class ClusterKerberosController {
     /**
      * download keytab
      */
+    @ApiOperation(value = "下载密钥表")
     @UserPermission
     @GetMapping("/downloadKeytab")
     public void list(Integer clusterId,String principal,String keytabName,String hostname, HttpServletResponse response) throws IOException {

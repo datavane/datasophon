@@ -19,6 +19,8 @@ package com.datasophon.api.controller;
 
 import java.util.*;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.datasophon.common.utils.Result;
@@ -32,6 +34,7 @@ import com.datasophon.api.service.ClusterAlertQuotaService;
  * @email gaodayu2022@163.com
  * @date 2022-06-24 15:10:41
  */
+@Api(tags = "集群告警指标")
 @RestController
 @RequestMapping("cluster/alert/quota")
 public class ClusterAlertQuotaController {
@@ -42,7 +45,8 @@ public class ClusterAlertQuotaController {
     /**
      * 信息
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result info(Integer clusterId,Integer alertGroupId,String quotaName,Integer page,Integer pageSize){
         return clusterAlertQuotaService.getAlertQuotaList(clusterId,alertGroupId,quotaName,page,pageSize);
     }
@@ -50,7 +54,8 @@ public class ClusterAlertQuotaController {
     /**
      * 启用
      */
-    @RequestMapping("/start")
+    @ApiOperation(value = "启用")
+    @PostMapping("/start")
     public Result start(Integer clusterId,String alertQuotaIds){
         return clusterAlertQuotaService.start(clusterId,alertQuotaIds);
     }
@@ -58,7 +63,8 @@ public class ClusterAlertQuotaController {
     /**
      * 停用
      */
-    @RequestMapping("/stop")
+    @ApiOperation(value = "停用")
+    @PostMapping("/stop")
     public Result stop(Integer clusterId,String alertQuotaIds){
         return clusterAlertQuotaService.stop(clusterId,alertQuotaIds);
     }
@@ -66,7 +72,8 @@ public class ClusterAlertQuotaController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterAlertQuota clusterAlertQuota){
 
 
@@ -77,7 +84,8 @@ public class ClusterAlertQuotaController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterAlertQuota clusterAlertQuota){
 
         clusterAlertQuotaService.updateById(clusterAlertQuota);
@@ -88,7 +96,8 @@ public class ClusterAlertQuotaController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids){
         clusterAlertQuotaService.removeByIds(Arrays.asList(ids));
 

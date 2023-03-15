@@ -21,11 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.datasophon.api.service.FrameServiceService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.datasophon.dao.entity.FrameServiceEntity;
 import com.datasophon.common.utils.Result;
@@ -38,6 +37,7 @@ import com.datasophon.common.utils.Result;
  * @email gaodayu2022@163.com
  * @date 2022-03-15 17:36:08
  */
+@Api(tags = "集群框架版本服务")
 @RestController
 @RequestMapping("api/frame/service")
 public class FrameServiceController {
@@ -48,7 +48,8 @@ public class FrameServiceController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "列表")
+    @PostMapping("/list")
     public Result list(Integer clusterId) {
         return frameVersionServiceService.getAllFrameService(clusterId);
     }
@@ -56,7 +57,8 @@ public class FrameServiceController {
     /**
      * 根据servce id列表查询服务
      */
-    @RequestMapping("/getServiceListByServiceIds")
+    @ApiOperation(value = "根据servce id列表查询服务")
+    @PostMapping("/getServiceListByServiceIds")
     public Result getServiceListByServiceIds(List<Integer> serviceIds) {
         return frameVersionServiceService.getServiceListByServiceIds(serviceIds);
     }
@@ -64,7 +66,8 @@ public class FrameServiceController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+    @ApiOperation(value = "信息")
+    @PostMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id) {
         FrameServiceEntity frameVersionService = frameVersionServiceService.getById(id);
 
@@ -74,7 +77,8 @@ public class FrameServiceController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存")
+    @PostMapping("/save")
     public Result save(@RequestBody FrameServiceEntity frameVersionService) {
         frameVersionServiceService.save(frameVersionService);
 
@@ -84,7 +88,8 @@ public class FrameServiceController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改")
+    @PostMapping("/update")
     public Result update(@RequestBody FrameServiceEntity frameVersionService) {
         frameVersionServiceService.updateById(frameVersionService);
 
@@ -94,7 +99,8 @@ public class FrameServiceController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids) {
         frameVersionServiceService.removeByIds(Arrays.asList(ids));
 

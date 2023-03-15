@@ -21,8 +21,11 @@ package com.datasophon.api.controller;
 
 import com.datasophon.api.service.ClusterServiceDashboardService;
 import com.datasophon.common.utils.Result;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @email gaodayu2022@163.com
  * @date 2022-06-23 17:01:58
  */
+@Api(tags = "集群服务总览仪表盘")
 @RestController
 @RequestMapping("cluster/service/dashboard")
 public class ClusterServiceDashboardController {
@@ -43,7 +47,8 @@ public class ClusterServiceDashboardController {
     /**
      * 列表
      */
-    @RequestMapping("/getDashboardUrl")
+    @ApiOperation(value = "仪表盘列表")
+    @PostMapping("/getDashboardUrl")
     public Result getDashboardUrl(Integer clusterId){
 
         return clusterServiceDashboardService.getDashboardUrl(clusterId);

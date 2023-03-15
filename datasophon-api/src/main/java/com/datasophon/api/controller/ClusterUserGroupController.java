@@ -20,7 +20,10 @@ package com.datasophon.api.controller;
 import com.datasophon.api.service.ClusterUserGroupService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterUserGroup;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 
 
+@Api(tags = "集群用户组")
 @RestController
 @RequestMapping("api/clusterusergroup")
 public class ClusterUserGroupController {
@@ -37,7 +41,8 @@ public class ClusterUserGroupController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
+    @ApiOperation(value = "用户组列表")
+    @PostMapping("/list")
     public Result list(){
 
 
@@ -50,7 +55,8 @@ public class ClusterUserGroupController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @ApiOperation(value = "保存用户组")
+    @PostMapping("/save")
     public Result save(@RequestBody ClusterUserGroup clusterUserGroup){
         clusterUserGroupService.save(clusterUserGroup);
 
@@ -60,7 +66,8 @@ public class ClusterUserGroupController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+    @ApiOperation(value = "修改用户组信息")
+    @PostMapping("/update")
     public Result update(@RequestBody ClusterUserGroup clusterUserGroup){
 
         clusterUserGroupService.updateById(clusterUserGroup);
@@ -71,7 +78,8 @@ public class ClusterUserGroupController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+    @ApiOperation(value = "删除用户组")
+    @PostMapping("/delete")
     public Result delete(@RequestBody Integer[] ids){
         clusterUserGroupService.removeByIds(Arrays.asList(ids));
 
