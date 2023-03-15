@@ -15,16 +15,14 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>datasophon</artifactId>
         <groupId>com.datasophon</groupId>
+        <artifactId>datasophon</artifactId>
         <version>1.1.0</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>datasophon-worker</artifactId>
 
@@ -34,52 +32,52 @@
     </properties>
     <dependencies>
         <!--springboot-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-web</artifactId>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework.boot</groupId>-->
-<!--                    <artifactId>spring-boot-starter-tomcat</artifactId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>log4j-to-slf4j</artifactId>-->
-<!--                    <groupId>org.apache.logging.log4j</groupId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-starter-web</artifactId>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <groupId>org.springframework.boot</groupId>-->
+        <!--                    <artifactId>spring-boot-starter-tomcat</artifactId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <artifactId>log4j-to-slf4j</artifactId>-->
+        <!--                    <groupId>org.apache.logging.log4j</groupId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
 
-<!--        &lt;!&ndash; use jetty &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-jetty</artifactId>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.eclipse.jetty.websocket</groupId>-->
-<!--                    <artifactId>javax-websocket-server-impl</artifactId>-->
-<!--                </exclusion>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.eclipse.jetty.websocket</groupId>-->
-<!--                    <artifactId>websocket-server</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
+        <!--        &lt;!&ndash; use jetty &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-starter-jetty</artifactId>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <groupId>org.eclipse.jetty.websocket</groupId>-->
+        <!--                    <artifactId>javax-websocket-server-impl</artifactId>-->
+        <!--                </exclusion>-->
+        <!--                <exclusion>-->
+        <!--                    <groupId>org.eclipse.jetty.websocket</groupId>-->
+        <!--                    <artifactId>websocket-server</artifactId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
 
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-aop</artifactId>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>org.springframework.boot</groupId>-->
-<!--                    <artifactId>spring-boot-starter</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-starter-aop</artifactId>-->
+        <!--            <exclusions>-->
+        <!--                <exclusion>-->
+        <!--                    <groupId>org.springframework.boot</groupId>-->
+        <!--                    <artifactId>spring-boot-starter</artifactId>-->
+        <!--                </exclusion>-->
+        <!--            </exclusions>-->
+        <!--        </dependency>-->
 
-<!--        <dependency>-->
-<!--            <groupId>org.springframework</groupId>-->
-<!--            <artifactId>spring-context</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework</groupId>-->
+        <!--            <artifactId>spring-context</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor_2.11</artifactId>
@@ -99,7 +97,7 @@
         <dependency>
             <groupId>com.datasophon</groupId>
             <artifactId>datasophon-common</artifactId>
-            <version>1.1.0</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.freemarker</groupId>
@@ -126,35 +124,18 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-lib</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/lib</outputDirectory>
-                            <excludeTransitive>false</excludeTransitive>
-                            <stripVersion>false</stripVersion>
-                            <includeScope>runtime</includeScope>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
                 <configuration>
                     <!-- 打包后的包名是否包含assembly的id名 -->
                     <appendAssemblyId>false</appendAssemblyId>
                     <!-- 指定最后tar或者zip包的名字 -->
                     <finalName>datasophon-worker</finalName>
                     <!-- tar或者zip包的输出目录 -->
-                    <outputDirectory>target/</outputDirectory>
+                    <outputDirectory>${project.basedir}/target/</outputDirectory>
                     <descriptors>
                         <!-- 引用的assembly配置文件-->
-                        <descriptor>src/main/resources/assembly.xml</descriptor>
+                        <descriptor>${project.basedir}/src/main/resources/assembly.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
@@ -162,12 +143,12 @@
                     <execution>
                         <!--名字任意 -->
                         <id>make-assembly</id>
-                        <!-- 绑定到package生命周期阶段上 -->
-                        <phase>package</phase>
                         <goals>
                             <!-- 只运行一次 -->
                             <goal>single</goal>
                         </goals>
+                        <!-- 绑定到package生命周期阶段上 -->
+                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>
