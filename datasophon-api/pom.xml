@@ -15,16 +15,14 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>datasophon</artifactId>
         <groupId>com.datasophon</groupId>
+        <artifactId>datasophon</artifactId>
         <version>1.1.0</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>datasophon-api</artifactId>
 
@@ -43,8 +41,8 @@
                     <artifactId>spring-boot-starter-tomcat</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>log4j-to-slf4j</artifactId>
                     <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-to-slf4j</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -95,12 +93,18 @@
         <dependency>
             <groupId>com.datasophon</groupId>
             <artifactId>datasophon-dao</artifactId>
-            <version>1.1.0</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.datasophon</groupId>
             <artifactId>datasophon-common</artifactId>
-            <version>1.1.0</version>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- ui 工程打包是一个空包，这里依赖主要是让 ui 先编译，这样前端就能自动打包到 tar 介质中-->
+        <dependency>
+            <groupId>com.datasophon</groupId>
+            <artifactId>datasophon-ui</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
@@ -114,7 +118,6 @@
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-persistence_2.11</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>org.apache.sshd</groupId>
@@ -131,56 +134,42 @@
             <scope>test</scope>
         </dependency>
 
-
     </dependencies>
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-lib</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/lib</outputDirectory>
-                            <excludeTransitive>false</excludeTransitive>
-                            <stripVersion>false</stripVersion>
-                            <includeScope>runtime</includeScope>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
                 <configuration>
                     <!-- 打包后的包名是否包含assembly的id名 -->
                     <appendAssemblyId>false</appendAssemblyId>
                     <!-- 指定最后tar或者zip包的名字 -->
                     <finalName>datasophon-manager-${project.version}</finalName>
                     <!-- tar或者zip包的输出目录 -->
-                    <outputDirectory>target/</outputDirectory>
+                    <outputDirectory>${project.basedir}/target/</outputDirectory>
                     <descriptors>
                         <!-- 引用的assembly配置文件-->
-                        <descriptor>src/main/resources/assembly.xml</descriptor>
+                        <descriptor>${project.basedir}/src/main/resources/assembly.xml</descriptor>
                     </descriptors>
+                    <archive>
+                        <manifest>
+                            <mainClass />
+                        </manifest>
+                    </archive>
                 </configuration>
                 <executions>
                     <!-- phase加入package后，则在执行maven package时就可以调用maven-assembly-plugin插件定义的打包方式 -->
                     <execution>
                         <!--名字任意 -->
                         <id>make-assembly</id>
-                        <!-- 绑定到package生命周期阶段上 -->
-                        <phase>package</phase>
                         <goals>
                             <!-- 只运行一次 -->
                             <goal>single</goal>
                         </goals>
+                        <!-- 绑定到package生命周期阶段上 -->
+                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>

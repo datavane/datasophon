@@ -2,11 +2,11 @@
   "name": "DINKY",
   "label": "Dinky",
   "description": "流处理极速开发框架,流批一体&湖仓一体的云原生平台,一站式计算平台",
-  "version": "0.7.0",
+  "version": "0.7.2",
   "sortNum": 19,
   "dependencies":[],
-  "packageName": "dlink-0.7.0.tar.gz",
-  "decompressPackageName": "dlink-release-0.7.0",
+  "packageName": "dlink-0.7.2.tar.gz",
+  "decompressPackageName": "dlink-release-0.7.2",
   "roles": [
     {
       "name": "Dinky",
@@ -19,7 +19,8 @@
         "timeout": "60",
         "program": "auto.sh",
         "args": [
-          "startWithJmx"
+          "startWithJmx",
+          "1.14"
         ]
       },
       "stopRunner": {
@@ -40,7 +41,8 @@
         "timeout": "60",
         "program": "auto.sh",
         "args": [
-          "restart"
+          "restart",
+          "1.14"
         ]
       },
       "externalLink": {
