@@ -396,12 +396,12 @@
       "configName": "dfs.namenode.handler.count",
       "required": true,
       "minValue": 0,
-      "maxValue": 32,
+      "maxValue": 128,
       "type": "slider",
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "8"
+      "defaultValue": "16"
     },
     {
       "name": "dfs.datanode.data.dir",
