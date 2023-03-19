@@ -159,7 +159,8 @@
         "outputDirectory": "ranger-hive-plugin",
         "templateName": "ranger-hive.ftl",
         "includeParams": [
-          "rangerAdminUrl"
+          "rangerAdminUrl",
+          "hiveHome"
         ]
       }
     ]
