@@ -39,7 +39,7 @@ public interface ClusterServiceCommandService extends IService<ClusterServiceCom
 
     Result getServiceCommandlist(Integer clusterId, Integer page, Integer pageSize);
 
-    Result generateServiceCommand(Integer clusterId, CommandType command, List<String> ids);
+    Result generateServiceCommand(Integer clusterId, String commandType, String serviceInstanceIds);
 
     Result generateServiceRoleCommand(Integer clusterId, CommandType command, Integer serviceIntanceId, List<String> ids);
 

@@ -33,16 +33,18 @@ import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.common.model.HostInfo;
 import com.datasophon.common.model.StartWorkerMessage;
+import com.datasophon.common.utils.CollectionUtils;
+import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.enums.MANAGED;
 import com.datasophon.dao.enums.ServiceRoleState;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WorkerStartActor extends UntypedActor {
@@ -82,10 +84,84 @@ public class WorkerStartActor extends UntypedActor {
                 clusterHostService.updateById(hostEntity);
             }
             //add to prometheus
-            ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class,ActorUtils.getActorRefName(PrometheusActor.class));
+            ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class, ActorUtils.getActorRefName(PrometheusActor.class));
             GenerateHostPrometheusConfig prometheusConfigCommand = new GenerateHostPrometheusConfig();
             prometheusConfigCommand.setClusterId(cluster.getId());
             prometheusActor.tell(prometheusConfigCommand, getSelf());
+
+            autoStartServiceNeeded(msg.getHostname(), cluster.getId());
         }
     }
+
+    /**
+     * Automatically start services that need to be started
+     *
+     * @param clusterId
+     */
+    private void autoStartServiceNeeded(String hostname, Integer clusterId) {
+        ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
+
+        ClusterServiceRoleInstanceEntity prometheus = roleInstanceService
+                .lambdaQuery()
+                .eq(ClusterServiceRoleInstanceEntity::getClusterId, clusterId)
+                .eq(ClusterServiceRoleInstanceEntity::getServiceName, "PROMETHEUS")
+                .one();  // from v1.1.0, prometheus and alertmanager must install at the same node
+        if (Objects.isNull(prometheus) || !Objects.equals(hostname, prometheus.getHostname())) {
+            return;
+        }
+
+        List<ClusterServiceRoleInstanceEntity> stopedServiceList = roleInstanceService.getStoppedService(clusterId);
+        if (CollectionUtils.isEmpty(stopedServiceList)) {
+            logger.info("There's no service need to auto-start.");
+            return;
+        }
+
+        Set<Integer> basicServiceIds = new HashSet<>(2);
+        Set<Integer> otherServiceIds = new HashSet<>();
+        stopedServiceList.forEach(i -> {
+            String serviceName = i.getServiceName();
+            Integer serviceId = i.getServiceId();
+            if (Objects.equals(serviceName, "PROMETHEUS") || Objects.equals(serviceName, "ALERTMANAGER")) {
+                basicServiceIds.add(serviceId);
+            } else {
+                otherServiceIds.add(serviceId);
+            }
+        });
+
+        ClusterServiceCommandService serviceCommandService = SpringTool.getApplicationContext().getBean(ClusterServiceCommandService.class);
+        Result result = null;
+        if (CollectionUtils.isNotEmpty(basicServiceIds)) {
+            result = startServices(serviceCommandService, clusterId, basicServiceIds);
+
+            if (Objects.equals(result.getCode(), 200)) {
+                logger.info("Auto-start service Prometheus and AlertManager successful.");
+            } else {
+                logger.info("Auto-start service Prometheus and AlertManager failed, terminate auto-start other services.\"");
+                return;
+            }
+        }
+
+        if (CollectionUtils.isEmpty(otherServiceIds)) {// no other service need to start
+            return;
+        }
+
+        if (Objects.isNull(result) || Objects.equals(result.getCode(), 200)) { // prometheus and alertmanager is running
+            logger.info("Service Prometheus and AlertManager is running，auto-start other services.");
+            result = startServices(serviceCommandService, clusterId, otherServiceIds);
+
+            if (Objects.equals(result.getCode(), 200)) {
+                logger.info("Auto-start other services successful");
+            } else {
+                logger.info("Some service auto-start failed, please check logs of the services that failed to start.");
+            }
+        }
+    }
+
+    private Result startServices(ClusterServiceCommandService serviceCommandService,
+                                 Integer clusterId,
+                                 Set<Integer> serviceIdList) {
+        String serviceIds = StringUtils.join(serviceIdList, ",");
+        return serviceCommandService.generateServiceCommand(clusterId, CommandType.START_SERVICE.name(), serviceIds);
+    }
+
 }

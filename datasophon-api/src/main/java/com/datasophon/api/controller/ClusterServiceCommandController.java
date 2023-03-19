@@ -75,15 +75,11 @@ public class ClusterServiceCommandController {
     @RequestMapping("/generateServiceCommand")
     @UserPermission
     public Result generateServiceCommand(Integer clusterId, String commandType, String serviceInstanceIds) {
-        CommandType command = EnumUtil.fromString(CommandType.class, commandType);
-        if(StringUtils.isNotBlank(serviceInstanceIds)){
-            List<String> ids = Arrays.asList(serviceInstanceIds.split(","));
-            return clusterServiceCommandService.generateServiceCommand(clusterId, command, ids);
-        }else {
+        if (StringUtils.isBlank(serviceInstanceIds)) {
             return Result.error(Status.NO_SERVICE_EXECUTE.getMsg());
         }
 
-
+        return clusterServiceCommandService.generateServiceCommand(clusterId, commandType, serviceInstanceIds);
     }
 
     /**
@@ -104,7 +100,7 @@ public class ClusterServiceCommandController {
     @RequestMapping("/startExecuteCommand")
     @UserPermission
     public Result startExecuteCommand(Integer clusterId, String commandType, String commandIds) {
-        clusterServiceCommandService.startExecuteCommand(clusterId,commandType,commandIds);
+        clusterServiceCommandService.startExecuteCommand(clusterId, commandType, commandIds);
         return Result.success();
     }
 
@@ -113,7 +109,6 @@ public class ClusterServiceCommandController {
         clusterServiceCommandService.cancelCommand(commandId);
         return Result.success();
     }
-
 
 
     /**

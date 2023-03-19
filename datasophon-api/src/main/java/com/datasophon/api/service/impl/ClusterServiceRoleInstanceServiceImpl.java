@@ -314,4 +314,13 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
                 .eq(Constants.HOSTNAME, hostName)
                 .eq(Constants.SERVICE_ROLE_NAME, serviceRoleName));
     }
+
+    @Override
+    public List<ClusterServiceRoleInstanceEntity> getStoppedService(Integer clusterId) {
+        return roleInstanceService.lambdaQuery()
+                .eq(ClusterServiceRoleInstanceEntity::getClusterId, clusterId)
+                .eq(ClusterServiceRoleInstanceEntity::getServiceRoleState, ServiceRoleState.STOP)
+                .list();
+    }
+
 }

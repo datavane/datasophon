@@ -181,12 +181,15 @@ public class ClusterServiceCommandServiceImpl extends ServiceImpl<ClusterService
      * @return
      */
     @Override
-    public Result generateServiceCommand(Integer clusterId, CommandType commandType, List<String> serviceInstanceIds) {
+    public Result generateServiceCommand(Integer clusterId, String commandType, String serviceInstanceIds) {
+        CommandType cmdType = EnumUtil.fromString(CommandType.class, commandType);
+        String[] sInstanceIds = serviceInstanceIds.split(",");
+
         List<ClusterServiceCommandEntity> list = new ArrayList<>();
         List<ClusterServiceCommandHostEntity> commandHostList = new ArrayList<>();
         List<ClusterServiceCommandHostCommandEntity> hostCommandList = new ArrayList<>();
         List<String> commandIds = new ArrayList<String>();
-        for (String serviceInstanceId : serviceInstanceIds) {
+        for (String serviceInstanceId : sInstanceIds) {
             int id = Integer.parseInt(serviceInstanceId);
             //查询服务对应的服务角色实例
             List<ClusterServiceRoleInstanceEntity> roleInstanceList = roleInstanceService.getServiceRoleInstanceListByServiceId(id);
@@ -194,7 +197,7 @@ public class ClusterServiceCommandServiceImpl extends ServiceImpl<ClusterService
                 continue;
             }
             ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getById(id);
-            ClusterServiceCommandEntity commandEntity = ProcessUtils.generateCommandEntity(clusterId, commandType, serviceInstance.getServiceName());
+            ClusterServiceCommandEntity commandEntity = ProcessUtils.generateCommandEntity(clusterId, cmdType, serviceInstance.getServiceName());
             String commandId = commandEntity.getCommandId();
             commandEntity.setServiceInstanceId(id);
             commandIds.add(commandId);
@@ -209,7 +212,7 @@ public class ClusterServiceCommandServiceImpl extends ServiceImpl<ClusterService
                     commandHost = ProcessUtils.generateCommandHostEntity(commandId, roleInstance.getHostname());
                     commandHostList.add(commandHost);
                 }
-                ClusterServiceCommandHostCommandEntity hostCommand = ProcessUtils.generateCommandHostCommandEntity(commandType, commandId, roleInstance.getServiceRoleName(),roleInstance.getRoleType(), commandHost);
+                ClusterServiceCommandHostCommandEntity hostCommand = ProcessUtils.generateCommandHostCommandEntity(cmdType, commandId, roleInstance.getServiceRoleName(),roleInstance.getRoleType(), commandHost);
                 hostCommandList.add(hostCommand);
                 map.put(roleInstance.getHostname(),commandHost);
             }
@@ -221,7 +224,7 @@ public class ClusterServiceCommandServiceImpl extends ServiceImpl<ClusterService
 
             //通知commandActor执行命令
             ActorRef dagBuildActor = ActorUtils.getLocalActor(DAGBuildActor.class,ActorUtils.getActorRefName(DAGBuildActor.class));
-            dagBuildActor.tell(new StartExecuteCommandCommand(commandIds,clusterId, commandType),ActorRef.noSender());
+            dagBuildActor.tell(new StartExecuteCommandCommand(commandIds,clusterId, cmdType),ActorRef.noSender());
         }
         return Result.success(String.join(",",commandIds));
     }

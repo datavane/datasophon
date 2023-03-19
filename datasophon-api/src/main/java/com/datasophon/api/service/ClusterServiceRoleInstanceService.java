@@ -69,5 +69,8 @@ public interface ClusterServiceRoleInstanceService extends IService<ClusterServi
     List<ClusterServiceRoleInstanceEntity> listServiceRoleByName(String alertManager);
 
     ClusterServiceRoleInstanceEntity getServiceRoleInsByHostAndName(String hostName, String serviceRoleName);
+
+    List<ClusterServiceRoleInstanceEntity> getStoppedService(Integer clusterId);
+
 }
 
