@@ -424,30 +424,30 @@
       "label": "NameNode堆内存大小",
       "description": "配置NameNode堆内存大小",
       "configType": "map",
-      "required": false,
+      "required": true,
       "minValue": 0,
-      "maxValue": 32,
+      "maxValue": 256,
       "type": "slider",
       "value": "",
       "unit": "GB",
       "configurableInWizard": true,
-      "hidden": true,
-      "defaultValue": "2"
+      "hidden": false,
+      "defaultValue": "8"
     },
     {
       "name": "datanodeHeapSize",
       "label": "DataNode堆内存大小",
       "description": "配置DataNode堆内存大小",
       "configType": "map",
-      "required": false,
+      "required": true,
       "minValue": 0,
-      "maxValue": 32,
+      "maxValue": 256,
       "type": "slider",
       "value": "",
       "unit": "GB",
       "configurableInWizard": true,
-      "hidden": true,
-      "defaultValue": "2"
+      "hidden": false,
+      "defaultValue": "8"
     },
     {
       "name": "hadoopLogDir",
