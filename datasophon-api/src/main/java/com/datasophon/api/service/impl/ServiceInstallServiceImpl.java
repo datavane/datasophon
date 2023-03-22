@@ -94,6 +94,8 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     @Autowired
     private ClusterServiceRoleInstanceService roleInstanceService;
 
+    public static final String PROMETHEUS = "prometheus";
+
 
     @Override
     public Result getServiceConfigOption(Integer clusterId, String serviceName) {
@@ -104,10 +106,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         //查询服务实例是否存在
         ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceName);
         if (Objects.nonNull(serviceInstance)) {
-            ClusterServiceInstanceRoleGroup roleGroup = roleGroupService.getRoleGroupByServiceInstanceId(serviceInstance.getId());
-            ClusterServiceRoleGroupConfig config = groupConfigService.getConfigByRoleGroupId(roleGroup.getId());
-            String serviceConfig = PlaceholderUtils.replacePlaceholders(config.getConfigJson(), globalVariables, Constants.REGEX_VARIABLE);
-            list = JSONArray.parseArray(serviceConfig, ServiceConfig.class);
+            list = listServiceConfigByServiceInstance(serviceInstance);
         } else {
             FrameServiceEntity frameService = this.frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);
             String serviceConfig = frameService.getServiceConfig();
@@ -124,24 +123,48 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         return Result.success(list);
     }
 
+    private List<ServiceConfig> listServiceConfigByServiceInstance( ClusterServiceInstanceEntity serviceInstance) {
+        List<ServiceConfig> list;
+        ClusterServiceInstanceRoleGroup roleGroup = roleGroupService.getRoleGroupByServiceInstanceId(serviceInstance.getId());
+        ClusterServiceRoleGroupConfig config = groupConfigService.getConfigByRoleGroupId(roleGroup.getId());
+//        String serviceConfig = PlaceholderUtils.replacePlaceholders(config.getConfigJson(), globalVariables, Constants.REGEX_VARIABLE);
+        list = JSONArray.parseArray(config.getConfigJson(), ServiceConfig.class);
+        return list;
+    }
+
     @Override
     public Result saveServiceConfig(Integer clusterId, String serviceName, List<ServiceConfig> list, Integer roleGroupId) {
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         ServiceConfigMap.put(clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceName + Constants.CONFIG, list);
         HashMap<String, ServiceConfig> map = new HashMap<>();
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
-        Boolean configUpdate = false;
+
+
+        ClusterServiceInstanceEntity serviceInstanceEntity = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceName);
+        List<ServiceConfig> originalConfigs = listServiceConfigByServiceInstance(serviceInstanceEntity);
+        Map<String, Object> originalConfigMap = originalConfigs.stream().collect(Collectors.toMap(ServiceConfig::getName, ServiceConfig::getValue, (v1, v2) -> v1));
+
         ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceName);
         if (Objects.nonNull(serviceRoleHandler)) {
             serviceRoleHandler.handlerConfig(clusterId, list);
         }
 
         FrameServiceEntity frameServiceEntity = frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);
+        Boolean configUpdate = false;
         for (ServiceConfig serviceConfig : list) {
-            //add to global variable
-            String variableName = "${" + serviceConfig.getName() + "}";
+            String configName = serviceConfig.getName();
+            String variableName = "${" + configName + "}";
             String variableValue = String.valueOf(serviceConfig.getValue());
-            addToGlobalVariable(clusterId, variableName, variableValue, configUpdate);
+            if(originalConfigMap.containsKey(configName)){
+                String configValue = String.valueOf(originalConfigMap.get(configName));
+                if(!variableValue.equals(configValue)){
+                    configUpdate = true;
+                }
+            }
+            //add to global variable
+            if (Constants.INPUT.equals(serviceConfig.getType())) {
+                addToGlobalVariable(clusterId, variableName, variableValue);
+            }
             globalVariables.put(variableName, variableValue);
             map.put(serviceConfig.getName(), serviceConfig);
         }
@@ -149,13 +172,13 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         //update config-file
         HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
         buildConfigFileMap(serviceName, clusterInfo, map, configFileMap);
-        if ("prometheus".equals(serviceName.toLowerCase())) {
+        if (PROMETHEUS.equals(serviceName.toLowerCase())) {
             logger.info("add worker and node to prometheus");
             //add host node to prometheus
             addHostNodeToPrometheus(clusterId, configFileMap);
         }
 
-        ClusterServiceInstanceEntity serviceInstanceEntity = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceName);
+
         if (Objects.isNull(serviceInstanceEntity)) {
             serviceInstanceEntity = saveServiceInstance(clusterId, serviceName, frameServiceEntity);
 
@@ -304,13 +327,12 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         }
     }
 
-    private void addToGlobalVariable(Integer clusterId, String variableName, String value, Boolean configUpdate) {
+    private void addToGlobalVariable(Integer clusterId, String variableName, String value) {
         ClusterVariable clusterVariable = variableService.getVariableByVariableName(variableName, clusterId);
         if (Objects.nonNull(clusterVariable)) {
             if (!value.equals(clusterVariable.getVariableValue())) {
                 clusterVariable.setVariableValue(value);
                 variableService.updateById(clusterVariable);
-                configUpdate = true;
             }
         } else {
             clusterVariable = new ClusterVariable();
