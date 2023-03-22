@@ -32,13 +32,7 @@ import com.datasophon.dao.entity.FrameServiceRoleEntity;
 import com.datasophon.common.utils.Result;
 
 
-/**
- * 框架服务角色表
- *
- * @author dygao2
- * @email gaodayu2022@163.com
- * @date 2022-04-18 14:38:53
- */
+
 @RestController
 @RequestMapping("api/frame/service/role")
 public class FrameServiceRoleController {

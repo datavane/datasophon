@@ -38,13 +38,7 @@ import com.datasophon.api.service.UserInfoService;
 import com.datasophon.common.utils.Result;
 
 
-/**
- * 用户信息表
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-03-15 17:36:08
- */
+
 @RestController
 @RequestMapping("api/user")
 public class UserInfoController {
