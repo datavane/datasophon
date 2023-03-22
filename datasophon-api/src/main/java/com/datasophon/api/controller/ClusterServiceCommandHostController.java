@@ -31,13 +31,7 @@ import com.datasophon.common.utils.Result;
 
 
 
-/**
- * 集群服务操作指令主机表
- *
- * @author dygao2
- * @email gaodayu2022@163.com
- * @date 2022-04-12 11:28:06
- */
+
 @RestController
 @RequestMapping("api/cluster/service/command/host")
 public class ClusterServiceCommandHostController {

@@ -39,7 +39,7 @@ public class ClusterKerberosController {
      */
     @UserPermission
     @GetMapping("/downloadKeytab")
-    public void list(Integer clusterId,String principal,String keytabName,String hostname, HttpServletResponse response) throws IOException {
+    public void downloadKeytab(Integer clusterId,String principal,String keytabName,String hostname, HttpServletResponse response) throws IOException {
         kerberosService.downloadKeytab(clusterId,principal,keytabName,hostname,response);
     }
 }
