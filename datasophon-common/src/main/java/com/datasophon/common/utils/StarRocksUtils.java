@@ -70,7 +70,7 @@ public class StarRocksUtils {
     public static List<ProcInfo> showFrontends(String feMaster) throws SQLException, ClassNotFoundException {
         String sql = "SHOW PROC '/frontends';";
         logger.info("sql is {}",sql);
-        return executeQuerySql(feMaster, sql);
+        return executeQueryProcInfo(feMaster, sql);
     }
 
     public static List<ProcInfo> listDeadFrontends(String feMaster) throws SQLException, ClassNotFoundException {
@@ -89,10 +89,10 @@ public class StarRocksUtils {
     public static List<ProcInfo> showBackends(String feMaster) throws SQLException, ClassNotFoundException {
         String sql = "SHOW PROC '/backends';";
 //        logger.info("sql is {}",sql);
-        return executeQuerySql(feMaster, sql);
+        return executeQueryProcInfo(feMaster, sql);
     }
 
-    private static List<ProcInfo> executeQuerySql(String feMaster, String sql) throws SQLException, ClassNotFoundException {
+    public static List<ProcInfo> executeQueryProcInfo(String feMaster, String sql) throws SQLException, ClassNotFoundException {
         Connection connection = getConnection(feMaster);
         Statement statement = connection.createStatement();
         ArrayList<ProcInfo> list = new ArrayList<>();
@@ -110,8 +110,25 @@ public class StarRocksUtils {
         return list;
     }
 
+    public static List<ProcInfo> executeQuerySql(String feMaster, String sql) throws SQLException, ClassNotFoundException {
+        Connection connection = getConnection(feMaster);
+        long start = System.currentTimeMillis();
+        Statement statement = connection.createStatement();
+        ArrayList<ProcInfo> list = new ArrayList<>();
+        if(Objects.nonNull(connection) && Objects.nonNull(statement)){
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()){
+                System.out.println(resultSet.getString(1));
+            }
+        }
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+        close(connection, statement);
+        return list;
+    }
+
     private static List<ProcInfo> getDeadProcInfos(String feMaster, String sql) throws SQLException, ClassNotFoundException {
-        List<ProcInfo> list = executeQuerySql(feMaster, sql);
+        List<ProcInfo> list = executeQueryProcInfo(feMaster, sql);
         ArrayList<ProcInfo> deadList = new ArrayList<>();
         for (ProcInfo procInfo : list) {
             if (!procInfo.getAlive()) {

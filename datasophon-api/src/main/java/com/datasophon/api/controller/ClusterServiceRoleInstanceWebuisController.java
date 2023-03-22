@@ -28,13 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceWebuis;
 
-/**
- * 集群服务角色对应web ui表 
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-06-30 09:35:40
- */
+
 @RestController
 @RequestMapping("cluster/webuis")
 public class ClusterServiceRoleInstanceWebuisController {

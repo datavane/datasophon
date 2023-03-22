@@ -29,13 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.datasophon.dao.entity.ClusterAlertHistory;
 
-/**
- * 集群告警历史表 
- *
- * @author dygao2
- * @email gaodayu2022@163.com
- * @date 2022-06-07 12:04:38
- */
 @RestController
 @RequestMapping("cluster/alert/history")
 public class ClusterAlertHistoryController {
