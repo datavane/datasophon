@@ -209,6 +209,8 @@
         "includeParams": [
           "hadoopLogDir",
           "hadoopHome",
+          "datanodeHeapSize",
+          "namenodeHeapSize",
           "custom.hadoop.env.sh"
         ]
       },
