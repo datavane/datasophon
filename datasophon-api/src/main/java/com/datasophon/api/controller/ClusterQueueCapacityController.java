@@ -26,13 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * 
- *
- * @author dygao2
- * @email dygao2@datasophon.com
- * @date 2022-11-25 14:30:11
- */
+
 @RestController
 @RequestMapping("cluster/queue/capacity")
 public class ClusterQueueCapacityController {

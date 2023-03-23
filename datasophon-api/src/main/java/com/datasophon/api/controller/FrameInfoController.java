@@ -31,13 +31,7 @@ import com.datasophon.common.utils.Result;
 
 
 
-/**
- * 集群框架表
- *
- * @author dygao2
- * @email gaodayu2022@163.com
- * @date 2022-03-15 17:36:08
- */
+
 @RestController
 @RequestMapping("api/frame")
 public class FrameInfoController {

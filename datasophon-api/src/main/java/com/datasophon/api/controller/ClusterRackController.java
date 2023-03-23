@@ -27,13 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * 
- *
- * @author dygao2
- * @email dygao2@datasophon.com
- * @date 2022-11-25 11:31:59
- */
+
 @RestController
 @RequestMapping("cluster/rack")
 public class ClusterRackController {

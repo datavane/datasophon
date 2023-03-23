@@ -32,13 +32,7 @@ import com.datasophon.api.service.NoticeGroupUserService;
 import com.datasophon.common.utils.Result;
 
 
-/**
- * 通知组-用户中间表
- *
- * @author dygao2
- * @email gaodayu2022@163.com
- * @date 2022-03-15 17:36:08
- */
+
 @RestController
 @RequestMapping("api/notice/group/user")
 public class NoticeGroupUserController {

@@ -94,6 +94,8 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     @Autowired
     private ClusterServiceRoleInstanceService roleInstanceService;
 
+    public static final String PROMETHEUS = "prometheus";
+
 
     @Override
     public Result getServiceConfigOption(Integer clusterId, String serviceName) {
@@ -104,10 +106,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         //查询服务实例是否存在
         ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceName);
         if (Objects.nonNull(serviceInstance)) {
-            ClusterServiceInstanceRoleGroup roleGroup = roleGroupService.getRoleGroupByServiceInstanceId(serviceInstance.getId());
-            ClusterServiceRoleGroupConfig config = groupConfigService.getConfigByRoleGroupId(roleGroup.getId());
-            String serviceConfig = PlaceholderUtils.replacePlaceholders(config.getConfigJson(), globalVariables, Constants.REGEX_VARIABLE);
-            list = JSONArray.parseArray(serviceConfig, ServiceConfig.class);
+            list = listServiceConfigByServiceInstance(serviceInstance);
         } else {
             FrameServiceEntity frameService = this.frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);
             String serviceConfig = frameService.getServiceConfig();
@@ -124,6 +123,15 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         return Result.success(list);
     }
 
+    private List<ServiceConfig> listServiceConfigByServiceInstance( ClusterServiceInstanceEntity serviceInstance) {
+        List<ServiceConfig> list;
+        ClusterServiceInstanceRoleGroup roleGroup = roleGroupService.getRoleGroupByServiceInstanceId(serviceInstance.getId());
+        ClusterServiceRoleGroupConfig config = groupConfigService.getConfigByRoleGroupId(roleGroup.getId());
+//        String serviceConfig = PlaceholderUtils.replacePlaceholders(config.getConfigJson(), globalVariables, Constants.REGEX_VARIABLE);
+        list = JSONArray.parseArray(config.getConfigJson(), ServiceConfig.class);
+        return list;
+    }
+
     @Override
     public Result saveServiceConfig(Integer clusterId, String serviceName, List<ServiceConfig> list, Integer roleGroupId) {
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
@@ -131,126 +139,54 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         HashMap<String, ServiceConfig> map = new HashMap<>();
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
 
+
+        ClusterServiceInstanceEntity serviceInstanceEntity = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceName);
+        List<ServiceConfig> originalConfigs = listServiceConfigByServiceInstance(serviceInstanceEntity);
+        Map<String, Object> originalConfigMap = originalConfigs.stream().collect(Collectors.toMap(ServiceConfig::getName, ServiceConfig::getValue, (v1, v2) -> v1));
+
         ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceName);
         if (Objects.nonNull(serviceRoleHandler)) {
             serviceRoleHandler.handlerConfig(clusterId, list);
         }
 
         FrameServiceEntity frameServiceEntity = frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);
+        Boolean configUpdate = false;
         for (ServiceConfig serviceConfig : list) {
-//            //add to global variable
-            if (Constants.INPUT.equals(serviceConfig.getType())) {
-                String variableName = "${" + serviceConfig.getName() + "}";
-                String value = String.valueOf(serviceConfig.getValue());
-                if (globalVariables.containsKey(variableName)) {
-                    ClusterVariable clusterVariable = variableService.getVariableByVariableName(variableName, clusterId);
-                    if (Objects.nonNull(clusterVariable) && !value.equals(clusterVariable.getVariableValue())) {
-                        clusterVariable.setVariableValue(value);
-                        variableService.updateById(clusterVariable);
-                    }
-                } else {
-                    ClusterVariable clusterVariable = new ClusterVariable();
-                    clusterVariable.setClusterId(clusterId);
-                    clusterVariable.setVariableName(variableName);
-                    clusterVariable.setVariableValue(value);
-                    variableService.save(clusterVariable);
+            String configName = serviceConfig.getName();
+            String variableName = "${" + configName + "}";
+            String variableValue = String.valueOf(serviceConfig.getValue());
+            if(originalConfigMap.containsKey(configName)){
+                String configValue = String.valueOf(originalConfigMap.get(configName));
+                if(!variableValue.equals(configValue)){
+                    configUpdate = true;
                 }
-                globalVariables.put(variableName, value);
             }
+            //add to global variable
+            if (Constants.INPUT.equals(serviceConfig.getType())) {
+                addToGlobalVariable(clusterId, variableName, variableValue);
+            }
+            globalVariables.put(variableName, variableValue);
             map.put(serviceConfig.getName(), serviceConfig);
         }
 
         //update config-file
         HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
-        FrameServiceEntity frameService = this.frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);
-        if (StringUtils.isNotBlank(frameService.getConfigFileJson())) {
-            Map<JSONObject, JSONArray> configMap = JSONObject.parseObject(frameService.getConfigFileJson(), Map.class);
-            for (JSONObject fileJson : configMap.keySet()) {
-                Generators generators = fileJson.toJavaObject(Generators.class);
-                List<ServiceConfig> serviceConfigs = configMap.get(fileJson).toJavaList(ServiceConfig.class);
-                for (ServiceConfig config : serviceConfigs) {
-                    logger.info(config.getName());
-                    if (map.containsKey(config.getName())) {
-                        ServiceConfig newConfig = map.get(config.getName());
-                        config.setValue(map.get(config.getName()).getValue());
-                        config.setHidden(newConfig.isHidden());
-                        config.setRequired(newConfig.isRequired());
-                    }
-                }
-                configFileMap.put(generators, serviceConfigs);
-            }
-        }
-        if ("prometheus".equals(serviceName.toLowerCase())) {
+        buildConfigFileMap(serviceName, clusterInfo, map, configFileMap);
+        if (PROMETHEUS.equals(serviceName.toLowerCase())) {
             logger.info("add worker and node to prometheus");
-            //添加worker和node到监控列表
-            List<ClusterHostEntity> hostList = hostService.list(new QueryWrapper<ClusterHostEntity>()
-                    .eq(Constants.MANAGED, 1)
-                    .eq(Constants.CLUSTER_ID, clusterId));
-            Generators workerGenerators = new Generators();
-            workerGenerators.setFilename("worker.json");
-            workerGenerators.setOutputDirectory("configs");
-            workerGenerators.setConfigFormat("custom");
-            workerGenerators.setTemplateName("scrape.ftl");
-
-            Generators nodeGenerators = new Generators();
-            nodeGenerators.setFilename("linux.json");
-            nodeGenerators.setOutputDirectory("configs");
-            nodeGenerators.setConfigFormat("custom");
-            nodeGenerators.setTemplateName("scrape.ftl");
-            ArrayList<ServiceConfig> workerServiceConfigs = new ArrayList<>();
-            ArrayList<ServiceConfig> nodeServiceConfigs = new ArrayList<>();
-            for (ClusterHostEntity clusterHostEntity : hostList) {
-                ServiceConfig serviceConfig = new ServiceConfig();
-                serviceConfig.setName("worker_" + clusterHostEntity.getHostname());
-                serviceConfig.setValue(clusterHostEntity.getHostname() + ":8585");
-                serviceConfig.setRequired(true);
-                workerServiceConfigs.add(serviceConfig);
-
-                ServiceConfig nodeServiceConfig = new ServiceConfig();
-                nodeServiceConfig.setName("node_" + clusterHostEntity.getHostname());
-                nodeServiceConfig.setValue(clusterHostEntity.getHostname() + ":9100");
-                nodeServiceConfig.setRequired(true);
-                nodeServiceConfigs.add(nodeServiceConfig);
-            }
-            configFileMap.put(workerGenerators, workerServiceConfigs);
-            configFileMap.put(nodeGenerators, nodeServiceConfigs);
+            //add host node to prometheus
+            addHostNodeToPrometheus(clusterId, configFileMap);
         }
-        //查询服务实例是否存在
-        ClusterServiceInstanceEntity serviceInstanceEntity = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceName);
+
+
         if (Objects.isNull(serviceInstanceEntity)) {
-            serviceInstanceEntity = new ClusterServiceInstanceEntity();
-            serviceInstanceEntity.setClusterId(clusterId);
-            serviceInstanceEntity.setServiceState(ServiceState.WAIT_INSTALL);
-            serviceInstanceEntity.setServiceName(serviceName);
-            serviceInstanceEntity.setLabel(frameServiceEntity.getLabel());
-            serviceInstanceEntity.setCreateTime(new Date());
-            serviceInstanceEntity.setUpdateTime(new Date());
-            serviceInstanceEntity.setNeedRestart(NeedRestart.NO);
-            serviceInstanceEntity.setFrameServiceId(frameServiceEntity.getId());
-            serviceInstanceEntity.setSortNum(frameServiceEntity.getSortNum());
-            serviceInstanceService.save(serviceInstanceEntity);
+            serviceInstanceEntity = saveServiceInstance(clusterId, serviceName, frameServiceEntity);
 
-            ClusterServiceInstanceRoleGroup clusterServiceInstanceRoleGroup = new ClusterServiceInstanceRoleGroup();
-            clusterServiceInstanceRoleGroup.setServiceInstanceId(serviceInstanceEntity.getId());
-            clusterServiceInstanceRoleGroup.setClusterId(clusterId);
-            clusterServiceInstanceRoleGroup.setRoleGroupName("默认角色组");
-            clusterServiceInstanceRoleGroup.setServiceName(serviceName);
-            clusterServiceInstanceRoleGroup.setRoleGroupType("default");
-            roleGroupService.save(clusterServiceInstanceRoleGroup);
+            ClusterServiceInstanceRoleGroup clusterServiceInstanceRoleGroup = saveServiceInstanceRoleGroup(clusterId, serviceName, serviceInstanceEntity);
 
-            ClusterServiceRoleGroupConfig roleGroupConfig = new ClusterServiceRoleGroupConfig();
-            roleGroupConfig.setRoleGroupId(clusterServiceInstanceRoleGroup.getId());
-            roleGroupConfig.setClusterId(clusterId);
-            roleGroupConfig.setCreateTime(new Date());
-            roleGroupConfig.setUpdateTime(new Date());
-            roleGroupConfig.setServiceName(serviceName);
-            buildConfig(list, configFileMap, roleGroupConfig);
-            roleGroupConfig.setConfigVersion(1);
-            groupConfigService.save(roleGroupConfig);
+            saveServiceRoleGroupConfig(clusterId, serviceName, list, configFileMap, clusterServiceInstanceRoleGroup);
             CacheUtils.put("UseRoleGroup_" + serviceInstanceEntity.getId(), clusterServiceInstanceRoleGroup.getId());
         } else {
-            serviceInstanceEntity.setUpdateTime(new Date());
-            serviceInstanceEntity.setLabel(frameServiceEntity.getLabel());
             ClusterServiceRoleGroupConfig roleGroupConfig;
             if (Objects.isNull(roleGroupId)) {
                 ClusterServiceInstanceRoleGroup roleGroup = roleGroupService.getRoleGroupByServiceInstanceId(serviceInstanceEntity.getId());
@@ -258,11 +194,8 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             } else {
                 roleGroupConfig = groupConfigService.getConfigByRoleGroupId(roleGroupId);
             }
-            String configJson = JSONObject.toJSONString(list);
-            String newMd5 = SecureUtil.md5(configJson);
-            String configJsonMd5 = roleGroupConfig.getConfigJsonMd5();
             CacheUtils.put("UseRoleGroup_" + serviceInstanceEntity.getId(), roleGroupConfig.getRoleGroupId());
-            if (!configJsonMd5.equals(newMd5)) {
+            if (configUpdate) {
                 ClusterServiceRoleGroupConfig newRoleGroupConfig = new ClusterServiceRoleGroupConfig();
                 if (Objects.isNull(roleGroupId)) {
                     int count = roleGroupService.count(new QueryWrapper<ClusterServiceInstanceRoleGroup>()
@@ -291,11 +224,123 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
                 groupConfigService.save(newRoleGroupConfig);
                 serviceInstanceEntity.setNeedRestart(NeedRestart.YES);
                 roleInstanceService.updateToNeedRestart(roleGroupId);
-
             }
+            //update service instance
+            serviceInstanceEntity.setUpdateTime(new Date());
+            serviceInstanceEntity.setLabel(frameServiceEntity.getLabel());
             serviceInstanceService.updateById(serviceInstanceEntity);
         }
         return Result.success();
+    }
+
+    private void saveServiceRoleGroupConfig(Integer clusterId, String serviceName, List<ServiceConfig> list, HashMap<Generators, List<ServiceConfig>> configFileMap, ClusterServiceInstanceRoleGroup clusterServiceInstanceRoleGroup) {
+        ClusterServiceRoleGroupConfig roleGroupConfig = new ClusterServiceRoleGroupConfig();
+        roleGroupConfig.setRoleGroupId(clusterServiceInstanceRoleGroup.getId());
+        roleGroupConfig.setClusterId(clusterId);
+        roleGroupConfig.setCreateTime(new Date());
+        roleGroupConfig.setUpdateTime(new Date());
+        roleGroupConfig.setServiceName(serviceName);
+        buildConfig(list, configFileMap, roleGroupConfig);
+        roleGroupConfig.setConfigVersion(1);
+        groupConfigService.save(roleGroupConfig);
+    }
+
+    private ClusterServiceInstanceRoleGroup saveServiceInstanceRoleGroup(Integer clusterId, String serviceName, ClusterServiceInstanceEntity serviceInstanceEntity) {
+        ClusterServiceInstanceRoleGroup clusterServiceInstanceRoleGroup = new ClusterServiceInstanceRoleGroup();
+        clusterServiceInstanceRoleGroup.setServiceInstanceId(serviceInstanceEntity.getId());
+        clusterServiceInstanceRoleGroup.setClusterId(clusterId);
+        clusterServiceInstanceRoleGroup.setRoleGroupName("默认角色组");
+        clusterServiceInstanceRoleGroup.setServiceName(serviceName);
+        clusterServiceInstanceRoleGroup.setRoleGroupType("default");
+        roleGroupService.save(clusterServiceInstanceRoleGroup);
+        return clusterServiceInstanceRoleGroup;
+    }
+
+    private ClusterServiceInstanceEntity saveServiceInstance(Integer clusterId, String serviceName, FrameServiceEntity frameServiceEntity) {
+        ClusterServiceInstanceEntity serviceInstanceEntity;
+        serviceInstanceEntity = new ClusterServiceInstanceEntity();
+        serviceInstanceEntity.setClusterId(clusterId);
+        serviceInstanceEntity.setServiceState(ServiceState.WAIT_INSTALL);
+        serviceInstanceEntity.setServiceName(serviceName);
+        serviceInstanceEntity.setLabel(frameServiceEntity.getLabel());
+        serviceInstanceEntity.setCreateTime(new Date());
+        serviceInstanceEntity.setUpdateTime(new Date());
+        serviceInstanceEntity.setNeedRestart(NeedRestart.NO);
+        serviceInstanceEntity.setFrameServiceId(frameServiceEntity.getId());
+        serviceInstanceEntity.setSortNum(frameServiceEntity.getSortNum());
+        serviceInstanceService.save(serviceInstanceEntity);
+        return serviceInstanceEntity;
+    }
+
+    private void addHostNodeToPrometheus(Integer clusterId, HashMap<Generators, List<ServiceConfig>> configFileMap) {
+        List<ClusterHostEntity> hostList = hostService.list(new QueryWrapper<ClusterHostEntity>()
+                .eq(Constants.MANAGED, 1)
+                .eq(Constants.CLUSTER_ID, clusterId));
+        Generators workerGenerators = new Generators();
+        workerGenerators.setFilename("worker.json");
+        workerGenerators.setOutputDirectory("configs");
+        workerGenerators.setConfigFormat("custom");
+        workerGenerators.setTemplateName("scrape.ftl");
+
+        Generators nodeGenerators = new Generators();
+        nodeGenerators.setFilename("linux.json");
+        nodeGenerators.setOutputDirectory("configs");
+        nodeGenerators.setConfigFormat("custom");
+        nodeGenerators.setTemplateName("scrape.ftl");
+        ArrayList<ServiceConfig> workerServiceConfigs = new ArrayList<>();
+        ArrayList<ServiceConfig> nodeServiceConfigs = new ArrayList<>();
+        for (ClusterHostEntity clusterHostEntity : hostList) {
+            ServiceConfig serviceConfig = new ServiceConfig();
+            serviceConfig.setName("worker_" + clusterHostEntity.getHostname());
+            serviceConfig.setValue(clusterHostEntity.getHostname() + ":8585");
+            serviceConfig.setRequired(true);
+            workerServiceConfigs.add(serviceConfig);
+
+            ServiceConfig nodeServiceConfig = new ServiceConfig();
+            nodeServiceConfig.setName("node_" + clusterHostEntity.getHostname());
+            nodeServiceConfig.setValue(clusterHostEntity.getHostname() + ":9100");
+            nodeServiceConfig.setRequired(true);
+            nodeServiceConfigs.add(nodeServiceConfig);
+        }
+        configFileMap.put(workerGenerators, workerServiceConfigs);
+        configFileMap.put(nodeGenerators, nodeServiceConfigs);
+    }
+
+    private void buildConfigFileMap(String serviceName, ClusterInfoEntity clusterInfo, HashMap<String, ServiceConfig> map, HashMap<Generators, List<ServiceConfig>> configFileMap) {
+        FrameServiceEntity frameService = this.frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);
+        if (StringUtils.isNotBlank(frameService.getConfigFileJson())) {
+            Map<JSONObject, JSONArray> configMap = JSONObject.parseObject(frameService.getConfigFileJson(), Map.class);
+            for (JSONObject fileJson : configMap.keySet()) {
+                Generators generators = fileJson.toJavaObject(Generators.class);
+                List<ServiceConfig> serviceConfigs = configMap.get(fileJson).toJavaList(ServiceConfig.class);
+                for (ServiceConfig config : serviceConfigs) {
+                    logger.info(config.getName());
+                    if (map.containsKey(config.getName())) {
+                        ServiceConfig newConfig = map.get(config.getName());
+                        config.setValue(map.get(config.getName()).getValue());
+                        config.setHidden(newConfig.isHidden());
+                        config.setRequired(newConfig.isRequired());
+                    }
+                }
+                configFileMap.put(generators, serviceConfigs);
+            }
+        }
+    }
+
+    private void addToGlobalVariable(Integer clusterId, String variableName, String value) {
+        ClusterVariable clusterVariable = variableService.getVariableByVariableName(variableName, clusterId);
+        if (Objects.nonNull(clusterVariable)) {
+            if (!value.equals(clusterVariable.getVariableValue())) {
+                clusterVariable.setVariableValue(value);
+                variableService.updateById(clusterVariable);
+            }
+        } else {
+            clusterVariable = new ClusterVariable();
+            clusterVariable.setClusterId(clusterId);
+            clusterVariable.setVariableName(variableName);
+            clusterVariable.setVariableValue(value);
+            variableService.save(clusterVariable);
+        }
     }
 
 
@@ -314,7 +359,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
                 .map(ServiceRoleHostMapping::getHosts)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
-        if(CollectionUtils.isEmpty(hostnameSet)) {
+        if (CollectionUtils.isEmpty(hostnameSet)) {
             return;
         }
 
@@ -325,7 +370,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
                 .collect(Collectors.toSet());
         hostnameSet.addAll(installedHostnameSet);
 
-        if(hostnameSet.size() > 1) {
+        if (hostnameSet.size() > 1) {
             throw new ServiceException(Status.BASIC_SERVICE_SELECT_MOST_ONE_HOST.getMsg());
         }
     }
@@ -333,7 +378,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     private void serviceValidation(ServiceRoleHostMapping serviceRoleHostMapping) {
         String serviceRole = serviceRoleHostMapping.getServiceRole();
         List<String> hosts = serviceRoleHostMapping.getHosts();
-       
+
         if ("JournalNode".equals(serviceRole) && hosts.size() != 3) {
             throw new ServiceException(Status.THREE_JOURNALNODE_DEPLOYMENTS_REQUIRED.getMsg());
         }

@@ -48,7 +48,7 @@ public class BEHandlerStrategy implements ServiceRoleStrategy {
             startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
             if (startResult.getExecResult()) {
                 try {
-                    StarRocksUtils.allBackend(command.getMasterHost(), CacheUtils.getString(Constants.HOSTNAME));
+                    StarRocksUtils.addBackend(command.getMasterHost(), CacheUtils.getString(Constants.HOSTNAME));
                 }catch (SQLException | ClassNotFoundException e){
                     logger.info("add backend failed {}", ThrowableUtils.getStackTrace(e));
                 }
