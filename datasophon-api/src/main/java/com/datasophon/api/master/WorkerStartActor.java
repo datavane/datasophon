@@ -136,7 +136,7 @@ public class WorkerStartActor extends UntypedActor {
             if (Objects.equals(result.getCode(), 200)) {
                 logger.info("Auto-start service Prometheus and AlertManager successful.");
             } else {
-                logger.info("Auto-start service Prometheus and AlertManager failed, terminate auto-start other services.\"");
+                logger.info("Auto-start service Prometheus and AlertManager failed, terminate auto-start other services.");
                 return;
             }
         }
