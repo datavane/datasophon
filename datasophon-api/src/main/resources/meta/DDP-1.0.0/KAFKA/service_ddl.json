@@ -223,7 +223,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "1000012"
+      "defaultValue": "10000120"
     },
     {
       "name": "replica.fetch.max.bytes",
@@ -234,7 +234,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "1048576"
+      "defaultValue": "10485760"
     },
     {
       "name": "num.network.threads",
@@ -278,7 +278,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "102400"
+      "defaultValue": "1024000"
     },
     {
       "name": "socket.send.buffer.bytes",
@@ -289,7 +289,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "102400"
+      "defaultValue": "1024000"
     },
     {
       "name": "socket.request.max.bytes",
