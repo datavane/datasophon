@@ -21,9 +21,9 @@ export HADOOP_LOG_DIR=${hadoopLogDir}
 
 SH_PATH=${r"$(cd `dirname $0`; pwd)"}
 
-export HDFS_NAMENODE_OPTS="$HDFS_NAMENODE_OPTS -javaagent:${hadoopHome}/jmx/jmx_prometheus_javaagent-0.16.1.jar=27001:${hadoopHome}/jmx/prometheus_config.yml"
+export HDFS_NAMENODE_OPTS="$HDFS_NAMENODE_OPTS -Xms${namenodeHeapSize}g -Xmx${namenodeHeapSize}g -javaagent:${hadoopHome}/jmx/jmx_prometheus_javaagent-0.16.1.jar=27001:${hadoopHome}/jmx/prometheus_config.yml"
 
-export HDFS_DATANODE_OPTS="$HDFS_DATANODE_OPTS -javaagent:${hadoopHome}/jmx/jmx_prometheus_javaagent-0.16.1.jar=27002:${hadoopHome}/jmx/prometheus_config.yml"
+export HDFS_DATANODE_OPTS="$HDFS_DATANODE_OPTS -Xms${datanodeHeapSize}g -Xmx${datanodeHeapSize}g -javaagent:${hadoopHome}/jmx/jmx_prometheus_javaagent-0.16.1.jar=27002:${hadoopHome}/jmx/prometheus_config.yml"
 
 export HDFS_JOURNALNODE_OPTS="$HDFS_JOURNALNODE_OPTS -javaagent:${hadoopHome}/jmx/jmx_prometheus_javaagent-0.16.1.jar=27003:${hadoopHome}/jmx/prometheus_config.yml"
 

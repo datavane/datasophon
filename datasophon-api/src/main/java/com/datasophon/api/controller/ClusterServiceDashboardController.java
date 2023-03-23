@@ -27,13 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * 集群服务总览仪表盘
- *
- * @author dygao2
- * @email gaodayu2022@163.com
- * @date 2022-06-23 17:01:58
- */
+
 @RestController
 @RequestMapping("cluster/service/dashboard")
 public class ClusterServiceDashboardController {

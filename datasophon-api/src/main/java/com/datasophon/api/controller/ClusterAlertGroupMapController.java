@@ -28,13 +28,7 @@ import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterAlertGroupMap;
 import com.datasophon.api.service.ClusterAlertGroupMapService;
 
-/**
- * 
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-07-13 10:01:06
- */
+
 @RestController
 @RequestMapping("cluster/alert/group/map")
 public class ClusterAlertGroupMapController {

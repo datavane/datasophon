@@ -27,13 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 
-/**
- * 
- *
- * @author dygao2
- * @email dygao2@datasophon.com
- * @date 2022-11-25 15:02:11
- */
+
 @RestController
 @RequestMapping("cluster/yarn/scheduler")
 public class ClusterYarnSchedulerController {
