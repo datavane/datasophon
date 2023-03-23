@@ -20,9 +20,9 @@ package com.datasophon.api.controller;
 import com.datasophon.api.security.UserPermission;
 import com.datasophon.api.service.ClusterKerberosService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -37,9 +37,19 @@ public class ClusterKerberosController {
     /**
      * download keytab
      */
-    @UserPermission
     @GetMapping("/downloadKeytab")
     public void downloadKeytab(Integer clusterId,String principal,String keytabName,String hostname, HttpServletResponse response) throws IOException {
         kerberosService.downloadKeytab(clusterId,principal,keytabName,hostname,response);
     }
+
+    /**
+     * upload keytab
+     */
+    @PostMapping(value = "/uploadKeytab", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void uploadFile(@RequestParam(value = "file") MultipartFile file,String hostname,String keytabFileName) throws IOException {
+        kerberosService.uploadKeytab(file,hostname,keytabFileName);
+    }
+
+
+
 }
