@@ -33,13 +33,7 @@ import com.datasophon.dao.entity.AlertGroupEntity;
 import com.datasophon.common.utils.Result;
 
 
-/**
- * 告警组表
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-03-15 17:36:08
- */
+
 @RestController
 @RequestMapping("alert/group")
 public class AlertGroupController {

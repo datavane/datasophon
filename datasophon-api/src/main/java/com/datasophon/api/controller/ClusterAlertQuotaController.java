@@ -25,13 +25,7 @@ import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterAlertQuota;
 import com.datasophon.api.service.ClusterAlertQuotaService;
 
-/**
- * 集群告警指标表 
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-06-24 15:10:41
- */
+
 @RestController
 @RequestMapping("cluster/alert/quota")
 public class ClusterAlertQuotaController {

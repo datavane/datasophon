@@ -28,13 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 
-/**
- * 
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-08-16 16:56:01
- */
+
 @RestController
 @RequestMapping("cluster/service/role/group/config")
 public class ClusterServiceRoleGroupConfigController {
