@@ -24,13 +24,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 集群服务总览仪表盘
- * 
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-06-23 17:01:58
- */
+
 @Data
 @TableName("t_ddh_cluster_service_dashboard")
 public class ClusterServiceDashboard implements Serializable {

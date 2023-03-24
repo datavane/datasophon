@@ -24,13 +24,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 
- * 
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-08-16 16:56:00
- */
+
 @Data
 @TableName("t_ddh_cluster_service_instance_role_group")
 public class ClusterServiceInstanceRoleGroup implements Serializable {

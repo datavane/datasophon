@@ -26,13 +26,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 集群服务操作指令主机指令表
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-04-12 11:28:06
- */
+
 @TableName("t_ddh_cluster_service_command_host_command")
 @Data
 public class ClusterServiceCommandHostCommandEntity implements Serializable {

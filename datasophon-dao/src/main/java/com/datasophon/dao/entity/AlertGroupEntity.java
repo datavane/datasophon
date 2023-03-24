@@ -25,13 +25,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 告警组表
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-03-15 17:28:12
- */
+
 @TableName("t_ddh_alert_group")
 @Data
 public class AlertGroupEntity implements Serializable {
