@@ -130,29 +130,18 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         ServiceConfigMap.put(clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceName + Constants.CONFIG, list);
         HashMap<String, ServiceConfig> map = new HashMap<>();
         Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
-
-
-        ClusterServiceInstanceEntity serviceInstanceEntity = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceName);
-        List<ServiceConfig> originalConfigs = listServiceConfigByServiceInstance(serviceInstanceEntity);
-        Map<String, Object> originalConfigMap = originalConfigs.stream().collect(Collectors.toMap(ServiceConfig::getName, ServiceConfig::getValue, (v1, v2) -> v1));
-
+        //handler config
         ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceName);
         if (Objects.nonNull(serviceRoleHandler)) {
             serviceRoleHandler.handlerConfig(clusterId, list);
         }
-
+        //add variable
         FrameServiceEntity frameServiceEntity = frameService.getServiceByFrameCodeAndServiceName(clusterInfo.getClusterFrame(), serviceName);
         Boolean configUpdate = false;
         for (ServiceConfig serviceConfig : list) {
             String configName = serviceConfig.getName();
             String variableName = "${" + configName + "}";
             String variableValue = String.valueOf(serviceConfig.getValue());
-            if(originalConfigMap.containsKey(configName)){
-                String configValue = String.valueOf(originalConfigMap.get(configName));
-                if(!variableValue.equals(configValue)){
-                    configUpdate = true;
-                }
-            }
             //add to global variable
             if (Constants.INPUT.equals(serviceConfig.getType())) {
                 addToGlobalVariable(clusterId, variableName, variableValue);
@@ -168,15 +157,14 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             //add host node to prometheus
             addHostNodeToPrometheus(clusterId, configFileMap);
         }
-
+        ClusterServiceInstanceEntity serviceInstanceEntity = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceName);
         if (Objects.isNull(serviceInstanceEntity)) {
             serviceInstanceEntity = saveServiceInstance(clusterId, serviceName, frameServiceEntity);
-
             ClusterServiceInstanceRoleGroup clusterServiceInstanceRoleGroup = saveServiceInstanceRoleGroup(clusterId, serviceName, serviceInstanceEntity);
-
             saveServiceRoleGroupConfig(clusterId, serviceName, list, configFileMap, clusterServiceInstanceRoleGroup);
             CacheUtils.put("UseRoleGroup_" + serviceInstanceEntity.getId(), clusterServiceInstanceRoleGroup.getId());
         } else {
+            isConfigNeedUpdate(serviceInstanceEntity, list, configUpdate);
             ClusterServiceRoleGroupConfig roleGroupConfig;
             if (Objects.isNull(roleGroupId)) {
                 ClusterServiceInstanceRoleGroup roleGroup = roleGroupService.getRoleGroupByServiceInstanceId(serviceInstanceEntity.getId());
@@ -188,17 +176,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             if (configUpdate) {
                 ClusterServiceRoleGroupConfig newRoleGroupConfig = new ClusterServiceRoleGroupConfig();
                 if (Objects.isNull(roleGroupId)) {
-                    int count = roleGroupService.count(new QueryWrapper<ClusterServiceInstanceRoleGroup>()
-                            .eq(Constants.ROLE_GROUP_TYPE, "auto")
-                            .eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceEntity.getId()));
-                    ClusterServiceInstanceRoleGroup roleGroup = new ClusterServiceInstanceRoleGroup();
-                    int num = count + 1;
-                    roleGroup.setRoleGroupName("RoleGroup" + num);
-                    roleGroup.setServiceInstanceId(serviceInstanceEntity.getId());
-                    roleGroup.setServiceName(serviceInstanceEntity.getServiceName());
-                    roleGroup.setClusterId(serviceInstanceEntity.getClusterId());
-                    roleGroup.setRoleGroupType("auto");
-                    roleGroupService.save(roleGroup);
+                    ClusterServiceInstanceRoleGroup roleGroup = saveRoleGroup(serviceInstanceEntity);
                     newRoleGroupConfig.setConfigVersion(1);
                     newRoleGroupConfig.setRoleGroupId(roleGroup.getId());
                     CacheUtils.put("UseRoleGroup_" + serviceInstanceEntity.getId(), roleGroup.getId());
@@ -222,6 +200,37 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         }
         return Result.success();
     }
+
+    private ClusterServiceInstanceRoleGroup saveRoleGroup(ClusterServiceInstanceEntity serviceInstanceEntity) {
+        int count = roleGroupService.count(new QueryWrapper<ClusterServiceInstanceRoleGroup>()
+                .eq(Constants.ROLE_GROUP_TYPE, "auto")
+                .eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceEntity.getId()));
+        ClusterServiceInstanceRoleGroup roleGroup = new ClusterServiceInstanceRoleGroup();
+        int num = count + 1;
+        roleGroup.setRoleGroupName("RoleGroup" + num);
+        roleGroup.setServiceInstanceId(serviceInstanceEntity.getId());
+        roleGroup.setServiceName(serviceInstanceEntity.getServiceName());
+        roleGroup.setClusterId(serviceInstanceEntity.getClusterId());
+        roleGroup.setRoleGroupType("auto");
+        roleGroupService.save(roleGroup);
+        return roleGroup;
+    }
+
+    private void isConfigNeedUpdate(ClusterServiceInstanceEntity serviceInstanceEntity, List<ServiceConfig> list, Boolean configUpdate) {
+        List<ServiceConfig> originalConfigs = listServiceConfigByServiceInstance(serviceInstanceEntity);
+        Map<String, Object> originalConfigMap = originalConfigs.stream().collect(Collectors.toMap(ServiceConfig::getName, ServiceConfig::getValue, (v1, v2) -> v1));
+        for (ServiceConfig serviceConfig : list) {
+            String configName = serviceConfig.getName();
+            String variableValue = String.valueOf(serviceConfig.getValue());
+            if (originalConfigMap.containsKey(configName)) {
+                String configValue = String.valueOf(originalConfigMap.get(configName));
+                if (!variableValue.equals(configValue)) {
+                    configUpdate = true;
+                }
+            }
+        }
+    }
+
 
     @Override
     public Result saveServiceRoleHostMapping(Integer clusterId, List<ServiceRoleHostMapping> list) {
@@ -543,14 +552,13 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         }
     }
 
-    private List<ServiceConfig> listServiceConfigByServiceInstance( ClusterServiceInstanceEntity serviceInstance) {
+    private List<ServiceConfig> listServiceConfigByServiceInstance(ClusterServiceInstanceEntity serviceInstance) {
         List<ServiceConfig> list;
         ClusterServiceInstanceRoleGroup roleGroup = roleGroupService.getRoleGroupByServiceInstanceId(serviceInstance.getId());
         ClusterServiceRoleGroupConfig config = groupConfigService.getConfigByRoleGroupId(roleGroup.getId());
         list = JSONArray.parseArray(config.getConfigJson(), ServiceConfig.class);
         return list;
     }
-
 
 
 }
