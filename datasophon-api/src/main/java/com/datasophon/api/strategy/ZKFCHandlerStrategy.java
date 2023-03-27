@@ -17,6 +17,7 @@
 
 package com.datasophon.api.strategy;
 
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
@@ -35,7 +36,7 @@ public class ZKFCHandlerStrategy implements ServiceRoleStrategy{
 
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
-        Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+clusterId);
+        Map<String,String> globalVariables =  GlobalVariables.get(clusterId);
         if(hosts.size() == 2 ){
             ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${ZKFC1}",hosts.get(0));
             ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${ZKFC2}",hosts.get(1));
@@ -54,7 +55,7 @@ public class ZKFCHandlerStrategy implements ServiceRoleStrategy{
 
     @Override
     public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + serviceRoleInfo.getClusterId());
+        Map<String, String> globalVariables = GlobalVariables.get(serviceRoleInfo.getClusterId());
         if(hostname.equals(globalVariables.get("${ZKFC2}"))){
             logger.info("set to slave zkfc");
             serviceRoleInfo.setSlave(true);

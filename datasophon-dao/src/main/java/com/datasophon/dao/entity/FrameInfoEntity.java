@@ -25,13 +25,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * 集群框架表
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-03-15 17:28:12
- */
+
 @Data
 @TableName("t_ddh_frame_info")
 public class FrameInfoEntity implements Serializable {

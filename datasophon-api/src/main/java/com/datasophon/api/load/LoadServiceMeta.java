@@ -129,7 +129,7 @@ public class LoadServiceMeta implements ApplicationRunner {
 
     private void putServiceHomeToVariable(List<ClusterInfoEntity> clusters, String serviceName, String decompressPackageName) {
         for (ClusterInfoEntity cluster : clusters) {
-            Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + cluster.getId());
+            Map<String, String> globalVariables = GlobalVariables.get(cluster.getId());
             if (HDFS.equals(serviceName)) {
                 serviceName = HADOOP;
             }
@@ -234,7 +234,9 @@ public class LoadServiceMeta implements ApplicationRunner {
                 globalVariables.put("${apiHost}", InetAddress.getLocalHost().getHostName());
                 globalVariables.put("${apiPort}", configBean.getServerPort());
                 globalVariables.put("${INSTALL_PATH}", Constants.INSTALL_PATH);
-                CacheUtils.put("globalVariables" + Constants.UNDERLINE + cluster.getId(), globalVariables);
+
+                GlobalVariables.put(cluster.getId(),globalVariables);
+
                 ProcessUtils.createServiceActor(cluster);
             }
         }

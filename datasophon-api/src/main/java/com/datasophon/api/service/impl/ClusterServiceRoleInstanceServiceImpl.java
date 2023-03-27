@@ -22,6 +22,7 @@ import akka.pattern.Patterns;
 import akka.util.Timeout;
 import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
 import com.datasophon.api.enums.Status;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.*;
 import com.datasophon.common.utils.CollectionUtils;
@@ -147,9 +148,7 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
         ClusterServiceRoleInstanceEntity roleInstance = this.getById(serviceRoleInstanceId);
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(roleInstance.getClusterId());
         FrameServiceRoleEntity serviceRole = frameServiceRoleService.getServiceRoleByFrameCodeAndServiceRoleName(clusterInfo.getClusterFrame(), roleInstance.getServiceRoleName());
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + roleInstance.getClusterId());
-        //        String serviceRoleJson = serviceRole.getServiceRoleJson();
-//        ServiceRoleInfo serviceRoleInfo = JSONObject.parseObject(serviceRoleJson, ServiceRoleInfo.class);
+        Map<String, String> globalVariables =  GlobalVariables.get( roleInstance.getClusterId());
         if (serviceRole.getServiceRoleType() == RoleType.CLIENT) {
             return Result.success("client does not have any log");
         }

@@ -23,13 +23,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * 
- * 
- * @author dygao2
- * @email dygao2@datasophon.com
- * @date 2022-11-25 15:02:11
- */
+
 @Data
 @TableName("t_ddh_cluster_yarn_scheduler")
 public class ClusterYarnScheduler implements Serializable {

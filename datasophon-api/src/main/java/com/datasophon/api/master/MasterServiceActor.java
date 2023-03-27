@@ -21,12 +21,14 @@ package com.datasophon.api.master;
 import akka.actor.UntypedActor;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.handler.service.*;
 import com.datasophon.api.service.ClusterServiceRoleGroupConfigService;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.ExecuteServiceRoleCommand;
+import com.datasophon.common.command.GetLogCommand;
 import com.datasophon.common.model.Generators;
 import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.model.ServiceRoleInfo;
@@ -204,7 +206,7 @@ public class MasterServiceActor extends UntypedActor {
     }
 
     private boolean isEnableRangerPlugin(Integer clusterId,String serviceName) {
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables =  GlobalVariables.get(clusterId);
         if(globalVariables.containsKey("${enable"+serviceName+"Plugin}") && "true".equals(globalVariables.get("${enable"+serviceName+"Plugin}"))){
             return true;
         }

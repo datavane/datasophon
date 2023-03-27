@@ -24,13 +24,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 规则表
- * 
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-06-07 12:04:38
- */
+
 @Data
 @TableName("t_ddh_cluster_alert_rule")
 public class ClusterAlertRule implements Serializable {

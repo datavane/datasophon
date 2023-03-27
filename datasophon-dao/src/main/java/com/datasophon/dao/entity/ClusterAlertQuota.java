@@ -27,13 +27,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 集群告警指标表 
- * 
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-06-24 15:10:41
- */
+
 @Data
 @TableName("t_ddh_cluster_alert_quota")
 public class ClusterAlertQuota implements Serializable {
