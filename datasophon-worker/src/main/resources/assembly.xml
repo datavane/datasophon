@@ -116,6 +116,7 @@
             <includes>
                 <include>node_exporter</include>
             </includes>
+            <fileMode>0755</fileMode>
             <outputDirectory>node/x86</outputDirectory>
         </fileSet>
 
@@ -124,6 +125,7 @@
             <includes>
                 <include>node_exporter</include>
             </includes>
+            <fileMode>0755</fileMode>
             <outputDirectory>node/arm</outputDirectory>
         </fileSet>
 
