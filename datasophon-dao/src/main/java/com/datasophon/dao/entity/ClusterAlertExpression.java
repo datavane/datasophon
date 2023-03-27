@@ -24,13 +24,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 表达式常量表
- * 
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-06-07 12:04:38
- */
+
 @Data
 @TableName("t_ddh_cluster_alert_expression")
 public class ClusterAlertExpression implements Serializable {

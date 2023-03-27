@@ -24,11 +24,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-03-16 11:40:00
- */
+
 @Data
 @TableName("t_ddh_session")
 public class SessionEntity implements Serializable {

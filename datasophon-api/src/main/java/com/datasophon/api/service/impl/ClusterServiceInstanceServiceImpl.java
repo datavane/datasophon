@@ -19,6 +19,7 @@ package com.datasophon.api.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.datasophon.api.enums.Status;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.service.*;
 import com.datasophon.dao.entity.*;
 import com.datasophon.common.Constants;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -90,7 +92,7 @@ public class ClusterServiceInstanceServiceImpl extends ServiceImpl<ClusterServic
 
     @Override
     public Result listAll(Integer clusterId) {
-        HashMap<String, String> globalVariables = (HashMap<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         List<ClusterServiceInstanceEntity> list = this.list(new QueryWrapper<ClusterServiceInstanceEntity>()
                 .eq(Constants.CLUSTER_ID, clusterId).orderByAsc(Constants.SORT_NUM));
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);

@@ -18,6 +18,7 @@
 package com.datasophon.api.strategy;
 
 import com.alibaba.fastjson.JSONObject;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.service.*;
 import com.datasophon.common.model.ServiceRoleInfo;
@@ -45,7 +46,7 @@ public class RangerAdminHandlerStrategy extends ServiceHandlerAbstract implement
 
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         if (hosts.size() == 1) {
             String rangerAdminUrl = "http://" + hosts.get(0) + ":6080";
             logger.info("rangerAdminUrl is {}", rangerAdminUrl);
@@ -55,7 +56,7 @@ public class RangerAdminHandlerStrategy extends ServiceHandlerAbstract implement
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
         boolean enableKerberos = false;
         Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
@@ -117,7 +118,7 @@ public class RangerAdminHandlerStrategy extends ServiceHandlerAbstract implement
         ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
         ServiceInstallService serviceInstallService = SpringTool.getApplicationContext().getBean(ServiceInstallService.class);
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceName);
         //查询角色组id
         List<ClusterServiceRoleInstanceEntity> roleList = roleInstanceService.getServiceRoleInstanceListByClusterIdAndRoleName(clusterId, serviceRoleName);

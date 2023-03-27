@@ -29,6 +29,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.ServiceCommandActor;
@@ -141,7 +142,7 @@ public class ProcessUtils {
                 if (Objects.nonNull(list) && list.size() > 0) {
                     logger.info("web ui already exists");
                 } else {
-                    HashMap<String, String> globalVariables = (HashMap<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterInfo.getId());
+                    Map<String, String> globalVariables =  GlobalVariables.get(clusterInfo.getId());
                     globalVariables.put("${host}", serviceRoleInfo.getHostname());
                     String url = PlaceholderUtils.replacePlaceholders(externalLink.getUrl(), globalVariables, Constants.REGEX_VARIABLE);
                     ClusterServiceRoleInstanceWebuis webuis = new ClusterServiceRoleInstanceWebuis();

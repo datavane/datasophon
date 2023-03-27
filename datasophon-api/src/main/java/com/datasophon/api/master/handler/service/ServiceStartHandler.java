@@ -20,6 +20,7 @@ package com.datasophon.api.master.handler.service;
 import akka.actor.ActorSelection;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
@@ -44,7 +45,7 @@ public class ServiceStartHandler extends ServiceHandler {
     public ExecResult handlerRequest(ServiceRoleInfo serviceRoleInfo) throws Exception {
         logger.info("start to start service {} in {}", serviceRoleInfo.getName(), serviceRoleInfo.getHostname());
         //启动
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + serviceRoleInfo.getClusterId());
+        Map<String, String> globalVariables = GlobalVariables.get(serviceRoleInfo.getClusterId());
         ServiceRoleOperateCommand serviceRoleOperateCommand = new ServiceRoleOperateCommand();
         serviceRoleOperateCommand.setServiceRoleName(serviceRoleInfo.getName());
         serviceRoleOperateCommand.setStartRunner(serviceRoleInfo.getStartRunner());

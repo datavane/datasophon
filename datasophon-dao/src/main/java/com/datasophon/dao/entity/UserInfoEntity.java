@@ -24,13 +24,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 用户信息表
- * 
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-03-15 17:28:12
- */
+
 @Data
 @TableName("t_ddh_user_info")
 public class UserInfoEntity implements Serializable {

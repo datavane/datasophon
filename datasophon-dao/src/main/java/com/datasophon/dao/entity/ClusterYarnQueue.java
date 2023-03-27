@@ -25,13 +25,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 
- * 
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-07-13 19:34:14
- */
+
 @Data
 @TableName("t_ddh_cluster_yarn_queue")
 public class ClusterYarnQueue implements Serializable {
