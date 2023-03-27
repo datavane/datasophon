@@ -211,7 +211,7 @@ public class MasterServiceActor extends UntypedActor {
         return false;
     }
 
-    //生成configFileMap
+    //generate configFileMap
     private void generateConfigFileMap(HashMap<Generators, List<ServiceConfig>> configFileMap, ClusterServiceRoleGroupConfig config) {
         Map<JSONObject, JSONArray> map = JSONObject.parseObject(config.getConfigFileJson(), Map.class);
         for (JSONObject fileJson : map.keySet()) {
