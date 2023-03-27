@@ -17,6 +17,7 @@
 
 package com.datasophon.api.service.impl;
 
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.service.ClusterServiceDashboardService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
@@ -28,6 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -39,7 +42,7 @@ public class ClusterServiceDashboardServiceImpl extends ServiceImpl<ClusterServi
 
     @Override
     public Result getDashboardUrl(Integer clusterId) {
-        HashMap<String, String> globalVariables = (HashMap<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+clusterId);
+        Map<String, String> globalVariables =  GlobalVariables.get(clusterId);
         ClusterServiceDashboard dashboard = dashboardService.getOne(new QueryWrapper<ClusterServiceDashboard>().eq(Constants.SERVICE_NAME, "TOTAL"));
         String dashboardUrl = PlaceholderUtils.replacePlaceholders(dashboard.getDashboardUrl(), globalVariables, Constants.REGEX_VARIABLE);
         return Result.success(dashboardUrl);

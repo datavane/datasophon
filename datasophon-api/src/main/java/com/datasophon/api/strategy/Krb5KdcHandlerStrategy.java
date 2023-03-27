@@ -20,6 +20,7 @@ package com.datasophon.api.strategy;
 import akka.actor.ActorSelection;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceInfoMap;
 import com.datasophon.api.load.ServiceRoleMap;
 import com.datasophon.api.master.ActorUtils;
@@ -46,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 public class Krb5KdcHandlerStrategy implements ServiceRoleStrategy {
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         if (hosts.size() >= 1) {
             ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${kdcHost}", hosts.get(0));
         }

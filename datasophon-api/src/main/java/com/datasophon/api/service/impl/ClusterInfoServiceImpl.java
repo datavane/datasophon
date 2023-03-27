@@ -20,6 +20,7 @@ package com.datasophon.api.service.impl;
 import akka.actor.*;
 import com.datasophon.api.configuration.ConfigBean;
 import com.datasophon.api.enums.Status;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.MasterServiceActor;
 import com.datasophon.api.service.*;
@@ -133,7 +134,7 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         globalVariables.put("${apiPort}", configBean.getServerPort());
         globalVariables.put("${HADOOP_HOME}", Constants.INSTALL_PATH + Constants.SLASH+ PackageUtils.getServiceDcPackageName(clusterInfo.getClusterFrame(),"HDFS"));
 
-        CacheUtils.put("globalVariables" + Constants.UNDERLINE + clusterInfo.getId(), globalVariables);
+        GlobalVariables.put(clusterInfo.getId(), globalVariables);
     }
 
 

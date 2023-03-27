@@ -23,6 +23,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.exceptions.ServiceException;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.load.ServiceInfoMap;
 import com.datasophon.api.load.ServiceRoleMap;
@@ -102,7 +103,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         List<ServiceConfig> list = null;
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
 
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
 
         ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceName);
         if (Objects.nonNull(serviceInstance)) {
@@ -129,7 +130,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         ServiceConfigMap.put(clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceName + Constants.CONFIG, list);
         HashMap<String, ServiceConfig> map = new HashMap<>();
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         //handler config
         ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(serviceName);
         if (Objects.nonNull(serviceRoleHandler)) {
@@ -176,7 +177,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
             if (configUpdate) {
                 ClusterServiceRoleGroupConfig newRoleGroupConfig = new ClusterServiceRoleGroupConfig();
                 if (Objects.isNull(roleGroupId)) {
-                    ClusterServiceInstanceRoleGroup roleGroup = saveRoleGroup(serviceInstanceEntity);
+                    ClusterServiceInstanceRoleGroup roleGroup = saveNewRoleGroup(serviceInstanceEntity);
                     newRoleGroupConfig.setConfigVersion(1);
                     newRoleGroupConfig.setRoleGroupId(roleGroup.getId());
                     CacheUtils.put("UseRoleGroup_" + serviceInstanceEntity.getId(), roleGroup.getId());
@@ -190,6 +191,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
                 newRoleGroupConfig.setServiceName(serviceInstanceEntity.getServiceName());
                 buildConfig(list, configFileMap, newRoleGroupConfig);
                 groupConfigService.save(newRoleGroupConfig);
+
                 serviceInstanceEntity.setNeedRestart(NeedRestart.YES);
                 roleInstanceService.updateToNeedRestart(roleGroupId);
             }
@@ -201,7 +203,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         return Result.success();
     }
 
-    private ClusterServiceInstanceRoleGroup saveRoleGroup(ClusterServiceInstanceEntity serviceInstanceEntity) {
+    private ClusterServiceInstanceRoleGroup saveNewRoleGroup(ClusterServiceInstanceEntity serviceInstanceEntity) {
         int count = roleGroupService.count(new QueryWrapper<ClusterServiceInstanceRoleGroup>()
                 .eq(Constants.ROLE_GROUP_TYPE, "auto")
                 .eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceEntity.getId()));
