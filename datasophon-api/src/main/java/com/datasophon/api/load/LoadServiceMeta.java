@@ -129,7 +129,6 @@ public class LoadServiceMeta implements ApplicationRunner {
 
     private void putServiceHomeToVariable(List<ClusterInfoEntity> clusters, String serviceName, String decompressPackageName) {
         for (ClusterInfoEntity cluster : clusters) {
-//            Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + cluster.getId());
             Map<String, String> globalVariables = GlobalVariables.get(cluster.getId());
             if (HDFS.equals(serviceName)) {
                 serviceName = HADOOP;

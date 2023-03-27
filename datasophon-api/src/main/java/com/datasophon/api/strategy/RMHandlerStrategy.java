@@ -38,7 +38,7 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
     @Override
     public void handler(Integer clusterId,List<String> hosts) {
 
-        Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+clusterId);
+        Map<String,String> globalVariables = GlobalVariables.get(clusterId);
 
         ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${rm1}",hosts.get(0));
         ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${rm2}",hosts.get(1));
