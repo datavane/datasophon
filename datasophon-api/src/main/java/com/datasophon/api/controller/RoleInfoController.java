@@ -33,13 +33,7 @@ import com.datasophon.common.utils.Result;
 
 
 
-/**
- * 角色信息表
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-03-15 17:36:08
- */
+
 @RestController
 @RequestMapping("/api/role/info")
 public class RoleInfoController {
