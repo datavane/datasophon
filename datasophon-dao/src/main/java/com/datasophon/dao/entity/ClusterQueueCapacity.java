@@ -23,13 +23,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * 
- * 
- * @author dygao2
- * @email dygao2@datasophon.com
- * @date 2022-11-25 14:30:11
- */
+
 @Data
 @TableName("t_ddh_cluster_queue_capacity")
 public class ClusterQueueCapacity implements Serializable {

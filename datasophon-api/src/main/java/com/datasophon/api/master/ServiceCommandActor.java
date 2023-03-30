@@ -45,6 +45,12 @@ public class ServiceCommandActor extends UntypedActor {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceCommandActor.class);
 
+    private static final String STARROCKS = "starrocks";
+
+    private static final String DORIS = "doris";
+
+    private static final String HDFS = "hdfs";
+
     @Override
     public void preRestart(Throwable reason, Option<Object> message) throws Exception {
         logger.info("service command actor restart because {}", reason.getMessage());
@@ -68,20 +74,18 @@ public class ServiceCommandActor extends UntypedActor {
             commandHost.setCommandProgress(progress);
 
             if (progress == 100) {
-                List<ClusterServiceCommandHostCommandEntity> list =  service.findFailedHostCommand(message.getHostname(),message.getCommandHostId());
-                if(list.size() >0){
+                List<ClusterServiceCommandHostCommandEntity> list = service.findFailedHostCommand(message.getHostname(), message.getCommandHostId());
+                if (list.size() > 0) {
                     commandHost.setCommandState(CommandState.FAILED);
-                }else{
+                } else {
                     commandHost.setCommandState(CommandState.SUCCESS);
                 }
-                List<ClusterServiceCommandHostCommandEntity> cancelList = service.findCanceledHostCommand(message.getHostname(),message.getCommandHostId());
-                if(cancelList.size() > 0){
+                List<ClusterServiceCommandHostCommandEntity> cancelList = service.findCanceledHostCommand(message.getHostname(), message.getCommandHostId());
+                if (cancelList.size() > 0) {
                     commandHost.setCommandState(CommandState.CANCEL);
                 }
             }
             commandHostService.update(commandHost, new QueryWrapper<ClusterServiceCommandHostEntity>().eq(Constants.COMMAND_HOST_ID, message.getCommandHostId()));
-
-
             Integer size1 = commandHostService.getCommandHostSizeByCommandId(message.getCommandId());
             Integer totalProgress1 = commandHostService.getCommandHostTotalProgressByCommandId(message.getCommandId());
             Integer progress1 = totalProgress1 / size1;
@@ -90,7 +94,7 @@ public class ServiceCommandActor extends UntypedActor {
             if (progress1 == 100) {
                 command.setCommandState(CommandState.SUCCESS);
                 command.setEndTime(new Date());
-                //更新集群状态
+                //update cluster state
                 if (command.getCommandType() == 1) {
                     ClusterInfoEntity clusterInfo = clusterInfoService.getById(command.getClusterId());
                     if (clusterInfo.getClusterState().equals(ClusterState.NEED_CONFIG)) {
@@ -98,26 +102,22 @@ public class ServiceCommandActor extends UntypedActor {
                         clusterInfoService.updateById(clusterInfo);
                     }
                     String serviceName = command.getServiceName();
-                    if("hdfs".equals(serviceName.toLowerCase())){
-                        ActorRef hdfsECActor = ActorUtils.getLocalActor(HdfsECActor.class,ActorUtils.getActorRefName(HdfsECActor.class));
+                    if (HDFS.equals(serviceName.toLowerCase())) {
+                        ActorRef hdfsECActor = ActorUtils.getLocalActor(HdfsECActor.class, ActorUtils.getActorRefName(HdfsECActor.class));
                         HdfsEcCommand hdfsEcCommand = new HdfsEcCommand();
                         hdfsEcCommand.setServiceInstanceId(command.getServiceInstanceId());
-                        hdfsECActor.tell(hdfsEcCommand,getSelf());
+                        hdfsECActor.tell(hdfsEcCommand, getSelf());
                     }
                     logger.info("start to generate prometheus config");
-                    ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class,ActorUtils.getActorRefName(PrometheusActor.class));
-                    if("starrocks".equals(serviceName.toLowerCase()) || "doris".equals(serviceName.toLowerCase())){
+                    ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class, ActorUtils.getActorRefName(PrometheusActor.class));
+                    if (STARROCKS.equals(serviceName.toLowerCase()) || DORIS.equals(serviceName.toLowerCase())) {
                         GenerateSRPromConfigCommand prometheusConfigCommand = new GenerateSRPromConfigCommand();
                         prometheusConfigCommand.setServiceInstanceId(command.getServiceInstanceId());
                         prometheusConfigCommand.setClusterFrame(clusterInfo.getClusterFrame());
                         prometheusConfigCommand.setClusterId(clusterInfo.getId());
-                        if("starrocks".equals(serviceName.toLowerCase())){
-                            prometheusConfigCommand.setFilename("starrocks.json");
-                        }else{
-                            prometheusConfigCommand.setFilename("doris.json");
-                        }
+                        prometheusConfigCommand.setFilename(serviceName.toLowerCase() + ".json");
                         prometheusActor.tell(prometheusConfigCommand, getSelf());
-                    }else{
+                    } else {
                         GeneratePrometheusConfigCommand prometheusConfigCommand = new GeneratePrometheusConfigCommand();
                         prometheusConfigCommand.setServiceInstanceId(command.getServiceInstanceId());
                         prometheusConfigCommand.setClusterFrame(clusterInfo.getClusterFrame());
@@ -128,16 +128,16 @@ public class ServiceCommandActor extends UntypedActor {
                     List<ClusterAlertQuota> list = alertQuotaService.listAlertQuotaByServiceName(serviceName);
                     List<Integer> ids = list.stream().map(e -> e.getId()).collect(Collectors.toList());
                     String alertQuotaIds = StringUtils.join(ids, ",");
-                    alertQuotaService.start(clusterInfo.getId(),alertQuotaIds);
+                    alertQuotaService.start(clusterInfo.getId(), alertQuotaIds);
                 }
                 List<ClusterServiceCommandHostEntity> list = commandHostService.findFailedCommandHost(message.getCommandId());
-                if(list.size() > 0){
+                if (list.size() > 0) {
                     command.setCommandState(CommandState.FAILED);
                     command.setEndTime(new Date());
                 }
 
                 List<ClusterServiceCommandHostEntity> cancelList = commandHostService.findCanceledCommandHost(message.getCommandId());
-                if(cancelList.size() > 0){
+                if (cancelList.size() > 0) {
                     command.setCommandState(CommandState.CANCEL);
                     command.setEndTime(new Date());
                 }

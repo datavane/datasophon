@@ -29,13 +29,7 @@ import com.datasophon.dao.enums.RoleType;
 import com.datasophon.dao.enums.ServiceRoleState;
 import lombok.Data;
 
-/**
- * 集群服务角色实例表
- *
- * @author dygao2
- * @email gaodayu2022@163.com
- * @date 2022-04-24 16:25:17
- */
+
 @TableName("t_ddh_cluster_service_role_instance")
 @Data
 public class ClusterServiceRoleInstanceEntity implements Serializable {

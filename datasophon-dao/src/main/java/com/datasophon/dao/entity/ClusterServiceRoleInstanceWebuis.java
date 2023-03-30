@@ -24,13 +24,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 集群服务角色对应web ui表 
- * 
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-06-30 09:35:40
- */
+
 @Data
 @TableName("t_ddh_cluster_service_role_instance_webuis")
 public class ClusterServiceRoleInstanceWebuis implements Serializable {

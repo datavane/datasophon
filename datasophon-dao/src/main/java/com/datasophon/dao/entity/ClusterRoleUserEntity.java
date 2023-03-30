@@ -24,13 +24,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * 集群角色用户中间表
- * 
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-03-15 17:28:12
- */
+
 @Data
 @TableName("t_ddh_cluster_role_user")
 public class ClusterRoleUserEntity implements Serializable {

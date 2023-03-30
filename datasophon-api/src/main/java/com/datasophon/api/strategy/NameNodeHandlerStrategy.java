@@ -18,6 +18,7 @@
 package com.datasophon.api.strategy;
 
 
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
@@ -44,7 +45,7 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract  implements 
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
 
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
 
         ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${nn1}", hosts.get(0));
         ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${nn2}", hosts.get(1));
@@ -53,7 +54,7 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract  implements 
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
 
         boolean enableRack = false;
@@ -100,7 +101,7 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract  implements 
 
     @Override
     public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + serviceRoleInfo.getClusterId());
+        Map<String, String> globalVariables = GlobalVariables.get(serviceRoleInfo.getClusterId());
         if( hostname.equals(globalVariables.get("${nn2}"))){
             logger.info("set to slave namenode");
             serviceRoleInfo.setSlave(true);

@@ -17,6 +17,7 @@
 
 package com.datasophon.api.strategy;
 
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
@@ -37,7 +38,7 @@ public class HiveServer2HandlerStrategy extends ServiceHandlerAbstract implement
     private static final Logger logger = LoggerFactory.getLogger(HiveServer2HandlerStrategy.class);
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         CacheUtils.put("enableHiveServer2HA",false);
         if (hosts.size() > 1) {
             CacheUtils.put("enableHiveServer2HA",true);
@@ -47,7 +48,7 @@ public class HiveServer2HandlerStrategy extends ServiceHandlerAbstract implement
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
         boolean enableKerberos = false;
         Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
@@ -74,7 +75,7 @@ public class HiveServer2HandlerStrategy extends ServiceHandlerAbstract implement
         //if enabled hiveserver2 ha
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
         List<ServiceConfig> serviceConfigs = ServiceConfigMap.get(clusterInfo.getClusterFrame() + Constants.UNDERLINE + "HIVE" + Constants.CONFIG);
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         if((Boolean) CacheUtils.get("enableHiveServer2HA")){
             for (ServiceConfig serviceConfig : serviceConfigs) {
                 if("ha".equals(serviceConfig.getConfigType())){
@@ -99,7 +100,7 @@ public class HiveServer2HandlerStrategy extends ServiceHandlerAbstract implement
 
     @Override
     public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + serviceRoleInfo.getClusterId());
+        Map<String, String> globalVariables = GlobalVariables.get(serviceRoleInfo.getClusterId());
         if(globalVariables.containsKey("${masterHiveServer2}") && !hostname.equals(globalVariables.get("${masterHiveServer2}"))){
             logger.info("set to slave hiveserver2");
             serviceRoleInfo.setSlave(true);

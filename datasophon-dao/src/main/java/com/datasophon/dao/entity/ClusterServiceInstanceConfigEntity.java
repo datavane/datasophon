@@ -25,13 +25,7 @@ import java.util.Date;
 
 import lombok.Data;
 
-/**
- * 集群服务角色实例配置表
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-04-24 16:25:17
- */
+
 @TableName("t_ddh_cluster_service_instance_config")
 @Data
 public class ClusterServiceInstanceConfigEntity implements Serializable {

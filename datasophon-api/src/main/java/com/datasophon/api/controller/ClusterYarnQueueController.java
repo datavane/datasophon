@@ -31,13 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterYarnQueue;
 
-/**
- * 
- *
- * @author dygao2
- * @email gaodayu2022@163.com
- * @date 2022-07-13 19:34:14
- */
+
 @RestController
 @RequestMapping("cluster/yarn/queue")
 public class ClusterYarnQueueController {
