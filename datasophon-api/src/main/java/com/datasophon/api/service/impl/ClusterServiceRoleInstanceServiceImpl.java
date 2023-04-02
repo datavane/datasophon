@@ -87,6 +87,15 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
     private ClusterAlertHistoryService alertHistoryService;
 
     @Override
+    public List<ClusterServiceRoleInstanceEntity> getStoppedServiceRoleListByHostnameAndClusterId(String hostname, Integer clusterId) {
+        return this.lambdaQuery()
+                .eq(ClusterServiceRoleInstanceEntity::getClusterId, clusterId)
+                .eq(ClusterServiceRoleInstanceEntity::getHostname, hostname)
+                .eq(ClusterServiceRoleInstanceEntity::getServiceRoleState, ServiceRoleState.STOP)
+                .list();
+    }
+
+    @Override
     public List<ClusterServiceRoleInstanceEntity> getServiceRoleListByHostnameAndClusterId(String hostname, Integer clusterId) {
         return this.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                 .eq(Constants.CLUSTER_ID, clusterId)

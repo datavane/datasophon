@@ -34,6 +34,8 @@ import java.util.List;
  */
 public interface ClusterServiceRoleInstanceService extends IService<ClusterServiceRoleInstanceEntity> {
 
+    List<ClusterServiceRoleInstanceEntity> getStoppedServiceRoleListByHostnameAndClusterId(String hostname, Integer clusterId);
+
     List<ClusterServiceRoleInstanceEntity> getServiceRoleListByHostnameAndClusterId(String hostname, Integer clusterId);
 
     List<ClusterServiceRoleInstanceEntity> getServiceRoleInstanceListByServiceIdAndRoleState(Integer id, ServiceRoleState stop);
