@@ -33,17 +33,17 @@ import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.common.model.HostInfo;
 import com.datasophon.common.model.StartWorkerMessage;
+import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.enums.MANAGED;
-import com.datasophon.dao.enums.ServiceRoleState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+
+import java.util.*;
+
+import static java.util.stream.Collectors.*;
 
 public class WorkerStartActor extends UntypedActor {
 
@@ -81,14 +81,41 @@ public class WorkerStartActor extends UntypedActor {
                 hostEntity.setManaged(MANAGED.YES);
                 clusterHostService.updateById(hostEntity);
             }
-            //tell to worker what need to start
-
 
             //add to prometheus
-            ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class,ActorUtils.getActorRefName(PrometheusActor.class));
+            ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class, ActorUtils.getActorRefName(PrometheusActor.class));
             GenerateHostPrometheusConfig prometheusConfigCommand = new GenerateHostPrometheusConfig();
             prometheusConfigCommand.setClusterId(cluster.getId());
             prometheusActor.tell(prometheusConfigCommand, getSelf());
+
+            //tell to worker what need to start
+            autoStartServiceNeeded(msg.getHostname(), cluster.getId());
         }
     }
+
+    /**
+     * Automatically start services that need to be started
+     *
+     * @param clusterId
+     */
+    private void autoStartServiceNeeded(String hostname, Integer clusterId) {
+        ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
+        ClusterServiceCommandService serviceCommandService = SpringTool.getApplicationContext().getBean(ClusterServiceCommandService.class);
+
+        List<ClusterServiceRoleInstanceEntity> serviceRoleList = roleInstanceService.getServiceRoleListByHostnameAndClusterId(hostname, clusterId);
+        Map<Integer, List<String>> serviceRoleMap = serviceRoleList.stream()
+                .collect(
+                        groupingBy(
+                                ClusterServiceRoleInstanceEntity::getServiceId,
+                                mapping(i -> String.valueOf(i.getId()), toList())
+                        )
+                );
+        Result result = serviceCommandService.generateServiceRoleCommands(clusterId, CommandType.START_SERVICE, serviceRoleMap);
+        if (result.getCode() == 200) {
+            logger.info("Auto-start services successful");
+        } else {
+            logger.info("Some service auto-start failed, please check logs of the services that failed to start.");
+        }
+    }
+
 }
