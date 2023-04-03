@@ -15,7 +15,7 @@ public class MinaUtilsTest {
     public void testOpenConnection() {
         // Setup
         // Run the test
-        final ClientSession result = MinaUtils.openConnection("sshHost", 0, "sshUser", "privateKey");
+        final ClientSession result = MinaUtils.openConnection("sshHost", 0, "sshUser");
 
         // Verify the results
     }
