@@ -49,11 +49,7 @@ public class KerberosActor extends UntypedActor {
                 logger.info("generate keytab file cmd :{}", keytabCmd);
                 ShellUtils.exceShell(keytabCmd);
             }
-
-            String keytabStr = FileUtil.readString(keytabFilePath, Charset.defaultCharset());
-            logger.info(keytabStr);
             execResult.setExecResult(true);
-            execResult.setExecOut(keytabStr);
             getSender().tell(execResult, getSelf());
         } else {
             unhandled(message);

@@ -26,13 +26,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 集群主机表
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-04-14 20:32:39
- */
+
 @TableName("t_ddh_cluster_host")
 @Data
 public class ClusterHostEntity implements Serializable {

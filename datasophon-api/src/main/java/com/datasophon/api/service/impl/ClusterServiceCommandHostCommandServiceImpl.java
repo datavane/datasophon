@@ -21,6 +21,7 @@ import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.FrameServiceRoleService;
@@ -125,7 +126,7 @@ public class ClusterServiceCommandHostCommandServiceImpl extends ServiceImpl<Clu
 
         ClusterServiceCommandHostCommandEntity hostCommand = this.getOne(new QueryWrapper<ClusterServiceCommandHostCommandEntity>().eq(Constants.HOST_COMMAND_ID, hostCommandId));
         FrameServiceRoleEntity serviceRole = frameServiceRoleService.getServiceRoleByFrameCodeAndServiceRoleName(clusterInfo.getClusterFrame(), hostCommand.getServiceRoleName());
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables =  GlobalVariables.get(clusterId);
         if(serviceRole.getServiceRoleType() == RoleType.CLIENT){
             return Result.success("client does not have any log");
         }

@@ -22,16 +22,21 @@ import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterUser;
 
 
+import java.util.List;
 import java.util.Map;
 
 
 public interface ClusterUserService extends IService<ClusterUser> {
 
 
-    Result create(Integer clusterId , String username,Integer mainGroupId , String otherGroupIds);
+    Result create(Integer clusterId, String username, Integer mainGroupId, String otherGroupIds);
 
     Result listPage(Integer clusterId, String username, Integer page, Integer pageSize);
 
     Result deleteClusterUser(Integer id);
+
+    List<ClusterUser> listAllUser(Integer clusterId);
+
+    void createUnixUserOnHost(ClusterUser clusterUser, String hostname);
 }
 

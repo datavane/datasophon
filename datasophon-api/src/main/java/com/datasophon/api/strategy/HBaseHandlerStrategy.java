@@ -17,6 +17,7 @@
 
 package com.datasophon.api.strategy;
 
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
@@ -38,7 +39,7 @@ public class HBaseHandlerStrategy extends ServiceHandlerAbstract implements Serv
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
         boolean enableKerberos = false;
         Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);

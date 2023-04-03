@@ -22,7 +22,7 @@ package com.datasophon.api.service.impl;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.DispatcherWorkerActor;
-import com.datasophon.api.master.HostActor;
+import com.datasophon.api.master.HostConnectActor;
 import com.datasophon.api.service.ClusterHostService;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.InstallService;
@@ -186,7 +186,7 @@ public class InstallServiceImpl implements InstallService {
 
     private void tellHostCheck(String clusterCode, HostInfo hostInfo) {
         ActorRef actor =
-                ActorUtils.getLocalActor(HostActor.class, "hostActor-" + hostInfo.getHostname());
+                ActorUtils.getLocalActor(HostConnectActor.class, "hostActor-" + hostInfo.getHostname());
         actor.tell(new HostCheckCommand(hostInfo, clusterCode), ActorRef.noSender());
     }
 
@@ -249,7 +249,7 @@ public class InstallServiceImpl implements InstallService {
         for (String hostname : hostnames.split(",")) {
             if (map.containsKey(hostname)) {
                 ActorRef hostActor =
-                        ActorUtils.getLocalActor(HostActor.class, "hostActor-" + hostname);
+                        ActorUtils.getLocalActor(HostConnectActor.class, "hostActor-" + hostname);
                 HostInfo hostInfo = map.get(hostname);
                 hostInfo.setCheckResult(
                         new CheckResult(

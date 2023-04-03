@@ -24,13 +24,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 
- * 
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-09-07 10:04:16
- */
+
 @Data
 @TableName("t_ddh_cluster_zk")
 public class ClusterZk implements Serializable {

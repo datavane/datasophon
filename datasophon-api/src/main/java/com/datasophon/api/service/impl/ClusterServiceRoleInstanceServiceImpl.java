@@ -22,6 +22,7 @@ import akka.pattern.Patterns;
 import akka.util.Timeout;
 import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
 import com.datasophon.api.enums.Status;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.*;
 import com.datasophon.common.utils.CollectionUtils;
@@ -85,6 +86,18 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
     @Autowired
     private ClusterAlertHistoryService alertHistoryService;
 
+    @Autowired
+    private ClusterServiceRoleInstanceWebuisService webuisService;
+
+    @Override
+    public List<ClusterServiceRoleInstanceEntity> listStoppedServiceRoleListByHostnameAndClusterId(String hostname, Integer clusterId) {
+        return this.lambdaQuery()
+                .eq(ClusterServiceRoleInstanceEntity::getClusterId, clusterId)
+                .eq(ClusterServiceRoleInstanceEntity::getHostname, hostname)
+                .eq(ClusterServiceRoleInstanceEntity::getServiceRoleState, ServiceRoleState.STOP)
+                .list();
+    }
+
     @Override
     public List<ClusterServiceRoleInstanceEntity> getServiceRoleListByHostnameAndClusterId(String hostname, Integer clusterId) {
         return this.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
@@ -147,9 +160,7 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
         ClusterServiceRoleInstanceEntity roleInstance = this.getById(serviceRoleInstanceId);
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(roleInstance.getClusterId());
         FrameServiceRoleEntity serviceRole = frameServiceRoleService.getServiceRoleByFrameCodeAndServiceRoleName(clusterInfo.getClusterFrame(), roleInstance.getServiceRoleName());
-        Map<String, String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables" + Constants.UNDERLINE + roleInstance.getClusterId());
-        //        String serviceRoleJson = serviceRole.getServiceRoleJson();
-//        ServiceRoleInfo serviceRoleInfo = JSONObject.parseObject(serviceRoleJson, ServiceRoleInfo.class);
+        Map<String, String> globalVariables =  GlobalVariables.get( roleInstance.getClusterId());
         if (serviceRole.getServiceRoleType() == RoleType.CLIENT) {
             return Result.success("client does not have any log");
         }
@@ -195,6 +206,9 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
         if (needRemoveList.size() > 0) {
             alertHistoryService.removeAlertByRoleInstanceIds(needRemoveList);
             this.removeByIds(needRemoveList);
+            //delete if there is a webui
+            webuisService.removeByRoleInsIds(needRemoveList);
+
         }
         return flag ? Result.error(Status.EXIT_RUNNING_INSTANCES.getMsg()) : Result.success();
     }

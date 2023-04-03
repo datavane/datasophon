@@ -31,14 +31,9 @@ import java.util.Date;
 public class ClusterUser implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
 	@TableId
 	private Integer id;
-	/**
-	 * 
-	 */
+
 	private String username;
 
 	private Integer clusterId;
