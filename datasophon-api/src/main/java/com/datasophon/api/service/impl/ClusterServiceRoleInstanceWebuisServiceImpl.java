@@ -20,6 +20,7 @@ package com.datasophon.api.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.common.Constants;
 import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceWebuis;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -28,6 +29,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.dao.mapper.ClusterServiceRoleInstanceWebuisMapper;
 import com.datasophon.api.service.ClusterServiceRoleInstanceWebuisService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -48,8 +50,18 @@ public class ClusterServiceRoleInstanceWebuisServiceImpl extends ServiceImpl<Clu
 
     @Override
     public void updateWebUiToActive(Integer roleInstanceId) {
-        ClusterServiceRoleInstanceWebuis webuis = this.lambdaQuery().eq(ClusterServiceRoleInstanceWebuis::getId, roleInstanceId).one();
-        webuis.setName(webuis.getName()+" Active");
+        ClusterServiceRoleInstanceWebuis webuis = this.lambdaQuery().eq(ClusterServiceRoleInstanceWebuis::getServiceRoleInstanceId, roleInstanceId).one();
+        webuis.setName(webuis.getName()+"(Active)");
         this.lambdaUpdate().eq(ClusterServiceRoleInstanceWebuis::getId,roleInstanceId).update(webuis);
+    }
+
+    @Override
+    public ClusterServiceRoleInstanceWebuis getRoleInstanceWebUi(Integer roleInstanceId) {
+        return this.lambdaQuery().eq(ClusterServiceRoleInstanceWebuis::getServiceRoleInstanceId, roleInstanceId).one();
+    }
+
+    @Override
+    public void removeByRoleInsIds(ArrayList<Integer> needRemoveList) {
+        this.lambdaUpdate().in(ClusterServiceRoleInstanceWebuis::getServiceRoleInstanceId,needRemoveList).remove();
     }
 }

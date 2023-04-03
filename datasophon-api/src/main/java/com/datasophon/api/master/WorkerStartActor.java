@@ -56,7 +56,7 @@ public class WorkerStartActor extends UntypedActor {
             StartWorkerMessage msg = (StartWorkerMessage) message;
             String hostname = msg.getHostname();
             Integer clusterId = msg.getClusterId();
-            logger.info("receive message when worker first start :{}", hostname);
+            logger.info("Receive message when worker first start :{}", hostname);
 
             ClusterHostService clusterHostService = SpringTool.getApplicationContext().getBean(ClusterHostService.class);
             ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
@@ -64,7 +64,7 @@ public class WorkerStartActor extends UntypedActor {
             //is managed?
             ClusterHostEntity hostEntity = clusterHostService.getClusterHostByHostname(hostname);
             ClusterInfoEntity cluster = clusterInfoService.getById(clusterId);
-            logger.info("host install set to 100%");
+            logger.info("Host install set to 100%");
             if (CacheUtils.constainsKey(cluster.getClusterCode() + Constants.HOST_MAP)) {
                 HashMap<String, HostInfo> map = (HashMap<String, HostInfo>) CacheUtils.get(cluster.getClusterCode() + Constants.HOST_MAP);
                 HostInfo hostInfo = map.get(hostname);
@@ -78,7 +78,7 @@ public class WorkerStartActor extends UntypedActor {
             if (ObjectUtil.isNull(hostEntity)) {
                 //save to db
                 ProcessUtils.saveHostInstallInfo(msg, cluster.getClusterCode(), clusterHostService);
-                logger.info("host install save to database");
+                logger.info("Host install save to database");
                 //sync cluster user and group
                 syncClusterUserAndGroup(clusterId, hostname);
             } else {

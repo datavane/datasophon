@@ -86,6 +86,9 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
     @Autowired
     private ClusterAlertHistoryService alertHistoryService;
 
+    @Autowired
+    private ClusterServiceRoleInstanceWebuisService webuisService;
+
     @Override
     public List<ClusterServiceRoleInstanceEntity> listStoppedServiceRoleListByHostnameAndClusterId(String hostname, Integer clusterId) {
         return this.lambdaQuery()
@@ -203,6 +206,9 @@ public class ClusterServiceRoleInstanceServiceImpl extends ServiceImpl<ClusterSe
         if (needRemoveList.size() > 0) {
             alertHistoryService.removeAlertByRoleInstanceIds(needRemoveList);
             this.removeByIds(needRemoveList);
+            //delete if there is a webui
+            webuisService.removeByRoleInsIds(needRemoveList);
+
         }
         return flag ? Result.error(Status.EXIT_RUNNING_INSTANCES.getMsg()) : Result.success();
     }
