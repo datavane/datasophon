@@ -42,5 +42,7 @@ public interface ClusterServiceRoleInstanceWebuisService extends IService<Cluste
     ClusterServiceRoleInstanceWebuis getRoleInstanceWebUi(Integer roleInstanceId);
 
     void removeByRoleInsIds(ArrayList<Integer> needRemoveList);
+
+    void updateWebUiToStandby(Integer id);
 }
 

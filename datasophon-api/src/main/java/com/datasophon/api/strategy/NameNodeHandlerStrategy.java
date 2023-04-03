@@ -127,10 +127,13 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
 
     @Override
     public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity, Map<String, ClusterServiceRoleInstanceEntity> map) {
-        String commandLine1 = GlobalVariables.get(roleInstanceEntity.getClusterId()).get("${HADOOP_HOME}") + "/bin/hdfs haadmin -getServiceState nn1";
-        String commandLine2 = GlobalVariables.get(roleInstanceEntity.getClusterId()).get("${HADOOP_HOME}") + "/bin/hdfs haadmin -getServiceState nn2";
-        getNMState(roleInstanceEntity, commandLine1);
-        getNMState(roleInstanceEntity, commandLine2);
+        Map<String, String> globalVariable = GlobalVariables.get(roleInstanceEntity.getClusterId());
+        String nn2 = globalVariable.get("${nn2}");
+        String commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/hdfs haadmin -getServiceState nn1";;
+        if(nn2.equals(roleInstanceEntity.getHostname())){
+            commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/hdfs haadmin -getServiceState nn2";
+        }
+        getNMState(roleInstanceEntity, commandLine);
     }
 
     private void getNMState(ClusterServiceRoleInstanceEntity roleInstanceEntity, String commandLine) {
@@ -142,8 +145,13 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
         Future<Object> execFuture = Patterns.ask(execCmdActor, cmdCommand, timeout);
         try {
             ExecResult execResult = (ExecResult) Await.result(execFuture, timeout.duration());
-            if (execResult.getExecResult() && ACTIVE.equals(execResult.getExecOut())) {
-                webuisService.updateWebUiToActive(roleInstanceEntity.getId());
+            if (execResult.getExecResult()) {
+                if(ACTIVE.equals(execResult.getExecOut())){
+                    webuisService.updateWebUiToActive(roleInstanceEntity.getId());
+                }else {
+                    webuisService.updateWebUiToStandby(roleInstanceEntity.getId());
+                }
+
             }
         } catch (Exception e) {
             logger.info(e.getMessage());

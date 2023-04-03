@@ -115,10 +115,14 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
 
     @Override
     public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity, Map<String, ClusterServiceRoleInstanceEntity> map) {
-        String commandLine1 = GlobalVariables.get(roleInstanceEntity.getClusterId()).get("${HADOOP_HOME}") + "/bin/yarn rmadmin -getServiceState rm1";
-        String commandLine2 = GlobalVariables.get(roleInstanceEntity.getClusterId()).get("${HADOOP_HOME}") + "/bin/yarn rmadmin -getServiceState rm2";
-        getRMState(roleInstanceEntity, commandLine1);
-        getRMState(roleInstanceEntity, commandLine2);
+
+        Map<String, String> globalVariable = GlobalVariables.get(roleInstanceEntity.getClusterId());
+        String rm2 = globalVariable.get("${rm2}");
+        String commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/yarn rmadmin -getServiceState rm1";;
+        if(rm2.equals(roleInstanceEntity.getHostname())){
+            commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/yarn rmadmin -getServiceState rm2";
+        }
+        getRMState(roleInstanceEntity, commandLine);
     }
 
     private void getRMState(ClusterServiceRoleInstanceEntity roleInstanceEntity, String commandLine) {
@@ -130,8 +134,13 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
         Future<Object> execFuture = Patterns.ask(execCmdActor, cmdCommand, timeout);
         try {
             ExecResult execResult = (ExecResult) Await.result(execFuture, timeout.duration());
-            if (execResult.getExecResult() && ACTIVE.equals(execResult.getExecOut())) {
-                webuisService.updateWebUiToActive(roleInstanceEntity.getId());
+            if (execResult.getExecResult()) {
+                if(ACTIVE.equals(execResult.getExecOut())){
+                    webuisService.updateWebUiToActive(roleInstanceEntity.getId());
+                }else {
+                    webuisService.updateWebUiToStandby(roleInstanceEntity.getId());
+                }
+
             }
         } catch (Exception e) {
             logger.info(e.getMessage());

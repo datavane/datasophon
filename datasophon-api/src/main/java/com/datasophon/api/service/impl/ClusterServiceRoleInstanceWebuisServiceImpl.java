@@ -36,6 +36,9 @@ import java.util.List;
 @Service("clusterServiceRoleInstanceWebuisService")
 public class ClusterServiceRoleInstanceWebuisServiceImpl extends ServiceImpl<ClusterServiceRoleInstanceWebuisMapper, ClusterServiceRoleInstanceWebuis> implements ClusterServiceRoleInstanceWebuisService {
 
+    private static final String ACTIVE = "(Active)";
+
+    private static final String STANDBY = "(Standby)";
 
     @Override
     public Result getWebUis(Integer serviceInstanceId) {
@@ -45,14 +48,12 @@ public class ClusterServiceRoleInstanceWebuisServiceImpl extends ServiceImpl<Clu
 
     @Override
     public void removeByServiceInsId(Integer serviceInstanceId) {
-        this.remove(new QueryWrapper<ClusterServiceRoleInstanceWebuis>().eq(Constants.SERVICE_INSTANCE_ID,serviceInstanceId));
+        this.remove(new QueryWrapper<ClusterServiceRoleInstanceWebuis>().eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceId));
     }
 
     @Override
     public void updateWebUiToActive(Integer roleInstanceId) {
-        ClusterServiceRoleInstanceWebuis webuis = this.lambdaQuery().eq(ClusterServiceRoleInstanceWebuis::getServiceRoleInstanceId, roleInstanceId).one();
-        webuis.setName(webuis.getName()+"(Active)");
-        this.lambdaUpdate().eq(ClusterServiceRoleInstanceWebuis::getId,roleInstanceId).update(webuis);
+        updateWebUiName(roleInstanceId, ACTIVE);
     }
 
     @Override
@@ -62,6 +63,23 @@ public class ClusterServiceRoleInstanceWebuisServiceImpl extends ServiceImpl<Clu
 
     @Override
     public void removeByRoleInsIds(ArrayList<Integer> needRemoveList) {
-        this.lambdaUpdate().in(ClusterServiceRoleInstanceWebuis::getServiceRoleInstanceId,needRemoveList).remove();
+        this.lambdaUpdate().in(ClusterServiceRoleInstanceWebuis::getServiceRoleInstanceId, needRemoveList).remove();
+    }
+
+    @Override
+    public void updateWebUiToStandby(Integer roleInstanceId) {
+        updateWebUiName(roleInstanceId, STANDBY);
+    }
+
+    private void updateWebUiName(Integer roleInstanceId, String active) {
+        ClusterServiceRoleInstanceWebuis webuis = this.lambdaQuery()
+                .eq(ClusterServiceRoleInstanceWebuis::getServiceRoleInstanceId, roleInstanceId)
+                .one();
+        if (!webuis.getName().contains(active)) {
+            webuis.setName(webuis.getName() + active);
+            this.lambdaUpdate()
+                    .eq(ClusterServiceRoleInstanceWebuis::getServiceRoleInstanceId, roleInstanceId)
+                    .update(webuis);
+        }
     }
 }
