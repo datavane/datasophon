@@ -54,13 +54,13 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
     private static final String ACTIVE = "active";
 
     @Override
-    public void handler(Integer clusterId,List<String> hosts) {
+    public void handler(Integer clusterId, List<String> hosts) {
 
-        Map<String,String> globalVariables = GlobalVariables.get(clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
 
-        ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${rm1}",hosts.get(0));
-        ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${rm2}",hosts.get(1));
-        ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${rmHost}",String.join(",",hosts));
+        ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${rm1}", hosts.get(0));
+        ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${rm2}", hosts.get(1));
+        ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${rmHost}", String.join(",", hosts));
 
     }
 
@@ -74,33 +74,32 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
         for (ServiceConfig config : list) {
             if ("yarn.resourcemanager.scheduler.class".equals(config.getName())) {
                 ClusterYarnScheduler scheduler = schedulerService.getScheduler(clusterId);
-                if("org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler".equals(config.getValue())){
-                    if("capacity".equals(scheduler.getScheduler())){
+                if ("org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler".equals(config.getValue())) {
+                    if ("capacity".equals(scheduler.getScheduler())) {
                         scheduler.setScheduler("fair");
                         schedulerService.updateById(scheduler);
                     }
-                }else {
-                    if("fair".equals(scheduler.getScheduler())){
+                } else {
+                    if ("fair".equals(scheduler.getScheduler())) {
                         scheduler.setScheduler("capacity");
                         schedulerService.updateById(scheduler);
                     }
                 }
             }
-            if("enableKerberos".equals(config.getName())){
-                enableKerberos = isEnableKerberos(clusterId, globalVariables, enableKerberos, config,"YARN");
+            if ("enableKerberos".equals(config.getName())) {
+                enableKerberos = isEnableKerberos(clusterId, globalVariables, enableKerberos, config, "YARN");
             }
         }
         String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "YARN" + Constants.CONFIG;
         List<ServiceConfig> configs = ServiceConfigMap.get(key);
         ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
-        if(enableKerberos){
+        if (enableKerberos) {
             addConfigWithKerberos(globalVariables, map, configs, kbConfigs);
-        }else{
+        } else {
             removeConfigWithKerberos(list, map, configs);
         }
         list.addAll(kbConfigs);
     }
-
 
 
     @Override
@@ -118,8 +117,9 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
 
         Map<String, String> globalVariable = GlobalVariables.get(roleInstanceEntity.getClusterId());
         String rm2 = globalVariable.get("${rm2}");
-        String commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/yarn rmadmin -getServiceState rm1";;
-        if(rm2.equals(roleInstanceEntity.getHostname())){
+        String commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/yarn rmadmin -getServiceState rm1";
+        ;
+        if (rm2.equals(roleInstanceEntity.getHostname())) {
             commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/yarn rmadmin -getServiceState rm2";
         }
         getRMState(roleInstanceEntity, commandLine);
@@ -135,9 +135,9 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
         try {
             ExecResult execResult = (ExecResult) Await.result(execFuture, timeout.duration());
             if (execResult.getExecResult()) {
-                if(ACTIVE.equals(execResult.getExecOut())){
+                if (ACTIVE.equals(execResult.getExecOut())) {
                     webuisService.updateWebUiToActive(roleInstanceEntity.getId());
-                }else {
+                } else {
                     webuisService.updateWebUiToStandby(roleInstanceEntity.getId());
                 }
 

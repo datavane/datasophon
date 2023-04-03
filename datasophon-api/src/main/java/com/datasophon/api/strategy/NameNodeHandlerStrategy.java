@@ -129,8 +129,9 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
     public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity, Map<String, ClusterServiceRoleInstanceEntity> map) {
         Map<String, String> globalVariable = GlobalVariables.get(roleInstanceEntity.getClusterId());
         String nn2 = globalVariable.get("${nn2}");
-        String commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/hdfs haadmin -getServiceState nn1";;
-        if(nn2.equals(roleInstanceEntity.getHostname())){
+        String commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/hdfs haadmin -getServiceState nn1";
+        ;
+        if (nn2.equals(roleInstanceEntity.getHostname())) {
             commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/hdfs haadmin -getServiceState nn2";
         }
         getNMState(roleInstanceEntity, commandLine);
@@ -146,9 +147,9 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
         try {
             ExecResult execResult = (ExecResult) Await.result(execFuture, timeout.duration());
             if (execResult.getExecResult()) {
-                if(ACTIVE.equals(execResult.getExecOut())){
+                if (ACTIVE.equals(execResult.getExecOut())) {
                     webuisService.updateWebUiToActive(roleInstanceEntity.getId());
-                }else {
+                } else {
                     webuisService.updateWebUiToStandby(roleInstanceEntity.getId());
                 }
 
