@@ -45,4 +45,11 @@ public class ClusterServiceRoleInstanceWebuisServiceImpl extends ServiceImpl<Clu
     public void removeByServiceInsId(Integer serviceInstanceId) {
         this.remove(new QueryWrapper<ClusterServiceRoleInstanceWebuis>().eq(Constants.SERVICE_INSTANCE_ID,serviceInstanceId));
     }
+
+    @Override
+    public void updateWebUiToActive(Integer roleInstanceId) {
+        ClusterServiceRoleInstanceWebuis webuis = this.lambdaQuery().eq(ClusterServiceRoleInstanceWebuis::getId, roleInstanceId).one();
+        webuis.setName(webuis.getName()+" Active");
+        this.lambdaUpdate().eq(ClusterServiceRoleInstanceWebuis::getId,roleInstanceId).update(webuis);
+    }
 }

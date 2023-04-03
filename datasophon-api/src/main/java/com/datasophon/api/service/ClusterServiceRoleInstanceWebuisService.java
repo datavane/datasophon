@@ -33,5 +33,7 @@ public interface ClusterServiceRoleInstanceWebuisService extends IService<Cluste
     Result getWebUis(Integer serviceInstanceId);
 
     void removeByServiceInsId(Integer serviceInstanceId);
+
+    void updateWebUiToActive(Integer id);
 }
 
