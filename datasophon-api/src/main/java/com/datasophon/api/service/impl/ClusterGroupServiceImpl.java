@@ -70,7 +70,6 @@ public class ClusterGroupServiceImpl extends ServiceImpl<ClusterGroupMapper, Clu
 
     @Override
     public Result saveClusterGroup(Integer clusterId, String groupName)  {
-        //判读groupName是否重复
         if(hasRepeatGroupName(clusterId,groupName)){
             return Result.error(Status.GROUP_NAME_DUPLICATION.getMsg());
         }
@@ -168,5 +167,35 @@ public class ClusterGroupServiceImpl extends ServiceImpl<ClusterGroupMapper, Clu
         }
         int total = this.count(new QueryWrapper<ClusterGroup>().like(Constants.GROUP_NAME, groupName));
         return Result.success(list).put(Constants.TOTAL,total);
+    }
+
+    @Override
+    public List<ClusterGroup> listAllUserGroup(Integer clusterId) {
+        return this.lambdaQuery().eq(ClusterGroup::getClusterId,clusterId).list();
+    }
+
+    @Override
+    public void createUnixGroupOnHost(String hostname,  String groupName) {
+        ActorRef unixGroupActor = ActorUtils.getRemoteActor(hostname, "unixGroupActor");
+        createUnixGroup(hostname,unixGroupActor,groupName);
+    }
+
+    private void createUnixGroup(String hostname, ActorRef unixGroupActor, String groupName) {
+        CreateUnixGroupCommand createUnixGroupCommand = new CreateUnixGroupCommand();
+        createUnixGroupCommand.setGroupName(groupName);
+        Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
+        Future<Object> execFuture = Patterns.ask(unixGroupActor, createUnixGroupCommand, timeout);
+        ExecResult execResult = null;
+        try {
+            execResult = (ExecResult) Await.result(execFuture, timeout.duration());
+            if (execResult.getExecResult()) {
+                logger.info("create unix group success at {}", hostname);
+            } else {
+                logger.info(execResult.getExecOut());
+                throw new ServiceException(500, "create unix group " + groupName + " failed at " + hostname);
+            }
+        } catch (Exception e) {
+            throw new ServiceException(500, "create unix group " + groupName + " failed at " + hostname);
+        }
     }
 }

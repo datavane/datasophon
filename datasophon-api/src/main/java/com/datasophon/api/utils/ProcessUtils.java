@@ -80,7 +80,7 @@ public class ProcessUtils {
         ClusterServiceInstanceRoleGroupService roleGroupService = SpringTool.getApplicationContext().getBean(ClusterServiceInstanceRoleGroupService.class);
 
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(serviceRoleInfo.getClusterId());
-        //判断当前服务实例是否存在，不存在则新增
+
         ClusterServiceInstanceEntity clusterServiceInstance = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(serviceRoleInfo.getClusterId(), serviceRoleInfo.getParentName());
         if (Objects.isNull(clusterServiceInstance)) {
             clusterServiceInstance = new ClusterServiceInstanceEntity();
@@ -90,7 +90,7 @@ public class ProcessUtils {
             clusterServiceInstance.setCreateTime(new Date());
             clusterServiceInstance.setUpdateTime(new Date());
             serviceInstanceService.save(clusterServiceInstance);
-            //保存服务实例配置
+            //save config
             List<ServiceConfig> list = ServiceConfigMap.get(clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceRoleInfo.getParentName() + Constants.CONFIG);
             String config = JSON.toJSONString(list);
             ClusterServiceInstanceConfigEntity clusterServiceInstanceConfig = new ClusterServiceInstanceConfigEntity();
@@ -110,7 +110,7 @@ public class ProcessUtils {
         Integer roleGroupId = (Integer) CacheUtils.get("UseRoleGroup_" + clusterServiceInstance.getId());
         ClusterServiceInstanceRoleGroup roleGroup = roleGroupService.getById(roleGroupId);
 
-        //保存服务角色实例
+        //save role instance
         ClusterServiceRoleInstanceEntity roleInstanceEntity = serviceRoleInstanceService.getOneServiceRole(serviceRoleInfo.getName(), serviceRoleInfo.getHostname(), clusterInfo.getId());
         if (Objects.isNull(roleInstanceEntity)) {
             ClusterServiceRoleInstanceEntity roleInstance = new ClusterServiceRoleInstanceEntity();
@@ -137,12 +137,11 @@ public class ProcessUtils {
 
             if (Objects.nonNull(serviceRoleInfo.getExternalLink())) {
                 ExternalLink externalLink = serviceRoleInfo.getExternalLink();
-                List<ClusterServiceRoleInstanceWebuis> list = webuisService.list(new QueryWrapper<ClusterServiceRoleInstanceWebuis>()
-                        .eq(Constants.NAME, externalLink.getName() + "(" + serviceRoleInfo.getHostname() + ")"));
-                if (Objects.nonNull(list) && list.size() > 0) {
+                ClusterServiceRoleInstanceWebuis webui = webuisService.getRoleInstanceWebUi(roleInstance.getId());
+                if (Objects.nonNull(webui)) {
                     logger.info("web ui already exists");
                 } else {
-                    Map<String, String> globalVariables =  GlobalVariables.get(clusterInfo.getId());
+                    Map<String, String> globalVariables = GlobalVariables.get(clusterInfo.getId());
                     globalVariables.put("${host}", serviceRoleInfo.getHostname());
                     String url = PlaceholderUtils.replacePlaceholders(externalLink.getUrl(), globalVariables, Constants.REGEX_VARIABLE);
                     ClusterServiceRoleInstanceWebuis webuis = new ClusterServiceRoleInstanceWebuis();

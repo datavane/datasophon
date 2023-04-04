@@ -13,7 +13,7 @@
   <a href="https://www.apache.org/licenses/LICENSE-2.0.html"><img src="https://img.shields.io/badge/license-Apache%202-4EB1BA.svg"></a>
   <p align="center">
     <a href="https://datasophon.github.io/datasophon-website/">Office Website</a> |
-    <a href="https://github.com/gaodayu168/datasophon/blob/main/README_CN.md">Chinese</a>
+    <a href="https://github.com/datasophon/datasophon/blob/dev/README_CN.md">Chinese</a>
   </p>
 </p>
 <h3>If you like,star fork it and join us</h3>

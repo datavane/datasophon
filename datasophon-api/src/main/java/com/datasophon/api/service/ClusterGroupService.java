@@ -17,9 +17,12 @@
 
 package com.datasophon.api.service;
 
+import akka.actor.ActorRef;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterGroup;
+
+import java.util.List;
 
 
 public interface ClusterGroupService extends IService<ClusterGroup> {
@@ -32,5 +35,10 @@ public interface ClusterGroupService extends IService<ClusterGroup> {
     Result deleteUserGroup(Integer id);
 
     Result listPage(String groupName, Integer page, Integer pageSize);
+
+    List<ClusterGroup> listAllUserGroup(Integer clusterId);
+
+    void createUnixGroupOnHost(String hostname, String groupName);
+
 }
 
