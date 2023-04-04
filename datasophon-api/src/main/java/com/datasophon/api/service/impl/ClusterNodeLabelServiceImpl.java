@@ -23,6 +23,7 @@ import akka.util.Timeout;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.api.enums.Status;
+import com.datasophon.api.exceptions.BusinessException;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.ClusterHostService;
 import com.datasophon.api.service.ClusterInfoService;
@@ -68,15 +69,9 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
     @Autowired
     private ClusterInfoService clusterInfoService;
 
-//    @Autowired
-//    DataSourceTransactionManager dataSourceTransactionManager;
-//    @Autowired
-//    TransactionDefinition transactionDefinition;
 
     @Override
     public Result saveNodeLabel(Integer clusterId, String nodeLabel) {
-//        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
-
         if (repeatNodeLable(clusterId, nodeLabel)) {
             return Result.error(Status.REPEAT_NODE_LABEL.getMsg());
         }
@@ -86,10 +81,8 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
         this.save(nodeLabelEntity);
         //refresh to yarn
         if(!refreshToYarn(clusterId,"-addToClusterNodeLabels",nodeLabel)){
-//            dataSourceTransactionManager.rollback(transactionStatus);
-            return Result.error(Status.ADD_YARN_NODE_LABEL_FAILED.getMsg());
+            throw new BusinessException(Status.ADD_YARN_NODE_LABEL_FAILED.getMsg()+",maybe you need to enable yarn node labels");
         }
-//        dataSourceTransactionManager.commit(transactionStatus);
         return Result.success();
     }
 
@@ -125,7 +118,6 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
 
     @Override
     public Result deleteNodeLabel(Integer nodeLabelId) {
-//        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
         ClusterNodeLabelEntity nodeLabelEntity = this.getById(nodeLabelId);
 
         if (nodeLabelInUse(nodeLabelEntity.getNodeLabel())) {
@@ -133,16 +125,13 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
         }
         this.removeById(nodeLabelId);
         if(!refreshToYarn(nodeLabelEntity.getClusterId(),"-removeFromClusterNodeLabels",nodeLabelEntity.getNodeLabel())){
-//            dataSourceTransactionManager.rollback(transactionStatus);
-            return Result.error(Status.ADD_YARN_NODE_LABEL_FAILED.getMsg());
+            throw new BusinessException(Status.REMOVE_YARN_NODE_LABEL_FAILED.getMsg());
         }
-//        dataSourceTransactionManager.commit(transactionStatus);
         return Result.success();
     }
 
     @Override
     public Result assignNodeLabel(Integer nodeLabelId, String hostIds) {
-//        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
         ClusterNodeLabelEntity nodeLabelEntity = this.getById(nodeLabelId);
         List<String> ids = Arrays.asList(hostIds.split(","));
         hostService.updateBatchNodeLabel(ids, nodeLabelEntity.getNodeLabel());
@@ -153,10 +142,8 @@ public class ClusterNodeLabelServiceImpl extends ServiceImpl<ClusterNodeLabelMap
         //sync to yarn
         //refresh to yarn
         if(!refreshToYarn(nodeLabelEntity.getClusterId(),"-replaceLabelsOnNode",assignNodeLabel)){
-//            dataSourceTransactionManager.rollback(transactionStatus);
-            return Result.error(Status.ADD_YARN_NODE_LABEL_FAILED.getMsg());
+            throw new BusinessException(Status.ASSIGN_YARN_NODE_LABEL_FAILED.getMsg());
         }
-//        dataSourceTransactionManager.commit(transactionStatus);
         return Result.success();
     }
 

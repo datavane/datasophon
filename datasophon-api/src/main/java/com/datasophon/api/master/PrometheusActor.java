@@ -104,13 +104,15 @@ public class PrometheusActor extends UntypedActor {
                 generators.setTemplateName("scrape.ftl");
                 List<String> value = roleEntry.getValue();
                 ArrayList<ServiceConfig> serviceConfigs = new ArrayList<>();
+                String serviceName = serviceInstance.getServiceName();
+                String serviceRoleName = roleEntry.getKey();
+                String clusterFrame = command.getClusterFrame();
                 for (String hostname : value) {
-                    String jmxKey =
-                            command.getClusterFrame()
+                    String jmxKey = clusterFrame
                                     + Constants.UNDERLINE
-                                    + serviceInstance.getServiceName()
+                                    + serviceName
                                     + Constants.UNDERLINE
-                                    + roleEntry.getKey();
+                                    + serviceRoleName;
                     if (ServiceRoleJmxMap.exists(jmxKey)) {
                         ServiceConfig serviceConfig = new ServiceConfig();
                         serviceConfig.setName(roleEntry.getKey() + Constants.UNDERLINE + hostname);

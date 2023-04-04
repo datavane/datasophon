@@ -41,7 +41,11 @@ DataSophon也是个类似的管理平台，只不过与智子不同的是，智�
 
 ![img](website/static/img/dashboard.png)
 
-# 整体架构
+# 产品架构
+
+![img](website/static/img/product.png)
+
+# 技术架构
 
 ![img](website/static/img/archive.png)
 

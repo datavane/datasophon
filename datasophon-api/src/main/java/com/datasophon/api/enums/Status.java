@@ -77,10 +77,10 @@ public enum Status {
     SELECT_LEAST_ONE_HOST (10034,"select at least one host","至少选择一台主机"),
     BASIC_SERVICE_SELECT_MOST_ONE_HOST (10035,"AlertManager/Grafana/Prometheus must at the same host","AlertManager/Grafana/Prometheus必须在同一台主机"),
     ODD_NUMBER_ARE_REQUIRED_FOR_ZKSERVER (10036,"The Number of ZkServer must be an odd number.","ZkServer个数必须是奇数"),
-
+    REMOVE_YARN_NODE_LABEL_FAILED(10037,"remove yarn node label failed.","删除yarn节点标签失败"),
+    ASSIGN_YARN_NODE_LABEL_FAILED(10037,"assign yarn node label failed.","分配yarn节点标签失败"),
     USER_NO_OPERATION_PERM(30001, "user has no operation privilege", "当前用户没有操作权限"),
     ;
-
 
 
     private final int code;

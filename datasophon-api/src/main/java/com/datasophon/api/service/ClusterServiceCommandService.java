@@ -25,6 +25,7 @@ import com.datasophon.dao.entity.ClusterServiceCommandEntity;
 
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 集群服务操作指令表
@@ -40,6 +41,8 @@ public interface ClusterServiceCommandService extends IService<ClusterServiceCom
     Result getServiceCommandlist(Integer clusterId, Integer page, Integer pageSize);
 
     Result generateServiceCommand(Integer clusterId, CommandType command, List<String> ids);
+
+    Result  generateServiceRoleCommands(Integer clusterId, CommandType commandType, Map<Integer, List<String>> instanceIdMap);
 
     Result generateServiceRoleCommand(Integer clusterId, CommandType command, Integer serviceIntanceId, List<String> ids);
 

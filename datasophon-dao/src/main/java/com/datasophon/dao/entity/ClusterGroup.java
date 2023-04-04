@@ -30,14 +30,9 @@ import java.io.Serializable;
 public class ClusterGroup implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
 	@TableId
 	private Integer id;
-	/**
-	 * 
-	 */
+
 	private String groupName;
 
 	private Integer clusterId;
