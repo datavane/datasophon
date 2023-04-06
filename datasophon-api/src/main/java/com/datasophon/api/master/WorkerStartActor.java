@@ -80,7 +80,7 @@ public class WorkerStartActor extends UntypedActor {
                 ProcessUtils.saveHostInstallInfo(msg, cluster.getClusterCode(), clusterHostService);
                 logger.info("Host install save to database");
                 //sync cluster user and group
-                syncClusterUserAndGroup(clusterId, hostname);
+//                syncClusterUserAndGroup(clusterId, hostname);
             } else {
                 hostEntity.setCpuArchitecture(msg.getCpuArchitecture());
                 hostEntity.setManaged(MANAGED.YES);
