@@ -1,4 +1,5 @@
 /*
+ *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -13,19 +14,11 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.datasophon.worker;
 
-import akka.actor.ActorRef;
-import akka.actor.ActorSelection;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
-import akka.event.EventStream;
-import akka.remote.AssociatedEvent;
-import akka.remote.AssociationErrorEvent;
-import akka.remote.DisassociatedEvent;
-import com.alibaba.fastjson.JSONObject;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.lifecycle.ServerLifeCycleManager;
@@ -36,16 +29,28 @@ import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.actor.RemoteEventActor;
 import com.datasophon.worker.actor.WorkerActor;
 import com.datasophon.worker.utils.UnixUtils;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSONObject;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
+import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.event.EventStream;
+import akka.remote.AssociatedEvent;
+import akka.remote.AssociationErrorEvent;
+import akka.remote.DisassociatedEvent;
 
 public class WorkerApplicationServer {
 
@@ -63,7 +68,6 @@ public class WorkerApplicationServer {
 
     private static final String HADOOP = "hadoop";
 
-
     public static void main(String[] args) throws UnknownHostException {
         String hostname = InetAddress.getLocalHost().getHostName();
         String workDir = System.getProperty(USER_DIR);
@@ -71,14 +75,14 @@ public class WorkerApplicationServer {
         String cpuArchitecture = ShellUtils.getCpuArchitecture();
 
         CacheUtils.put(Constants.HOSTNAME, hostname);
-        //init actor
+        // init actor
         ActorSystem system = initActor(hostname);
 
         subscribeRemoteEvent(system);
 
         startNodeExporter(workDir, cpuArchitecture);
 
-        Map<String, String> userMap = new HashMap();
+        Map<String, String> userMap = new HashMap(16);
         initUserMap(userMap);
 
         createDefaultUser(userMap);
@@ -89,11 +93,14 @@ public class WorkerApplicationServer {
         /*
          * registry hooks, which are called before the process exits
          */
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if (!ServerLifeCycleManager.isStopped()) {
-                close("WorkerServer shutdown hook");
-            }
-        }));
+        Runtime.getRuntime()
+                .addShutdownHook(
+                        new Thread(
+                                () -> {
+                                    if (!ServerLifeCycleManager.isStopped()) {
+                                        close("WorkerServer shutdown hook");
+                                    }
+                                }));
     }
 
     private static void initUserMap(Map<String, String> userMap) {
@@ -106,8 +113,9 @@ public class WorkerApplicationServer {
     }
 
     private static void createDefaultUser(Map<String, String> userMap) {
-        for (String user : userMap.keySet()) {
-            String group = userMap.get(user);
+        for (Map.Entry<String, String> entry : userMap.entrySet()) {
+            String user = entry.getKey();
+            String group = entry.getValue();
             if (!UnixUtils.isGroupExists(group)) {
                 UnixUtils.createUnixGroup(group);
             }
@@ -115,28 +123,36 @@ public class WorkerApplicationServer {
         }
     }
 
-
     private static ActorSystem initActor(String hostname) {
         Config config = ConfigFactory.parseString("akka.remote.netty.tcp.hostname=" + hostname);
-        ActorSystem system = ActorSystem.create(Constants.DATASOPHON, config.withFallback(ConfigFactory.load()));
+        ActorSystem system =
+                ActorSystem.create(Constants.DATASOPHON, config.withFallback(ConfigFactory.load()));
         system.actorOf(Props.create(WorkerActor.class), WORKER);
         return system;
     }
 
     private static void subscribeRemoteEvent(ActorSystem system) {
-        ActorRef remoteEventActor = system.actorOf(Props.create(RemoteEventActor.class), "remoteEventActor");
+        ActorRef remoteEventActor =
+                system.actorOf(Props.create(RemoteEventActor.class), "remoteEventActor");
         EventStream eventStream = system.eventStream();
         eventStream.subscribe(remoteEventActor, AssociationErrorEvent.class);
         eventStream.subscribe(remoteEventActor, AssociatedEvent.class);
         eventStream.subscribe(remoteEventActor, DisassociatedEvent.class);
     }
 
-
-    private static void tellToMaster(String hostname, String workDir, String masterHost, String cpuArchitecture, ActorSystem system) {
-        ActorSelection workerStartActor = system.actorSelection("akka.tcp://datasophon@" + masterHost + ":2551/user/workerStartActor");
+    private static void tellToMaster(
+            String hostname,
+            String workDir,
+            String masterHost,
+            String cpuArchitecture,
+            ActorSystem system) {
+        ActorSelection workerStartActor =
+                system.actorSelection(
+                        "akka.tcp://datasophon@" + masterHost + ":2551/user/workerStartActor");
         ExecResult result = ShellUtils.exceShell(workDir + "/script/host-info-collect.sh");
         logger.info("host info collect result:{}", result);
-        StartWorkerMessage startWorkerMessage = JSONObject.parseObject(result.getExecOut(), StartWorkerMessage.class);
+        StartWorkerMessage startWorkerMessage =
+                JSONObject.parseObject(result.getExecOut(), StartWorkerMessage.class);
         startWorkerMessage.setCpuArchitecture(cpuArchitecture);
         startWorkerMessage.setClusterId(PropertyUtils.getInt("clusterId"));
         startWorkerMessage.setHostname(hostname);
@@ -144,10 +160,8 @@ public class WorkerApplicationServer {
     }
 
     public static void close(String cause) {
-        logger.info("Worker server stopped, current cause: {}", cause);
-
         stopNodeExporter();
-        logger.info("Worker server stopped, current cause: {}", cause);
+        logger.info("Worker server stopped");
     }
 
     private static void stopNodeExporter() {
@@ -160,7 +174,8 @@ public class WorkerApplicationServer {
         operateNodeExporter(workDir, cpuArchitecture, "restart");
     }
 
-    private static void operateNodeExporter(String workDir, String cpuArchitecture, String operate) {
+    private static void operateNodeExporter(
+            String workDir, String cpuArchitecture, String operate) {
         ArrayList<String> commands = new ArrayList<>();
         commands.add(SH);
         if (Constants.x86_64.equals(cpuArchitecture)) {
