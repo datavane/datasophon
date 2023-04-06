@@ -21,7 +21,7 @@ import akka.actor.ActorRef;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import cn.hutool.core.io.FileUtil;
-import com.datasophon.api.exceptions.ServiceException;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.ClusterKerberosService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
@@ -41,7 +41,6 @@ import scala.concurrent.duration.Duration;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
 @Service("clusterKerberosService")
@@ -49,16 +48,17 @@ import java.util.concurrent.TimeUnit;
 public class ClusterKerberosServiceImpl implements ClusterKerberosService {
 
 
+    private static final String SSHUSER = "SSHUSER";
+
     @Autowired
     private ClusterServiceRoleInstanceService roleInstanceService;
 
     @Override
     public void downloadKeytab(Integer clusterId, String principal, String keytabName, String hostname, HttpServletResponse response) throws IOException {
-        String userDir = System.getProperty("user.dir");
-        String keytabFilePath = "/etc/security/keytab"+ Constants.SLASH + hostname + Constants.SLASH + keytabName;
+        String keytabFilePath = "/etc/security/keytab" + Constants.SLASH + hostname + Constants.SLASH + keytabName;
         File file = new File(keytabFilePath);
         if (!file.exists()) {
-            generateKeytabFile(clusterId, keytabFilePath, principal, keytabName,hostname);
+            generateKeytabFile(clusterId, keytabFilePath, principal, keytabName, hostname);
         }
         FileInputStream inputStream = new FileInputStream(file);
 
@@ -79,13 +79,12 @@ public class ClusterKerberosServiceImpl implements ClusterKerberosService {
 
     @Override
     public void uploadKeytab(MultipartFile file, String hostname, String keytabFileName) throws IOException {
-        String keytabFilePath = "/etc/security/keytab"+ Constants.SLASH + hostname + Constants.SLASH + keytabFileName;
+        String keytabFilePath = "/etc/security/keytab" + Constants.SLASH + hostname + Constants.SLASH + keytabFileName;
         file.transferTo(new File(keytabFilePath));
     }
 
 
-
-    private void generateKeytabFile(Integer clusterId, String keytabFilePath, String principal, String keytabName,String hostname) {
+    private void generateKeytabFile(Integer clusterId, String keytabFilePath, String principal, String keytabName, String hostname) {
         ClusterServiceRoleInstanceEntity roleInstanceEntity = roleInstanceService.getKAdminRoleIns(clusterId);
         ActorRef kerberosActor = ActorUtils.getRemoteActor(roleInstanceEntity.getHostname(), "kerberosActor");
         GenerateKeytabFileCommand command = new GenerateKeytabFileCommand();
@@ -99,8 +98,12 @@ public class ClusterKerberosServiceImpl implements ClusterKerberosService {
             execResult = (ExecResult) Await.result(execFuture, timeout.duration());
             String localHostname = CacheUtils.getString(Constants.HOSTNAME);
             if (execResult.getExecResult() && !localHostname.equals(roleInstanceEntity.getHostname())) {
-                String keytabFileDir = "/etc/security/keytab"+ Constants.SLASH + hostname + Constants.SLASH;
-                ShellUtils.exceShell("scp root@"+roleInstanceEntity.getHostname()+":"+keytabFilePath+" "+keytabFileDir);
+                String keytabFileDir = "/etc/security/keytab" + Constants.SLASH + hostname + Constants.SLASH;
+                if (!FileUtil.exist(keytabFileDir)) {
+                    FileUtil.mkdir(keytabFileDir);
+                }
+                String sshuser = GlobalVariables.get(clusterId).get(SSHUSER);
+                ShellUtils.exceShell("scp " + sshuser + "@" + roleInstanceEntity.getHostname() + ":" + keytabFilePath + " " + keytabFileDir);
             }
         } catch (Exception e) {
 
