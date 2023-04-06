@@ -71,12 +71,25 @@ public class ClusterServiceRoleInstanceWebuisServiceImpl extends ServiceImpl<Clu
         updateWebUiName(roleInstanceId, STANDBY);
     }
 
-    private void updateWebUiName(Integer roleInstanceId, String active) {
+    private void updateWebUiName(Integer roleInstanceId, String state) {
         ClusterServiceRoleInstanceWebuis webuis = this.lambdaQuery()
                 .eq(ClusterServiceRoleInstanceWebuis::getServiceRoleInstanceId, roleInstanceId)
                 .one();
-        if (!webuis.getName().contains(active)) {
-            webuis.setName(webuis.getName() + active);
+        String webuiName = webuis.getName();
+        Boolean needUpdate = false;
+        if (webuiName.contains(ACTIVE) && STANDBY.equals(state)) {
+            webuiName.replace(ACTIVE, STANDBY);
+            needUpdate = true;
+        }
+        if (webuiName.contains(STANDBY) && ACTIVE.equals(state)) {
+            webuiName.replace(STANDBY, ACTIVE);
+            needUpdate = true;
+        }
+        if (!webuiName.contains(ACTIVE) && !webuiName.contains(STANDBY)) {
+            webuis.setName(webuis.getName() + state);
+            needUpdate = true;
+        }
+        if (needUpdate) {
             this.lambdaUpdate()
                     .eq(ClusterServiceRoleInstanceWebuis::getServiceRoleInstanceId, roleInstanceId)
                     .update(webuis);
