@@ -20,6 +20,7 @@
 package com.datasophon.api.service.impl;
 
 import com.datasophon.api.enums.Status;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.DispatcherWorkerActor;
 import com.datasophon.api.master.HostConnectActor;
@@ -28,6 +29,7 @@ import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.InstallService;
 import com.datasophon.api.utils.MessageResolverUtils;
 import com.datasophon.api.utils.MinaUtils;
+import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.DispatcherHostAgentCommand;
@@ -75,11 +77,16 @@ public class InstallServiceImpl implements InstallService {
 
     private static final Logger logger = LoggerFactory.getLogger(InstallServiceImpl.class);
 
-    @Autowired InstallStepMapper stepMapper;
+    @Autowired
+    InstallStepMapper stepMapper;
 
-    @Autowired ClusterInfoService clusterInfoService;
+    @Autowired
+    ClusterInfoService clusterInfoService;
 
-    @Autowired ClusterHostService hostService;
+    @Autowired
+    ClusterHostService hostService;
+
+    private static final String SSHUSER = "SSHUSER";
 
     @Override
     public Result getInstallStep(Integer type) {
@@ -106,6 +113,8 @@ public class InstallServiceImpl implements InstallService {
             Integer sshPort,
             Integer page,
             Integer pageSize) {
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
+        ProcessUtils.generateClusterVariable(globalVariables, clusterId, SSHUSER, sshUser);
 
         List<HostInfo> list = new ArrayList<>();
         hosts = hosts.replace(" ", "");
@@ -369,7 +378,7 @@ public class InstallServiceImpl implements InstallService {
             HostInfo value = hostInfoEntry.getValue();
             if (Objects.isNull(value.getCheckResult())
                     || (Objects.nonNull(value.getCheckResult())
-                            && value.getCheckResult().getCode() != 10001)) {
+                    && value.getCheckResult().getCode() != 10001)) {
                 return Result.success().put("hostCheckCompleted", false);
             }
         }
@@ -393,7 +402,7 @@ public class InstallServiceImpl implements InstallService {
             HostInfo hostInfo = hostInfoEntry.getValue();
             if (hostInfo.getProgress() == 75
                     && DateUtil.between(hostInfo.getCreateTime(), new Date(), DateUnit.MINUTE)
-                            > 1) {
+                    > 1) {
                 logger.info("dispatcher host agent timeout");
                 hostInfo.setInstallState(InstallState.FAILED);
                 hostInfo.setInstallStateCode(InstallState.FAILED.getValue());
