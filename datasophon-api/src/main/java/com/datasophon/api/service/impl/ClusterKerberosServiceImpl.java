@@ -31,6 +31,8 @@ import com.datasophon.common.command.remote.GenerateKeytabFileCommand;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,39 +49,44 @@ import java.util.concurrent.TimeUnit;
 @Transactional
 public class ClusterKerberosServiceImpl implements ClusterKerberosService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ClusterKerberosServiceImpl.class);
 
     private static final String SSHUSER = "SSHUSER";
+
+    private static final String KEYTAB_PATH = "/etc/security/keytab";
 
     @Autowired
     private ClusterServiceRoleInstanceService roleInstanceService;
 
     @Override
     public void downloadKeytab(Integer clusterId, String principal, String keytabName, String hostname, HttpServletResponse response) throws IOException {
-        String keytabFilePath = "/etc/security/keytab" + Constants.SLASH + hostname + Constants.SLASH + keytabName;
+        String keytabFilePath = KEYTAB_PATH + Constants.SLASH + hostname + Constants.SLASH + keytabName;
         File file = new File(keytabFilePath);
         if (!file.exists()) {
             generateKeytabFile(clusterId, keytabFilePath, principal, keytabName, hostname);
         }
         FileInputStream inputStream = new FileInputStream(file);
-
         response.reset();
         response.setContentType("application/octet-stream");
         response.addHeader("Content-Length", "" + file.length());
         response.setHeader("Content-Disposition", "attachment;filename=" + keytabName);
         OutputStream out = response.getOutputStream();
-        int length = 0;
-        byte[] buffer = new byte[1024];
-        while ((length = inputStream.read(buffer)) != -1) {
-            out.write(buffer, 0, length);
+        try {
+            int length = 0;
+            byte[] buffer = new byte[1024];
+            while ((length = inputStream.read(buffer)) != -1) {
+                out.write(buffer, 0, length);
+            }
+        } finally {
+            inputStream.close();
+            out.flush();
+            out.close();
         }
-        inputStream.close();
-        out.flush();
-        out.close();
     }
 
     @Override
     public void uploadKeytab(MultipartFile file, String hostname, String keytabFileName) throws IOException {
-        String keytabFilePath = "/etc/security/keytab" + Constants.SLASH + hostname + Constants.SLASH + keytabFileName;
+        String keytabFilePath = KEYTAB_PATH + Constants.SLASH + hostname + Constants.SLASH + keytabFileName;
         file.transferTo(new File(keytabFilePath));
     }
 
@@ -98,7 +105,7 @@ public class ClusterKerberosServiceImpl implements ClusterKerberosService {
             execResult = (ExecResult) Await.result(execFuture, timeout.duration());
             String localHostname = CacheUtils.getString(Constants.HOSTNAME);
             if (execResult.getExecResult() && !localHostname.equals(roleInstanceEntity.getHostname())) {
-                String keytabFileDir = "/etc/security/keytab" + Constants.SLASH + hostname + Constants.SLASH;
+                String keytabFileDir = KEYTAB_PATH + Constants.SLASH + hostname + Constants.SLASH;
                 if (!FileUtil.exist(keytabFileDir)) {
                     FileUtil.mkdir(keytabFileDir);
                 }
@@ -106,7 +113,7 @@ public class ClusterKerberosServiceImpl implements ClusterKerberosService {
                 ShellUtils.exceShell("scp " + sshuser + "@" + roleInstanceEntity.getHostname() + ":" + keytabFilePath + " " + keytabFileDir);
             }
         } catch (Exception e) {
-
+            logger.error("Failed to generate keytab file: {} with hostname {}", keytabName, hostname);
         }
     }
 }
