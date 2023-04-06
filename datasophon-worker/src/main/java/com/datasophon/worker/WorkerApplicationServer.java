@@ -28,14 +28,12 @@ import akka.remote.DisassociatedEvent;
 import com.alibaba.fastjson.JSONObject;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
-import com.datasophon.common.command.remote.CreateUnixUserCommand;
 import com.datasophon.common.lifecycle.ServerLifeCycleManager;
 import com.datasophon.common.model.StartWorkerMessage;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.PropertyUtils;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.actor.RemoteEventActor;
-import com.datasophon.worker.actor.UnixUserActor;
 import com.datasophon.worker.actor.WorkerActor;
 import com.datasophon.worker.utils.UnixUtils;
 import com.typesafe.config.Config;
@@ -43,20 +41,19 @@ import com.typesafe.config.ConfigFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WorkerApplicationServer  {
+public class WorkerApplicationServer {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkerApplicationServer.class);
 
     private static final String USER_DIR = "user.dir";
 
-    private static final String MASTER_HOST= "masterHost";
+    private static final String MASTER_HOST = "masterHost";
 
     private static final String WORKER = "worker";
 
@@ -64,6 +61,7 @@ public class WorkerApplicationServer  {
 
     private static final String NODE = "node";
 
+    private static final String HADOOP = "hadoop";
 
 
     public static void main(String[] args) throws UnknownHostException {
@@ -72,7 +70,7 @@ public class WorkerApplicationServer  {
         String masterHost = PropertyUtils.getString(MASTER_HOST);
         String cpuArchitecture = ShellUtils.getCpuArchitecture();
 
-        CacheUtils.put(Constants.HOSTNAME,hostname);
+        CacheUtils.put(Constants.HOSTNAME, hostname);
         //init actor
         ActorSystem system = initActor(hostname);
 
@@ -80,7 +78,7 @@ public class WorkerApplicationServer  {
 
         startNodeExporter(workDir, cpuArchitecture);
 
-        Map<String,String> userMap = new HashMap<String,String>();
+        Map<String, String> userMap = new HashMap();
         initUserMap(userMap);
 
         createDefaultUser(userMap);
@@ -99,24 +97,23 @@ public class WorkerApplicationServer  {
     }
 
     private static void initUserMap(Map<String, String> userMap) {
-        userMap.put("hdfs","hadoop");
-        userMap.put("yarn","hadoop");
-        userMap.put("hive","hadoop");
-        userMap.put("mapred","hadoop");
-        userMap.put("hbase","hadoop");
-        userMap.put("elastic","elastic");
+        userMap.put("hdfs", HADOOP);
+        userMap.put("yarn", HADOOP);
+        userMap.put("hive", HADOOP);
+        userMap.put("mapred", HADOOP);
+        userMap.put("hbase", HADOOP);
+        userMap.put("elastic", "elastic");
     }
 
-    private static void createDefaultUser(Map<String,String> userMap) {
+    private static void createDefaultUser(Map<String, String> userMap) {
         for (String user : userMap.keySet()) {
             String group = userMap.get(user);
-            if(!UnixUtils.isGroupExists(group)){
+            if (!UnixUtils.isGroupExists(group)) {
                 UnixUtils.createUnixGroup(group);
-            };
-            UnixUtils.createUnixUser(user,group,null);
+            }
+            UnixUtils.createUnixUser(user, group, null);
         }
     }
-
 
 
     private static ActorSystem initActor(String hostname) {
@@ -148,10 +145,15 @@ public class WorkerApplicationServer  {
 
     public static void close(String cause) {
         logger.info("Worker server stopped, current cause: {}", cause);
-        String workDir = System.getProperty("user.dir");
+
+        stopNodeExporter();
+        logger.info("Worker server stopped, current cause: {}", cause);
+    }
+
+    private static void stopNodeExporter() {
+        String workDir = System.getProperty(USER_DIR);
         String cpuArchitecture = ShellUtils.getCpuArchitecture();
         operateNodeExporter(workDir, cpuArchitecture, "stop");
-        logger.info("Worker server stopped, current cause: {}", cause);
     }
 
     private static void startNodeExporter(String workDir, String cpuArchitecture) {
