@@ -1,4 +1,5 @@
 /*
+ *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -13,15 +14,11 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.datasophon.api.strategy;
 
-
-import akka.actor.ActorRef;
-import akka.actor.ActorSelection;
-import akka.pattern.Patterns;
-import akka.util.Timeout;
 import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.master.ActorUtils;
@@ -29,25 +26,27 @@ import com.datasophon.api.service.ClusterServiceRoleInstanceWebuisService;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.Constants;
-import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ExecuteCmdCommand;
 import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.common.utils.ExecResult;
-import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
-import com.datasophon.dao.enums.AlertLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import scala.concurrent.Await;
-import scala.concurrent.Future;
-import scala.concurrent.duration.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import akka.actor.ActorRef;
+import akka.pattern.Patterns;
+import akka.util.Timeout;
+import scala.concurrent.Await;
+import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
 
 public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements ServiceRoleStrategy {
 
@@ -66,7 +65,6 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
 
         ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${nn1}", hosts.get(0));
         ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${nn2}", hosts.get(1));
-
     }
 
     @Override
@@ -78,7 +76,8 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
         boolean enableKerberos = false;
         Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
 
-        String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "HDFS" + Constants.CONFIG;
+        String key =
+                clusterInfo.getClusterFrame() + Constants.UNDERLINE + "HDFS" + Constants.CONFIG;
         List<ServiceConfig> configs = ServiceConfigMap.get(key);
 
         for (ServiceConfig config : list) {
@@ -88,7 +87,9 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
                 }
             }
             if (ENABLE_KERBEROS.equals(config.getName())) {
-                enableKerberos = isEnableKerberos(clusterId, globalVariables, enableKerberos, config, "HDFS");
+                enableKerberos =
+                        isEnableKerberos(
+                                clusterId, globalVariables, enableKerberos, config, "HDFS");
             }
         }
         List<ServiceConfig> rackConfigs = new ArrayList<>();
@@ -109,11 +110,8 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
         list.addAll(kbConfigs);
     }
 
-
     @Override
-    public void getConfig(Integer clusterId, List<ServiceConfig> list) {
-
-    }
+    public void getConfig(Integer clusterId, List<ServiceConfig> list) {}
 
     @Override
     public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {
@@ -126,19 +124,27 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
     }
 
     @Override
-    public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity, Map<String, ClusterServiceRoleInstanceEntity> map) {
+    public void handlerServiceRoleCheck(
+            ClusterServiceRoleInstanceEntity roleInstanceEntity,
+            Map<String, ClusterServiceRoleInstanceEntity> map) {
         Map<String, String> globalVariable = GlobalVariables.get(roleInstanceEntity.getClusterId());
         String nn2 = globalVariable.get("${nn2}");
-        String commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/hdfs haadmin -getServiceState nn1";
+        String commandLine =
+                globalVariable.get("${HADOOP_HOME}") + "/bin/hdfs haadmin -getServiceState nn1";
         if (nn2.equals(roleInstanceEntity.getHostname())) {
-            commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/hdfs haadmin -getServiceState nn2";
+            commandLine =
+                    globalVariable.get("${HADOOP_HOME}") + "/bin/hdfs haadmin -getServiceState nn2";
         }
         getNMState(roleInstanceEntity, commandLine);
     }
 
-    private void getNMState(ClusterServiceRoleInstanceEntity roleInstanceEntity, String commandLine) {
-        ClusterServiceRoleInstanceWebuisService webuisService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceWebuisService.class);
-        ActorRef execCmdActor = ActorUtils.getRemoteActor(roleInstanceEntity.getHostname(), "nMStateActor");
+    private void getNMState(
+            ClusterServiceRoleInstanceEntity roleInstanceEntity, String commandLine) {
+        ClusterServiceRoleInstanceWebuisService webuisService =
+                SpringTool.getApplicationContext()
+                        .getBean(ClusterServiceRoleInstanceWebuisService.class);
+        ActorRef execCmdActor =
+                ActorUtils.getRemoteActor(roleInstanceEntity.getHostname(), "nMStateActor");
         ExecuteCmdCommand cmdCommand = new ExecuteCmdCommand();
         cmdCommand.setCommandLine(commandLine);
         Timeout timeout = new Timeout(Duration.create(30, TimeUnit.SECONDS));
@@ -151,13 +157,11 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
                 } else {
                     webuisService.updateWebUiToStandby(roleInstanceEntity.getId());
                 }
-            }else{
+            } else {
                 webuisService.updateWebUiToStandby(roleInstanceEntity.getId());
             }
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
     }
-
-
 }

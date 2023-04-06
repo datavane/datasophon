@@ -1,4 +1,5 @@
 /*
+ *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -13,13 +14,11 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.datasophon.api.strategy;
 
-import akka.actor.ActorRef;
-import akka.pattern.Patterns;
-import akka.util.Timeout;
 import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.master.ActorUtils;
@@ -28,7 +27,6 @@ import com.datasophon.api.service.ClusterYarnSchedulerService;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.Constants;
-import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ExecuteCmdCommand;
 import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.model.ServiceRoleInfo;
@@ -36,16 +34,21 @@ import com.datasophon.common.utils.ExecResult;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.entity.ClusterYarnScheduler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import scala.concurrent.Await;
-import scala.concurrent.Future;
-import scala.concurrent.duration.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import akka.actor.ActorRef;
+import akka.pattern.Patterns;
+import akka.util.Timeout;
+import scala.concurrent.Await;
+import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
 
 public class RMHandlerStrategy extends ServiceHandlerAbstract implements ServiceRoleStrategy {
 
@@ -60,13 +63,14 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
 
         ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${rm1}", hosts.get(0));
         ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${rm2}", hosts.get(1));
-        ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${rmHost}", String.join(",", hosts));
-
+        ProcessUtils.generateClusterVariable(
+                globalVariables, clusterId, "${rmHost}", String.join(",", hosts));
     }
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
-        ClusterYarnSchedulerService schedulerService = SpringTool.getApplicationContext().getBean(ClusterYarnSchedulerService.class);
+        ClusterYarnSchedulerService schedulerService =
+                SpringTool.getApplicationContext().getBean(ClusterYarnSchedulerService.class);
         Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
         boolean enableKerberos = false;
@@ -74,7 +78,8 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
         for (ServiceConfig config : list) {
             if ("yarn.resourcemanager.scheduler.class".equals(config.getName())) {
                 ClusterYarnScheduler scheduler = schedulerService.getScheduler(clusterId);
-                if ("org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler".equals(config.getValue())) {
+                if ("org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler"
+                        .equals(config.getValue())) {
                     if ("capacity".equals(scheduler.getScheduler())) {
                         scheduler.setScheduler("fair");
                         schedulerService.updateById(scheduler);
@@ -87,10 +92,13 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
                 }
             }
             if ("enableKerberos".equals(config.getName())) {
-                enableKerberos = isEnableKerberos(clusterId, globalVariables, enableKerberos, config, "YARN");
+                enableKerberos =
+                        isEnableKerberos(
+                                clusterId, globalVariables, enableKerberos, config, "YARN");
             }
         }
-        String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "YARN" + Constants.CONFIG;
+        String key =
+                clusterInfo.getClusterFrame() + Constants.UNDERLINE + "YARN" + Constants.CONFIG;
         List<ServiceConfig> configs = ServiceConfigMap.get(key);
         ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
         if (enableKerberos) {
@@ -101,33 +109,36 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
         list.addAll(kbConfigs);
     }
 
+    @Override
+    public void getConfig(Integer clusterId, List<ServiceConfig> list) {}
 
     @Override
-    public void getConfig(Integer clusterId, List<ServiceConfig> list) {
-
-    }
+    public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {}
 
     @Override
-    public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {
-
-    }
-
-    @Override
-    public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity, Map<String, ClusterServiceRoleInstanceEntity> map) {
+    public void handlerServiceRoleCheck(
+            ClusterServiceRoleInstanceEntity roleInstanceEntity,
+            Map<String, ClusterServiceRoleInstanceEntity> map) {
 
         Map<String, String> globalVariable = GlobalVariables.get(roleInstanceEntity.getClusterId());
         String rm2 = globalVariable.get("${rm2}");
-        String commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/yarn rmadmin -getServiceState rm1";
-        ;
+        String commandLine =
+                globalVariable.get("${HADOOP_HOME}") + "/bin/yarn rmadmin -getServiceState rm1";
+
         if (rm2.equals(roleInstanceEntity.getHostname())) {
-            commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/yarn rmadmin -getServiceState rm2";
+            commandLine =
+                    globalVariable.get("${HADOOP_HOME}") + "/bin/yarn rmadmin -getServiceState rm2";
         }
         getRMState(roleInstanceEntity, commandLine);
     }
 
-    private void getRMState(ClusterServiceRoleInstanceEntity roleInstanceEntity, String commandLine) {
-        ClusterServiceRoleInstanceWebuisService webuisService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceWebuisService.class);
-        ActorRef execCmdActor = ActorUtils.getRemoteActor(roleInstanceEntity.getHostname(), "rMStateActor");
+    private void getRMState(
+            ClusterServiceRoleInstanceEntity roleInstanceEntity, String commandLine) {
+        ClusterServiceRoleInstanceWebuisService webuisService =
+                SpringTool.getApplicationContext()
+                        .getBean(ClusterServiceRoleInstanceWebuisService.class);
+        ActorRef execCmdActor =
+                ActorUtils.getRemoteActor(roleInstanceEntity.getHostname(), "rMStateActor");
         ExecuteCmdCommand cmdCommand = new ExecuteCmdCommand();
         cmdCommand.setCommandLine(commandLine);
         Timeout timeout = new Timeout(Duration.create(30, TimeUnit.SECONDS));
@@ -140,12 +151,11 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
                 } else {
                     webuisService.updateWebUiToStandby(roleInstanceEntity.getId());
                 }
-            }else{
+            } else {
                 webuisService.updateWebUiToStandby(roleInstanceEntity.getId());
             }
         } catch (Exception e) {
             logger.info(e.getMessage());
         }
     }
-
 }
