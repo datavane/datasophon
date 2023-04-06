@@ -78,13 +78,14 @@ public class ClusterServiceRoleInstanceWebuisServiceImpl extends ServiceImpl<Clu
         String webuiName = webuis.getName();
         Boolean needUpdate = false;
         if (webuiName.contains(ACTIVE) && STANDBY.equals(state)) {
-            webuiName.replace(ACTIVE, STANDBY);
+            webuiName = webuiName.replace(ACTIVE, STANDBY);
             needUpdate = true;
         }
         if (webuiName.contains(STANDBY) && ACTIVE.equals(state)) {
-            webuiName.replace(STANDBY, ACTIVE);
+            webuiName = webuiName.replace(STANDBY, ACTIVE);
             needUpdate = true;
         }
+        webuis.setName(webuiName);
         if (!webuiName.contains(ACTIVE) && !webuiName.contains(STANDBY)) {
             webuis.setName(webuis.getName() + state);
             needUpdate = true;

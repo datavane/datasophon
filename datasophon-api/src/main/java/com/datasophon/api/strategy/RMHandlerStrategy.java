@@ -140,7 +140,8 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
                 } else {
                     webuisService.updateWebUiToStandby(roleInstanceEntity.getId());
                 }
-
+            }else{
+                webuisService.updateWebUiToStandby(roleInstanceEntity.getId());
             }
         } catch (Exception e) {
             logger.info(e.getMessage());

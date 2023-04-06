@@ -130,7 +130,6 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
         Map<String, String> globalVariable = GlobalVariables.get(roleInstanceEntity.getClusterId());
         String nn2 = globalVariable.get("${nn2}");
         String commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/hdfs haadmin -getServiceState nn1";
-        ;
         if (nn2.equals(roleInstanceEntity.getHostname())) {
             commandLine = globalVariable.get("${HADOOP_HOME}") + "/bin/hdfs haadmin -getServiceState nn2";
         }
@@ -152,10 +151,11 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
                 } else {
                     webuisService.updateWebUiToStandby(roleInstanceEntity.getId());
                 }
-
+            }else{
+                webuisService.updateWebUiToStandby(roleInstanceEntity.getId());
             }
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 
