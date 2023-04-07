@@ -91,7 +91,7 @@ public class ClusterServiceRoleInstanceWebuisServiceImpl
                                 roleInstanceId)
                         .one();
         String webuiName = webuis.getName();
-        Boolean needUpdate = false;
+        boolean needUpdate = false;
         if (webuiName.contains(ACTIVE) && STANDBY.equals(state)) {
             webuiName = webuiName.replace(ACTIVE, STANDBY);
             needUpdate = true;
