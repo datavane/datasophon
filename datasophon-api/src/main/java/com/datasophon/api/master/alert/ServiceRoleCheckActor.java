@@ -26,8 +26,7 @@ import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,7 +34,6 @@ import java.util.stream.Collectors;
 public class ServiceRoleCheckActor extends UntypedActor {
 
 
-    private static final Logger logger = LoggerFactory.getLogger(ServiceRoleCheckActor.class);
 
     @Override
     public void onReceive(Object msg) throws Throwable {
@@ -45,9 +43,9 @@ public class ServiceRoleCheckActor extends UntypedActor {
             List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                     .in(Constants.SERVICE_ROLE_NAME, "Prometheus", "AlertManager", "Krb5Kdc", "KAdmin", "SRFE", "SRBE", "DorisFE", "DorisBE", "NameNode", "ResourceManager"));
 
-            Map<String, ClusterServiceRoleInstanceEntity> map = list.stream().collect(Collectors.toMap(e -> e.getHostname() + e.getServiceRoleName(), e -> e, (v1, v2) -> v1));
+            Map<String, ClusterServiceRoleInstanceEntity> map = translateListToMap(list);
 
-            if (Objects.nonNull(list) && list.size() > 0) {
+            if (!list.isEmpty()) {
                 for (ClusterServiceRoleInstanceEntity roleInstanceEntity : list) {
                     ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(roleInstanceEntity.getServiceRoleName());
                     if (Objects.nonNull(serviceRoleHandler)) {
@@ -58,6 +56,10 @@ public class ServiceRoleCheckActor extends UntypedActor {
                 unhandled(msg);
             }
         }
+    }
+
+    private Map<String, ClusterServiceRoleInstanceEntity> translateListToMap(List<ClusterServiceRoleInstanceEntity> list) {
+        return list.stream().collect(Collectors.toMap(e -> e.getHostname() + e.getServiceRoleName(), e -> e, (v1, v2) -> v1));
     }
 
 
