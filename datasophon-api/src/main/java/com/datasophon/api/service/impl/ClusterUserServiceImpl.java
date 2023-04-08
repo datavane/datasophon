@@ -58,9 +58,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
-
-
-
 @Service("clusterUserService")
 @Transactional
 public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, ClusterUser> implements ClusterUserService {
@@ -75,9 +72,9 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
     private ClusterUserGroupService userGroupService;
 
     @Override
-    public Result create(Integer clusterId , String username, Integer mainGroupId,String groupIds) {
+    public Result create(Integer clusterId, String username, Integer mainGroupId, String groupIds) {
 
-        if(hasRepeatUserName(clusterId,username)){
+        if (hasRepeatUserName(clusterId, username)) {
             return Result.error(Status.DUPLICATE_USER_NAME.getMsg());
         }
         List<ClusterHostEntity> hostList = hostService.getHostListByClusterId(clusterId);
@@ -89,7 +86,7 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
         buildClusterUserGroup(clusterId, clusterUser.getId(), mainGroupId, 1);
 
         String otherGroup = null;
-        if(StringUtils.isNotBlank(groupIds)){
+        if (StringUtils.isNotBlank(groupIds)) {
             List<Integer> otherGroupIds = Arrays.stream(groupIds.split(",")).map(e -> Integer.parseInt(e)).collect(Collectors.toList());
             for (Integer id : otherGroupIds) {
                 buildClusterUserGroup(clusterId, clusterUser.getId(), id, 2);
@@ -114,19 +111,19 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
             try {
                 execResult = (ExecResult) Await.result(execFuture, timeout.duration());
                 if (execResult.getExecResult()) {
-                    logger.info("create unix user {} success at {}", username,clusterHost.getHostname());
+                    logger.info("create unix user {} success at {}", username, clusterHost.getHostname());
                 } else {
                     logger.info(execResult.getExecOut());
-                    throw new ServiceException(500,"create unix user "+username+" failed at "+clusterHost.getHostname());
+                    throw new ServiceException(500, "create unix user " + username + " failed at " + clusterHost.getHostname());
                 }
             } catch (Exception e) {
-                throw new ServiceException(500,"create unix user "+username+" failed at "+clusterHost.getHostname());
+                throw new ServiceException(500, "create unix user " + username + " failed at " + clusterHost.getHostname());
             }
         }
         return Result.success();
     }
 
-    private void buildClusterUserGroup(Integer clusterId,  Integer userId, Integer groupId,Integer userGroupType) {
+    private void buildClusterUserGroup(Integer clusterId, Integer userId, Integer groupId, Integer userGroupType) {
         ClusterUserGroup clusterUserGroup = new ClusterUserGroup();
         clusterUserGroup.setUserId(userId);
         clusterUserGroup.setGroupId(groupId);
@@ -139,28 +136,28 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
         List<ClusterUser> list = this.list(new QueryWrapper<ClusterUser>()
                 .eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.USERNAME, username));
-        if(list.size() > 0){
+        if (list.size() > 0) {
             return true;
         }
         return false;
     }
 
     @Override
-    public Result listPage(Integer clusterId ,String username, Integer page, Integer pageSize) {
+    public Result listPage(Integer clusterId, String username, Integer page, Integer pageSize) {
         Integer offset = (page - 1) * pageSize;
         List<ClusterUser> list = this.list(new QueryWrapper<ClusterUser>().like(Constants.USERNAME, username)
                 .last("limit " + offset + "," + pageSize));
         for (ClusterUser clusterUser : list) {
             ClusterGroup mainGroup = userGroupService.queryMainGroup(clusterUser.getId());
             List<ClusterGroup> otherGroupList = userGroupService.listOtherGroups(clusterUser.getId());
-            if(Objects.nonNull(otherGroupList) && !otherGroupList.isEmpty()){
+            if (Objects.nonNull(otherGroupList) && !otherGroupList.isEmpty()) {
                 String otherGroups = otherGroupList.stream().map(e -> e.getGroupName()).collect(Collectors.joining(","));
                 clusterUser.setOtherGroups(otherGroups);
             }
             clusterUser.setMainGroup(mainGroup.getGroupName());
         }
         int total = this.count(new QueryWrapper<ClusterUser>().like(Constants.USERNAME, username));
-        return Result.success(list).put(Constants.TOTAL,total);
+        return Result.success(list).put(Constants.TOTAL, total);
     }
 
     @Override
@@ -190,5 +187,43 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
         }
         this.removeById(id);
         return Result.success();
+    }
+
+    @Override
+    public List<ClusterUser> listAllUser(Integer clusterId) {
+        return this.lambdaQuery().eq(ClusterUser::getClusterId, clusterId).list();
+    }
+
+    @Override
+    public void createUnixUserOnHost(ClusterUser clusterUser, String hostname) {
+        String username = clusterUser.getUsername();
+        ClusterGroup mainGroup = userGroupService.queryMainGroup(clusterUser.getId());
+        List<ClusterGroup> otherGroupList = userGroupService.listOtherGroups(clusterUser.getId());
+        String otherGroup="";
+        if (Objects.nonNull(otherGroupList) && !otherGroupList.isEmpty()) {
+            otherGroup = otherGroupList.stream().map(e -> e.getGroupName()).collect(Collectors.joining(","));
+        }
+        ActorSelection unixUserActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + hostname + ":2552/user/worker/unixUserActor");
+
+        CreateUnixUserCommand createUnixUserCommand = new CreateUnixUserCommand();
+        createUnixUserCommand.setUsername(clusterUser.getUsername());
+        createUnixUserCommand.setMainGroup(mainGroup.getGroupName());
+        createUnixUserCommand.setOtherGroups(otherGroup);
+
+        Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
+        Future<Object> execFuture = Patterns.ask(unixUserActor, createUnixUserCommand, timeout);
+        ExecResult execResult = null;
+        try {
+            execResult = (ExecResult) Await.result(execFuture, timeout.duration());
+            if (execResult.getExecResult()) {
+                logger.info("create unix user {} success at {}", username, hostname);
+            } else {
+                logger.info(execResult.getExecOut());
+                throw new ServiceException(500, "create unix user " + username + " failed at " + hostname);
+            }
+        } catch (Exception e) {
+            throw new ServiceException(500, "create unix user " + username + " failed at " + hostname);
+        }
+
     }
 }
