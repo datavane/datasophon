@@ -20,20 +20,41 @@
 package com.datasophon.api.load;
 
 import com.datasophon.api.configuration.ConfigBean;
-import com.datasophon.api.service.*;
+import com.datasophon.api.service.ClusterInfoService;
+import com.datasophon.api.service.ClusterServiceInstanceRoleGroupService;
+import com.datasophon.api.service.ClusterServiceInstanceService;
+import com.datasophon.api.service.ClusterServiceRoleGroupConfigService;
+import com.datasophon.api.service.ClusterVariableService;
+import com.datasophon.api.service.FrameInfoService;
+import com.datasophon.api.service.FrameServiceRoleService;
+import com.datasophon.api.service.FrameServiceService;
 import com.datasophon.api.utils.CommonUtils;
 import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
 
-import com.datasophon.common.model.*;
-import com.datasophon.dao.entity.*;
+import com.datasophon.common.model.ConfigWriter;
+import com.datasophon.common.model.Generators;
+import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.common.model.ServiceInfo;
+import com.datasophon.common.model.ServiceRoleInfo;
+import com.datasophon.dao.entity.ClusterInfoEntity;
+import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
+import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
+import com.datasophon.dao.entity.ClusterVariable;
+import com.datasophon.dao.entity.FrameInfoEntity;
+import com.datasophon.dao.entity.FrameServiceEntity;
+import com.datasophon.dao.entity.FrameServiceRoleEntity;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -310,9 +331,10 @@ public class LoadServiceMeta implements ApplicationRunner {
             for (ClusterInfoEntity cluster : clusters) {
                 HashMap<String, String> globalVariables = new HashMap<>();
                 List<ClusterVariable> variables =
-                        variableService.list(
-                                new QueryWrapper<ClusterVariable>()
-                                        .eq(Constants.CLUSTER_ID, cluster.getId()));
+                        variableService
+                                .lambdaQuery()
+                                .eq(ClusterVariable::getClusterId, cluster.getId())
+                                .list();
                 for (ClusterVariable variable : variables) {
                     globalVariables.put(variable.getVariableName(), variable.getVariableValue());
                 }

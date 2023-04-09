@@ -1,4 +1,5 @@
 /*
+ *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -13,33 +14,34 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.datasophon.api.service.impl;
 
-import com.datasophon.common.Constants;
-import org.springframework.stereotype.Service;
+import com.datasophon.api.service.ClusterVariableService;
+import com.datasophon.dao.entity.ClusterVariable;
+import com.datasophon.dao.mapper.ClusterVariableMapper;
 
 import java.util.List;
 import java.util.Objects;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-
-import com.datasophon.dao.mapper.ClusterVariableMapper;
-import com.datasophon.dao.entity.ClusterVariable;
-import com.datasophon.api.service.ClusterVariableService;
-
-
 @Service("clusterVariableService")
-public class ClusterVariableServiceImpl extends ServiceImpl<ClusterVariableMapper, ClusterVariable> implements ClusterVariableService {
-
+public class ClusterVariableServiceImpl extends ServiceImpl<ClusterVariableMapper, ClusterVariable>
+        implements ClusterVariableService {
 
     @Override
     public ClusterVariable getVariableByVariableName(String variableName, Integer clusterId) {
-        List<ClusterVariable> list = this.list(new QueryWrapper<ClusterVariable>().eq(Constants.VARIABLE_NAME, variableName).eq(Constants.CLUSTER_ID, clusterId));
-        if(Objects.nonNull(list) && list.size() >= 1){
+        List<ClusterVariable> list =
+                this.lambdaQuery()
+                        .eq(ClusterVariable::getVariableName, variableName)
+                        .eq(ClusterVariable::getClusterId, clusterId)
+                        .list();
+        if (Objects.nonNull(list) && list.size() >= 1) {
             return list.get(0);
         }
         return null;

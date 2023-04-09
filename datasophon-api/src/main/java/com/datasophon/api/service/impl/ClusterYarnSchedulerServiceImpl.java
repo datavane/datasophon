@@ -1,4 +1,5 @@
 /*
+ *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -13,25 +14,27 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.datasophon.api.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.api.service.ClusterYarnSchedulerService;
-import com.datasophon.common.Constants;
 import com.datasophon.dao.entity.ClusterYarnScheduler;
 import com.datasophon.dao.mapper.ClusterYarnSchedulerMapper;
+
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 @Service("clusterYarnSchedulerService")
-public class ClusterYarnSchedulerServiceImpl extends ServiceImpl<ClusterYarnSchedulerMapper, ClusterYarnScheduler> implements ClusterYarnSchedulerService {
+public class ClusterYarnSchedulerServiceImpl
+        extends ServiceImpl<ClusterYarnSchedulerMapper, ClusterYarnScheduler>
+        implements ClusterYarnSchedulerService {
 
     @Override
     public ClusterYarnScheduler getScheduler(Integer clusterId) {
-        return this.getOne(new QueryWrapper<ClusterYarnScheduler>().eq(Constants.CLUSTER_ID,clusterId));
+        return this.lambdaQuery().eq(ClusterYarnScheduler::getClusterId, clusterId).one();
     }
 
     @Override

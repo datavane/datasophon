@@ -48,8 +48,6 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
 import akka.actor.ActorSelection;
 import akka.actor.UntypedActor;
 import akka.pattern.Patterns;
@@ -108,7 +106,8 @@ public class PrometheusActor extends UntypedActor {
                 String serviceRoleName = roleEntry.getKey();
                 String clusterFrame = command.getClusterFrame();
                 for (String hostname : value) {
-                    String jmxKey = clusterFrame
+                    String jmxKey =
+                            clusterFrame
                                     + Constants.UNDERLINE
                                     + serviceName
                                     + Constants.UNDERLINE
@@ -145,10 +144,11 @@ public class PrometheusActor extends UntypedActor {
                     SpringTool.getApplicationContext()
                             .getBean(ClusterServiceRoleInstanceService.class);
             List<ClusterHostEntity> hostList =
-                    hostService.list(
-                            new QueryWrapper<ClusterHostEntity>()
-                                    .eq(Constants.MANAGED, 1)
-                                    .eq(Constants.CLUSTER_ID, clusterId));
+                    hostService
+                            .lambdaQuery()
+                            .eq(ClusterHostEntity::getClusterId, clusterId)
+                            .eq(ClusterHostEntity::getManaged, 1)
+                            .list();
             ClusterServiceRoleInstanceEntity prometheusInstance =
                     roleInstanceService.getOneServiceRole(
                             "Prometheus", null, command.getClusterId());

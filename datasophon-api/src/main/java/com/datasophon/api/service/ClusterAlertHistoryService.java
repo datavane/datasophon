@@ -1,4 +1,5 @@
 /*
+ *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -13,19 +14,20 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.datasophon.api.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
 
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterAlertHistory;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+
 /**
- * 集群告警历史表 
+ * 集群告警历史表
  *
  * @author gaodayu
  * @email gaodayu2022@163.com
@@ -33,6 +35,8 @@ import java.util.List;
  */
 public interface ClusterAlertHistoryService extends IService<ClusterAlertHistory> {
 
+    ClusterAlertHistory getOneBy(
+            Integer clusterId, String hostname, String alertTargetName, Integer isEnabled);
 
     void saveAlertHistory(String alertMessage);
 
@@ -42,4 +46,3 @@ public interface ClusterAlertHistoryService extends IService<ClusterAlertHistory
 
     void removeAlertByRoleInstanceIds(List<Integer> ids);
 }
-

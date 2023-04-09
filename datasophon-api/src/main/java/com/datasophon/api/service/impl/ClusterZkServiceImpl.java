@@ -1,4 +1,5 @@
 /*
+ *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -13,30 +14,27 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.datasophon.api.service.impl;
 
-import com.datasophon.common.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.datasophon.api.service.ClusterZkService;
+import com.datasophon.dao.entity.ClusterZk;
+import com.datasophon.dao.mapper.ClusterZkMapper;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-
-import com.datasophon.dao.mapper.ClusterZkMapper;
-import com.datasophon.dao.entity.ClusterZk;
-import com.datasophon.api.service.ClusterZkService;
-
-
 @Service("clusterZkService")
-public class ClusterZkServiceImpl extends ServiceImpl<ClusterZkMapper, ClusterZk> implements ClusterZkService {
+public class ClusterZkServiceImpl extends ServiceImpl<ClusterZkMapper, ClusterZk>
+        implements ClusterZkService {
 
-    @Autowired
-    private ClusterZkMapper clusterZkMapper;
+    @Autowired private ClusterZkMapper clusterZkMapper;
 
     @Override
     public Integer getMaxMyId(Integer clusterId) {
@@ -45,6 +43,6 @@ public class ClusterZkServiceImpl extends ServiceImpl<ClusterZkMapper, ClusterZk
 
     @Override
     public List<ClusterZk> getAllZkServer(Integer clusterId) {
-        return this.list(new QueryWrapper<ClusterZk>().eq(Constants.CLUSTER_ID,clusterId));
+        return this.lambdaQuery().eq(ClusterZk::getClusterId, clusterId).list();
     }
 }

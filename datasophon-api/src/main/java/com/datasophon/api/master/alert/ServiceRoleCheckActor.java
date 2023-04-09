@@ -23,20 +23,29 @@ import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.api.strategy.ServiceRoleStrategy;
 import com.datasophon.api.strategy.ServiceRoleStrategyContext;
 import com.datasophon.api.utils.SpringTool;
-import com.datasophon.common.Constants;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
 import akka.actor.UntypedActor;
 
 public class ServiceRoleCheckActor extends UntypedActor {
+
+    private static final List<String> CHECK_SERVICE_ROLES =
+            Arrays.asList(
+                    "Prometheus",
+                    "AlertManager",
+                    "Krb5Kdc",
+                    "KAdmin",
+                    "SRFE",
+                    "SRBE",
+                    "DorisFE",
+                    "DorisBE");
 
     @Override
     public void onReceive(Object msg) throws Throwable {
@@ -46,20 +55,12 @@ public class ServiceRoleCheckActor extends UntypedActor {
                             .getBean(ClusterServiceRoleInstanceService.class);
 
             List<ClusterServiceRoleInstanceEntity> list =
-                    roleInstanceService.list(
-                            new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                                    .in(
-                                            Constants.SERVICE_ROLE_NAME,
-                                            "Prometheus",
-                                            "AlertManager",
-                                            "Krb5Kdc",
-                                            "KAdmin",
-                                            "SRFE",
-                                            "SRBE",
-                                            "DorisFE",
-                                            "DorisBE",
-                                            "NameNode",
-                                            "ResourceManager"));
+                    roleInstanceService
+                            .lambdaQuery()
+                            .in(
+                                    ClusterServiceRoleInstanceEntity::getServiceRoleName,
+                                    CHECK_SERVICE_ROLES)
+                            .list();
 
             if (!list.isEmpty()) {
                 Map<String, ClusterServiceRoleInstanceEntity> map = translateListToMap(list);

@@ -20,7 +20,6 @@
 package com.datasophon.api.service.impl;
 
 import com.datasophon.api.service.ClusterServiceRoleInstanceWebuisService;
-import com.datasophon.common.Constants;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceWebuis;
 import com.datasophon.dao.mapper.ClusterServiceRoleInstanceWebuisMapper;
@@ -30,7 +29,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 @Service("clusterServiceRoleInstanceWebuisService")
@@ -46,17 +44,19 @@ public class ClusterServiceRoleInstanceWebuisServiceImpl
     @Override
     public Result getWebUis(Integer serviceInstanceId) {
         List<ClusterServiceRoleInstanceWebuis> list =
-                this.list(
-                        new QueryWrapper<ClusterServiceRoleInstanceWebuis>()
-                                .eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceId));
+                this.lambdaQuery()
+                        .eq(
+                                ClusterServiceRoleInstanceWebuis::getServiceInstanceId,
+                                serviceInstanceId)
+                        .list();
         return Result.success(list);
     }
 
     @Override
     public void removeByServiceInsId(Integer serviceInstanceId) {
-        this.remove(
-                new QueryWrapper<ClusterServiceRoleInstanceWebuis>()
-                        .eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceId));
+        this.lambdaUpdate()
+                .eq(ClusterServiceRoleInstanceWebuis::getServiceInstanceId, serviceInstanceId)
+                .remove();
     }
 
     @Override
