@@ -17,11 +17,11 @@
 
 package com.datasophon.common.utils;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.util.ArrayList;
 
 public class CompressUtils {
     private static final Logger logger = LoggerFactory.getLogger(CompressUtils.class);
@@ -29,7 +29,6 @@ public class CompressUtils {
     public static void main(String[] args) throws IOException {
         decompressTarGz("D:\\DDP\\apache-druid-0.20.2-bin.tar.gz", "D:\\360downloads");
     }
-
 
     public static Boolean decompressTarGz(String sourceTarGzFile, String targetDir) {
         logger.info("use tar -zxvf to decompress");
@@ -42,6 +41,4 @@ public class CompressUtils {
         ExecResult execResult = ShellUtils.execWithStatus(targetDir, command, 120);
         return execResult.getExecResult();
     }
-
-
 }

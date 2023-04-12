@@ -17,39 +17,29 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
 
 @Data
 @TableName("t_ddh_frame_info")
 public class FrameInfoEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键
-     */
-    @TableId
-    private Integer id;
-    /**
-     * 框架名称
-     */
+    /** 主键 */
+    @TableId private Integer id;
+    /** 框架名称 */
     private String frameName;
-    /**
-     * 框架编码
-     */
+    /** 框架编码 */
     private String frameCode;
-    /**
-     * 框架版本
-     */
+    /** 框架版本 */
     private String frameVersion;
 
     @TableField(exist = false)
     private List<FrameServiceEntity> frameServiceList;
-
 }

@@ -26,18 +26,17 @@ import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.common.utils.StarRocksUtils;
 import com.datasophon.common.utils.ThrowableUtils;
 import com.datasophon.worker.handler.ServiceHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BEHandlerStrategy implements ServiceRoleStrategy {
     private static final Logger logger = LoggerFactory.getLogger(BEHandlerStrategy.class);
 
     @Override
-    public ExecResult handler(ServiceRoleOperateCommand command)  {
+    public ExecResult handler(ServiceRoleOperateCommand command) {
         ExecResult startResult = new ExecResult();
         ServiceHandler serviceHandler = new ServiceHandler();
 
@@ -45,19 +44,30 @@ public class BEHandlerStrategy implements ServiceRoleStrategy {
             logger.info("add  be to cluster");
             ShellUtils.exceShell("ulimit -n 102400");
             ShellUtils.exceShell("sysctl -w vm.max_map_count=2000000");
-            startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
+            startResult =
+                    serviceHandler.start(
+                            command.getStartRunner(),
+                            command.getStatusRunner(),
+                            command.getDecompressPackageName(),
+                            command.getRunAs());
             if (startResult.getExecResult()) {
                 try {
-                    StarRocksUtils.addBackend(command.getMasterHost(), CacheUtils.getString(Constants.HOSTNAME));
-                }catch (SQLException | ClassNotFoundException e){
+                    StarRocksUtils.addBackend(
+                            command.getMasterHost(), CacheUtils.getString(Constants.HOSTNAME));
+                } catch (SQLException | ClassNotFoundException e) {
                     logger.info("add backend failed {}", ThrowableUtils.getStackTrace(e));
                 }
                 logger.info("slave be start success");
             } else {
                 logger.info("slave be start failed");
             }
-        }else{
-            startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
+        } else {
+            startResult =
+                    serviceHandler.start(
+                            command.getStartRunner(),
+                            command.getStatusRunner(),
+                            command.getDecompressPackageName(),
+                            command.getRunAs());
         }
         return startResult;
     }

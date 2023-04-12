@@ -27,52 +27,66 @@ import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.entity.FrameServiceEntity;
+import com.datasophon.dao.entity.FrameServiceRoleEntity;
 import com.datasophon.dao.enums.RoleType;
+import com.datasophon.dao.mapper.FrameServiceRoleMapper;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-
-import com.datasophon.dao.mapper.FrameServiceRoleMapper;
-import com.datasophon.dao.entity.FrameServiceRoleEntity;
-
-
 @Service("frameServiceRoleService")
-public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMapper, FrameServiceRoleEntity> implements FrameServiceRoleService {
-    @Autowired
-    private ClusterInfoService clusterInfoService;
+public class FrameServiceRoleServiceImpl
+        extends ServiceImpl<FrameServiceRoleMapper, FrameServiceRoleEntity>
+        implements FrameServiceRoleService {
+    @Autowired private ClusterInfoService clusterInfoService;
 
-    @Autowired
-    private ClusterServiceRoleInstanceService roleInstanceService;
+    @Autowired private ClusterServiceRoleInstanceService roleInstanceService;
 
-    @Autowired
-    private FrameServiceService frameService;
+    @Autowired private FrameServiceService frameService;
 
     @Override
-    public Result getServiceRoleList(Integer clusterId, String serviceIds, Integer serviceRoleType) {
+    public Result getServiceRoleList(
+            Integer clusterId, String serviceIds, Integer serviceRoleType) {
         List<String> ids = Arrays.asList(serviceIds.split(","));
-        List<FrameServiceRoleEntity> list = this.lambdaQuery()
-                .eq(Objects.nonNull(serviceRoleType), FrameServiceRoleEntity::getServiceRoleType, serviceRoleType)
-                .in(FrameServiceRoleEntity::getServiceId, ids)
-                .list();
-        //校验是否已安装依赖的服务
-        //校验是否已安装Prometheus,Grafana,AlertManager
+        List<FrameServiceRoleEntity> list =
+                this.lambdaQuery()
+                        .eq(
+                                Objects.nonNull(serviceRoleType),
+                                FrameServiceRoleEntity::getServiceRoleType,
+                                serviceRoleType)
+                        .in(FrameServiceRoleEntity::getServiceId, ids)
+                        .list();
+        // 校验是否已安装依赖的服务
+        // 校验是否已安装Prometheus,Grafana,AlertManager
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
-        String key = clusterInfo.getClusterCode() + Constants.UNDERLINE + Constants.SERVICE_ROLE_HOST_MAPPING;
+        String key =
+                clusterInfo.getClusterCode()
+                        + Constants.UNDERLINE
+                        + Constants.SERVICE_ROLE_HOST_MAPPING;
 
         for (FrameServiceRoleEntity role : list) {
             FrameServiceEntity frameServiceEntity = frameService.getById(role.getServiceId());
-            List<ClusterServiceRoleInstanceEntity> roleInstanceList = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                    .eq(Constants.SERVICE_NAME, frameServiceEntity.getServiceName())
-                    .eq(Constants.SERVICE_ROLE_NAME, role.getServiceRoleName())
-                    .eq(Constants.CLUSTER_ID, clusterId));
+            List<ClusterServiceRoleInstanceEntity> roleInstanceList =
+                    roleInstanceService.list(
+                            new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                                    .eq(Constants.SERVICE_NAME, frameServiceEntity.getServiceName())
+                                    .eq(Constants.SERVICE_ROLE_NAME, role.getServiceRoleName())
+                                    .eq(Constants.CLUSTER_ID, clusterId));
             if (Objects.nonNull(roleInstanceList) && roleInstanceList.size() > 0) {
-                List<String> hosts = roleInstanceList.stream().map(e -> e.getHostname()).collect(Collectors.toList());
+                List<String> hosts =
+                        roleInstanceList.stream()
+                                .map(e -> e.getHostname())
+                                .collect(Collectors.toList());
                 role.setHosts(hosts);
             } else if (CacheUtils.constainsKey(key)) {
                 Map<String, List<String>> map = (Map<String, List<String>>) CacheUtils.get(key);
@@ -85,7 +99,8 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
     }
 
     @Override
-    public FrameServiceRoleEntity getServiceRoleByServiceIdAndServiceRoleName(Integer serviceId, String roleName) {
+    public FrameServiceRoleEntity getServiceRoleByServiceIdAndServiceRoleName(
+            Integer serviceId, String roleName) {
         return this.lambdaQuery()
                 .eq(FrameServiceRoleEntity::getServiceId, serviceId)
                 .eq(FrameServiceRoleEntity::getServiceRoleName, roleName)
@@ -93,29 +108,41 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
     }
 
     @Override
-    public FrameServiceRoleEntity getServiceRoleByFrameCodeAndServiceRoleName(String clusterFrame, String serviceRoleName) {
-        return this.getOne(new QueryWrapper<FrameServiceRoleEntity>()
-                .eq(Constants.FRAME_CODE_1, clusterFrame).eq(Constants.SERVICE_ROLE_NAME, serviceRoleName));
+    public FrameServiceRoleEntity getServiceRoleByFrameCodeAndServiceRoleName(
+            String clusterFrame, String serviceRoleName) {
+        return this.getOne(
+                new QueryWrapper<FrameServiceRoleEntity>()
+                        .eq(Constants.FRAME_CODE_1, clusterFrame)
+                        .eq(Constants.SERVICE_ROLE_NAME, serviceRoleName));
     }
 
     @Override
     public Result getNonMasterRoleList(Integer clusterId, String serviceIds) {
         List<String> ids = Arrays.asList(serviceIds.split(","));
-        List<FrameServiceRoleEntity> list = this.lambdaQuery()
-                .ne(FrameServiceRoleEntity::getServiceRoleType, RoleType.MASTER)
-                .in(FrameServiceRoleEntity::getServiceId, ids)
-                .list();
+        List<FrameServiceRoleEntity> list =
+                this.lambdaQuery()
+                        .ne(FrameServiceRoleEntity::getServiceRoleType, RoleType.MASTER)
+                        .in(FrameServiceRoleEntity::getServiceId, ids)
+                        .list();
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
-        String key = clusterInfo.getClusterCode() + Constants.UNDERLINE + Constants.SERVICE_ROLE_HOST_MAPPING;
+        String key =
+                clusterInfo.getClusterCode()
+                        + Constants.UNDERLINE
+                        + Constants.SERVICE_ROLE_HOST_MAPPING;
         List<String> hosts = new ArrayList<>();
         for (FrameServiceRoleEntity role : list) {
             FrameServiceEntity frameServiceEntity = frameService.getById(role.getServiceId());
-            List<ClusterServiceRoleInstanceEntity> roleInstanceList = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                    .eq(Constants.SERVICE_NAME, frameServiceEntity.getServiceName())
-                    .eq(Constants.SERVICE_ROLE_NAME, role.getServiceRoleName())
-                    .eq(Constants.CLUSTER_ID, clusterId));
+            List<ClusterServiceRoleInstanceEntity> roleInstanceList =
+                    roleInstanceService.list(
+                            new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                                    .eq(Constants.SERVICE_NAME, frameServiceEntity.getServiceName())
+                                    .eq(Constants.SERVICE_ROLE_NAME, role.getServiceRoleName())
+                                    .eq(Constants.CLUSTER_ID, clusterId));
             if (Objects.nonNull(roleInstanceList) && roleInstanceList.size() > 0) {
-                hosts = roleInstanceList.stream().map(e -> e.getHostname()).collect(Collectors.toList());
+                hosts =
+                        roleInstanceList.stream()
+                                .map(e -> e.getHostname())
+                                .collect(Collectors.toList());
 
             } else if (CacheUtils.constainsKey(key)) {
                 Map<String, List<String>> map = (Map<String, List<String>>) CacheUtils.get(key);
@@ -138,10 +165,13 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
             return Result.success(list);
         }
         ClusterInfoEntity clusterInfoEntity = clusterInfoService.getById(clusterId);
-        FrameServiceEntity frameServiceEntity = frameService.getServiceByFrameCodeAndServiceName(clusterInfoEntity.getClusterFrame(), serviceName);
-        List<FrameServiceRoleEntity> list = this.lambdaQuery()
-                .eq(FrameServiceRoleEntity::getServiceId, frameServiceEntity.getId())
-                .list();
+        FrameServiceEntity frameServiceEntity =
+                frameService.getServiceByFrameCodeAndServiceName(
+                        clusterInfoEntity.getClusterFrame(), serviceName);
+        List<FrameServiceRoleEntity> list =
+                this.lambdaQuery()
+                        .eq(FrameServiceRoleEntity::getServiceId, frameServiceEntity.getId())
+                        .list();
         return Result.success(list);
     }
 
@@ -149,6 +179,4 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
     public List<FrameServiceRoleEntity> getAllServiceRoleList(Integer frameServiceId) {
         return this.lambdaQuery().eq(FrameServiceRoleEntity::getServiceId, frameServiceId).list();
     }
-
-
 }

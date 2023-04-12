@@ -17,32 +17,24 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
 
 @Data
 @TableName("t_ddh_cluster_yarn_scheduler")
 public class ClusterYarnScheduler implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	@TableId
-	private Integer id;
-	/**
-	 * 
-	 */
-	private Integer clusterId;
-	/**
-	 * 
-	 */
-	private String scheduler;
+    /** */
+    @TableId private Integer id;
+    /** */
+    private Integer clusterId;
+    /** */
+    private String scheduler;
 
-	private Integer inUse;
-
+    private Integer inUse;
 }

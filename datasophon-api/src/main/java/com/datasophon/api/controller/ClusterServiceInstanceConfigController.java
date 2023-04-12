@@ -17,6 +17,10 @@
 
 package com.datasophon.api.controller;
 
+import com.datasophon.api.service.ClusterServiceInstanceConfigService;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterServiceInstanceConfigEntity;
+
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,64 +28,52 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.ClusterServiceInstanceConfigEntity;
-import com.datasophon.api.service.ClusterServiceInstanceConfigService;
-import com.datasophon.common.utils.Result;
-
-
-
-
 @RestController
 @RequestMapping("cluster/service/instance/config")
 public class ClusterServiceInstanceConfigController {
-    @Autowired
-    private ClusterServiceInstanceConfigService clusterServiceInstanceConfigService;
+    @Autowired private ClusterServiceInstanceConfigService clusterServiceInstanceConfigService;
 
-    /**
-     * 列表
-     */
+    /** 列表 */
     @RequestMapping("/getConfigVersion")
-    public Result getConfigVersion(Integer serviceInstanceId,Integer roleGroupId){
-        return clusterServiceInstanceConfigService.getConfigVersion(serviceInstanceId,roleGroupId);
+    public Result getConfigVersion(Integer serviceInstanceId, Integer roleGroupId) {
+        return clusterServiceInstanceConfigService.getConfigVersion(serviceInstanceId, roleGroupId);
     }
 
-
-    /**
-     * 信息
-     */
+    /** 信息 */
     @RequestMapping("/info")
-    public Result info(Integer serviceInstanceId,Integer version,Integer roleGroupId,Integer page,Integer pageSize){
-        return clusterServiceInstanceConfigService.getServiceInstanceConfig(serviceInstanceId,version,roleGroupId,page,pageSize);
+    public Result info(
+            Integer serviceInstanceId,
+            Integer version,
+            Integer roleGroupId,
+            Integer page,
+            Integer pageSize) {
+        return clusterServiceInstanceConfigService.getServiceInstanceConfig(
+                serviceInstanceId, version, roleGroupId, page, pageSize);
     }
 
-    /**
-     * 保存
-     */
+    /** 保存 */
     @RequestMapping("/save")
-    public Result save(@RequestBody ClusterServiceInstanceConfigEntity clusterServiceInstanceConfig){
+    public Result save(
+            @RequestBody ClusterServiceInstanceConfigEntity clusterServiceInstanceConfig) {
         clusterServiceInstanceConfigService.save(clusterServiceInstanceConfig);
 
         return Result.success();
     }
 
-    /**
-     * 修改
-     */
+    /** 修改 */
     @RequestMapping("/update")
-    public Result update(@RequestBody ClusterServiceInstanceConfigEntity clusterServiceInstanceConfig){
+    public Result update(
+            @RequestBody ClusterServiceInstanceConfigEntity clusterServiceInstanceConfig) {
         clusterServiceInstanceConfigService.updateById(clusterServiceInstanceConfig);
-        
+
         return Result.success();
     }
 
-    /**
-     * 删除
-     */
+    /** 删除 */
     @RequestMapping("/delete")
-    public Result delete(@RequestBody Integer[] ids){
+    public Result delete(@RequestBody Integer[] ids) {
         clusterServiceInstanceConfigService.removeByIds(Arrays.asList(ids));
 
         return Result.success();
     }
-
 }

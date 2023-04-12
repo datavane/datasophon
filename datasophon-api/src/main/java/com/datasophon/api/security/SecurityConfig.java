@@ -18,6 +18,7 @@
 package com.datasophon.api.security;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,8 @@ public class SecurityConfig {
 
     private void setAuthenticationType(String type) {
         if (StringUtils.isBlank(type)) {
-            logger.info("security.authentication.type configuration is empty, the default value 'PASSWORD'");
+            logger.info(
+                    "security.authentication.type configuration is empty, the default value 'PASSWORD'");
             this.authenticationType = AuthenticationType.PASSWORD;
             return;
         }

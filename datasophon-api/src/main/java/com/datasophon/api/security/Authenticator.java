@@ -17,7 +17,6 @@
 
 package com.datasophon.api.security;
 
-
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.UserInfoEntity;
 
@@ -29,7 +28,7 @@ public interface Authenticator {
      *
      * @param username user name
      * @param password user password
-     * @param extra    extra info
+     * @param extra extra info
      * @return result object
      */
     Result authenticate(String username, String password, String extra);

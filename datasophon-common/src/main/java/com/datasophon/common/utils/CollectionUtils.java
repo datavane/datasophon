@@ -14,23 +14,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.datasophon.common.utils;
 
+package com.datasophon.common.utils;
 
 import org.apache.commons.collections.BeanMap;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Provides utility methods and decorators for {@link Collection} instances.
- * <p>
- * Various utility methods might put the input objects into a Set/Map/Bag. In case
- * the input objects override {@link Object#equals(Object)}, it is mandatory that
- * the general contract of the {@link Object#hashCode()} method is maintained.
- * <p>
- * NOTE: From 4.0, method parameters will take {@link Iterable} objects when possible.
+ *
+ * <p>Various utility methods might put the input objects into a Set/Map/Bag. In case the input
+ * objects override {@link Object#equals(Object)}, it is mandatory that the general contract of the
+ * {@link Object#hashCode()} method is maintained.
+ *
+ * <p>NOTE: From 4.0, method parameters will take {@link Iterable} objects when possible.
  *
  * @version $Id: CollectionUtils.java 1686855 2015-06-22 13:00:27Z tn $
  * @since 1.0
@@ -41,15 +47,17 @@ public class CollectionUtils {
         throw new IllegalStateException("CollectionUtils class");
     }
     /**
-     * Returns a new {@link Collection} containing <i>a</i> minus a subset of
-     * <i>b</i>.  Only the elements of <i>b</i> that satisfy the predicate
-     * condition, <i>p</i> are subtracted from <i>a</i>.
+     * Returns a new {@link Collection} containing <i>a</i> minus a subset of <i>b</i>. Only the
+     * elements of <i>b</i> that satisfy the predicate condition, <i>p</i> are subtracted from
+     * <i>a</i>.
      *
-     * <p>The cardinality of each element <i>e</i> in the returned {@link Collection}
-     * that satisfies the predicate condition will be the cardinality of <i>e</i> in <i>a</i>
-     * minus the cardinality of <i>e</i> in <i>b</i>, or zero, whichever is greater.</p>
-     * <p>The cardinality of each element <i>e</i> in the returned {@link Collection} that does <b>not</b>
-     * satisfy the predicate condition will be equal to the cardinality of <i>e</i> in <i>a</i>.</p>
+     * <p>The cardinality of each element <i>e</i> in the returned {@link Collection} that satisfies
+     * the predicate condition will be the cardinality of <i>e</i> in <i>a</i> minus the cardinality
+     * of <i>e</i> in <i>b</i>, or zero, whichever is greater.
+     *
+     * <p>The cardinality of each element <i>e</i> in the returned {@link Collection} that does
+     * <b>not</b> satisfy the predicate condition will be equal to the cardinality of <i>e</i> in
+     * <i>a</i>.
      *
      * @param a the collection to subtract from, must not be null
      * @param b the collection to subtract, must not be null
@@ -69,15 +77,13 @@ public class CollectionUtils {
         return coll == null || coll.isEmpty();
     }
 
-    /**
-     * The load factor used when none specified in constructor.
-     */
+    /** The load factor used when none specified in constructor. */
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
     /**
      * String to map
      *
-     * @param str       string
+     * @param str string
      * @param separator separator
      * @return string to map
      */
@@ -88,7 +94,7 @@ public class CollectionUtils {
     /**
      * String to map
      *
-     * @param str       string
+     * @param str string
      * @param separator separator
      * @param keyPrefix prefix
      * @return string to map
@@ -102,14 +108,14 @@ public class CollectionUtils {
             return emptyMap;
         }
         String[] strings = str.split(separator);
-        int initialCapacity = (int)(strings.length / DEFAULT_LOAD_FACTOR) + 1;
+        int initialCapacity = (int) (strings.length / DEFAULT_LOAD_FACTOR) + 1;
         Map<String, String> map = new HashMap<>(initialCapacity);
         for (int i = 0; i < strings.length; i++) {
             String[] strArray = strings[i].split("=");
             if (strArray.length != 2) {
                 return emptyMap;
             }
-            //strArray[0] KEY  strArray[1] VALUE
+            // strArray[0] KEY  strArray[1] VALUE
             if (StringUtils.isEmpty(keyPrefix)) {
                 map.put(strArray[0], strArray[1]);
             } else {
@@ -119,7 +125,6 @@ public class CollectionUtils {
         return map;
     }
 
-
     /**
      * Helper class to easily access cardinality properties of two collections.
      *
@@ -127,14 +132,10 @@ public class CollectionUtils {
      */
     private static class CardinalityHelper<O> {
 
-        /**
-         * Contains the cardinality for each object in collection A.
-         */
+        /** Contains the cardinality for each object in collection A. */
         final Map<O, Integer> cardinalityA;
 
-        /**
-         * Contains the cardinality for each object in collection B.
-         */
+        /** Contains the cardinality for each object in collection B. */
         final Map<O, Integer> cardinalityB;
 
         /**
@@ -178,13 +179,14 @@ public class CollectionUtils {
     }
 
     /**
-     * returns {@code true} iff the given {@link Collection}s contain
-     * exactly the same elements with exactly the same cardinalities.
+     * returns {@code true} iff the given {@link Collection}s contain exactly the same elements with
+     * exactly the same cardinalities.
      *
      * @param a the first collection
      * @param b the second collection
-     * @return Returns true iff the given Collections contain exactly the same elements with exactly the same cardinalities.
-     * That is, iff the cardinality of e in a is equal to the cardinality of e in b, for each element e in a or b.
+     * @return Returns true iff the given Collections contain exactly the same elements with exactly
+     *     the same cardinalities. That is, iff the cardinality of e in a is equal to the
+     *     cardinality of e in b, for each element e in a or b.
      */
     public static boolean equalLists(Collection<?> a, Collection<?> b) {
         if (a == null && b == null) {
@@ -199,16 +201,16 @@ public class CollectionUtils {
     }
 
     /**
-     * Returns {@code true} iff the given {@link Collection}s contain
-     * exactly the same elements with exactly the same cardinalities.
-     * <p>
-     * That is, iff the cardinality of <i>e</i> in <i>a</i> is
-     * equal to the cardinality of <i>e</i> in <i>b</i>,
-     * for each element <i>e</i> in <i>a</i> or <i>b</i>.
+     * Returns {@code true} iff the given {@link Collection}s contain exactly the same elements with
+     * exactly the same cardinalities.
+     *
+     * <p>That is, iff the cardinality of <i>e</i> in <i>a</i> is equal to the cardinality of
+     * <i>e</i> in <i>b</i>, for each element <i>e</i> in <i>a</i> or <i>b</i>.
      *
      * @param a the first collection, must not be null
      * @param b the second collection, must not be null
-     * @return <code>true</code> iff the collections contain the same elements with the same cardinalities.
+     * @return <code>true</code> iff the collections contain the same elements with the same
+     *     cardinalities.
      */
     public static boolean isEqualCollection(final Collection<?> a, final Collection<?> b) {
         if (a.size() != b.size()) {
@@ -227,14 +229,13 @@ public class CollectionUtils {
     }
 
     /**
-     * Returns a {@link Map} mapping each unique element in the given
-     * {@link Collection} to an {@link Integer} representing the number
-     * of occurrences of that element in the {@link Collection}.
-     * <p>
-     * Only those elements present in the collection will appear as
-     * keys in the map.
+     * Returns a {@link Map} mapping each unique element in the given {@link Collection} to an
+     * {@link Integer} representing the number of occurrences of that element in the {@link
+     * Collection}.
      *
-     * @param <O>  the type of object in the returned {@link Map}. This is a super type of O
+     * <p>Only those elements present in the collection will appear as keys in the map.
+     *
+     * @param <O> the type of object in the returned {@link Map}. This is a super type of O
      * @param coll the collection to get the cardinality map for, must not be null
      * @return the populated cardinality map
      */
@@ -246,15 +247,16 @@ public class CollectionUtils {
         return count;
     }
 
-
     /**
      * Removes certain attributes of each object in the list
+     *
      * @param originList origin list
      * @param exclusionSet exclusion set
      * @param <T> T
      * @return removes certain attributes of each object in the list
      */
-    public static <T extends Object> List<Map<String, Object>> getListByExclusion(List<T> originList, Set<String> exclusionSet) {
+    public static <T extends Object> List<Map<String, Object>> getListByExclusion(
+            List<T> originList, Set<String> exclusionSet) {
         List<Map<String, Object>> instanceList = new ArrayList<>();
         if (exclusionSet == null) {
             exclusionSet = new HashSet<>();
@@ -265,8 +267,8 @@ public class CollectionUtils {
         Map<String, Object> instanceMap;
         for (T instance : originList) {
             Map<String, Object> dataMap = new BeanMap(instance);
-            instanceMap = new LinkedHashMap<>(16,0.75f,true);
-            for (Map.Entry<String, Object> entry: dataMap.entrySet()) {
+            instanceMap = new LinkedHashMap<>(16, 0.75f, true);
+            for (Map.Entry<String, Object> entry : dataMap.entrySet()) {
                 if (exclusionSet.contains(entry.getKey())) {
                     continue;
                 }
@@ -276,5 +278,4 @@ public class CollectionUtils {
         }
         return instanceList;
     }
-
 }

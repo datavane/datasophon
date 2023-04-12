@@ -17,12 +17,12 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 集群信息表
@@ -35,7 +35,7 @@ public interface ClusterInfoService extends IService<ClusterInfoEntity> {
 
     ClusterInfoEntity getClusterByClusterCode(String clusterCode);
 
-    Result saveCluster(ClusterInfoEntity clusterInf) ;
+    Result saveCluster(ClusterInfoEntity clusterInf);
 
     Result getClusterList();
 
@@ -49,4 +49,3 @@ public interface ClusterInfoService extends IService<ClusterInfoEntity> {
 
     void deleteCluster(List<Integer> asList);
 }
-

@@ -17,57 +17,37 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
 import java.io.Serializable;
 import java.util.Date;
 
-import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 
+import lombok.Data;
 
 @TableName("t_ddh_cluster_service_instance_config")
 @Data
 public class ClusterServiceInstanceConfigEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 主机
-     */
-    @TableId
-    private Integer id;
-    /**
-     * 服务角色实例id
-     */
+    /** 主机 */
+    @TableId private Integer id;
+    /** 服务角色实例id */
     private Integer serviceId;
-    /**
-     * 创建时间
-     */
+    /** 创建时间 */
     private Date createTime;
-    /**
-     * 配置json
-     */
+    /** 配置json */
     private String configJson;
-    /**
-     * 更新时间
-     */
+    /** 更新时间 */
     private Date updateTime;
-    /**
-     * 配置json md5
-     */
+    /** 配置json md5 */
     private String configJsonMd5;
-    /**
-     * 配置json版本
-     */
+    /** 配置json版本 */
     private Integer configVersion;
-    /**
-     *
-     */
+    /** */
     private Integer clusterId;
 
     private String configFileJson;
 
     private String configFileJsonMd5;
-
-
 }

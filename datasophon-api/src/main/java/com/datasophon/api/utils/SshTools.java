@@ -17,24 +17,37 @@
 
 package com.datasophon.api.utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
+
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.ssh.ChannelType;
-import com.jcraft.jsch.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.Objects;
-
 
 public class SshTools {
 
     private static final Logger logger = LoggerFactory.getLogger(SshTools.class);
 
     private static final String SFTP = "sftp";
-
 
     /**
      * 获取实例
@@ -47,18 +60,15 @@ public class SshTools {
 
     /**
      * 登录主机
-     * <p>
-     * 密码登录
      *
-     * @param hostIp   主机IP
+     * <p>密码登录
+     *
+     * @param hostIp 主机IP
      * @param hostPort 主机ssh端口
-     * @param user     主机登录用户名
+     * @param user 主机登录用户名
      * @param password 主机登录密码
      */
-    private void loginByPassword(String hostIp,
-                                 Integer hostPort,
-                                 String user,
-                                 String password) {
+    private void loginByPassword(String hostIp, Integer hostPort, String user, String password) {
         try {
             JSch jsch = new JSch();
             Session session = jsch.getSession(user, hostIp, hostPort);
@@ -74,18 +84,16 @@ public class SshTools {
 
     /**
      * 登录主机
-     * <p>
-     * 密钥登录
      *
-     * @param hostIp     主机IP
-     * @param hostPort   主机ssh端口
-     * @param user       主机登录用户名
+     * <p>密钥登录
+     *
+     * @param hostIp 主机IP
+     * @param hostPort 主机ssh端口
+     * @param user 主机登录用户名
      * @param privateKey 密钥
      */
-    public static Session createSession(String hostIp,
-                                        Integer hostPort,
-                                        String user,
-                                        String privateKey) throws JSchException {
+    public static Session createSession(
+            String hostIp, Integer hostPort, String user, String privateKey) throws JSchException {
 
         JSch jsch = new JSch();
         jsch.addIdentity(privateKey);
@@ -95,10 +103,10 @@ public class SshTools {
         // 连接超时
         session.connect(1000 * 100);
         return session;
-
     }
 
-    public static String exec(Session session, String cmd, Charset charset, OutputStream errStream) throws JSchException, IOException {
+    public static String exec(Session session, String cmd, Charset charset, OutputStream errStream)
+            throws JSchException, IOException {
         if (null == charset) {
             charset = CharsetUtil.CHARSET_UTF_8;
         }
@@ -117,8 +125,8 @@ public class SshTools {
         }
     }
 
-
-    public static void upload(Session session,String targetDirectory, String uploadFile) throws FileNotFoundException, SftpException, JSchException {
+    public static void upload(Session session, String targetDirectory, String uploadFile)
+            throws FileNotFoundException, SftpException, JSchException {
         final ChannelSftp sftp = (ChannelSftp) createChannel(session, ChannelType.SFTP);
         sftp.cd(targetDirectory);
         File file = new File(uploadFile);
@@ -126,16 +134,17 @@ public class SshTools {
         sftp.disconnect();
     }
 
-
-    public static void download(String directory, String downloadFile, String saveFile, ChannelSftp sftp) throws SftpException, FileNotFoundException {
+    public static void download(
+            String directory, String downloadFile, String saveFile, ChannelSftp sftp)
+            throws SftpException, FileNotFoundException {
         sftp.cd(directory);
         File file = new File(saveFile);
         sftp.get(downloadFile, new FileOutputStream(file));
         sftp.disconnect();
     }
 
-
-    public static Channel createChannel(Session session, ChannelType channelType) throws JSchException {
+    public static Channel createChannel(Session session, ChannelType channelType)
+            throws JSchException {
         Channel channel;
         if (false == session.isConnected()) {
             session.connect();
@@ -192,9 +201,7 @@ public class SshTools {
         return result;
     }
 
-    /**
-     * 关闭连接
-     */
+    /** 关闭连接 */
     public static void close(Session session) {
         if (Objects.nonNull(session) && session.isConnected()) {
             session.disconnect();
@@ -204,12 +211,11 @@ public class SshTools {
     public static void main(String[] args) throws JSchException, IOException, SftpException {
         Session session = null;
         try {
-            session = SshTools.createSession("172.31.96.16", 22, "root", "D:\\360Downloads\\id_rsa");
+            session =
+                    SshTools.createSession("172.31.96.16", 22, "root", "D:\\360Downloads\\id_rsa");
             String exec = SshTools.exec(session, "tar -zxvf /opt/datasophon/ddh/ddh-worker.tar.gz");
-        }finally {
+        } finally {
             SshTools.close(session);
         }
     }
-
-
 }

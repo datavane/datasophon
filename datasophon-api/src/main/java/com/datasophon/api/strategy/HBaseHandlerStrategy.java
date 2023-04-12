@@ -21,7 +21,6 @@ import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
-import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.dao.entity.ClusterInfoEntity;
@@ -33,9 +32,7 @@ import java.util.Map;
 
 public class HBaseHandlerStrategy extends ServiceHandlerAbstract implements ServiceRoleStrategy {
     @Override
-    public void handler(Integer clusterId, List<String> hosts) {
-
-    }
+    public void handler(Integer clusterId, List<String> hosts) {}
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
@@ -44,33 +41,32 @@ public class HBaseHandlerStrategy extends ServiceHandlerAbstract implements Serv
         boolean enableKerberos = false;
         Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
         for (ServiceConfig config : list) {
-            if("enableKerberos".equals(config.getName())){
-                enableKerberos = isEnableKerberos(clusterId, globalVariables, enableKerberos, config,"HBASE");
+            if ("enableKerberos".equals(config.getName())) {
+                enableKerberos =
+                        isEnableKerberos(
+                                clusterId, globalVariables, enableKerberos, config, "HBASE");
             }
         }
-        String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "HBASE" + Constants.CONFIG;
+        String key =
+                clusterInfo.getClusterFrame() + Constants.UNDERLINE + "HBASE" + Constants.CONFIG;
         List<ServiceConfig> configs = ServiceConfigMap.get(key);
         ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
-        if(enableKerberos){
+        if (enableKerberos) {
             addConfigWithKerberos(globalVariables, map, configs, kbConfigs);
-        }else{
+        } else {
             removeConfigWithKerberos(list, map, configs);
         }
         list.addAll(kbConfigs);
     }
 
     @Override
-    public void getConfig(Integer clusterId, List<ServiceConfig> list) {
-
-    }
+    public void getConfig(Integer clusterId, List<ServiceConfig> list) {}
 
     @Override
-    public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {
-
-    }
+    public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {}
 
     @Override
-    public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity, Map<String, ClusterServiceRoleInstanceEntity> map) {
-
-    }
+    public void handlerServiceRoleCheck(
+            ClusterServiceRoleInstanceEntity roleInstanceEntity,
+            Map<String, ClusterServiceRoleInstanceEntity> map) {}
 }

@@ -17,25 +17,32 @@
 
 package com.datasophon.api.master;
 
-import akka.actor.*;
-import akka.util.Timeout;
 import com.datasophon.api.master.alert.ServiceRoleCheckActor;
 import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
+
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import scala.concurrent.Await;
-import scala.concurrent.Future;
-import scala.concurrent.duration.Duration;
-import scala.concurrent.duration.FiniteDuration;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
+import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.util.Timeout;
+import scala.concurrent.Await;
+import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
+import scala.concurrent.duration.FiniteDuration;
 
 public class ActorUtils {
     private static final Logger logger = LoggerFactory.getLogger(ActorUtils.class);
@@ -46,32 +53,41 @@ public class ActorUtils {
 
     public static final String AKKA_REMOTE_NETTY_TCP_HOSTNAME = "akka.remote.netty.tcp.hostname";
 
-    private ActorUtils() {
-    }
+    private ActorUtils() {}
 
     public static void init() throws UnknownHostException {
         String hostname = InetAddress.getLocalHost().getHostName();
         Config config = ConfigFactory.parseString(AKKA_REMOTE_NETTY_TCP_HOSTNAME + "=" + hostname);
         actorSystem = ActorSystem.create(DATASOPHON, config.withFallback(ConfigFactory.load()));
-        actorSystem.actorOf(Props.create(WorkerStartActor.class), getActorRefName(WorkerStartActor.class));
-        ActorRef serviceRoleCheckActor = actorSystem.actorOf(Props.create(ServiceRoleCheckActor.class), getActorRefName(ServiceRoleCheckActor.class));
-        ActorRef hostCheckActor = actorSystem.actorOf(Props.create(HostCheckActor.class), getActorRefName(HostCheckActor.class));
+        actorSystem.actorOf(
+                Props.create(WorkerStartActor.class), getActorRefName(WorkerStartActor.class));
+        ActorRef serviceRoleCheckActor =
+                actorSystem.actorOf(
+                        Props.create(ServiceRoleCheckActor.class),
+                        getActorRefName(ServiceRoleCheckActor.class));
+        ActorRef hostCheckActor =
+                actorSystem.actorOf(
+                        Props.create(HostCheckActor.class), getActorRefName(HostCheckActor.class));
 
-        actorSystem.scheduler().schedule(
-                FiniteDuration.apply(60L, TimeUnit.SECONDS),
-                FiniteDuration.apply(5L, TimeUnit.MINUTES),
-                hostCheckActor,
-                new HostCheckCommand(),
-                actorSystem.dispatcher(),
-                ActorRef.noSender());
+        actorSystem
+                .scheduler()
+                .schedule(
+                        FiniteDuration.apply(60L, TimeUnit.SECONDS),
+                        FiniteDuration.apply(5L, TimeUnit.MINUTES),
+                        hostCheckActor,
+                        new HostCheckCommand(),
+                        actorSystem.dispatcher(),
+                        ActorRef.noSender());
 
-        actorSystem.scheduler().schedule(
-                FiniteDuration.apply(15L, TimeUnit.SECONDS),
-                FiniteDuration.apply(15L, TimeUnit.SECONDS),
-                serviceRoleCheckActor,
-                new ServiceRoleCheckCommand(),
-                actorSystem.dispatcher(),
-                ActorRef.noSender());
+        actorSystem
+                .scheduler()
+                .schedule(
+                        FiniteDuration.apply(15L, TimeUnit.SECONDS),
+                        FiniteDuration.apply(15L, TimeUnit.SECONDS),
+                        serviceRoleCheckActor,
+                        new ServiceRoleCheckCommand(),
+                        actorSystem.dispatcher(),
+                        ActorRef.noSender());
     }
 
     public static ActorRef getLocalActor(Class actorClass, String actorName) {
@@ -86,7 +102,10 @@ public class ActorUtils {
         }
         if (Objects.isNull(actorRef)) {
             logger.info("create actor {}", actorName);
-            actorRef = actorSystem.actorOf(Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"), actorName);
+            actorRef =
+                    actorSystem.actorOf(
+                            Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"),
+                            actorName);
         } else {
             logger.info("find actor {}", actorName);
         }
@@ -108,11 +127,8 @@ public class ActorUtils {
         return actorRef;
     }
 
-    /**
-     * Get ActorRef name from Class name.
-     */
+    /** Get ActorRef name from Class name. */
     public static String getActorRefName(Class clazz) {
         return StringUtils.uncapitalize(clazz.getSimpleName());
     }
-
 }

@@ -21,11 +21,10 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum AlertLevel {
-    WARN(1,"warning"),
-    EXCEPTION(2,"exception");
+    WARN(1, "warning"),
+    EXCEPTION(2, "exception");
 
-    @EnumValue
-    private int value;
+    @EnumValue private int value;
 
     private String desc;
 
@@ -50,7 +49,6 @@ public enum AlertLevel {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-
 
     @Override
     public String toString() {

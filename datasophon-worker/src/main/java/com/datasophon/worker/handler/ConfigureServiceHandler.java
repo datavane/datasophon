@@ -17,10 +17,6 @@
 
 package com.datasophon.worker.handler;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.IdUtil;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.datasophon.common.Constants;
 import com.datasophon.common.model.Generators;
 import com.datasophon.common.model.RunAs;
@@ -29,23 +25,38 @@ import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.utils.FreemakerUtils;
+
 import org.apache.commons.lang.StringUtils;
+
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetAddress;
-import java.util.*;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.IdUtil;
 
 public class ConfigureServiceHandler {
     private static final Logger logger = LoggerFactory.getLogger(ConfigureServiceHandler.class);
 
     private static final String RANGER_ADMIN = "RangerAdmin";
 
-    public ExecResult configure(Map<Generators, List<ServiceConfig>> cofigFileMap,
-                                String decompressPackageName,
-                                Integer myid,
-                                String serviceRoleName,
-                                RunAs runAs) {
+    public ExecResult configure(
+            Map<Generators, List<ServiceConfig>> cofigFileMap,
+            String decompressPackageName,
+            Integer myid,
+            String serviceRoleName,
+            RunAs runAs) {
         ExecResult execResult = new ExecResult();
         try {
             String hostName = InetAddress.getLocalHost().getHostName();
@@ -65,7 +76,11 @@ public class ConfigureServiceHandler {
                     if (StringUtils.isNotBlank(config.getType())) {
                         switch (config.getType()) {
                             case Constants.INPUT:
-                                String value = PlaceholderUtils.replacePlaceholders((String) config.getValue(), paramMap, Constants.REGEX_VARIABLE);
+                                String value =
+                                        PlaceholderUtils.replacePlaceholders(
+                                                (String) config.getValue(),
+                                                paramMap,
+                                                Constants.REGEX_VARIABLE);
                                 config.setValue(value);
                                 break;
                             case Constants.MULTIPLE:
@@ -84,7 +99,8 @@ public class ConfigureServiceHandler {
                     if (!config.isRequired() && !Constants.CUSTOM.equals(config.getConfigType())) {
                         iterator.remove();
                     }
-                    if (config.getValue() instanceof Boolean || config.getValue() instanceof Integer) {
+                    if (config.getValue() instanceof Boolean
+                            || config.getValue() instanceof Integer) {
                         logger.info("convert boolean and integer to string");
                         config.setValue(config.getValue().toString());
                     }
@@ -93,7 +109,8 @@ public class ConfigureServiceHandler {
                         logger.info("find dataDir : {}", config.getValue());
                         dataDir = (String) config.getValue();
                     }
-                    if ("TrinoCoordinator".equals(serviceRoleName) && "coordinator".equals(config.getName())) {
+                    if ("TrinoCoordinator".equals(serviceRoleName)
+                            && "coordinator".equals(config.getName())) {
                         logger.info("start config trino coordinator");
                         config.setValue("true");
                         ServiceConfig serviceConfig = new ServiceConfig();
@@ -101,10 +118,10 @@ public class ConfigureServiceHandler {
                         serviceConfig.setValue("false");
                         customConfList.add(serviceConfig);
                     }
-                    if ("fe_priority_networks".equals(config.getName()) || "be_priority_networks".equals(config.getName())) {
+                    if ("fe_priority_networks".equals(config.getName())
+                            || "be_priority_networks".equals(config.getName())) {
                         config.setName("priority_networks");
                     }
-
                 }
 
                 if (Objects.nonNull(myid) && StringUtils.isNotBlank(dataDir)) {
@@ -138,12 +155,29 @@ public class ConfigureServiceHandler {
     private boolean setupRangerAdmin(String decompressPackageName) {
         logger.info("start to execute ranger admin setup.sh");
         ArrayList<String> commands = new ArrayList<>();
-        commands.add(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "setup.sh");
-        ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName, commands, 300L);
+        commands.add(
+                Constants.INSTALL_PATH
+                        + Constants.SLASH
+                        + decompressPackageName
+                        + Constants.SLASH
+                        + "setup.sh");
+        ExecResult execResult =
+                ShellUtils.execWithStatus(
+                        Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName,
+                        commands,
+                        300L);
 
         ArrayList<String> globalCommand = new ArrayList<>();
-        globalCommand.add(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "set_globals.sh");
-        ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName, globalCommand, 300L);
+        globalCommand.add(
+                Constants.INSTALL_PATH
+                        + Constants.SLASH
+                        + decompressPackageName
+                        + Constants.SLASH
+                        + "set_globals.sh");
+        ShellUtils.execWithStatus(
+                Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName,
+                globalCommand,
+                300L);
         if (execResult.getExecResult()) {
             logger.info("ranger admin setup success");
             return true;
@@ -163,7 +197,10 @@ public class ConfigureServiceHandler {
         }
     }
 
-    private void addToCustomList(Iterator<ServiceConfig> iterator, ArrayList<ServiceConfig> customConfList, ServiceConfig config) {
+    private void addToCustomList(
+            Iterator<ServiceConfig> iterator,
+            ArrayList<ServiceConfig> customConfList,
+            ServiceConfig config) {
         List<JSONObject> list = (List<JSONObject>) config.getValue();
         iterator.remove();
         for (JSONObject json : list) {

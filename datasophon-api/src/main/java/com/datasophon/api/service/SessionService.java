@@ -17,10 +17,12 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.dao.entity.SessionEntity;
 import com.datasophon.dao.entity.UserInfoEntity;
+
 import javax.servlet.http.HttpServletRequest;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * @author gaodayu
@@ -34,4 +36,3 @@ public interface SessionService extends IService<SessionEntity> {
 
     void signOut(String ip, UserInfoEntity loginUser);
 }
-

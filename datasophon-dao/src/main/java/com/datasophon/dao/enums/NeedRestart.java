@@ -21,14 +21,10 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum NeedRestart {
+    NO(1, false),
+    YES(2, true);
 
-    NO(1,false),
-    YES(2,true);
-
-
-    @EnumValue
-    private int value;
-
+    @EnumValue private int value;
 
     private boolean desc;
 
@@ -53,6 +49,4 @@ public enum NeedRestart {
     public void setDesc(boolean desc) {
         this.desc = desc;
     }
-
-
 }

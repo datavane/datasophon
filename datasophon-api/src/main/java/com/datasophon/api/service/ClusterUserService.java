@@ -17,17 +17,14 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterUser;
 
-
 import java.util.List;
-import java.util.Map;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 
 public interface ClusterUserService extends IService<ClusterUser> {
-
 
     Result create(Integer clusterId, String username, Integer mainGroupId, String otherGroupIds);
 
@@ -39,4 +36,3 @@ public interface ClusterUserService extends IService<ClusterUser> {
 
     void createUnixUserOnHost(ClusterUser clusterUser, String hostname);
 }
-

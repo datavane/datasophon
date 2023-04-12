@@ -24,12 +24,10 @@ public enum ServiceRoleState {
     RUNNING(1, "正在运行"),
     STOP(2, "停止"),
     EXISTS_ALARM(3, "存在告警"),
-    DECOMMISSIONING(4,"退役中"),
-    DECOMMISSIONED(5,"已退役")
-    ;
+    DECOMMISSIONING(4, "退役中"),
+    DECOMMISSIONED(5, "已退役");
 
-    @EnumValue
-    private int value;
+    @EnumValue private int value;
 
     private String desc;
 
@@ -54,7 +52,6 @@ public enum ServiceRoleState {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-
 
     @Override
     public String toString() {

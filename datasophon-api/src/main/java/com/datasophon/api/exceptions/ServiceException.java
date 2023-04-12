@@ -14,23 +14,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.datasophon.api.exceptions;
 
+package com.datasophon.api.exceptions;
 
 import com.datasophon.api.enums.Status;
 
-/**
- * service exception
- */
+/** service exception */
 public class ServiceException extends RuntimeException {
 
-    /**
-     * code
-     */
+    /** code */
     private Integer code;
 
-    public ServiceException() {
-    }
+    public ServiceException() {}
 
     public ServiceException(Status status) {
         super(status.getMsg());

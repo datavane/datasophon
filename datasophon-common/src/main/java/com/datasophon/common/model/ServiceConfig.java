@@ -17,13 +17,13 @@
 
 package com.datasophon.common.model;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
 
+import lombok.Data;
+
 @Data
-public class ServiceConfig  implements Serializable {
+public class ServiceConfig implements Serializable {
     private String name;
 
     private Object value;
@@ -59,5 +59,4 @@ public class ServiceConfig  implements Serializable {
     private boolean configWithHA;
 
     private String separator;
-
 }

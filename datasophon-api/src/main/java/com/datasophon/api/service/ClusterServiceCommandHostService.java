@@ -17,12 +17,12 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceCommandHostEntity;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 集群服务操作指令主机表
@@ -31,10 +31,8 @@ import java.util.List;
  * @email gaodayu2022@163.com
  * @date 2022-04-12 11:28:06
  */
-public interface ClusterServiceCommandHostService extends IService<ClusterServiceCommandHostEntity> {
-
-
-
+public interface ClusterServiceCommandHostService
+        extends IService<ClusterServiceCommandHostEntity> {
 
     Result getCommandHostList(Integer clusterId, String commandId, Integer page, Integer pageSize);
 
@@ -46,4 +44,3 @@ public interface ClusterServiceCommandHostService extends IService<ClusterServic
 
     List<ClusterServiceCommandHostEntity> findCanceledCommandHost(String commandId);
 }
-

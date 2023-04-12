@@ -19,9 +19,10 @@ package com.datasophon.common.command;
 
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.model.RunAs;
-import lombok.Data;
 
 import java.io.Serializable;
+
+import lombok.Data;
 
 @Data
 public class ServiceRoleOperateCommand extends BaseCommand implements Serializable {

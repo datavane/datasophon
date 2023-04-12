@@ -17,9 +17,9 @@
 
 package com.datasophon.common.command;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import lombok.Data;
 
 @Data
 public class GeneratePrometheusConfigCommand implements Serializable {
@@ -29,5 +29,4 @@ public class GeneratePrometheusConfigCommand implements Serializable {
     private String clusterFrame;
 
     private Integer clusterId;
-
 }

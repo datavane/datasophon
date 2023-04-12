@@ -43,17 +43,20 @@ public class ServerLifeCycleManager {
     }
 
     /**
-     * Change the current server state to {@link ServerStatus#WAITING}, only {@link ServerStatus#RUNNING} can change to {@link ServerStatus#WAITING}.
+     * Change the current server state to {@link ServerStatus#WAITING}, only {@link
+     * ServerStatus#RUNNING} can change to {@link ServerStatus#WAITING}.
      *
      * @throws ServerLifeCycleException if change failed.
      */
     public static synchronized void toWaiting() throws ServerLifeCycleException {
         if (isStopped()) {
-            throw new ServerLifeCycleException("The current server is already stopped, cannot change to waiting");
+            throw new ServerLifeCycleException(
+                    "The current server is already stopped, cannot change to waiting");
         }
 
         if (serverStatus != ServerStatus.RUNNING) {
-            throw new ServerLifeCycleException("The current server is not at running status, cannot change to waiting");
+            throw new ServerLifeCycleException(
+                    "The current server is not at running status, cannot change to waiting");
         }
         serverStatus = ServerStatus.WAITING;
     }
@@ -65,7 +68,8 @@ public class ServerLifeCycleManager {
      */
     public static synchronized void recoverFromWaiting() throws ServerLifeCycleException {
         if (serverStatus != ServerStatus.WAITING) {
-            throw new ServerLifeCycleException("The current server status is not waiting, cannot recover form waiting");
+            throw new ServerLifeCycleException(
+                    "The current server status is not waiting, cannot recover form waiting");
         }
         serverStartupTime = System.currentTimeMillis();
         serverStatus = ServerStatus.RUNNING;
@@ -78,5 +82,4 @@ public class ServerLifeCycleManager {
         serverStatus = ServerStatus.STOPPED;
         return true;
     }
-
 }

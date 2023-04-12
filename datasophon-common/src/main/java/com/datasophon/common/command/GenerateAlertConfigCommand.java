@@ -19,11 +19,12 @@ package com.datasophon.common.command;
 
 import com.datasophon.common.model.AlertItem;
 import com.datasophon.common.model.Generators;
-import lombok.Data;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class GenerateAlertConfigCommand implements Serializable {

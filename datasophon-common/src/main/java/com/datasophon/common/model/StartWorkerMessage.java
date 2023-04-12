@@ -17,12 +17,12 @@
 
 package com.datasophon.common.model;
 
-import lombok.Data;
-
 import java.io.Serializable;
 
+import lombok.Data;
+
 @Data
-public class StartWorkerMessage  implements Serializable {
+public class StartWorkerMessage implements Serializable {
     private int coreNum;
     private double totalMem;
     private double totalDisk;
@@ -37,5 +37,4 @@ public class StartWorkerMessage  implements Serializable {
     private String cpuArchitecture;
 
     private Long deliveryId;
-
 }

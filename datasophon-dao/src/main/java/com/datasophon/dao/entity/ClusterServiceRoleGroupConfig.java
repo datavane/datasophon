@@ -17,63 +17,39 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
 
 @Data
 @TableName("t_ddh_cluster_service_role_group_config")
 public class ClusterServiceRoleGroupConfig implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	@TableId
-	private Integer id;
-	/**
-	 * 
-	 */
-	private Integer roleGroupId;
-	/**
-	 * 
-	 */
-	private String configJson;
-	/**
-	 * 
-	 */
-	private String configJsonMd5;
-	/**
-	 * 
-	 */
-	private Integer configVersion;
-	/**
-	 * 
-	 */
-	private String configFileJson;
-	/**
-	 * 
-	 */
-	private String configFileJsonMd5;
-	/**
-	 * 
-	 */
-	private Integer clusterId;
-	/**
-	 * 
-	 */
-	private Date createTime;
-	/**
-	 * 
-	 */
-	private Date updateTime;
-	/**
-	 * 
-	 */
-	private String serviceName;
-
+    /** */
+    @TableId private Integer id;
+    /** */
+    private Integer roleGroupId;
+    /** */
+    private String configJson;
+    /** */
+    private String configJsonMd5;
+    /** */
+    private Integer configVersion;
+    /** */
+    private String configFileJson;
+    /** */
+    private String configFileJsonMd5;
+    /** */
+    private Integer clusterId;
+    /** */
+    private Date createTime;
+    /** */
+    private Date updateTime;
+    /** */
+    private String serviceName;
 }

@@ -25,10 +25,10 @@ public class ThrowableUtils {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         try {
-                throwable.printStackTrace(pw);
-                return sw.toString();
-            } finally {
-                pw.close();
+            throwable.printStackTrace(pw);
+            return sw.toString();
+        } finally {
+            pw.close();
         }
     }
 }

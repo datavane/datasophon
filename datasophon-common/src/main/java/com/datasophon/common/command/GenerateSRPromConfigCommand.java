@@ -17,9 +17,9 @@
 
 package com.datasophon.common.command;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import lombok.Data;
 
 @Data
 public class GenerateSRPromConfigCommand implements Serializable {
@@ -31,5 +31,4 @@ public class GenerateSRPromConfigCommand implements Serializable {
     private Integer clusterId;
 
     private String filename;
-
 }

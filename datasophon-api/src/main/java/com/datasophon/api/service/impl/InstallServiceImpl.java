@@ -1,5 +1,4 @@
 /*
- *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -14,7 +13,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 
 package com.datasophon.api.service.impl;
@@ -77,14 +75,11 @@ public class InstallServiceImpl implements InstallService {
 
     private static final Logger logger = LoggerFactory.getLogger(InstallServiceImpl.class);
 
-    @Autowired
-    InstallStepMapper stepMapper;
+    @Autowired InstallStepMapper stepMapper;
 
-    @Autowired
-    ClusterInfoService clusterInfoService;
+    @Autowired ClusterInfoService clusterInfoService;
 
-    @Autowired
-    ClusterHostService hostService;
+    @Autowired ClusterHostService hostService;
 
     private static final String SSHUSER = "SSHUSER";
 
@@ -195,7 +190,8 @@ public class InstallServiceImpl implements InstallService {
 
     private void tellHostCheck(String clusterCode, HostInfo hostInfo) {
         ActorRef actor =
-                ActorUtils.getLocalActor(HostConnectActor.class, "hostActor-" + hostInfo.getHostname());
+                ActorUtils.getLocalActor(
+                        HostConnectActor.class, "hostActor-" + hostInfo.getHostname());
         actor.tell(new HostCheckCommand(hostInfo, clusterCode), ActorRef.noSender());
     }
 
@@ -378,7 +374,7 @@ public class InstallServiceImpl implements InstallService {
             HostInfo value = hostInfoEntry.getValue();
             if (Objects.isNull(value.getCheckResult())
                     || (Objects.nonNull(value.getCheckResult())
-                    && value.getCheckResult().getCode() != 10001)) {
+                            && value.getCheckResult().getCode() != 10001)) {
                 return Result.success().put("hostCheckCompleted", false);
             }
         }
@@ -402,7 +398,7 @@ public class InstallServiceImpl implements InstallService {
             HostInfo hostInfo = hostInfoEntry.getValue();
             if (hostInfo.getProgress() == 75
                     && DateUtil.between(hostInfo.getCreateTime(), new Date(), DateUnit.MINUTE)
-                    > 1) {
+                            > 1) {
                 logger.info("dispatcher host agent timeout");
                 hostInfo.setInstallState(InstallState.FAILED);
                 hostInfo.setInstallStateCode(InstallState.FAILED.getValue());

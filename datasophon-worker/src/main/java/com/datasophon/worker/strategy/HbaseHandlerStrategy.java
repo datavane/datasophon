@@ -17,7 +17,6 @@
 
 package com.datasophon.worker.strategy;
 
-import cn.hutool.core.io.FileUtil;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
@@ -27,10 +26,13 @@ import com.datasophon.common.utils.PropertyUtils;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.handler.ServiceHandler;
 import com.datasophon.worker.utils.KerberosUtils;
+
+import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import cn.hutool.core.io.FileUtil;
 
 public class HbaseHandlerStrategy implements ServiceRoleStrategy {
     private static final Logger logger = LoggerFactory.getLogger(HbaseHandlerStrategy.class);
@@ -44,11 +46,27 @@ public class HbaseHandlerStrategy implements ServiceRoleStrategy {
             ArrayList<String> commands = new ArrayList<>();
             commands.add("sh");
             commands.add("./enable-hbase-plugin.sh");
-            if (!FileUtil.exist(Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName() + "/ranger-hbase-plugin/success.id")) {
-                ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName() + "/ranger-hbase-plugin", commands, 30L);
+            if (!FileUtil.exist(
+                    Constants.INSTALL_PATH
+                            + Constants.SLASH
+                            + command.getDecompressPackageName()
+                            + "/ranger-hbase-plugin/success.id")) {
+                ExecResult execResult =
+                        ShellUtils.execWithStatus(
+                                Constants.INSTALL_PATH
+                                        + Constants.SLASH
+                                        + command.getDecompressPackageName()
+                                        + "/ranger-hbase-plugin",
+                                commands,
+                                30L);
                 if (execResult.getExecResult()) {
                     logger.info("enable ranger hbase plugin success");
-                    FileUtil.writeUtf8String("success", Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName() + "/ranger-hbase-plugin/success.id");
+                    FileUtil.writeUtf8String(
+                            "success",
+                            Constants.INSTALL_PATH
+                                    + Constants.SLASH
+                                    + command.getDecompressPackageName()
+                                    + "/ranger-hbase-plugin/success.id");
                 } else {
                     logger.info("enable ranger hbase plugin failed");
                     return execResult;
@@ -66,12 +84,17 @@ public class HbaseHandlerStrategy implements ServiceRoleStrategy {
         if (command.getCommandType().equals(CommandType.INSTALL_SERVICE)) {
             String hadoopHome = PropertyUtils.getString("HADOOP_HOME");
             ShellUtils.exceShell("sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -mkdir -p /hbase");
-            ShellUtils.exceShell("sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -chown hbase:hadoop /hbase");
+            ShellUtils.exceShell(
+                    "sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -chown hbase:hadoop /hbase");
             ShellUtils.exceShell("sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -chmod 777 /hbase");
         }
-        startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
+        startResult =
+                serviceHandler.start(
+                        command.getStartRunner(),
+                        command.getStatusRunner(),
+                        command.getDecompressPackageName(),
+                        command.getRunAs());
 
         return startResult;
-
     }
 }

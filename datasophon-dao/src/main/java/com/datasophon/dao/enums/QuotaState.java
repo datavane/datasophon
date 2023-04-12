@@ -21,11 +21,10 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum QuotaState {
-    RUNNING(1,"启用"),
-    STOPPED(2,"未启用");
+    RUNNING(1, "启用"),
+    STOPPED(2, "未启用");
 
-    @EnumValue
-    private int value;
+    @EnumValue private int value;
 
     private String desc;
 
@@ -50,7 +49,6 @@ public enum QuotaState {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-
 
     @Override
     public String toString() {

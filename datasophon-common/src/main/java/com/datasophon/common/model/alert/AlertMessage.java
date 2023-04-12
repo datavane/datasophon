@@ -1,4 +1,3 @@
-
 /*
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
@@ -17,9 +16,10 @@
  */
 
 package com.datasophon.common.model.alert;
-import lombok.Data;
 
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class AlertMessage {
@@ -31,6 +31,4 @@ public class AlertMessage {
     private String version;
     private String groupKey;
     private int truncatedAlerts;
-
-
 }

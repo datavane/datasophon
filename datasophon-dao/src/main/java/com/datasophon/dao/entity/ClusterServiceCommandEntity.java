@@ -17,58 +17,41 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.datasophon.dao.enums.CommandState;
-import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
 
 @TableName("t_ddh_cluster_service_command")
 @Data
 public class ClusterServiceCommandEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键
-     */
+    /** 主键 */
     private String commandId;
-    /**
-     * 创建人
-     */
+    /** 创建人 */
     private String createBy;
-    /**
-     * 创建时间
-     */
+    /** 创建时间 */
     private Date createTime;
-    /**
-     * 命令名称
-     */
+    /** 命令名称 */
     private String commandName;
-    /**
-     * 命令状态 1：正在运行2：成功3：失败
-     */
+    /** 命令状态 1：正在运行2：成功3：失败 */
     private CommandState commandState;
 
     @TableField(exist = false)
     private Integer commandStateCode;
-    /**
-     * 命令进度
-     */
+    /** 命令进度 */
     private Integer commandProgress;
-    /**
-     * 集群id
-     */
+    /** 集群id */
     private Integer clusterId;
-    /**
-     * 服务名称
-     */
+    /** 服务名称 */
     private String serviceName;
-    /**
-     * 命令类型
-     */
+    /** 命令类型 */
     private Integer commandType;
 
     @TableField(exist = false)
@@ -77,5 +60,4 @@ public class ClusterServiceCommandEntity implements Serializable {
     private Date endTime;
 
     private Integer serviceInstanceId;
-
 }

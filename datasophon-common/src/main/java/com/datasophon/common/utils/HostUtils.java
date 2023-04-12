@@ -17,24 +17,20 @@
 
 package com.datasophon.common.utils;
 
-
-
-import com.google.common.net.InetAddresses;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
-
+import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.google.common.net.InetAddresses;
 
 /**
  * 读取hosts文件
  *
  * @author gaodayu
  */
-public enum HostUtils {;
-
+public enum HostUtils {
+    ;
 
     public static final Pattern HOST_NAME_STR = Pattern.compile("[0-9a-zA-Z-.]{1,64}");
 
@@ -64,14 +60,13 @@ public enum HostUtils {;
         }
     }
 
-
     public static String findIp(String hostname) {
         validHostname(hostname);
         String ip = getIp(hostname);
         return ip;
     }
 
-    public static String getHostName(String hostOrIp){
+    public static String getHostName(String hostOrIp) {
         try {
             InetAddress byName = InetAddress.getByName(hostOrIp);
             return byName.getCanonicalHostName();
@@ -80,7 +75,7 @@ public enum HostUtils {;
         }
     }
 
-    public static String getIp(String hostName){
+    public static String getIp(String hostName) {
         try {
             InetAddress byName = InetAddress.getByName(hostName);
             return byName.getHostAddress();
@@ -88,5 +83,4 @@ public enum HostUtils {;
             throw new RuntimeException(e);
         }
     }
-
 }

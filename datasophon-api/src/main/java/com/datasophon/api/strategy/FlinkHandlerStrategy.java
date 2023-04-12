@@ -21,7 +21,6 @@ import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
-import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.dao.entity.ClusterInfoEntity;
@@ -33,44 +32,39 @@ import java.util.Map;
 
 public class FlinkHandlerStrategy extends ServiceHandlerAbstract implements ServiceRoleStrategy {
     @Override
-    public void handler(Integer clusterId, List<String> hosts) {
-
-    }
+    public void handler(Integer clusterId, List<String> hosts) {}
 
     @Override
     public void handlerConfig(Integer clusterId, List<ServiceConfig> list) {
-        Map<String, String> globalVariables = GlobalVariables.get( clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
         boolean enableJM2HA = false;
         Map<String, ServiceConfig> map = ProcessUtils.translateToMap(list);
         for (ServiceConfig config : list) {
-            if("enableJMHA".equals(config.getName())){
-                enableJM2HA = isEnableHA(clusterId, globalVariables, enableJM2HA, config,"HIVE");
+            if ("enableJMHA".equals(config.getName())) {
+                enableJM2HA = isEnableHA(clusterId, globalVariables, enableJM2HA, config, "HIVE");
             }
         }
-        String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "FLINK" + Constants.CONFIG;
+        String key =
+                clusterInfo.getClusterFrame() + Constants.UNDERLINE + "FLINK" + Constants.CONFIG;
         List<ServiceConfig> configs = ServiceConfigMap.get(key);
         ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
-        if(enableJM2HA){
+        if (enableJM2HA) {
             addConfigWithHA(globalVariables, map, configs, kbConfigs);
-        }else{
+        } else {
             removeConfigWithHA(list, map, configs);
         }
         list.addAll(kbConfigs);
     }
 
     @Override
-    public void getConfig(Integer clusterId, List<ServiceConfig> list) {
-
-    }
+    public void getConfig(Integer clusterId, List<ServiceConfig> list) {}
 
     @Override
-    public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {
-
-    }
+    public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {}
 
     @Override
-    public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity, Map<String, ClusterServiceRoleInstanceEntity> map) {
-
-    }
+    public void handlerServiceRoleCheck(
+            ClusterServiceRoleInstanceEntity roleInstanceEntity,
+            Map<String, ClusterServiceRoleInstanceEntity> map) {}
 }

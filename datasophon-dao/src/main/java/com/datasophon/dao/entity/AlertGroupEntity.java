@@ -17,32 +17,25 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
 
 @TableName("t_ddh_alert_group")
 @Data
 public class AlertGroupEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键
-     */
-    @TableId
-    private Integer id;
-    /**
-     * 告警组名称
-     */
+    /** 主键 */
+    @TableId private Integer id;
+    /** 告警组名称 */
     private String alertGroupName;
-    /**
-     * 告警组类别
-     */
+    /** 告警组类别 */
     private String alertGroupCategory;
 
     private Date createTime;
@@ -52,5 +45,4 @@ public class AlertGroupEntity implements Serializable {
 
     @TableField(exist = false)
     private Integer clusterId;
-
 }

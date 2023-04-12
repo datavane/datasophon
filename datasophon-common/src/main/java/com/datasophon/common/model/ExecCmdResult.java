@@ -19,6 +19,7 @@ package com.datasophon.common.model;
 
 /**
  * @Description: 命令返回结果
+ *
  * @author: gaodayu
  * @date: 2022-03-25 21:03
  */

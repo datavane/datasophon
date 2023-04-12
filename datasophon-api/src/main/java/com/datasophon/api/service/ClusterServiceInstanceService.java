@@ -17,12 +17,12 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 集群服务表
@@ -33,7 +33,8 @@ import java.util.List;
  */
 public interface ClusterServiceInstanceService extends IService<ClusterServiceInstanceEntity> {
 
-    ClusterServiceInstanceEntity getServiceInstanceByClusterIdAndServiceName(Integer clusterId, String parentName);
+    ClusterServiceInstanceEntity getServiceInstanceByClusterIdAndServiceName(
+            Integer clusterId, String parentName);
 
     String getServiceConfigByClusterIdAndServiceName(Integer id, String node);
 
@@ -43,10 +44,9 @@ public interface ClusterServiceInstanceService extends IService<ClusterServiceIn
 
     Result getServiceRoleType(Integer serviceInstanceId);
 
-    Result configVersionCompare(Integer serviceInstanceId,Integer roleGroupId);
+    Result configVersionCompare(Integer serviceInstanceId, Integer roleGroupId);
 
     Result delServiceInstance(Integer serviceInstanceId);
 
     List<ClusterServiceInstanceEntity> listRunningServiceInstance(Integer clusterId);
 }
-

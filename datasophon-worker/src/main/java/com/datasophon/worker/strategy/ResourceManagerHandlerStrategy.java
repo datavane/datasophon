@@ -17,7 +17,6 @@
 
 package com.datasophon.worker.strategy;
 
-import cn.hutool.core.io.FileUtil;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
@@ -26,17 +25,22 @@ import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.handler.ServiceHandler;
 import com.datasophon.worker.utils.KerberosUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import cn.hutool.core.io.FileUtil;
+
 public class ResourceManagerHandlerStrategy implements ServiceRoleStrategy {
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceManagerHandlerStrategy.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(ResourceManagerHandlerStrategy.class);
 
     @Override
-    public ExecResult handler(ServiceRoleOperateCommand command) throws SQLException, ClassNotFoundException {
+    public ExecResult handler(ServiceRoleOperateCommand command)
+            throws SQLException, ClassNotFoundException {
         ExecResult startResult = new ExecResult();
         ServiceHandler serviceHandler = new ServiceHandler();
         if (command.getEnableKerberos()) {
@@ -47,12 +51,19 @@ public class ResourceManagerHandlerStrategy implements ServiceRoleStrategy {
                 KerberosUtils.downloadKeytabFromMaster("rm/" + hostname, "rm.service.keytab");
             }
         }
-        String hadoopHome = Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName();
+        String hadoopHome =
+                Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName();
         if (command.getCommandType().equals(CommandType.INSTALL_SERVICE)) {
-            //create /user/yarn
-            ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -mkdir -p /user/yarn");
-            ShellUtils.exceShell("sudo -u hdfs "+hadoopHome+"/bin/hdfs dfs -chown yarn:hadoop /user/yarn");
+            // create /user/yarn
+            ShellUtils.exceShell(
+                    "sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -mkdir -p /user/yarn");
+            ShellUtils.exceShell(
+                    "sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -chown yarn:hadoop /user/yarn");
         }
-        return serviceHandler.start(command.getStartRunner(), command.getStatusRunner(), command.getDecompressPackageName(), command.getRunAs());
+        return serviceHandler.start(
+                command.getStartRunner(),
+                command.getStatusRunner(),
+                command.getDecompressPackageName(),
+                command.getRunAs());
     }
 }

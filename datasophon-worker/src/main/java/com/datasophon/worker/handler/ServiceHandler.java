@@ -17,40 +17,41 @@
 
 package com.datasophon.worker.handler;
 
+import static ch.qos.logback.classic.ClassicConstants.FINALIZE_SESSION_MARKER;
 
 import com.datasophon.common.Constants;
 import com.datasophon.common.model.RunAs;
 import com.datasophon.common.model.ServiceRoleRunner;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.PropertyUtils;
-import com.datasophon.common.utils.ShellUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.*;
+import org.apache.commons.lang.StringUtils;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import static ch.qos.logback.classic.ClassicConstants.FINALIZE_SESSION_MARKER;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServiceHandler {
     private static final Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
 
-    /**
-     * log list
-     */
+    /** log list */
     public static List<String> logBuffer;
 
     protected boolean logOutputIsSuccess = false;
 
-    /**
-     * log handler
-     */
+    /** log handler */
     protected Consumer<List<String>> logHandler;
 
     public ServiceHandler() {
@@ -58,7 +59,11 @@ public class ServiceHandler {
         this.logHandler = this::logHandle;
     }
 
-    public ExecResult start(ServiceRoleRunner startRunner, ServiceRoleRunner statusRunner, String decompressPackageName, RunAs runAs) {
+    public ExecResult start(
+            ServiceRoleRunner startRunner,
+            ServiceRoleRunner statusRunner,
+            String decompressPackageName,
+            RunAs runAs) {
         ExecResult statusResult = execRunner(statusRunner, decompressPackageName, null);
         if (statusResult.getExecResult()) {
             logger.info("{} already started", decompressPackageName);
@@ -66,9 +71,9 @@ public class ServiceHandler {
             execResult.setExecResult(true);
             return execResult;
         }
-        //start service
-        ExecResult startResult =execRunner(startRunner, decompressPackageName, runAs);
-        //check start result
+        // start service
+        ExecResult startResult = execRunner(startRunner, decompressPackageName, runAs);
+        // check start result
         if (startResult.getExecResult()) {
             int times = PropertyUtils.getInt("times");
             int count = 0;
@@ -95,13 +100,16 @@ public class ServiceHandler {
         return startResult;
     }
 
-
-    public ExecResult stop(ServiceRoleRunner runner, ServiceRoleRunner statusRunner, String decompressPackageName, RunAs runAs) {
+    public ExecResult stop(
+            ServiceRoleRunner runner,
+            ServiceRoleRunner statusRunner,
+            String decompressPackageName,
+            RunAs runAs) {
         ExecResult statusResult = execRunner(statusRunner, decompressPackageName, runAs);
         ExecResult execResult = new ExecResult();
         if (statusResult.getExecResult()) {
             execResult = execRunner(runner, decompressPackageName, runAs);
-            //检测是否停止成功
+            // 检测是否停止成功
             if (execResult.getExecResult()) {
                 int times = PropertyUtils.getInt("times");
                 int count = 0;
@@ -120,11 +128,11 @@ public class ServiceHandler {
                     }
                     count++;
                 }
-                if (count == times) {//超时，置为失败
+                if (count == times) { // 超时，置为失败
                     execResult.setExecResult(false);
                 }
             }
-        } else {//已经是停止状态，直接返回
+        } else { // 已经是停止状态，直接返回
             logger.info("{} already stopped", decompressPackageName);
             execResult.setExecResult(true);
         }
@@ -141,7 +149,8 @@ public class ServiceHandler {
         return result;
     }
 
-    public ExecResult execRunner(ServiceRoleRunner runner, String decompressPackageName, RunAs runAs) {
+    public ExecResult execRunner(
+            ServiceRoleRunner runner, String decompressPackageName, RunAs runAs) {
         String shell = runner.getProgram();
         List<String> args = runner.getArgs();
         long timeout = Long.parseLong(runner.getTimeout());
@@ -151,7 +160,8 @@ public class ServiceHandler {
             command.add("-u");
             command.add(runAs.getUser());
         }
-        if (runner.getProgram().contains(Constants.TASK_MANAGER) || runner.getProgram().contains(Constants.JOB_MANAGER)) {
+        if (runner.getProgram().contains(Constants.TASK_MANAGER)
+                || runner.getProgram().contains(Constants.JOB_MANAGER)) {
             logger.info("do not use sh");
         } else {
             command.add("sh");
@@ -159,10 +169,13 @@ public class ServiceHandler {
         command.add(shell);
         command.addAll(args);
         logger.info("execute shell command : {}", command.toString());
-        ExecResult execResult = execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName, command, timeout);
+        ExecResult execResult =
+                execWithStatus(
+                        Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName,
+                        command,
+                        timeout);
         return execResult;
     }
-
 
     public ExecResult execWithStatus(String workPath, List<String> command, long timeout) {
         ExecResult result = new ExecResult();
@@ -190,39 +203,42 @@ public class ServiceHandler {
 
     public void getOutput(Process process) {
         ExecutorService getOutputLogService = Executors.newSingleThreadExecutor();
-        getOutputLogService.submit(() -> {
-            BufferedReader inReader = null;
-            try {
-                inReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String line;
-                while ((line = inReader.readLine()) != null) {
-                    logBuffer.add(line);
-                }
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            } finally {
-                logOutputIsSuccess = true;
-                close(inReader);
-            }
-        });
+        getOutputLogService.submit(
+                () -> {
+                    BufferedReader inReader = null;
+                    try {
+                        inReader =
+                                new BufferedReader(new InputStreamReader(process.getInputStream()));
+                        String line;
+                        while ((line = inReader.readLine()) != null) {
+                            logBuffer.add(line);
+                        }
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                    } finally {
+                        logOutputIsSuccess = true;
+                        close(inReader);
+                    }
+                });
         getOutputLogService.shutdown();
         ExecutorService parseProcessOutputExecutorService = Executors.newSingleThreadExecutor();
-        parseProcessOutputExecutorService.submit(() -> {
-            try {
-                long lastFlushTime = System.currentTimeMillis();
-                while (logBuffer.size() > 0 || !logOutputIsSuccess) {
-                    if (logBuffer.size() > 0) {
-                        lastFlushTime = flush(lastFlushTime);
-                    } else {
-                        Thread.sleep(1000);
+        parseProcessOutputExecutorService.submit(
+                () -> {
+                    try {
+                        long lastFlushTime = System.currentTimeMillis();
+                        while (logBuffer.size() > 0 || !logOutputIsSuccess) {
+                            if (logBuffer.size() > 0) {
+                                lastFlushTime = flush(lastFlushTime);
+                            } else {
+                                Thread.sleep(1000);
+                            }
+                        }
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                    } finally {
+                        clear();
                     }
-                }
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            } finally {
-                clear();
-            }
-        });
+                });
         parseProcessOutputExecutorService.shutdown();
     }
 
@@ -235,9 +251,7 @@ public class ServiceHandler {
     private long flush(long lastFlushTime) {
         long now = System.currentTimeMillis();
 
-        /**
-         * when log buffer siz or flush time reach condition , then flush
-         */
+        /** when log buffer siz or flush time reach condition , then flush */
         lastFlushTime = now;
         /** log handle */
         logHandler.accept(logBuffer);
@@ -247,9 +261,7 @@ public class ServiceHandler {
         return lastFlushTime;
     }
 
-    /**
-     * clear
-     */
+    /** clear */
     private void clear() {
 
         List<String> markerList = new ArrayList<>();

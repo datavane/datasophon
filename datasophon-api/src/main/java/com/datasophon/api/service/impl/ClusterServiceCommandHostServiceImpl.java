@@ -17,43 +17,43 @@
 
 package com.datasophon.api.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
-import com.datasophon.api.service.ClusterServiceCommandHostService;
 import com.datasophon.api.service.ClusterServiceCommandHostCommandService;
+import com.datasophon.api.service.ClusterServiceCommandHostService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.utils.Result;
-import com.datasophon.dao.enums.CommandState;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
-
-import com.datasophon.dao.mapper.ClusterServiceCommandHostMapper;
 import com.datasophon.dao.entity.ClusterServiceCommandHostEntity;
+import com.datasophon.dao.enums.CommandState;
+import com.datasophon.dao.mapper.ClusterServiceCommandHostMapper;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 @Service("clusterServiceCommandHostService")
-public class ClusterServiceCommandHostServiceImpl extends ServiceImpl<ClusterServiceCommandHostMapper, ClusterServiceCommandHostEntity> implements ClusterServiceCommandHostService {
+public class ClusterServiceCommandHostServiceImpl
+        extends ServiceImpl<ClusterServiceCommandHostMapper, ClusterServiceCommandHostEntity>
+        implements ClusterServiceCommandHostService {
 
-    @Autowired
-    private ClusterServiceCommandHostCommandService hostCommandService;
+    @Autowired private ClusterServiceCommandHostCommandService hostCommandService;
 
-    @Autowired
-    private ClusterServiceCommandHostMapper hostMapper;
+    @Autowired private ClusterServiceCommandHostMapper hostMapper;
 
     @Override
-    public Result getCommandHostList(Integer clusterId, String commandId, Integer page, Integer pageSize) {
+    public Result getCommandHostList(
+            Integer clusterId, String commandId, Integer page, Integer pageSize) {
         Integer offset = (page - 1) * pageSize;
 
-        LambdaQueryChainWrapper<ClusterServiceCommandHostEntity> wrapper = this.lambdaQuery()
-                .eq(ClusterServiceCommandHostEntity::getCommandId, commandId);
+        LambdaQueryChainWrapper<ClusterServiceCommandHostEntity> wrapper =
+                this.lambdaQuery().eq(ClusterServiceCommandHostEntity::getCommandId, commandId);
 
-        List<ClusterServiceCommandHostEntity> list = wrapper
-                .orderByDesc(ClusterServiceCommandHostEntity::getCreateTime)
-                .last("limit " + offset + "," + pageSize)
-                .list();
+        List<ClusterServiceCommandHostEntity> list =
+                wrapper.orderByDesc(ClusterServiceCommandHostEntity::getCreateTime)
+                        .last("limit " + offset + "," + pageSize)
+                        .list();
         for (ClusterServiceCommandHostEntity commandHostEntity : list) {
             commandHostEntity.setCommandStateCode(commandHostEntity.getCommandState().getValue());
         }
@@ -64,7 +64,9 @@ public class ClusterServiceCommandHostServiceImpl extends ServiceImpl<ClusterSer
 
     @Override
     public Integer getCommandHostSizeByCommandId(String commandId) {
-        return this.lambdaQuery().eq(ClusterServiceCommandHostEntity::getCommandId, commandId).count();
+        return this.lambdaQuery()
+                .eq(ClusterServiceCommandHostEntity::getCommandId, commandId)
+                .count();
     }
 
     @Override
@@ -87,5 +89,4 @@ public class ClusterServiceCommandHostServiceImpl extends ServiceImpl<ClusterSer
                 .eq(ClusterServiceCommandHostEntity::getCommandState, CommandState.CANCEL)
                 .list();
     }
-
 }

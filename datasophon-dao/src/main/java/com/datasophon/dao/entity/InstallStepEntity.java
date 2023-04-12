@@ -17,31 +17,22 @@
 
 package com.datasophon.dao.entity;
 
+import java.io.Serializable;
+
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import lombok.Data;
-
-import java.io.Serializable;
-import java.util.Date;
-
 
 @TableName("t_ddh_install_step")
 @Data
 public class InstallStepEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     *
-     */
-    @TableId
-    private Integer id;
-    /**
-     *
-     */
+    /** */
+    @TableId private Integer id;
+    /** */
     private String stepName;
-    /**
-     *
-     */
+    /** */
     private String stepDesc;
-
 }

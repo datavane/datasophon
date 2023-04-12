@@ -14,10 +14,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package com.datasophon.api.exceptions;
 
 import com.datasophon.api.enums.Status;
 import com.datasophon.common.utils.Result;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,14 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-/**
- * Exception Handler
- */
+/** Exception Handler */
 @ControllerAdvice
 @ResponseBody
 public class ApiExceptionHandler {
@@ -49,27 +50,24 @@ public class ApiExceptionHandler {
         }
         Status st = ce.value();
         logger.error(st.getMsg(), e);
-        return Result.error(st.getCode(),st.getMsg());
+        return Result.error(st.getCode(), st.getMsg());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public Result constraintViolationException(ConstraintViolationException e) {
-        Set<String> set = e.getConstraintViolations()
-                .stream()
-                .map(ConstraintViolation::getMessageTemplate)
-                .collect(Collectors.toSet());
+        Set<String> set =
+                e.getConstraintViolations().stream()
+                        .map(ConstraintViolation::getMessageTemplate)
+                        .collect(Collectors.toSet());
         return Result.error(String.join(",", set));
     }
-
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public Result exceptionHandler(MethodArgumentTypeMismatchException e) {
         return Result.error("参数类型错不匹配：" + e.getMessage());
     }
 
-    /**
-     * business exception
-     */
+    /** business exception */
     @ExceptionHandler(BusinessException.class)
     public Result businessExceptionHandler(BusinessException e) {
         return Result.error(e.getMessage());

@@ -17,12 +17,11 @@
 
 package com.datasophon.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.datasophon.dao.entity.ClusterGroup;
+
 import org.apache.ibatis.annotations.Mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 @Mapper
-public interface ClusterGroupMapper extends BaseMapper<ClusterGroup> {
-	
-}
+public interface ClusterGroupMapper extends BaseMapper<ClusterGroup> {}

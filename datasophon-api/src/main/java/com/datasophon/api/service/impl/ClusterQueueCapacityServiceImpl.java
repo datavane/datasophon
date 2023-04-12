@@ -17,10 +17,6 @@
 
 package com.datasophon.api.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.ClusterQueueCapacityService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
@@ -37,33 +33,46 @@ import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.mapper.ClusterQueueCapacityMapper;
 import com.datasophon.dao.model.ClusterQueueCapacityList;
 import com.datasophon.dao.model.Links;
+
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+import cn.hutool.core.bean.BeanUtil;
 
 @Service("clusterQueueCapacityService")
-public class ClusterQueueCapacityServiceImpl extends ServiceImpl<ClusterQueueCapacityMapper, ClusterQueueCapacity> implements ClusterQueueCapacityService {
+public class ClusterQueueCapacityServiceImpl
+        extends ServiceImpl<ClusterQueueCapacityMapper, ClusterQueueCapacity>
+        implements ClusterQueueCapacityService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClusterQueueCapacityServiceImpl.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(ClusterQueueCapacityServiceImpl.class);
 
-    @Autowired
-    private ClusterServiceRoleInstanceService roleInstanceService;
+    @Autowired private ClusterServiceRoleInstanceService roleInstanceService;
 
     @Override
     public Result refreshToYarn(Integer clusterId) throws Exception {
-        List<ClusterQueueCapacity> list = this.list(new QueryWrapper<ClusterQueueCapacity>()
-                .eq(Constants.CLUSTER_ID, clusterId));
+        List<ClusterQueueCapacity> list =
+                this.list(
+                        new QueryWrapper<ClusterQueueCapacity>()
+                                .eq(Constants.CLUSTER_ID, clusterId));
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
-        List<ClusterServiceRoleInstanceEntity> roleList = roleInstanceService.getServiceRoleInstanceListByClusterIdAndRoleName(clusterId, "ResourceManager");
+        List<ClusterServiceRoleInstanceEntity> roleList =
+                roleInstanceService.getServiceRoleInstanceListByClusterIdAndRoleName(
+                        clusterId, "ResourceManager");
 
-        //build configfilemap
+        // build configfilemap
         HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
         Generators generators = new Generators();
         generators.setFilename("capacity-scheduler.xml");
@@ -91,7 +100,8 @@ public class ClusterQueueCapacityServiceImpl extends ServiceImpl<ClusterQueueCap
         configFileMap.put(generators, serviceConfigs);
         String hostname = "";
         for (ClusterServiceRoleInstanceEntity roleInstanceEntity : roleList) {
-            ExecResult execResult = HadoopUtils.configQueueProp(clusterInfo, configFileMap, roleInstanceEntity);
+            ExecResult execResult =
+                    HadoopUtils.configQueueProp(clusterInfo, configFileMap, roleInstanceEntity);
             if (!execResult.getExecResult()) {
                 return Result.error("config capacity-scheduler.xml failed");
             }
@@ -123,8 +133,10 @@ public class ClusterQueueCapacityServiceImpl extends ServiceImpl<ClusterQueueCap
 
     @Override
     public Result listCapacityQueue(Integer clusterId) {
-        List<ClusterQueueCapacity> list = this.list(new QueryWrapper<ClusterQueueCapacity>()
-                .eq(Constants.CLUSTER_ID, clusterId));
+        List<ClusterQueueCapacity> list =
+                this.list(
+                        new QueryWrapper<ClusterQueueCapacity>()
+                                .eq(Constants.CLUSTER_ID, clusterId));
 
         ClusterQueueCapacityList clusterQueueCapacityList = new ClusterQueueCapacityList();
         clusterQueueCapacityList.setRootId("root");
@@ -140,6 +152,4 @@ public class ClusterQueueCapacityServiceImpl extends ServiceImpl<ClusterQueueCap
         clusterQueueCapacityList.setLinks(linksList);
         return Result.success(clusterQueueCapacityList);
     }
-
-
 }

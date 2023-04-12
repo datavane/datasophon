@@ -17,65 +17,64 @@
 
 package com.datasophon.api.controller;
 
+import static com.datasophon.api.enums.Status.IP_IS_EMPTY;
 
-import com.datasophon.api.utils.HttpUtils;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.security.Authenticator;
 import com.datasophon.api.service.SessionService;
+import com.datasophon.api.utils.HttpUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.UserInfoEntity;
-import org.apache.commons.httpclient.HttpStatus;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
-import static com.datasophon.api.enums.Status.IP_IS_EMPTY;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("")
-public class LoginController{
+public class LoginController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
+    @Autowired private SessionService sessionService;
 
-    @Autowired
-    private SessionService sessionService;
-
-    @Autowired
-    private Authenticator authenticator;
-
+    @Autowired private Authenticator authenticator;
 
     /**
      * login
      *
-     * @param userName     user name
+     * @param userName user name
      * @param userPassword user password
-     * @param request      request
-     * @param response     response
+     * @param request request
+     * @param response response
      * @return login result
      */
-
     @RequestMapping("/login")
-    public Result login(@RequestParam(value = "username") String userName,
-                        @RequestParam(value = "password") String userPassword,
-                        HttpServletRequest request,
-                        HttpServletResponse response) {
+    public Result login(
+            @RequestParam(value = "username") String userName,
+            @RequestParam(value = "password") String userPassword,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         logger.info("login user name: {} ", userName);
 
-        //user name check
+        // user name check
         if (StringUtils.isEmpty(userName)) {
-            return Result.error(Status.USER_NAME_NULL.getCode(),
-                    Status.USER_NAME_NULL.getMsg());
+            return Result.error(Status.USER_NAME_NULL.getCode(), Status.USER_NAME_NULL.getMsg());
         }
 
         // user ip check
@@ -105,16 +104,17 @@ public class LoginController{
      * sign out
      *
      * @param loginUser login user
-     * @param request   request
+     * @param request request
      * @return sign out result
      */
     @PostMapping(value = "/signOut")
-    public Result signOut(@RequestAttribute(value = Constants.SESSION_USER) UserInfoEntity loginUser,
-                          HttpServletRequest request) {
+    public Result signOut(
+            @RequestAttribute(value = Constants.SESSION_USER) UserInfoEntity loginUser,
+            HttpServletRequest request) {
         logger.info("login user:{} sign out", loginUser.getUsername());
         String ip = HttpUtils.getClientIpAddress(request);
         sessionService.signOut(ip, loginUser);
-        //clear session
+        // clear session
         request.removeAttribute(Constants.SESSION_USER);
         return Result.success();
     }

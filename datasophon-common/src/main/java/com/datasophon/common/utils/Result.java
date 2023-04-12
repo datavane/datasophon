@@ -1,4 +1,3 @@
-
 /*
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
@@ -19,12 +18,12 @@
 package com.datasophon.common.utils;
 
 import com.datasophon.common.Constants;
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Data;
 
 @Data
 public class Result extends HashMap<String, Object> {
@@ -35,8 +34,7 @@ public class Result extends HashMap<String, Object> {
 
     private Object data;
 
-    public Result() {
-    }
+    public Result() {}
 
     public static Result error() {
         return error(500, "未知异常，请联系管理员");
@@ -69,15 +67,16 @@ public class Result extends HashMap<String, Object> {
 
     public static Result success(Object data) {
         Result result = new Result();
-        result.put(Constants.CODE,200);
-        result.put(Constants.MSG,"success");
-        result.put("data",data);
+        result.put(Constants.CODE, 200);
+        result.put(Constants.MSG, "success");
+        result.put("data", data);
         return result;
     }
+
     public static Result success() {
         Result result = new Result();
-        result.put(Constants.CODE,200);
-        result.put(Constants.MSG,"success");
+        result.put(Constants.CODE, 200);
+        result.put(Constants.MSG, "success");
         return result;
     }
 

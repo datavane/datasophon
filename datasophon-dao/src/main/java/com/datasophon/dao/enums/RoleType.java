@@ -24,11 +24,9 @@ public enum RoleType {
     MASTER(1, "master"),
     WORKER(2, "worker"),
     CLIENT(3, "client"),
-    SLAVE(4,"slave");
+    SLAVE(4, "slave");
 
-    @EnumValue
-    private int value;
-
+    @EnumValue private int value;
 
     private String desc;
 
@@ -44,6 +42,7 @@ public enum RoleType {
     public void setValue(int value) {
         this.value = value;
     }
+
     @JsonValue
     public String getDesc() {
         return desc;
@@ -52,7 +51,6 @@ public enum RoleType {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-
 
     @Override
     public String toString() {

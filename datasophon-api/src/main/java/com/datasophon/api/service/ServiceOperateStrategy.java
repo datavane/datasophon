@@ -17,6 +17,4 @@
 
 package com.datasophon.api.service;
 
-public interface ServiceOperateStrategy {
-
-}
+public interface ServiceOperateStrategy {}

@@ -20,10 +20,10 @@ package com.datasophon.common.enums;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ServiceRoleType {
-    MASTER(1,"master"),
-    WORKER(2,"worker"),
-    CLIENT(3,"client"),
-    SLAVE(4,"slave");
+    MASTER(1, "master"),
+    WORKER(2, "worker"),
+    CLIENT(3, "client"),
+    SLAVE(4, "slave");
 
     private Integer code;
     private String name;

@@ -17,31 +17,22 @@
 
 package com.datasophon.dao.entity;
 
+import java.io.Serializable;
+
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import lombok.Data;
-
-import java.io.Serializable;
-import java.util.Date;
-
 
 @Data
 @TableName("t_ddh_cluster_alert_group_map")
 public class ClusterAlertGroupMap implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	@TableId
-	private Integer id;
-	/**
-	 * 
-	 */
-	private Integer clusterId;
-	/**
-	 * 
-	 */
-	private Integer alertGroupId;
-
+    /** */
+    @TableId private Integer id;
+    /** */
+    private Integer clusterId;
+    /** */
+    private Integer alertGroupId;
 }

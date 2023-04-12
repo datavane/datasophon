@@ -17,76 +17,68 @@
 
 package com.datasophon.api.controller;
 
-import java.util.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.datasophon.api.service.ClusterAlertQuotaService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterAlertQuota;
-import com.datasophon.api.service.ClusterAlertQuotaService;
 
+import java.util.Arrays;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("cluster/alert/quota")
 public class ClusterAlertQuotaController {
-    @Autowired
-    private ClusterAlertQuotaService clusterAlertQuotaService;
+    @Autowired private ClusterAlertQuotaService clusterAlertQuotaService;
 
-
-    /**
-     * 信息
-     */
+    /** 信息 */
     @RequestMapping("/list")
-    public Result info(Integer clusterId,Integer alertGroupId,String quotaName,Integer page,Integer pageSize){
-        return clusterAlertQuotaService.getAlertQuotaList(clusterId,alertGroupId,quotaName,page,pageSize);
+    public Result info(
+            Integer clusterId,
+            Integer alertGroupId,
+            String quotaName,
+            Integer page,
+            Integer pageSize) {
+        return clusterAlertQuotaService.getAlertQuotaList(
+                clusterId, alertGroupId, quotaName, page, pageSize);
     }
 
-    /**
-     * 启用
-     */
+    /** 启用 */
     @RequestMapping("/start")
-    public Result start(Integer clusterId,String alertQuotaIds){
-        return clusterAlertQuotaService.start(clusterId,alertQuotaIds);
+    public Result start(Integer clusterId, String alertQuotaIds) {
+        return clusterAlertQuotaService.start(clusterId, alertQuotaIds);
     }
 
-    /**
-     * 停用
-     */
+    /** 停用 */
     @RequestMapping("/stop")
-    public Result stop(Integer clusterId,String alertQuotaIds){
-        return clusterAlertQuotaService.stop(clusterId,alertQuotaIds);
+    public Result stop(Integer clusterId, String alertQuotaIds) {
+        return clusterAlertQuotaService.stop(clusterId, alertQuotaIds);
     }
 
-    /**
-     * 保存
-     */
+    /** 保存 */
     @RequestMapping("/save")
-    public Result save(@RequestBody ClusterAlertQuota clusterAlertQuota){
-
+    public Result save(@RequestBody ClusterAlertQuota clusterAlertQuota) {
 
         clusterAlertQuotaService.saveAlertQuota(clusterAlertQuota);
         return Result.success();
     }
 
-    /**
-     * 修改
-     */
+    /** 修改 */
     @RequestMapping("/update")
-    public Result update(@RequestBody ClusterAlertQuota clusterAlertQuota){
+    public Result update(@RequestBody ClusterAlertQuota clusterAlertQuota) {
 
         clusterAlertQuotaService.updateById(clusterAlertQuota);
-        
+
         return Result.success();
     }
 
-    /**
-     * 删除
-     */
+    /** 删除 */
     @RequestMapping("/delete")
-    public Result delete(@RequestBody Integer[] ids){
+    public Result delete(@RequestBody Integer[] ids) {
         clusterAlertQuotaService.removeByIds(Arrays.asList(ids));
 
         return Result.success();
     }
-
 }
