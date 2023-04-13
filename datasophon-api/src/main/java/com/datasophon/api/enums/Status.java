@@ -80,6 +80,7 @@ public enum Status {
     REMOVE_YARN_NODE_LABEL_FAILED(10037,"remove yarn node label failed.","删除yarn节点标签失败"),
     ASSIGN_YARN_NODE_LABEL_FAILED(10037,"assign yarn node label failed.","分配yarn节点标签失败"),
     USER_NO_OPERATION_PERM(30001, "user has no operation privilege", "当前用户没有操作权限"),
+    THE_CURRENT_ROLE_GROUP_IS_DEFAULT (10038,"the current role group is default role group ,please do not delete it","当前角色组是默认角色组，请勿删除"),
     ;
 
 
