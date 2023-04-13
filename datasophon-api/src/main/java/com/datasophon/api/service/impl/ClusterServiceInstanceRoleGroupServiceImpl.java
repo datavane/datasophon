@@ -77,6 +77,7 @@ public class ClusterServiceInstanceRoleGroupServiceImpl
         roleGroup.setServiceName(serviceInstance.getServiceName());
         roleGroup.setServiceInstanceId(serviceInstanceId);
         roleGroup.setClusterId(serviceInstance.getClusterId());
+        roleGroup.setNeedRestart(NeedRestart.NO);
         this.save(roleGroup);
         ClusterServiceRoleGroupConfig config =
                 roleGroupConfigService.getConfigByRoleGroupId(roleGroupId);
