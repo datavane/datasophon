@@ -40,7 +40,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service("clusterServiceInstanceRoleGroupService")
 public class ClusterServiceInstanceRoleGroupServiceImpl
@@ -53,13 +52,15 @@ public class ClusterServiceInstanceRoleGroupServiceImpl
 
     @Autowired private ClusterServiceRoleGroupConfigService roleGroupConfigService;
 
+    private static final String DEFAULT = "default";
+
     @Override
     public ClusterServiceInstanceRoleGroup getRoleGroupByServiceInstanceId(
             Integer serviceInstanceId) {
         return this.getOne(
                 new QueryWrapper<ClusterServiceInstanceRoleGroup>()
                         .eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceId)
-                        .eq(Constants.ROLE_GROUP_TYPE, "default"));
+                        .eq(Constants.ROLE_GROUP_TYPE, DEFAULT));
     }
 
     @Override
@@ -135,7 +136,7 @@ public class ClusterServiceInstanceRoleGroupServiceImpl
                 this.getOne(
                         new QueryWrapper<ClusterServiceInstanceRoleGroup>()
                                 .eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceId)
-                                .eq(Constants.ROLE_GROUP_TYPE, "default"));
+                                .eq(Constants.ROLE_GROUP_TYPE, DEFAULT));
         return roleGroupConfigService.getConfigByRoleGroupId(instanceRoleGroup.getId());
     }
 
@@ -156,9 +157,21 @@ public class ClusterServiceInstanceRoleGroupServiceImpl
         if (hasRoleInstanceUse(roleGroupId)) {
             return Result.error(Status.THE_CURRENT_ROLE_GROUP_BE_USING.getMsg());
         }
+        if(isDefaultRoleGroup(roleGroupId)){
+            return Result.error(Status.THE_CURRENT_ROLE_GROUP_IS_DEFAULT.getMsg());
+        }
         this.removeById(roleGroupId);
         roleGroupConfigService.removeAllByRoleGroupId(roleGroupId);
         return Result.success();
+    }
+
+    private boolean isDefaultRoleGroup(Integer roleGroupId) {
+        ClusterServiceInstanceRoleGroup roleGroup = this.getById(roleGroupId);
+        String roleGroupType = roleGroup.getRoleGroupType();
+        if(DEFAULT.equals(roleGroupType)){
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -182,9 +195,9 @@ public class ClusterServiceInstanceRoleGroupServiceImpl
                 roleInstanceService.list(
                         new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                                 .eq(Constants.ROLE_GROUP_ID, roleGroupId));
-        if (Objects.nonNull(list) && list.size() > 0) {
-            return true;
+        if (list.isEmpty()) {
+            return false;
         }
-        return false;
+        return true;
     }
 }
