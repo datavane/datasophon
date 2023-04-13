@@ -192,7 +192,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
                 buildConfig(list, configFileMap, newRoleGroupConfig);
                 groupConfigService.save(newRoleGroupConfig);
                 roleInstanceService.updateToNeedRestart(roleGroupId);
-
+                roleGroupService.updateToNeedRestart(roleGroupId);
                 serviceInstanceEntity.setNeedRestart(NeedRestart.YES);
             }
             //update service instance
@@ -250,10 +250,6 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     }
 
     /**
-     * 1、查询所有需要安装的服务
-     * 2、根据服务依赖关系决定服务安装顺序 --DAG
-     * 3、安装master服务角色
-     * 4、安装worker与client服务角色
      *
      * @param clusterId
      * @param commandIds
