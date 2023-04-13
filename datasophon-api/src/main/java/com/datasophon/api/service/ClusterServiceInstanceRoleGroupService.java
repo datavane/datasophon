@@ -26,7 +26,6 @@ import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 
 import java.util.List;
 
-
 public interface ClusterServiceInstanceRoleGroupService
         extends IService<ClusterServiceInstanceRoleGroup> {
 
