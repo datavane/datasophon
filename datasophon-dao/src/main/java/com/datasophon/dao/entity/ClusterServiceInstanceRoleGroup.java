@@ -1,4 +1,5 @@
 /*
+ *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -13,45 +14,35 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.datasophon.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.datasophon.dao.enums.NeedRestart;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
-
 
 @Data
 @TableName("t_ddh_cluster_service_instance_role_group")
 public class ClusterServiceInstanceRoleGroup implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	@TableId
-	private Integer id;
-	/**
-	 * 
-	 */
-	private String roleGroupName;
-	/**
-	 * 
-	 */
-	private Integer serviceInstanceId;
-	/**
-	 * 
-	 */
-	private String serviceName;
-	/**
-	 * 
-	 */
-	private Integer clusterId;
+    /** */
+    @TableId private Integer id;
+    /** */
+    private String roleGroupName;
+    /** */
+    private Integer serviceInstanceId;
+    /** */
+    private String serviceName;
+    /** */
+    private Integer clusterId;
 
-	private String roleGroupType;
+    private String roleGroupType;
 
+    private NeedRestart needRestart;
 }
