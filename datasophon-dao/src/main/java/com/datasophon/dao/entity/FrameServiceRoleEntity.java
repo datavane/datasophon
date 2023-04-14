@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.datasophon.dao.enums.RoleType;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.List;
 
 @TableName("t_ddh_frame_service_role")
 @Data
+@Accessors(chain = true)
 public class FrameServiceRoleEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
