@@ -17,6 +17,12 @@
 
 package com.datasophon.api.controller;
 
+import com.datasophon.api.enums.Status;
+import com.datasophon.api.service.ClusterYarnQueueService;
+import com.datasophon.common.Constants;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterYarnQueue;
+
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.datasophon.api.enums.Status;
-import com.datasophon.api.service.ClusterYarnQueueService;
-import com.datasophon.common.Constants;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterYarnQueue;
 
 @RestController
 @RequestMapping("cluster/yarn/queue")

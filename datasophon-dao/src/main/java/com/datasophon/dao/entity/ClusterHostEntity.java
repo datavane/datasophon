@@ -17,6 +17,8 @@
 
 package com.datasophon.dao.entity;
 
+import com.datasophon.dao.enums.MANAGED;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -25,7 +27,6 @@ import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.datasophon.dao.enums.MANAGED;
 
 @TableName("t_ddh_cluster_host")
 @Data

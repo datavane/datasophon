@@ -17,12 +17,12 @@
 
 package com.datasophon.common.command;
 
+import com.datasophon.common.enums.CommandType;
+
 import java.io.Serializable;
 import java.util.List;
 
 import lombok.Data;
-
-import com.datasophon.common.enums.CommandType;
 
 @Data
 public class StartExecuteCommandCommand implements Serializable {

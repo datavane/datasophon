@@ -17,6 +17,12 @@
 
 package com.datasophon.api.master;
 
+import com.datasophon.api.service.ClusterServiceRoleInstanceService;
+import com.datasophon.api.utils.ProcessUtils;
+import com.datasophon.api.utils.SpringTool;
+import com.datasophon.common.command.HdfsEcCommand;
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
+
 import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -25,12 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import akka.actor.UntypedActor;
-
-import com.datasophon.api.service.ClusterServiceRoleInstanceService;
-import com.datasophon.api.utils.ProcessUtils;
-import com.datasophon.api.utils.SpringTool;
-import com.datasophon.common.command.HdfsEcCommand;
-import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 
 /**
  * Used to manage hdfs capacity expansion and reduction

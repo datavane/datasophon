@@ -17,6 +17,15 @@
 
 package com.datasophon.api.master.handler.host;
 
+import com.datasophon.api.configuration.ConfigBean;
+import com.datasophon.api.utils.CommonUtils;
+import com.datasophon.api.utils.MessageResolverUtils;
+import com.datasophon.api.utils.MinaUtils;
+import com.datasophon.api.utils.SpringTool;
+import com.datasophon.common.Constants;
+import com.datasophon.common.enums.InstallState;
+import com.datasophon.common.model.HostInfo;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.sshd.client.session.ClientSession;
 
@@ -26,15 +35,6 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.datasophon.api.configuration.ConfigBean;
-import com.datasophon.api.utils.CommonUtils;
-import com.datasophon.api.utils.MessageResolverUtils;
-import com.datasophon.api.utils.MinaUtils;
-import com.datasophon.api.utils.SpringTool;
-import com.datasophon.common.Constants;
-import com.datasophon.common.enums.InstallState;
-import com.datasophon.common.model.HostInfo;
 
 public class StartWorkerHandler implements DispatcherWorkerHandler {
 

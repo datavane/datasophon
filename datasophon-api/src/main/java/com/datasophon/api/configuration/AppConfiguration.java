@@ -17,8 +17,9 @@
 
 package com.datasophon.api.configuration;
 
-import java.util.Locale;
-
+import com.datasophon.api.interceptor.LocaleChangeInterceptor;
+import com.datasophon.api.interceptor.LoginHandlerInterceptor;
+import com.datasophon.api.interceptor.UserPermissionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -32,9 +33,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
-import com.datasophon.api.interceptor.LocaleChangeInterceptor;
-import com.datasophon.api.interceptor.LoginHandlerInterceptor;
-import com.datasophon.api.interceptor.UserPermissionHandler;
+import java.util.Locale;
 
 /**
  * application configuration

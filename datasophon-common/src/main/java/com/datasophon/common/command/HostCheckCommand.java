@@ -17,9 +17,9 @@
 
 package com.datasophon.common.command;
 
-import lombok.Data;
-
 import com.datasophon.common.model.HostInfo;
+
+import lombok.Data;
 
 @Data
 public class HostCheckCommand {

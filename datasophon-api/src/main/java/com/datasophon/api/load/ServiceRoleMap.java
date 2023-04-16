@@ -17,9 +17,9 @@
 
 package com.datasophon.api.load;
 
-import java.util.HashMap;
-
 import com.datasophon.common.model.ServiceRoleInfo;
+
+import java.util.HashMap;
 
 public class ServiceRoleMap {
 

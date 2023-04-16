@@ -17,10 +17,11 @@
 
 package com.datasophon.dao.mapper;
 
+import com.datasophon.dao.entity.NoticeGroupUserEntity;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.datasophon.dao.entity.NoticeGroupUserEntity;
 
 /**
  * 通知组-用户中间表

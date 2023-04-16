@@ -17,6 +17,15 @@
 
 package com.datasophon.api.controller;
 
+import com.datasophon.api.enums.Status;
+import com.datasophon.api.security.UserPermission;
+import com.datasophon.api.service.UserInfoService;
+import com.datasophon.api.utils.SecurityUtils;
+import com.datasophon.common.Constants;
+import com.datasophon.common.utils.EncryptionUtils;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.UserInfoEntity;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -28,14 +37,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.datasophon.api.enums.Status;
-import com.datasophon.api.security.UserPermission;
-import com.datasophon.api.service.UserInfoService;
-import com.datasophon.api.utils.SecurityUtils;
-import com.datasophon.common.Constants;
-import com.datasophon.common.utils.EncryptionUtils;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.UserInfoEntity;
 
 @RestController
 @RequestMapping("api/user")

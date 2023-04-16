@@ -17,15 +17,15 @@
 
 package com.datasophon.common.command;
 
-import java.io.Serializable;
-import java.util.Map;
-
-import lombok.Data;
-
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.enums.ServiceExecuteState;
 import com.datasophon.common.model.DAGGraph;
 import com.datasophon.common.model.ServiceNode;
+
+import java.io.Serializable;
+import java.util.Map;
+
+import lombok.Data;
 
 @Data
 public class SubmitActiveTaskNodeCommand implements Serializable {

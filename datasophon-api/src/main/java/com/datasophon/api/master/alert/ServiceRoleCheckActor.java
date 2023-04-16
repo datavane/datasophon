@@ -19,6 +19,14 @@
 
 package com.datasophon.api.master.alert;
 
+import com.datasophon.api.service.ClusterServiceRoleInstanceService;
+import com.datasophon.api.strategy.ServiceRoleStrategy;
+import com.datasophon.api.strategy.ServiceRoleStrategyContext;
+import com.datasophon.api.utils.SpringTool;
+import com.datasophon.common.Constants;
+import com.datasophon.common.command.ServiceRoleCheckCommand;
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,13 +35,6 @@ import java.util.stream.Collectors;
 import akka.actor.UntypedActor;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.datasophon.api.service.ClusterServiceRoleInstanceService;
-import com.datasophon.api.strategy.ServiceRoleStrategy;
-import com.datasophon.api.strategy.ServiceRoleStrategyContext;
-import com.datasophon.api.utils.SpringTool;
-import com.datasophon.common.Constants;
-import com.datasophon.common.command.ServiceRoleCheckCommand;
-import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 
 public class ServiceRoleCheckActor extends UntypedActor {
 

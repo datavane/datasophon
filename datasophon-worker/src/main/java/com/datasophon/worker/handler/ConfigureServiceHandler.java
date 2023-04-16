@@ -17,6 +17,15 @@
 
 package com.datasophon.worker.handler;
 
+import com.datasophon.common.Constants;
+import com.datasophon.common.model.Generators;
+import com.datasophon.common.model.RunAs;
+import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.common.utils.ExecResult;
+import com.datasophon.common.utils.PlaceholderUtils;
+import com.datasophon.common.utils.ShellUtils;
+import com.datasophon.worker.utils.FreemakerUtils;
+
 import org.apache.commons.lang.StringUtils;
 
 import java.net.InetAddress;
@@ -30,14 +39,6 @@ import cn.hutool.core.util.IdUtil;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.datasophon.common.Constants;
-import com.datasophon.common.model.Generators;
-import com.datasophon.common.model.RunAs;
-import com.datasophon.common.model.ServiceConfig;
-import com.datasophon.common.utils.ExecResult;
-import com.datasophon.common.utils.PlaceholderUtils;
-import com.datasophon.common.utils.ShellUtils;
-import com.datasophon.worker.utils.FreemakerUtils;
 
 public class ConfigureServiceHandler {
 

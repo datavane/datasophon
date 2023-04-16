@@ -17,6 +17,13 @@
 
 package com.datasophon.api.master.handler.host;
 
+import com.datasophon.api.utils.CommonUtils;
+import com.datasophon.api.utils.MessageResolverUtils;
+import com.datasophon.api.utils.MinaUtils;
+import com.datasophon.common.Constants;
+import com.datasophon.common.enums.InstallState;
+import com.datasophon.common.model.HostInfo;
+
 import org.apache.sshd.client.session.ClientSession;
 
 import java.nio.charset.Charset;
@@ -25,13 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cn.hutool.core.io.FileUtil;
-
-import com.datasophon.api.utils.CommonUtils;
-import com.datasophon.api.utils.MessageResolverUtils;
-import com.datasophon.api.utils.MinaUtils;
-import com.datasophon.common.Constants;
-import com.datasophon.common.enums.InstallState;
-import com.datasophon.common.model.HostInfo;
 
 public class CheckWorkerMd5Handler implements DispatcherWorkerHandler {
 

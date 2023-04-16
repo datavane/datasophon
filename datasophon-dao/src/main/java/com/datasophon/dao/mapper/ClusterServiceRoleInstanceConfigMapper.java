@@ -17,10 +17,11 @@
 
 package com.datasophon.dao.mapper;
 
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceConfigEntity;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.datasophon.dao.entity.ClusterServiceRoleInstanceConfigEntity;
 
 /**
  * 集群服务角色实例配置表

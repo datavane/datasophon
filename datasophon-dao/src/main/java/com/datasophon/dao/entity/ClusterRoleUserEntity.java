@@ -17,13 +17,14 @@
 
 package com.datasophon.dao.entity;
 
+import com.datasophon.dao.enums.UserType;
+
 import java.io.Serializable;
 
 import lombok.Data;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.datasophon.dao.enums.UserType;
 
 @Data
 @TableName("t_ddh_cluster_role_user")

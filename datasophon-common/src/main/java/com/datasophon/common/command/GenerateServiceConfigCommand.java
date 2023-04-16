@@ -17,15 +17,15 @@
 
 package com.datasophon.common.command;
 
+import com.datasophon.common.model.Generators;
+import com.datasophon.common.model.RunAs;
+import com.datasophon.common.model.ServiceConfig;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 import lombok.Data;
-
-import com.datasophon.common.model.Generators;
-import com.datasophon.common.model.RunAs;
-import com.datasophon.common.model.ServiceConfig;
 
 @Data
 public class GenerateServiceConfigCommand implements Serializable {

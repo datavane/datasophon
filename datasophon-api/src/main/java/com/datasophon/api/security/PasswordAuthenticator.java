@@ -17,14 +17,6 @@
 
 package com.datasophon.api.security;
 
-import java.util.Collections;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.SessionService;
 import com.datasophon.api.service.UserInfoService;
@@ -33,6 +25,14 @@ import com.datasophon.common.Constants;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.SessionEntity;
 import com.datasophon.dao.entity.UserInfoEntity;
+
+import java.util.Collections;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class PasswordAuthenticator implements Authenticator {
 

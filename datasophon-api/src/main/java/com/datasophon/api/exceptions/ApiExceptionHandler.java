@@ -16,6 +16,9 @@
  */
 package com.datasophon.api.exceptions;
 
+import com.datasophon.api.enums.Status;
+import com.datasophon.common.utils.Result;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,9 +32,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-
-import com.datasophon.api.enums.Status;
-import com.datasophon.common.utils.Result;
 
 /**
  * Exception Handler

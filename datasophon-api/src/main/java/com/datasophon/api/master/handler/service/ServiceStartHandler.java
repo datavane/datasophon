@@ -17,6 +17,13 @@
 
 package com.datasophon.api.master.handler.service;
 
+import com.datasophon.api.load.GlobalVariables;
+import com.datasophon.api.master.ActorUtils;
+import com.datasophon.common.command.ServiceRoleOperateCommand;
+import com.datasophon.common.enums.ServiceRoleType;
+import com.datasophon.common.model.ServiceRoleInfo;
+import com.datasophon.common.utils.ExecResult;
+
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -31,13 +38,6 @@ import org.slf4j.LoggerFactory;
 import akka.actor.ActorSelection;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
-
-import com.datasophon.api.load.GlobalVariables;
-import com.datasophon.api.master.ActorUtils;
-import com.datasophon.common.command.ServiceRoleOperateCommand;
-import com.datasophon.common.enums.ServiceRoleType;
-import com.datasophon.common.model.ServiceRoleInfo;
-import com.datasophon.common.utils.ExecResult;
 
 public class ServiceStartHandler extends ServiceHandler {
 

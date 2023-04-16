@@ -17,11 +17,12 @@
 
 package com.datasophon.dao.mapper;
 
+import com.datasophon.dao.entity.FrameInfoEntity;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.datasophon.dao.entity.FrameInfoEntity;
 
 /**
  * 集群框架表

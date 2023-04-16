@@ -17,14 +17,14 @@
 
 package com.datasophon.common.model;
 
+import com.datasophon.common.enums.CommandType;
+import com.datasophon.common.enums.ServiceExecuteState;
+import com.datasophon.common.enums.ServiceRoleType;
+
 import java.io.Serializable;
 import java.util.Map;
 
 import lombok.Data;
-
-import com.datasophon.common.enums.CommandType;
-import com.datasophon.common.enums.ServiceExecuteState;
-import com.datasophon.common.enums.ServiceRoleType;
 
 @Data
 public class ServiceExecuteResultMessage implements Serializable {

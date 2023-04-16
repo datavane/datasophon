@@ -19,21 +19,21 @@
 
 package com.datasophon.api.master;
 
-import scala.Option;
+import com.datasophon.api.enums.Status;
+import com.datasophon.api.utils.MinaUtils;
+import com.datasophon.common.command.HostCheckCommand;
+import com.datasophon.common.model.CheckResult;
+import com.datasophon.common.model.HostInfo;
 
 import org.apache.sshd.client.session.ClientSession;
+
+import scala.Option;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import akka.actor.UntypedActor;
 import cn.hutool.core.util.ObjectUtil;
-
-import com.datasophon.api.enums.Status;
-import com.datasophon.api.utils.MinaUtils;
-import com.datasophon.common.command.HostCheckCommand;
-import com.datasophon.common.model.CheckResult;
-import com.datasophon.common.model.HostInfo;
 
 public class HostConnectActor extends UntypedActor {
 

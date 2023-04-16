@@ -18,6 +18,7 @@
 package com.datasophon.common.enums;
 
 import com.datasophon.common.Constants;
+
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum CommandType {

@@ -17,16 +17,16 @@
 
 package com.datasophon.worker.actor;
 
-import java.util.HashMap;
-import java.util.List;
-
-import akka.actor.UntypedActor;
-
 import com.datasophon.common.command.GenerateAlertConfigCommand;
 import com.datasophon.common.model.AlertItem;
 import com.datasophon.common.model.Generators;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.worker.utils.FreemakerUtils;
+
+import java.util.HashMap;
+import java.util.List;
+
+import akka.actor.UntypedActor;
 
 public class AlertConfigActor extends UntypedActor {
 

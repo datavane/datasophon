@@ -17,12 +17,16 @@
 
 package com.datasophon.api.master;
 
+import com.datasophon.api.master.alert.ServiceRoleCheckActor;
+import com.datasophon.common.command.HostCheckCommand;
+import com.datasophon.common.command.ServiceRoleCheckCommand;
+
+import org.apache.commons.lang.StringUtils;
+
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
-
-import org.apache.commons.lang.StringUtils;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -35,9 +39,6 @@ import org.slf4j.LoggerFactory;
 import akka.actor.*;
 import akka.util.Timeout;
 
-import com.datasophon.api.master.alert.ServiceRoleCheckActor;
-import com.datasophon.common.command.HostCheckCommand;
-import com.datasophon.common.command.ServiceRoleCheckCommand;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 

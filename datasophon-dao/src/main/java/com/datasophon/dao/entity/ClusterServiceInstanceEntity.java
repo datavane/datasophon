@@ -17,6 +17,9 @@
 
 package com.datasophon.dao.entity;
 
+import com.datasophon.dao.enums.NeedRestart;
+import com.datasophon.dao.enums.ServiceState;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -25,8 +28,6 @@ import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.datasophon.dao.enums.NeedRestart;
-import com.datasophon.dao.enums.ServiceState;
 
 @TableName("t_ddh_cluster_service_instance")
 @Data

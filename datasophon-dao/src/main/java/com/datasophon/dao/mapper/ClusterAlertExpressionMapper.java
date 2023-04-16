@@ -17,10 +17,11 @@
 
 package com.datasophon.dao.mapper;
 
+import com.datasophon.dao.entity.ClusterAlertExpression;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.datasophon.dao.entity.ClusterAlertExpression;
 
 /**
  * 表达式常量表

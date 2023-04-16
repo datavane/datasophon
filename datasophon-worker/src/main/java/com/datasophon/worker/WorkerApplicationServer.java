@@ -19,6 +19,17 @@
 
 package com.datasophon.worker;
 
+import com.datasophon.common.Constants;
+import com.datasophon.common.cache.CacheUtils;
+import com.datasophon.common.lifecycle.ServerLifeCycleManager;
+import com.datasophon.common.model.StartWorkerMessage;
+import com.datasophon.common.utils.ExecResult;
+import com.datasophon.common.utils.PropertyUtils;
+import com.datasophon.common.utils.ShellUtils;
+import com.datasophon.worker.actor.RemoteEventActor;
+import com.datasophon.worker.actor.WorkerActor;
+import com.datasophon.worker.utils.UnixUtils;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -38,16 +49,6 @@ import akka.remote.AssociationErrorEvent;
 import akka.remote.DisassociatedEvent;
 
 import com.alibaba.fastjson.JSONObject;
-import com.datasophon.common.Constants;
-import com.datasophon.common.cache.CacheUtils;
-import com.datasophon.common.lifecycle.ServerLifeCycleManager;
-import com.datasophon.common.model.StartWorkerMessage;
-import com.datasophon.common.utils.ExecResult;
-import com.datasophon.common.utils.PropertyUtils;
-import com.datasophon.common.utils.ShellUtils;
-import com.datasophon.worker.actor.RemoteEventActor;
-import com.datasophon.worker.actor.WorkerActor;
-import com.datasophon.worker.utils.UnixUtils;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 

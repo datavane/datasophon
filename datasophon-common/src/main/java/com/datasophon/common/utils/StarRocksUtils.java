@@ -17,6 +17,8 @@
 
 package com.datasophon.common.utils;
 
+import com.datasophon.common.model.ProcInfo;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +26,6 @@ import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.datasophon.common.model.ProcInfo;
 
 public class StarRocksUtils {
 

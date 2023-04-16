@@ -17,12 +17,12 @@
 
 package com.datasophon.worker.actor;
 
-import akka.actor.UntypedActor;
-
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.ExecuteCmdCommand;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.ShellUtils;
+
+import akka.actor.UntypedActor;
 
 public class ExecuteCmdActor extends UntypedActor {
 

@@ -19,10 +19,10 @@ package com.datasophon.api.exceptions;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import com.datasophon.api.enums.Status;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-
-import com.datasophon.api.enums.Status;
 
 /**
  * controller exception annotation

@@ -17,11 +17,11 @@
 
 package com.datasophon.common.model;
 
+import com.datasophon.common.enums.InstallState;
+
 import java.util.Date;
 
 import lombok.Data;
-
-import com.datasophon.common.enums.InstallState;
 
 @Data
 public class HostInfo {

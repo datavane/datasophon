@@ -17,6 +17,11 @@
 
 package com.datasophon.api.interceptor;
 
+import com.datasophon.api.security.Authenticator;
+import com.datasophon.common.Constants;
+import com.datasophon.dao.entity.UserInfoEntity;
+import com.datasophon.dao.mapper.UserInfoMapper;
+
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.StringUtils;
 
@@ -27,11 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
-
-import com.datasophon.api.security.Authenticator;
-import com.datasophon.common.Constants;
-import com.datasophon.dao.entity.UserInfoEntity;
-import com.datasophon.dao.mapper.UserInfoMapper;
 
 /**
  * login interceptor, must login first

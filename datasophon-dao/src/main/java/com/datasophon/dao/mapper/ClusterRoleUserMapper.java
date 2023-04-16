@@ -17,14 +17,15 @@
 
 package com.datasophon.dao.mapper;
 
+import com.datasophon.dao.entity.ClusterRoleUserEntity;
+import com.datasophon.dao.entity.UserInfoEntity;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.datasophon.dao.entity.ClusterRoleUserEntity;
-import com.datasophon.dao.entity.UserInfoEntity;
 
 /**
  * 集群角色用户中间表

@@ -17,6 +17,11 @@
 
 package com.datasophon.api.service.impl;
 
+import com.datasophon.api.service.ClusterVariableService;
+import com.datasophon.common.Constants;
+import com.datasophon.dao.entity.ClusterVariable;
+import com.datasophon.dao.mapper.ClusterVariableMapper;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -24,10 +29,6 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.datasophon.api.service.ClusterVariableService;
-import com.datasophon.common.Constants;
-import com.datasophon.dao.entity.ClusterVariable;
-import com.datasophon.dao.mapper.ClusterVariableMapper;
 
 @Service("clusterVariableService")
 public class ClusterVariableServiceImpl extends ServiceImpl<ClusterVariableMapper, ClusterVariable>

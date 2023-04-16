@@ -17,14 +17,14 @@
 
 package com.datasophon.worker.actor;
 
+import com.datasophon.common.command.GenerateServiceConfigCommand;
+import com.datasophon.common.utils.ExecResult;
+import com.datasophon.worker.handler.ConfigureServiceHandler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import akka.actor.UntypedActor;
-
-import com.datasophon.common.command.GenerateServiceConfigCommand;
-import com.datasophon.common.utils.ExecResult;
-import com.datasophon.worker.handler.ConfigureServiceHandler;
 
 public class ConfigureServiceActor extends UntypedActor {
 

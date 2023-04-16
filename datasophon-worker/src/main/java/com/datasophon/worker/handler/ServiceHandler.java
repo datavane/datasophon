@@ -19,6 +19,12 @@ package com.datasophon.worker.handler;
 
 import static ch.qos.logback.classic.ClassicConstants.FINALIZE_SESSION_MARKER;
 
+import com.datasophon.common.Constants;
+import com.datasophon.common.model.RunAs;
+import com.datasophon.common.model.ServiceRoleRunner;
+import com.datasophon.common.utils.ExecResult;
+import com.datasophon.common.utils.PropertyUtils;
+
 import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
@@ -30,12 +36,6 @@ import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.datasophon.common.Constants;
-import com.datasophon.common.model.RunAs;
-import com.datasophon.common.model.ServiceRoleRunner;
-import com.datasophon.common.utils.ExecResult;
-import com.datasophon.common.utils.PropertyUtils;
 
 public class ServiceHandler {
 

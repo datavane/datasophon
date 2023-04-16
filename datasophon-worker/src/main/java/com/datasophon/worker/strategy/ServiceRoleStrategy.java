@@ -17,10 +17,10 @@
 
 package com.datasophon.worker.strategy;
 
-import java.sql.SQLException;
-
 import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.utils.ExecResult;
+
+import java.sql.SQLException;
 
 public interface ServiceRoleStrategy {
 

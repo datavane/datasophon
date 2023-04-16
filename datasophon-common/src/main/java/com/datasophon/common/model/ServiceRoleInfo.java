@@ -17,15 +17,15 @@
 
 package com.datasophon.common.model;
 
+import com.datasophon.common.enums.CommandType;
+import com.datasophon.common.enums.ServiceRoleType;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import lombok.Data;
-
-import com.datasophon.common.enums.CommandType;
-import com.datasophon.common.enums.ServiceRoleType;
 
 @Data
 public class ServiceRoleInfo implements Serializable, Comparable<ServiceRoleInfo> {

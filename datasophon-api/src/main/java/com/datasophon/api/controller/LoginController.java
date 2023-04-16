@@ -19,6 +19,14 @@ package com.datasophon.api.controller;
 
 import static com.datasophon.api.enums.Status.IP_IS_EMPTY;
 
+import com.datasophon.api.enums.Status;
+import com.datasophon.api.security.Authenticator;
+import com.datasophon.api.service.SessionService;
+import com.datasophon.api.utils.HttpUtils;
+import com.datasophon.common.Constants;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.UserInfoEntity;
+
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.StringUtils;
 
@@ -32,14 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import com.datasophon.api.enums.Status;
-import com.datasophon.api.security.Authenticator;
-import com.datasophon.api.service.SessionService;
-import com.datasophon.api.utils.HttpUtils;
-import com.datasophon.common.Constants;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.UserInfoEntity;
 
 @RestController
 @RequestMapping("")

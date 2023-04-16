@@ -17,14 +17,14 @@
 
 package com.datasophon.api.utils;
 
+import com.datasophon.api.annotation.Hosts;
+import com.datasophon.common.Constants;
+import com.datasophon.common.utils.HostUtils;
+
 import java.util.regex.Pattern;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import com.datasophon.api.annotation.Hosts;
-import com.datasophon.common.Constants;
-import com.datasophon.common.utils.HostUtils;
 
 public class HostsValidator implements ConstraintValidator<Hosts, String> {
 

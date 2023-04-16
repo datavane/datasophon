@@ -17,17 +17,17 @@
 
 package com.datasophon.common.command;
 
-import java.util.List;
-import java.util.Map;
-
-import lombok.Data;
-
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.enums.ServiceExecuteState;
 import com.datasophon.common.enums.ServiceRoleType;
 import com.datasophon.common.model.DAGGraph;
 import com.datasophon.common.model.ServiceNode;
 import com.datasophon.common.model.ServiceRoleInfo;
+
+import java.util.List;
+import java.util.Map;
+
+import lombok.Data;
 
 @Data
 public class ExecuteServiceRoleCommand {

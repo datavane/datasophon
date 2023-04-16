@@ -17,6 +17,13 @@
 
 package com.datasophon.worker.handler;
 
+import com.datasophon.common.Constants;
+import com.datasophon.common.model.RunAs;
+import com.datasophon.common.utils.CompressUtils;
+import com.datasophon.common.utils.ExecResult;
+import com.datasophon.common.utils.PropertyUtils;
+import com.datasophon.common.utils.ShellUtils;
+
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Objects;
@@ -28,13 +35,6 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.StreamProgress;
 import cn.hutool.core.lang.Console;
 import cn.hutool.http.HttpUtil;
-
-import com.datasophon.common.Constants;
-import com.datasophon.common.model.RunAs;
-import com.datasophon.common.utils.CompressUtils;
-import com.datasophon.common.utils.ExecResult;
-import com.datasophon.common.utils.PropertyUtils;
-import com.datasophon.common.utils.ShellUtils;
 
 public class InstallServiceHandler {
 

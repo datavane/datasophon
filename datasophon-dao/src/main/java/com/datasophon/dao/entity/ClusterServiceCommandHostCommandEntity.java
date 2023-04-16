@@ -17,6 +17,9 @@
 
 package com.datasophon.dao.entity;
 
+import com.datasophon.dao.enums.CommandState;
+import com.datasophon.dao.enums.RoleType;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -24,8 +27,6 @@ import lombok.Data;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.datasophon.dao.enums.CommandState;
-import com.datasophon.dao.enums.RoleType;
 
 @TableName("t_ddh_cluster_service_command_host_command")
 @Data

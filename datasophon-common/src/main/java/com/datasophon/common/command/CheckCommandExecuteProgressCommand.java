@@ -17,13 +17,13 @@
 
 package com.datasophon.common.command;
 
+import com.datasophon.common.enums.ServiceExecuteState;
+import com.datasophon.common.model.ServiceRoleInfo;
+
 import java.util.List;
 import java.util.Map;
 
 import lombok.Data;
-
-import com.datasophon.common.enums.ServiceExecuteState;
-import com.datasophon.common.model.ServiceRoleInfo;
 
 @Data
 public class CheckCommandExecuteProgressCommand {

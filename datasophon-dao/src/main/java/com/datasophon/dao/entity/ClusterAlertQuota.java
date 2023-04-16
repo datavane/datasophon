@@ -17,6 +17,9 @@
 
 package com.datasophon.dao.entity;
 
+import com.datasophon.dao.enums.AlertLevel;
+import com.datasophon.dao.enums.QuotaState;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -25,8 +28,6 @@ import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.datasophon.dao.enums.AlertLevel;
-import com.datasophon.dao.enums.QuotaState;
 
 @Data
 @TableName("t_ddh_cluster_alert_quota")

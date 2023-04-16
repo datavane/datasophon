@@ -17,11 +17,11 @@
 
 package com.datasophon.api.master.handler.host;
 
+import com.datasophon.common.model.HostInfo;
+
 import org.apache.sshd.client.session.ClientSession;
 
 import java.net.UnknownHostException;
-
-import com.datasophon.common.model.HostInfo;
 
 public interface DispatcherWorkerHandler {
 

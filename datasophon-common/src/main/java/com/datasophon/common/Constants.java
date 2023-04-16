@@ -17,9 +17,9 @@
 
 package com.datasophon.common;
 
-import java.util.regex.Pattern;
-
 import com.datasophon.common.utils.PropertyUtils;
+
+import java.util.regex.Pattern;
 
 /**
  * Constants

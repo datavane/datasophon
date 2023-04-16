@@ -17,6 +17,17 @@
 
 package com.datasophon.api.master.handler.service;
 
+import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.service.ClusterHostService;
+import com.datasophon.api.service.ClusterServiceRoleInstanceService;
+import com.datasophon.api.utils.SpringTool;
+import com.datasophon.common.Constants;
+import com.datasophon.common.command.InstallServiceRoleCommand;
+import com.datasophon.common.model.ServiceRoleInfo;
+import com.datasophon.common.utils.ExecResult;
+import com.datasophon.dao.entity.ClusterHostEntity;
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
+
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -32,17 +43,6 @@ import akka.actor.ActorSelection;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import cn.hutool.core.io.FileUtil;
-
-import com.datasophon.api.master.ActorUtils;
-import com.datasophon.api.service.ClusterHostService;
-import com.datasophon.api.service.ClusterServiceRoleInstanceService;
-import com.datasophon.api.utils.SpringTool;
-import com.datasophon.common.Constants;
-import com.datasophon.common.command.InstallServiceRoleCommand;
-import com.datasophon.common.model.ServiceRoleInfo;
-import com.datasophon.common.utils.ExecResult;
-import com.datasophon.dao.entity.ClusterHostEntity;
-import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 
 public class ServiceInstallHandler extends ServiceHandler {
 

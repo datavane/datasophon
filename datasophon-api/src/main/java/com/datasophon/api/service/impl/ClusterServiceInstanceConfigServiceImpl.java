@@ -17,6 +17,15 @@
 
 package com.datasophon.api.service.impl;
 
+import com.datasophon.api.service.ClusterServiceInstanceConfigService;
+import com.datasophon.api.service.ClusterServiceRoleGroupConfigService;
+import com.datasophon.common.Constants;
+import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterServiceInstanceConfigEntity;
+import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
+import com.datasophon.dao.mapper.ClusterServiceInstanceConfigMapper;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -27,14 +36,6 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.datasophon.api.service.ClusterServiceInstanceConfigService;
-import com.datasophon.api.service.ClusterServiceRoleGroupConfigService;
-import com.datasophon.common.Constants;
-import com.datasophon.common.model.ServiceConfig;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterServiceInstanceConfigEntity;
-import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
-import com.datasophon.dao.mapper.ClusterServiceInstanceConfigMapper;
 
 @Service("clusterServiceInstanceConfigService")
 public class ClusterServiceInstanceConfigServiceImpl

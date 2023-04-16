@@ -17,9 +17,11 @@
 
 package com.datasophon.worker.actor;
 
-import scala.Option;
+import com.datasophon.common.model.StartWorkerMessage;
 
 import org.apache.commons.lang.StringUtils;
+
+import scala.Option;
 
 import java.io.IOException;
 
@@ -29,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import akka.actor.*;
 
 import com.alibaba.fastjson.JSONObject;
-import com.datasophon.common.model.StartWorkerMessage;
 
 public class WorkerActor extends UntypedActor {
 

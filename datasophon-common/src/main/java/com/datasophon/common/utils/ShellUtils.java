@@ -17,6 +17,8 @@
 
 package com.datasophon.common.utils;
 
+import com.datasophon.common.Constants;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +28,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.datasophon.common.Constants;
 
 public class ShellUtils {
 

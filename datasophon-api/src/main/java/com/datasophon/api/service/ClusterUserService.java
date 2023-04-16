@@ -17,11 +17,12 @@
 
 package com.datasophon.api.service;
 
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterUser;
+
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterUser;
 
 public interface ClusterUserService extends IService<ClusterUser> {
 

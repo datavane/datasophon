@@ -17,15 +17,15 @@
 
 package com.datasophon.api.controller;
 
+import com.datasophon.api.security.UserPermission;
+import com.datasophon.api.service.InstallService;
+import com.datasophon.common.utils.Result;
+
 import javax.validation.constraints.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import com.datasophon.api.security.UserPermission;
-import com.datasophon.api.service.InstallService;
-import com.datasophon.common.utils.Result;
 
 @Validated
 @RestController

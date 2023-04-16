@@ -17,16 +17,16 @@
 
 package com.datasophon.api.controller;
 
+import com.datasophon.api.service.ClusterYarnSchedulerService;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterYarnScheduler;
+
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.datasophon.api.service.ClusterYarnSchedulerService;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterYarnScheduler;
 
 @RestController
 @RequestMapping("cluster/yarn/scheduler")

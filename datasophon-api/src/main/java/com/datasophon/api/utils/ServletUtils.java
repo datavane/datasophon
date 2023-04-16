@@ -17,6 +17,8 @@
 
 package com.datasophon.api.utils;
 
+import com.datasophon.common.Constants;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -34,8 +36,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import cn.hutool.core.convert.Convert;
-
-import com.datasophon.common.Constants;
 
 public class ServletUtils {
 

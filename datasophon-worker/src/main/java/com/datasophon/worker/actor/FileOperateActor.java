@@ -17,6 +17,9 @@
 
 package com.datasophon.worker.actor;
 
+import com.datasophon.common.command.FileOperateCommand;
+import com.datasophon.common.utils.ExecResult;
+
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Objects;
@@ -24,9 +27,6 @@ import java.util.TreeSet;
 
 import akka.actor.UntypedActor;
 import cn.hutool.core.io.FileUtil;
-
-import com.datasophon.common.command.FileOperateCommand;
-import com.datasophon.common.utils.ExecResult;
 
 public class FileOperateActor extends UntypedActor {
 

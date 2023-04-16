@@ -17,11 +17,11 @@
 
 package com.datasophon.worker.actor;
 
-import akka.actor.UntypedActor;
-
 import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.worker.handler.ServiceHandler;
+
+import akka.actor.UntypedActor;
 
 public class RestartServiceActor extends UntypedActor {
 

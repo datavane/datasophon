@@ -19,16 +19,6 @@
 
 package com.datasophon.api.master;
 
-import scala.Option;
-
-import org.apache.sshd.client.session.ClientSession;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import akka.actor.UntypedActor;
-import cn.hutool.core.util.ObjectUtil;
-
 import com.datasophon.api.master.handler.host.CheckWorkerMd5Handler;
 import com.datasophon.api.master.handler.host.DecompressWorkerHandler;
 import com.datasophon.api.master.handler.host.DispatcherWorkerHandlerChain;
@@ -39,6 +29,16 @@ import com.datasophon.api.utils.MessageResolverUtils;
 import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.command.DispatcherHostAgentCommand;
 import com.datasophon.common.model.HostInfo;
+
+import org.apache.sshd.client.session.ClientSession;
+
+import scala.Option;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import akka.actor.UntypedActor;
+import cn.hutool.core.util.ObjectUtil;
 
 public class DispatcherWorkerActor extends UntypedActor {
 

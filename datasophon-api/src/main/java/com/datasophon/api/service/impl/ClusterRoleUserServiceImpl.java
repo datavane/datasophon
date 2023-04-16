@@ -17,6 +17,14 @@
 
 package com.datasophon.api.service.impl;
 
+import com.datasophon.api.service.ClusterRoleUserService;
+import com.datasophon.common.Constants;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterRoleUserEntity;
+import com.datasophon.dao.entity.UserInfoEntity;
+import com.datasophon.dao.enums.UserType;
+import com.datasophon.dao.mapper.ClusterRoleUserMapper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,13 +34,6 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.datasophon.api.service.ClusterRoleUserService;
-import com.datasophon.common.Constants;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterRoleUserEntity;
-import com.datasophon.dao.entity.UserInfoEntity;
-import com.datasophon.dao.enums.UserType;
-import com.datasophon.dao.mapper.ClusterRoleUserMapper;
 
 @Service("clusterRoleUserService")
 public class ClusterRoleUserServiceImpl extends ServiceImpl<ClusterRoleUserMapper, ClusterRoleUserEntity>

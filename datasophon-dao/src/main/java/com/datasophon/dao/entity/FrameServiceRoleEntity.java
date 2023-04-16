@@ -17,6 +17,8 @@
 
 package com.datasophon.dao.entity;
 
+import com.datasophon.dao.enums.RoleType;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,7 +28,6 @@ import lombok.experimental.Accessors;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.datasophon.dao.enums.RoleType;
 
 @TableName("t_ddh_frame_service_role")
 @Data

@@ -17,12 +17,12 @@
 
 package com.datasophon.common.command;
 
+import com.datasophon.common.enums.ServiceRoleType;
+import com.datasophon.common.model.ServiceRoleRunner;
+
 import java.io.Serializable;
 
 import lombok.Data;
-
-import com.datasophon.common.enums.ServiceRoleType;
-import com.datasophon.common.model.ServiceRoleRunner;
 
 @Data
 public class BaseCommand implements Serializable {

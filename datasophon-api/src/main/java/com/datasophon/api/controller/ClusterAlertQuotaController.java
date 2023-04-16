@@ -17,14 +17,14 @@
 
 package com.datasophon.api.controller;
 
+import com.datasophon.api.service.ClusterAlertQuotaService;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterAlertQuota;
+
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import com.datasophon.api.service.ClusterAlertQuotaService;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterAlertQuota;
 
 @RestController
 @RequestMapping("cluster/alert/quota")

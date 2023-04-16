@@ -19,6 +19,8 @@
 
 package com.datasophon.api.utils;
 
+import com.datasophon.common.Constants;
+
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ChannelExec;
 import org.apache.sshd.client.channel.ClientChannelEvent;
@@ -42,8 +44,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.LoggerFactory;
-
-import com.datasophon.common.Constants;
 
 public class MinaUtils {
 

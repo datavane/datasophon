@@ -17,6 +17,17 @@
 
 package com.datasophon.api.utils;
 
+import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
+import com.datasophon.common.Constants;
+import com.datasophon.common.command.ExecuteCmdCommand;
+import com.datasophon.common.model.Generators;
+import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.common.model.ServiceRoleInfo;
+import com.datasophon.common.utils.ExecResult;
+import com.datasophon.dao.entity.ClusterInfoEntity;
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
+
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -29,17 +40,6 @@ import java.util.concurrent.TimeUnit;
 import akka.actor.ActorSelection;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
-
-import com.datasophon.api.master.ActorUtils;
-import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
-import com.datasophon.common.Constants;
-import com.datasophon.common.command.ExecuteCmdCommand;
-import com.datasophon.common.model.Generators;
-import com.datasophon.common.model.ServiceConfig;
-import com.datasophon.common.model.ServiceRoleInfo;
-import com.datasophon.common.utils.ExecResult;
-import com.datasophon.dao.entity.ClusterInfoEntity;
-import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 
 public class HadoopUtils {
 

@@ -17,10 +17,11 @@
 
 package com.datasophon.dao.mapper;
 
+import com.datasophon.dao.entity.RoleInfoEntity;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.datasophon.dao.entity.RoleInfoEntity;
 
 /**
  * 角色信息表

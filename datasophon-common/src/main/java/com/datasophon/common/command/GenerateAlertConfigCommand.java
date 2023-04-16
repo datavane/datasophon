@@ -17,14 +17,14 @@
 
 package com.datasophon.common.command;
 
+import com.datasophon.common.model.AlertItem;
+import com.datasophon.common.model.Generators;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
 import lombok.Data;
-
-import com.datasophon.common.model.AlertItem;
-import com.datasophon.common.model.Generators;
 
 @Data
 public class GenerateAlertConfigCommand implements Serializable {

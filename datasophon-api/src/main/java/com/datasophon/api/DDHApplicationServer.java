@@ -17,6 +17,10 @@
 
 package com.datasophon.api;
 
+import com.datasophon.api.master.ActorUtils;
+import com.datasophon.common.Constants;
+import com.datasophon.common.cache.CacheUtils;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -28,10 +32,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
-
-import com.datasophon.api.master.ActorUtils;
-import com.datasophon.common.Constants;
-import com.datasophon.common.cache.CacheUtils;
 
 @SpringBootApplication
 @ServletComponentScan

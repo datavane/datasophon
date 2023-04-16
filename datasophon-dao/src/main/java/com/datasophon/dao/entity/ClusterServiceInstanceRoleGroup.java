@@ -19,13 +19,14 @@
 
 package com.datasophon.dao.entity;
 
+import com.datasophon.dao.enums.NeedRestart;
+
 import java.io.Serializable;
 
 import lombok.Data;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.datasophon.dao.enums.NeedRestart;
 
 @Data
 @TableName("t_ddh_cluster_service_instance_role_group")

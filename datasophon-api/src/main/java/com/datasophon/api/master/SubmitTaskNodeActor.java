@@ -17,6 +17,14 @@
 
 package com.datasophon.api.master;
 
+import com.datasophon.api.utils.ProcessUtils;
+import com.datasophon.common.command.SubmitActiveTaskNodeCommand;
+import com.datasophon.common.enums.ServiceExecuteState;
+import com.datasophon.common.enums.ServiceRoleType;
+import com.datasophon.common.model.DAGGraph;
+import com.datasophon.common.model.ServiceNode;
+import com.datasophon.common.model.ServiceRoleInfo;
+
 import scala.Option;
 
 import java.util.List;
@@ -28,14 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
-
-import com.datasophon.api.utils.ProcessUtils;
-import com.datasophon.common.command.SubmitActiveTaskNodeCommand;
-import com.datasophon.common.enums.ServiceExecuteState;
-import com.datasophon.common.enums.ServiceRoleType;
-import com.datasophon.common.model.DAGGraph;
-import com.datasophon.common.model.ServiceNode;
-import com.datasophon.common.model.ServiceRoleInfo;
 
 public class SubmitTaskNodeActor extends UntypedActor {
 

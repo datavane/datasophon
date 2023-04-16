@@ -17,12 +17,12 @@
 
 package com.datasophon.api.load;
 
+import com.datasophon.common.model.Generators;
+import com.datasophon.common.model.ServiceConfig;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.datasophon.common.model.Generators;
-import com.datasophon.common.model.ServiceConfig;
 
 public class ServiceConfigFileMap {
 

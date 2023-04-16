@@ -17,11 +17,27 @@
 
 package com.datasophon.api.service.impl;
 
+import com.datasophon.api.enums.Status;
+import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
+import com.datasophon.api.service.ClusterServiceRoleInstanceService;
+import com.datasophon.api.service.ClusterYarnQueueService;
+import com.datasophon.common.Constants;
+import com.datasophon.common.command.ExecuteCmdCommand;
+import com.datasophon.common.model.Generators;
+import com.datasophon.common.model.ServiceConfig;
+import com.datasophon.common.model.ServiceRoleInfo;
+import com.datasophon.common.utils.ExecResult;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
+import com.datasophon.dao.entity.ClusterYarnQueue;
+import com.datasophon.dao.mapper.ClusterYarnQueueMapper;
+
+import org.apache.commons.lang.StringUtils;
+
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
-
-import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,21 +57,6 @@ import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.datasophon.api.enums.Status;
-import com.datasophon.api.master.ActorUtils;
-import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
-import com.datasophon.api.service.ClusterServiceRoleInstanceService;
-import com.datasophon.api.service.ClusterYarnQueueService;
-import com.datasophon.common.Constants;
-import com.datasophon.common.command.ExecuteCmdCommand;
-import com.datasophon.common.model.Generators;
-import com.datasophon.common.model.ServiceConfig;
-import com.datasophon.common.model.ServiceRoleInfo;
-import com.datasophon.common.utils.ExecResult;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
-import com.datasophon.dao.entity.ClusterYarnQueue;
-import com.datasophon.dao.mapper.ClusterYarnQueueMapper;
 
 @Service("clusterYarnQueueService")
 public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMapper, ClusterYarnQueue>
