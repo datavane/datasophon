@@ -17,18 +17,19 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.datasophon.dao.enums.CommandState;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 
+import lombok.Data;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.datasophon.dao.enums.CommandState;
 
 @TableName("t_ddh_cluster_service_command")
 @Data
 public class ClusterServiceCommandEntity implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**

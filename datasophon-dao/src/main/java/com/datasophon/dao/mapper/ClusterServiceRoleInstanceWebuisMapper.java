@@ -17,9 +17,10 @@
 
 package com.datasophon.dao.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceWebuis;
-import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 集群服务角色对应web ui表 
@@ -30,5 +31,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface ClusterServiceRoleInstanceWebuisMapper extends BaseMapper<ClusterServiceRoleInstanceWebuis> {
-	
+
 }

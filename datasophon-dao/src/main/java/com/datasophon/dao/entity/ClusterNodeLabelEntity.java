@@ -17,9 +17,10 @@
 
 package com.datasophon.dao.entity;
 
+import lombok.Data;
+
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 
 @Data
 @TableName("t_ddh_cluster_node_label")

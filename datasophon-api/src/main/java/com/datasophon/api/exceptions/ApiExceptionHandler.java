@@ -16,8 +16,12 @@
  */
 package com.datasophon.api.exceptions;
 
-import com.datasophon.api.enums.Status;
-import com.datasophon.common.utils.Result;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,10 +30,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.datasophon.api.enums.Status;
+import com.datasophon.common.utils.Result;
 
 /**
  * Exception Handler
@@ -49,7 +51,7 @@ public class ApiExceptionHandler {
         }
         Status st = ce.value();
         logger.error(st.getMsg(), e);
-        return Result.error(st.getCode(),st.getMsg());
+        return Result.error(st.getCode(), st.getMsg());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -60,7 +62,6 @@ public class ApiExceptionHandler {
                 .collect(Collectors.toSet());
         return Result.error(String.join(",", set));
     }
-
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public Result exceptionHandler(MethodArgumentTypeMismatchException e) {

@@ -18,7 +18,6 @@
 package com.datasophon.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.dao.entity.NoticeGroupUserEntity;
 
 /**
@@ -31,4 +30,3 @@ import com.datasophon.dao.entity.NoticeGroupUserEntity;
 public interface NoticeGroupUserService extends IService<NoticeGroupUserEntity> {
 
 }
-

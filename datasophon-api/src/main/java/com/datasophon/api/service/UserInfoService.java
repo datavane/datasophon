@@ -18,7 +18,6 @@
 package com.datasophon.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.UserInfoEntity;
 
@@ -37,4 +36,3 @@ public interface UserInfoService extends IService<UserInfoEntity> {
 
     Result getUserListByPage(String username, Integer page, Integer pageSize);
 }
-

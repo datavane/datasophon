@@ -17,10 +17,11 @@
 
 package com.datasophon.common.model;
 
-import com.datasophon.common.enums.ReplyType;
+import java.io.Serializable;
+
 import lombok.Data;
 
-import java.io.Serializable;
+import com.datasophon.common.enums.ReplyType;
 @Data
 public class AkkaRemoteReply implements Serializable {
 

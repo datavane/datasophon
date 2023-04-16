@@ -17,15 +17,15 @@
 
 package com.datasophon.common.command;
 
-import com.datasophon.common.enums.ServiceRoleType;
-import com.datasophon.common.model.ServiceRoleRunner;
+import java.io.Serializable;
+
 import lombok.Data;
 
-import java.io.Serializable;
+import com.datasophon.common.enums.ServiceRoleType;
+import com.datasophon.common.model.ServiceRoleRunner;
 
 @Data
 public class BaseCommand implements Serializable {
-
 
     private static final long serialVersionUID = -1495156573211152639L;
     private String serviceName;

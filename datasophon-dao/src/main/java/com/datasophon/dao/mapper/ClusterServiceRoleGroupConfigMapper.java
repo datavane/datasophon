@@ -17,9 +17,10 @@
 
 package com.datasophon.dao.mapper;
 
-import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 
 /**
  * 
@@ -30,5 +31,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface ClusterServiceRoleGroupConfigMapper extends BaseMapper<ClusterServiceRoleGroupConfig> {
-	
+
 }

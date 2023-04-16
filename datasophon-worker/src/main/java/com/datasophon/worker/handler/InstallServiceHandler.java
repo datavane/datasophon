@@ -17,23 +17,27 @@
 
 package com.datasophon.worker.handler;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.StreamProgress;
 import cn.hutool.core.lang.Console;
 import cn.hutool.http.HttpUtil;
+
 import com.datasophon.common.Constants;
 import com.datasophon.common.model.RunAs;
 import com.datasophon.common.utils.CompressUtils;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.PropertyUtils;
 import com.datasophon.common.utils.ShellUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
 
 public class InstallServiceHandler {
+
     private static final Logger logger = LoggerFactory.getLogger(InstallServiceHandler.class);
 
     private static final String HADOOP = "hadoop";
@@ -63,7 +67,7 @@ public class InstallServiceHandler {
         Boolean needDownLoad = true;
         logger.info("Remote package md5 is {}", packageMd5);
         if (FileUtil.exist(packagePath)) {
-            //check md5
+            // check md5
             String md5cmd = "sh " + Constants.WORKER_SCRIPT_PATH + "md5.sh " + packagePath;
             String md5 = ShellUtils.getPackageMd5(md5cmd);
 
@@ -79,11 +83,13 @@ public class InstallServiceHandler {
     private void downloadPkg(String packageName, String packagePath) {
         String masterHost = PropertyUtils.getString(Constants.MASTER_HOST);
         String masterPort = PropertyUtils.getString(Constants.MASTER_WEB_PORT);
-        String downloadUrl = "http://" + masterHost + ":" + masterPort + "/ddh/service/install/downloadPackage?packageName=" + packageName;
+        String downloadUrl = "http://" + masterHost + ":" + masterPort
+                + "/ddh/service/install/downloadPackage?packageName=" + packageName;
 
         logger.info("download url is {}", downloadUrl);
 
         HttpUtil.downloadFile(downloadUrl, FileUtil.file(packagePath), new StreamProgress() {
+
             @Override
             public void start() {
                 Console.log("start to install。。。。");
@@ -107,12 +113,16 @@ public class InstallServiceHandler {
             Boolean decompressResult = CompressUtils.decompressTarGz(packagePath, Constants.INSTALL_PATH);
             if (Boolean.TRUE.equals(decompressResult)) {
                 if (Objects.nonNull(runAs)) {
-                    ShellUtils.exceShell(" chown -R " + runAs.getUser() + ":" + runAs.getGroup() + " " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
+                    ShellUtils.exceShell(" chown -R " + runAs.getUser() + ":" + runAs.getGroup() + " "
+                            + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
                 }
-                ShellUtils.exceShell(" chmod -R 775 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
+                ShellUtils
+                        .exceShell(" chmod -R 775 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
                 if (decompressPackageName.contains(Constants.PROMETHEUS)) {
-                    String alertPath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "alert_rules";
-                    ShellUtils.exceShell("sed -i \"s/clusterIdValue/" + PropertyUtils.getString("clusterId") + "/g\" `grep clusterIdValue -rl " + alertPath + "`");
+                    String alertPath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName
+                            + Constants.SLASH + "alert_rules";
+                    ShellUtils.exceShell("sed -i \"s/clusterIdValue/" + PropertyUtils.getString("clusterId")
+                            + "/g\" `grep clusterIdValue -rl " + alertPath + "`");
                 }
                 if (decompressPackageName.contains(HADOOP)) {
                     changeHadoopInstallPathPerm(decompressPackageName);
@@ -128,12 +138,18 @@ public class InstallServiceHandler {
     }
 
     private void changeHadoopInstallPathPerm(String decompressPackageName) {
-        ShellUtils.exceShell(" chown -R  root:hadoop " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
+        ShellUtils.exceShell(
+                " chown -R  root:hadoop " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
         ShellUtils.exceShell(" chmod 755 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName);
-        ShellUtils.exceShell(" chmod -R 755 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/etc");
-        ShellUtils.exceShell(" chmod 6050 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/bin/container-executor");
-        ShellUtils.exceShell(" chmod 400 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/etc/hadoop/container-executor.cfg");
-        ShellUtils.exceShell(" chown -R yarn:hadoop " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/logs/userlogs");
-        ShellUtils.exceShell(" chmod 775 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/logs/userlogs");
+        ShellUtils.exceShell(
+                " chmod -R 755 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/etc");
+        ShellUtils.exceShell(" chmod 6050 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName
+                + "/bin/container-executor");
+        ShellUtils.exceShell(" chmod 400 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName
+                + "/etc/hadoop/container-executor.cfg");
+        ShellUtils.exceShell(" chown -R yarn:hadoop " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName
+                + "/logs/userlogs");
+        ShellUtils.exceShell(
+                " chmod 775 " + Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + "/logs/userlogs");
     }
 }

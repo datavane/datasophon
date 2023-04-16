@@ -19,11 +19,7 @@
 
 package com.datasophon.api.master;
 
-import com.datasophon.api.enums.Status;
-import com.datasophon.api.utils.MinaUtils;
-import com.datasophon.common.command.HostCheckCommand;
-import com.datasophon.common.model.CheckResult;
-import com.datasophon.common.model.HostInfo;
+import scala.Option;
 
 import org.apache.sshd.client.session.ClientSession;
 
@@ -32,9 +28,15 @@ import org.slf4j.LoggerFactory;
 
 import akka.actor.UntypedActor;
 import cn.hutool.core.util.ObjectUtil;
-import scala.Option;
+
+import com.datasophon.api.enums.Status;
+import com.datasophon.api.utils.MinaUtils;
+import com.datasophon.common.command.HostCheckCommand;
+import com.datasophon.common.model.CheckResult;
+import com.datasophon.common.model.HostInfo;
 
 public class HostConnectActor extends UntypedActor {
+
     private static final Logger logger = LoggerFactory.getLogger(HostConnectActor.class);
 
     @Override

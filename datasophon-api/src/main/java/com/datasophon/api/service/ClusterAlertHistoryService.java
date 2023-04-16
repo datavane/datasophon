@@ -17,12 +17,11 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import java.util.List;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterAlertHistory;
-
-import java.util.List;
 
 /**
  * 集群告警历史表 
@@ -33,7 +32,6 @@ import java.util.List;
  */
 public interface ClusterAlertHistoryService extends IService<ClusterAlertHistory> {
 
-
     void saveAlertHistory(String alertMessage);
 
     Result getAlertList(Integer serviceInstanceId);
@@ -42,4 +40,3 @@ public interface ClusterAlertHistoryService extends IService<ClusterAlertHistory
 
     void removeAlertByRoleInstanceIds(List<Integer> ids);
 }
-

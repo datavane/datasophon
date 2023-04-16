@@ -18,7 +18,6 @@
 package com.datasophon.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.AlertGroupEntity;
 
@@ -31,8 +30,7 @@ import com.datasophon.dao.entity.AlertGroupEntity;
  */
 public interface AlertGroupService extends IService<AlertGroupEntity> {
 
-    Result getAlertGroupList(Integer clusterId,String alertGroupName, Integer page, Integer pageSize);
+    Result getAlertGroupList(Integer clusterId, String alertGroupName, Integer page, Integer pageSize);
 
     Result saveAlertGroup(AlertGroupEntity alertGroup);
 }
-

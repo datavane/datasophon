@@ -19,7 +19,17 @@
 
 package com.datasophon.api.master;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import akka.actor.UntypedActor;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.datasophon.api.load.GlobalVariables;
@@ -42,14 +52,6 @@ import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.enums.NeedRestart;
 import com.datasophon.dao.enums.ServiceRoleState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class MasterServiceActor extends UntypedActor {
 
@@ -311,8 +313,8 @@ public class MasterServiceActor extends UntypedActor {
 
     // generate configFileMap
     private void buildConfigFileMap(
-            HashMap<Generators, List<ServiceConfig>> configFileMap,
-            ClusterServiceRoleGroupConfig config) {
+                                    HashMap<Generators, List<ServiceConfig>> configFileMap,
+                                    ClusterServiceRoleGroupConfig config) {
         Map<JSONObject, JSONArray> map =
                 JSONObject.parseObject(config.getConfigFileJson(), Map.class);
         for (JSONObject fileJson : map.keySet()) {

@@ -19,7 +19,33 @@
 
 package com.datasophon.api.service.impl;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import cn.hutool.crypto.SecureUtil;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -70,28 +96,6 @@ import com.datasophon.dao.entity.ClusterVariable;
 import com.datasophon.dao.entity.FrameServiceEntity;
 import com.datasophon.dao.enums.NeedRestart;
 import com.datasophon.dao.enums.ServiceState;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service("serviceInstallService")
 @Transactional
@@ -102,7 +106,8 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     private static final List<String> MUST_AT_SAME_NODE_BASIC_SERVICE =
             Arrays.asList("Grafana", "AlertManager", "Prometheus");
 
-    @Autowired private ClusterInfoService clusterInfoService;
+    @Autowired
+    private ClusterInfoService clusterInfoService;
 
     @Autowired
     FrameInfoService frameInfoService;
@@ -113,21 +118,29 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     @Autowired
     ClusterServiceCommandService commandService;
 
-    @Autowired private ClusterServiceInstanceService serviceInstanceService;
+    @Autowired
+    private ClusterServiceInstanceService serviceInstanceService;
 
-    @Autowired private ClusterServiceInstanceConfigService serviceInstanceConfigService;
+    @Autowired
+    private ClusterServiceInstanceConfigService serviceInstanceConfigService;
 
-    @Autowired private ClusterServiceCommandHostCommandService hostCommandService;
+    @Autowired
+    private ClusterServiceCommandHostCommandService hostCommandService;
 
-    @Autowired private ClusterVariableService variableService;
+    @Autowired
+    private ClusterVariableService variableService;
 
-    @Autowired private ClusterHostService hostService;
+    @Autowired
+    private ClusterHostService hostService;
 
-    @Autowired private ClusterServiceInstanceRoleGroupService roleGroupService;
+    @Autowired
+    private ClusterServiceInstanceRoleGroupService roleGroupService;
 
-    @Autowired private ClusterServiceRoleGroupConfigService groupConfigService;
+    @Autowired
+    private ClusterServiceRoleGroupConfigService groupConfigService;
 
-    @Autowired private ClusterServiceRoleInstanceService roleInstanceService;
+    @Autowired
+    private ClusterServiceRoleInstanceService roleInstanceService;
 
     public static final String PROMETHEUS = "prometheus";
 
@@ -166,7 +179,8 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
 
     @Override
     public Result saveServiceConfig(
-            Integer clusterId, String serviceName, List<ServiceConfig> list, Integer roleGroupId) {
+                                    Integer clusterId, String serviceName, List<ServiceConfig> list,
+                                    Integer roleGroupId) {
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         ServiceConfigMap.put(
                 clusterInfo.getClusterCode() + Constants.UNDERLINE + serviceName + Constants.CONFIG,
@@ -316,11 +330,10 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     public Result getServiceRoleDeployOverview(Integer clusterId) {
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         HashMap<String, List<String>> map =
-                (HashMap<String, List<String>>)
-                        CacheUtils.get(
-                                clusterInfo.getClusterCode()
-                                        + Constants.UNDERLINE
-                                        + Constants.SERVICE_ROLE_HOST_MAPPING);
+                (HashMap<String, List<String>>) CacheUtils.get(
+                        clusterInfo.getClusterCode()
+                                + Constants.UNDERLINE
+                                + Constants.SERVICE_ROLE_HOST_MAPPING);
         return Result.success(map);
     }
 
@@ -374,8 +387,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     }
 
     @Override
-    public void downloadPackage(String packageName, HttpServletResponse response)
-            throws IOException {
+    public void downloadPackage(String packageName, HttpServletResponse response) throws IOException {
         FileInputStream inputStream = null;
         OutputStream out = null;
         // 通过文件路径获得File对象
@@ -461,7 +473,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     }
 
     private ClusterServiceInstanceRoleGroup saveNewRoleGroup(
-            ClusterServiceInstanceEntity serviceInstanceEntity) {
+                                                             ClusterServiceInstanceEntity serviceInstanceEntity) {
         int count =
                 roleGroupService.count(
                         new QueryWrapper<ClusterServiceInstanceRoleGroup>()
@@ -479,7 +491,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     }
 
     private boolean isConfigNeedUpdate(
-            ClusterServiceInstanceEntity serviceInstanceEntity, List<ServiceConfig> list) {
+                                       ClusterServiceInstanceEntity serviceInstanceEntity, List<ServiceConfig> list) {
         List<ServiceConfig> originalConfigs =
                 listServiceConfigByServiceInstance(serviceInstanceEntity);
         Map<String, Object> originalConfigMap =
@@ -503,11 +515,11 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     }
 
     private void saveServiceRoleGroupConfig(
-            Integer clusterId,
-            String serviceName,
-            List<ServiceConfig> list,
-            HashMap<Generators, List<ServiceConfig>> configFileMap,
-            ClusterServiceInstanceRoleGroup clusterServiceInstanceRoleGroup) {
+                                            Integer clusterId,
+                                            String serviceName,
+                                            List<ServiceConfig> list,
+                                            HashMap<Generators, List<ServiceConfig>> configFileMap,
+                                            ClusterServiceInstanceRoleGroup clusterServiceInstanceRoleGroup) {
         ClusterServiceRoleGroupConfig roleGroupConfig = new ClusterServiceRoleGroupConfig();
         roleGroupConfig.setRoleGroupId(clusterServiceInstanceRoleGroup.getId());
         roleGroupConfig.setClusterId(clusterId);
@@ -520,9 +532,9 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     }
 
     private ClusterServiceInstanceRoleGroup saveServiceInstanceRoleGroup(
-            Integer clusterId,
-            String serviceName,
-            ClusterServiceInstanceEntity serviceInstanceEntity) {
+                                                                         Integer clusterId,
+                                                                         String serviceName,
+                                                                         ClusterServiceInstanceEntity serviceInstanceEntity) {
         ClusterServiceInstanceRoleGroup clusterServiceInstanceRoleGroup =
                 new ClusterServiceInstanceRoleGroup();
         clusterServiceInstanceRoleGroup.setServiceInstanceId(serviceInstanceEntity.getId());
@@ -535,7 +547,8 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     }
 
     private ClusterServiceInstanceEntity saveServiceInstance(
-            Integer clusterId, String serviceName, FrameServiceEntity frameServiceEntity) {
+                                                             Integer clusterId, String serviceName,
+                                                             FrameServiceEntity frameServiceEntity) {
         ClusterServiceInstanceEntity serviceInstanceEntity;
         serviceInstanceEntity = new ClusterServiceInstanceEntity();
         serviceInstanceEntity.setClusterId(clusterId);
@@ -552,7 +565,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     }
 
     private void addHostNodeToPrometheus(
-            Integer clusterId, HashMap<Generators, List<ServiceConfig>> configFileMap) {
+                                         Integer clusterId, HashMap<Generators, List<ServiceConfig>> configFileMap) {
         List<ClusterHostEntity> hostList =
                 hostService.list(
                         new QueryWrapper<ClusterHostEntity>()
@@ -589,10 +602,10 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     }
 
     private void buildConfigFileMap(
-            String serviceName,
-            ClusterInfoEntity clusterInfo,
-            HashMap<String, ServiceConfig> map,
-            HashMap<Generators, List<ServiceConfig>> configFileMap) {
+                                    String serviceName,
+                                    ClusterInfoEntity clusterInfo,
+                                    HashMap<String, ServiceConfig> map,
+                                    HashMap<Generators, List<ServiceConfig>> configFileMap) {
         FrameServiceEntity frameService =
                 this.frameService.getServiceByFrameCodeAndServiceName(
                         clusterInfo.getClusterFrame(), serviceName);
@@ -635,9 +648,9 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     }
 
     private void buildConfig(
-            List<ServiceConfig> list,
-            HashMap<Generators, List<ServiceConfig>> configFileMap,
-            ClusterServiceRoleGroupConfig roleGroupConfig) {
+                             List<ServiceConfig> list,
+                             HashMap<Generators, List<ServiceConfig>> configFileMap,
+                             ClusterServiceRoleGroupConfig roleGroupConfig) {
         String configJson = JSONObject.toJSONString(list);
         String configFileJson = JSONObject.toJSONString(configFileMap);
         roleGroupConfig.setConfigJson(configJson);
@@ -695,7 +708,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     }
 
     private List<ServiceConfig> listServiceConfigByServiceInstance(
-            ClusterServiceInstanceEntity serviceInstance) {
+                                                                   ClusterServiceInstanceEntity serviceInstance) {
         ClusterServiceInstanceRoleGroup roleGroup =
                 roleGroupService.getRoleGroupByServiceInstanceId(serviceInstance.getId());
         ClusterServiceRoleGroupConfig config =

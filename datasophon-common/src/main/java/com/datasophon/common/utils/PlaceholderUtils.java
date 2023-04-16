@@ -17,10 +17,6 @@
 
 package com.datasophon.common.utils;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,17 +24,20 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PlaceholderUtils {
+
     private static final Logger logger = LoggerFactory.getLogger(PlaceholderUtils.class);
 
     public static void main(String[] args) {
         HashMap<String, String> paramMap = new HashMap<>();
         paramMap.put("${apiHost}", "ddp1016");
         paramMap.put("${apiPort}", "8081");
-//        String regex = "\\$\\{(\\w+)\\s*(([\\+\\-])\\s*(\\d+))?\\}";
-        String regex= "\\$\\{(.*?)\\}"
-        ;
-//        String regex = "\\[.*?\\]";
+        // String regex = "\\$\\{(\\w+)\\s*(([\\+\\-])\\s*(\\d+))?\\}";
+        String regex = "\\$\\{(.*?)\\}";
+        // String regex = "\\[.*?\\]";
         String replacePlaceholders = PlaceholderUtils.replacePlaceholders("[\n" +
                 "    {\n" +
                 "      \"name\": \"apiHost\",\n" +
@@ -62,7 +61,7 @@ public class PlaceholderUtils {
                 "      \"hidden\": false,\n" +
                 "      \"defaultValue\": \"${apiPort}\"\n" +
                 "    }\n" +
-                "  ]", paramMap,regex);
+                "  ]", paramMap, regex);
 
         System.out.println(replacePlaceholders);
         List<String> newEquipmentNoList = PlaceholderUtils.getNewEquipmentNoList("001", "002");
@@ -72,15 +71,15 @@ public class PlaceholderUtils {
     }
 
     public static String replacePlaceholders(String value,
-                                             Map<String, String> paramsMap,String regex) {
+                                             Map<String, String> paramsMap, String regex) {
 
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(value);
-        //自旋进行最小匹配，直到无法匹配
+        // 自旋进行最小匹配，直到无法匹配
         while (matcher.find()) {
             String group = matcher.group();
-            //替换匹配内容
-//            logger.info("find match value {}",group);
+            // 替换匹配内容
+            // logger.info("find match value {}",group);
             if (paramsMap.containsKey(group)) {
                 value = value.replace(group, paramsMap.get(group));
             }
@@ -94,10 +93,10 @@ public class PlaceholderUtils {
 
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(value);
-        //自旋进行最小匹配，直到无法匹配
+        // 自旋进行最小匹配，直到无法匹配
         while (matcher.find()) {
             String group = matcher.group();
-            //替换匹配内容
+            // 替换匹配内容
             list.add(group);
         }
         return list;
@@ -112,7 +111,7 @@ public class PlaceholderUtils {
         list.add(pre);
         while (next < end) {
             next = next + 1;
-            String nextStr = String.format("%0"+length+"d", next);
+            String nextStr = String.format("%0" + length + "d", next);
             list.add(nextStr);
         }
         return list;

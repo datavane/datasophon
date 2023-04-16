@@ -21,8 +21,9 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ClusterState {
-    RUNNING(2,"正在运行"),
-    NEED_CONFIG(1,"待配置");
+
+    RUNNING(2, "正在运行"),
+    NEED_CONFIG(1, "待配置");
 
     @EnumValue
     private int value;
@@ -50,7 +51,6 @@ public enum ClusterState {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-
 
     @Override
     public String toString() {

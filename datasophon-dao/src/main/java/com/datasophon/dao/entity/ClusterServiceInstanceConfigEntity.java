@@ -17,18 +17,18 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
 import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Data;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 
 @TableName("t_ddh_cluster_service_instance_config")
 @Data
 public class ClusterServiceInstanceConfigEntity implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -68,6 +68,5 @@ public class ClusterServiceInstanceConfigEntity implements Serializable {
     private String configFileJson;
 
     private String configFileJsonMd5;
-
 
 }

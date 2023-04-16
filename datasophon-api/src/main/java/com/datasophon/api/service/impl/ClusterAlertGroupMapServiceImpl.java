@@ -20,12 +20,13 @@ package com.datasophon.api.service.impl;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.datasophon.dao.mapper.ClusterAlertGroupMapMapper;
-import com.datasophon.dao.entity.ClusterAlertGroupMap;
 import com.datasophon.api.service.ClusterAlertGroupMapService;
-
+import com.datasophon.dao.entity.ClusterAlertGroupMap;
+import com.datasophon.dao.mapper.ClusterAlertGroupMapMapper;
 
 @Service("clusterAlertGroupMapService")
-public class ClusterAlertGroupMapServiceImpl extends ServiceImpl<ClusterAlertGroupMapMapper, ClusterAlertGroupMap> implements ClusterAlertGroupMapService {
+public class ClusterAlertGroupMapServiceImpl extends ServiceImpl<ClusterAlertGroupMapMapper, ClusterAlertGroupMap>
+        implements
+            ClusterAlertGroupMapService {
 
 }

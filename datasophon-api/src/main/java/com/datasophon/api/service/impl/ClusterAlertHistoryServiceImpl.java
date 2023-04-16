@@ -19,7 +19,17 @@
 
 package com.datasophon.api.service.impl;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import akka.actor.ActorRef;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -45,35 +55,33 @@ import com.datasophon.dao.enums.AlertLevel;
 import com.datasophon.dao.enums.ServiceRoleState;
 import com.datasophon.dao.enums.ServiceState;
 import com.datasophon.dao.mapper.ClusterAlertHistoryMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 
 @Service("clusterAlertHistoryService")
 public class ClusterAlertHistoryServiceImpl
-        extends ServiceImpl<ClusterAlertHistoryMapper, ClusterAlertHistory>
-        implements ClusterAlertHistoryService {
+        extends
+            ServiceImpl<ClusterAlertHistoryMapper, ClusterAlertHistory>
+        implements
+            ClusterAlertHistoryService {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterAlertHistoryServiceImpl.class);
 
-    @Autowired private ClusterServiceRoleInstanceService roleInstanceService;
+    @Autowired
+    private ClusterServiceRoleInstanceService roleInstanceService;
 
-    @Autowired private ClusterServiceInstanceService serviceInstanceService;
+    @Autowired
+    private ClusterServiceInstanceService serviceInstanceService;
 
-    @Autowired private ClusterHostService hostService;
+    @Autowired
+    private ClusterHostService hostService;
 
-    @Autowired private ClusterInfoService clusterInfoService;
+    @Autowired
+    private ClusterInfoService clusterInfoService;
 
     @Override
     public void saveAlertHistory(String alertMessage) {
         AlertMessage alertMes = JSONObject.parseObject(alertMessage, AlertMessage.class);
         List<Alerts> alerts = alertMes.getAlerts();
-        alerts.stream().forEach(alertInfo ->  {
+        alerts.stream().forEach(alertInfo -> {
             String status = alertInfo.getStatus();
             AlertLabels labels = alertInfo.getLabels();
             int clusterId = labels.getClusterId();
@@ -202,8 +210,7 @@ public class ClusterAlertHistoryServiceImpl
                                 ClusterServiceRoleInstanceEntity roleInstance =
                                         roleInstanceService.getOneServiceRole(
                                                 labels.getServiceRoleName(), hostname, clusterId);
-                                if (roleInstance.getServiceRoleState()
-                                        != ServiceRoleState.RUNNING) {
+                                if (roleInstance.getServiceRoleState() != ServiceRoleState.RUNNING) {
                                     roleInstance.setServiceRoleState(ServiceRoleState.RUNNING);
                                     if (Objects.nonNull(warnAlertList)
                                             && warnAlertList.size() > 0) {
@@ -229,8 +236,7 @@ public class ClusterAlertHistoryServiceImpl
                                 ClusterServiceRoleInstanceEntity roleInstance =
                                         roleInstanceService.getOneServiceRole(
                                                 labels.getServiceRoleName(), hostname, clusterId);
-                                if (roleInstance.getServiceRoleState()
-                                        != ServiceRoleState.RUNNING) {
+                                if (roleInstance.getServiceRoleState() != ServiceRoleState.RUNNING) {
                                     roleInstance.setServiceRoleState(ServiceRoleState.RUNNING);
                                     if (Objects.nonNull(warnAlertList)
                                             && warnAlertList.size() > 0) {
@@ -264,7 +270,7 @@ public class ClusterAlertHistoryServiceImpl
         QueryWrapper<ClusterAlertHistory> wrapper = new QueryWrapper<ClusterAlertHistory>();
         wrapper.eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.IS_ENABLED, 1);
-        List<ClusterAlertHistory>list = this.list(wrapper.last("limit " + offset + "," + pageSize));
+        List<ClusterAlertHistory> list = this.list(wrapper.last("limit " + offset + "," + pageSize));
         int count = this.count(wrapper);
         return Result.success(list).put(Constants.TOTAL, count);
     }

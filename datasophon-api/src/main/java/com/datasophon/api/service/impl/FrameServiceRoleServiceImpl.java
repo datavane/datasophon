@@ -17,6 +17,14 @@
 
 package com.datasophon.api.service.impl;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.api.service.FrameServiceRoleService;
@@ -27,23 +35,15 @@ import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.entity.FrameServiceEntity;
-import com.datasophon.dao.enums.RoleType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
-
-import com.datasophon.dao.mapper.FrameServiceRoleMapper;
 import com.datasophon.dao.entity.FrameServiceRoleEntity;
-
+import com.datasophon.dao.enums.RoleType;
+import com.datasophon.dao.mapper.FrameServiceRoleMapper;
 
 @Service("frameServiceRoleService")
-public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMapper, FrameServiceRoleEntity> implements FrameServiceRoleService {
+public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMapper, FrameServiceRoleEntity>
+        implements
+            FrameServiceRoleService {
+
     @Autowired
     private ClusterInfoService clusterInfoService;
 
@@ -60,17 +60,18 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
                 .eq(Objects.nonNull(serviceRoleType), FrameServiceRoleEntity::getServiceRoleType, serviceRoleType)
                 .in(FrameServiceRoleEntity::getServiceId, ids)
                 .list();
-        //校验是否已安装依赖的服务
-        //校验是否已安装Prometheus,Grafana,AlertManager
+        // 校验是否已安装依赖的服务
+        // 校验是否已安装Prometheus,Grafana,AlertManager
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         String key = clusterInfo.getClusterCode() + Constants.UNDERLINE + Constants.SERVICE_ROLE_HOST_MAPPING;
 
         for (FrameServiceRoleEntity role : list) {
             FrameServiceEntity frameServiceEntity = frameService.getById(role.getServiceId());
-            List<ClusterServiceRoleInstanceEntity> roleInstanceList = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                    .eq(Constants.SERVICE_NAME, frameServiceEntity.getServiceName())
-                    .eq(Constants.SERVICE_ROLE_NAME, role.getServiceRoleName())
-                    .eq(Constants.CLUSTER_ID, clusterId));
+            List<ClusterServiceRoleInstanceEntity> roleInstanceList =
+                    roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                            .eq(Constants.SERVICE_NAME, frameServiceEntity.getServiceName())
+                            .eq(Constants.SERVICE_ROLE_NAME, role.getServiceRoleName())
+                            .eq(Constants.CLUSTER_ID, clusterId));
             if (Objects.nonNull(roleInstanceList) && roleInstanceList.size() > 0) {
                 List<String> hosts = roleInstanceList.stream().map(e -> e.getHostname()).collect(Collectors.toList());
                 role.setHosts(hosts);
@@ -93,7 +94,8 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
     }
 
     @Override
-    public FrameServiceRoleEntity getServiceRoleByFrameCodeAndServiceRoleName(String clusterFrame, String serviceRoleName) {
+    public FrameServiceRoleEntity getServiceRoleByFrameCodeAndServiceRoleName(String clusterFrame,
+                                                                              String serviceRoleName) {
         return this.getOne(new QueryWrapper<FrameServiceRoleEntity>()
                 .eq(Constants.FRAME_CODE_1, clusterFrame).eq(Constants.SERVICE_ROLE_NAME, serviceRoleName));
     }
@@ -110,10 +112,11 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
         List<String> hosts = new ArrayList<>();
         for (FrameServiceRoleEntity role : list) {
             FrameServiceEntity frameServiceEntity = frameService.getById(role.getServiceId());
-            List<ClusterServiceRoleInstanceEntity> roleInstanceList = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                    .eq(Constants.SERVICE_NAME, frameServiceEntity.getServiceName())
-                    .eq(Constants.SERVICE_ROLE_NAME, role.getServiceRoleName())
-                    .eq(Constants.CLUSTER_ID, clusterId));
+            List<ClusterServiceRoleInstanceEntity> roleInstanceList =
+                    roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                            .eq(Constants.SERVICE_NAME, frameServiceEntity.getServiceName())
+                            .eq(Constants.SERVICE_ROLE_NAME, role.getServiceRoleName())
+                            .eq(Constants.CLUSTER_ID, clusterId));
             if (Objects.nonNull(roleInstanceList) && roleInstanceList.size() > 0) {
                 hosts = roleInstanceList.stream().map(e -> e.getHostname()).collect(Collectors.toList());
 
@@ -138,7 +141,8 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
             return Result.success(list);
         }
         ClusterInfoEntity clusterInfoEntity = clusterInfoService.getById(clusterId);
-        FrameServiceEntity frameServiceEntity = frameService.getServiceByFrameCodeAndServiceName(clusterInfoEntity.getClusterFrame(), serviceName);
+        FrameServiceEntity frameServiceEntity =
+                frameService.getServiceByFrameCodeAndServiceName(clusterInfoEntity.getClusterFrame(), serviceName);
         List<FrameServiceRoleEntity> list = this.lambdaQuery()
                 .eq(FrameServiceRoleEntity::getServiceId, frameServiceEntity.getId())
                 .list();
@@ -149,6 +153,5 @@ public class FrameServiceRoleServiceImpl extends ServiceImpl<FrameServiceRoleMap
     public List<FrameServiceRoleEntity> getAllServiceRoleList(Integer frameServiceId) {
         return this.lambdaQuery().eq(FrameServiceRoleEntity::getServiceId, frameServiceId).list();
     }
-
 
 }

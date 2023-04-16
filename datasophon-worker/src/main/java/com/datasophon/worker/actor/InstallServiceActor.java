@@ -17,19 +17,22 @@
 
 package com.datasophon.worker.actor;
 
+import java.util.ArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import akka.actor.UntypedActor;
+
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.InstallServiceRoleCommand;
 import com.datasophon.common.enums.ServiceRoleType;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.handler.InstallServiceHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
 
 public class InstallServiceActor extends UntypedActor {
+
     private static final Logger logger = LoggerFactory.getLogger(InstallServiceActor.class);
 
     @Override
@@ -57,10 +60,12 @@ public class InstallServiceActor extends UntypedActor {
                 }
                 ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH, commands, 180);
                 if (execResult.getExecResult()) {
-                    installResult = serviceHandler.install(command.getPackageName(), command.getDecompressPackageName(), command.getPackageMd5(), command.getRunAs());
+                    installResult = serviceHandler.install(command.getPackageName(), command.getDecompressPackageName(),
+                            command.getPackageMd5(), command.getRunAs());
                 }
             } else {
-                installResult = serviceHandler.install(command.getPackageName(), command.getDecompressPackageName(), command.getPackageMd5(), command.getRunAs());
+                installResult = serviceHandler.install(command.getPackageName(), command.getDecompressPackageName(),
+                        command.getPackageMd5(), command.getRunAs());
             }
             getSender().tell(installResult, getSelf());
             logger.info("install package {}", installResult.getExecResult() ? "success" : "failed");

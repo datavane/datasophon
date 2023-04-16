@@ -29,9 +29,7 @@ import com.datasophon.dao.entity.ClusterYarnScheduler;
  */
 public interface ClusterYarnSchedulerService extends IService<ClusterYarnScheduler> {
 
-
     ClusterYarnScheduler getScheduler(Integer clusterId);
 
     void createDefaultYarnScheduler(Integer clusterId);
 }
-

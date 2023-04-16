@@ -18,7 +18,6 @@
 package com.datasophon.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceConfigEntity;
 
 /**
@@ -31,4 +30,3 @@ import com.datasophon.dao.entity.ClusterServiceRoleInstanceConfigEntity;
 public interface ClusterServiceRoleInstanceConfigService extends IService<ClusterServiceRoleInstanceConfigEntity> {
 
 }
-

@@ -17,35 +17,35 @@
 
 package com.datasophon.api.service.impl;
 
-import com.datasophon.api.service.ClusterInfoService;
-import com.datasophon.api.service.ClusterServiceInstanceService;
-import com.datasophon.common.Constants;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterInfoEntity;
-import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
-import com.datasophon.dao.entity.FrameInfoEntity;
-import com.datasophon.dao.enums.ServiceState;
-import com.datasophon.dao.mapper.FrameInfoMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
-
-import com.datasophon.dao.mapper.FrameServiceMapper;
-import com.datasophon.dao.entity.FrameServiceEntity;
+import com.datasophon.api.service.ClusterInfoService;
+import com.datasophon.api.service.ClusterServiceInstanceService;
 import com.datasophon.api.service.FrameServiceService;
-
+import com.datasophon.common.Constants;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterInfoEntity;
+import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
+import com.datasophon.dao.entity.FrameInfoEntity;
+import com.datasophon.dao.entity.FrameServiceEntity;
+import com.datasophon.dao.enums.ServiceState;
+import com.datasophon.dao.mapper.FrameInfoMapper;
+import com.datasophon.dao.mapper.FrameServiceMapper;
 
 @Service("frameServiceService")
-public class FrameServiceServiceImpl extends ServiceImpl<FrameServiceMapper, FrameServiceEntity> implements FrameServiceService {
+public class FrameServiceServiceImpl extends ServiceImpl<FrameServiceMapper, FrameServiceEntity>
+        implements
+            FrameServiceService {
+
     @Autowired
     ClusterInfoService clusterInfoService;
 
@@ -69,8 +69,10 @@ public class FrameServiceServiceImpl extends ServiceImpl<FrameServiceMapper, Fra
 
     private void setInstalled(Integer clusterId, List<FrameServiceEntity> list) {
         for (FrameServiceEntity serviceEntity : list) {
-            ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getServiceInstanceByClusterIdAndServiceName(clusterId, serviceEntity.getServiceName());
-            if (Objects.nonNull(serviceInstance) && !serviceInstance.getServiceState().equals(ServiceState.WAIT_INSTALL)) {
+            ClusterServiceInstanceEntity serviceInstance = serviceInstanceService
+                    .getServiceInstanceByClusterIdAndServiceName(clusterId, serviceEntity.getServiceName());
+            if (Objects.nonNull(serviceInstance)
+                    && !serviceInstance.getServiceState().equals(ServiceState.WAIT_INSTALL)) {
                 serviceEntity.setInstalled(true);
             } else {
                 serviceEntity.setInstalled(false);
@@ -109,6 +111,5 @@ public class FrameServiceServiceImpl extends ServiceImpl<FrameServiceMapper, Fra
         List<String> ids = Arrays.stream(serviceIds.split(",")).collect(Collectors.toList());
         return this.lambdaQuery().in(FrameServiceEntity::getId, ids).list();
     }
-
 
 }

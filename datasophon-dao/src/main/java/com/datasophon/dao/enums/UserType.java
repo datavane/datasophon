@@ -21,8 +21,8 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum UserType {
-    CLUSTER_MANAGER(1,"集群管理员")
-    ;
+
+    CLUSTER_MANAGER(1, "集群管理员");
 
     @EnumValue
     private int value;
@@ -50,7 +50,6 @@ public enum UserType {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-
 
     @Override
     public String toString() {

@@ -17,12 +17,11 @@
 
 package com.datasophon.api.service;
 
+import java.util.ArrayList;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceWebuis;
-
-import java.util.ArrayList;
 
 /**
  * 集群服务角色对应web ui表 
@@ -45,4 +44,3 @@ public interface ClusterServiceRoleInstanceWebuisService extends IService<Cluste
 
     void updateWebUiToStandby(Integer id);
 }
-

@@ -25,15 +25,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.common.utils.Result;
-
-
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 
 @RestController
 @RequestMapping("cluster/service/role/instance")
 public class ClusterServiceRoleInstanceController {
+
     @Autowired
     private ClusterServiceRoleInstanceService clusterServiceRoleInstanceService;
 
@@ -41,10 +40,11 @@ public class ClusterServiceRoleInstanceController {
      * 列表
      */
     @RequestMapping("/list")
-    public Result list(Integer serviceInstanceId,String hostname,Integer serviceRoleState, String serviceRoleName,Integer roleGroupId,Integer page, Integer pageSize) {
-        return clusterServiceRoleInstanceService.listAll(serviceInstanceId,hostname,serviceRoleState,serviceRoleName,roleGroupId,page,pageSize);
+    public Result list(Integer serviceInstanceId, String hostname, Integer serviceRoleState, String serviceRoleName,
+                       Integer roleGroupId, Integer page, Integer pageSize) {
+        return clusterServiceRoleInstanceService.listAll(serviceInstanceId, hostname, serviceRoleState, serviceRoleName,
+                roleGroupId, page, pageSize);
     }
-
 
     /**
      * 信息
@@ -58,8 +58,8 @@ public class ClusterServiceRoleInstanceController {
      * 退役
      */
     @RequestMapping("/decommissionNode")
-    public Result decommissionNode(String serviceRoleInstanceIds,String serviceName) throws Exception {
-        return clusterServiceRoleInstanceService.decommissionNode(serviceRoleInstanceIds,serviceName);
+    public Result decommissionNode(String serviceRoleInstanceIds, String serviceName) throws Exception {
+        return clusterServiceRoleInstanceService.decommissionNode(serviceRoleInstanceIds, serviceName);
     }
 
     /**

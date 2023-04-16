@@ -17,12 +17,13 @@
 
 package com.datasophon.common.model;
 
-import lombok.Data;
-
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class PromDataInfo {
+
     /**
      * prometheus结果类型
      * vector--瞬时向量

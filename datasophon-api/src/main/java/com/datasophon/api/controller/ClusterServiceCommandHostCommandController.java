@@ -25,18 +25,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
 import com.datasophon.api.service.ClusterServiceCommandHostCommandService;
 import com.datasophon.common.utils.Result;
-
-
+import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
 
 @RestController
 @RequestMapping("api/cluster/service/command/host/command")
 public class ClusterServiceCommandHostCommandController {
+
     @Autowired
     private ClusterServiceCommandHostCommandService clusterServiceCommandHostCommandService;
-
 
     /**
      * 列表
@@ -57,7 +55,8 @@ public class ClusterServiceCommandHostCommandController {
      */
     @RequestMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id) {
-        ClusterServiceCommandHostCommandEntity clusterServiceCommandHostCommand = clusterServiceCommandHostCommandService.getById(id);
+        ClusterServiceCommandHostCommandEntity clusterServiceCommandHostCommand =
+                clusterServiceCommandHostCommandService.getById(id);
 
         return Result.success().put("clusterServiceCommandHostCommand", clusterServiceCommandHostCommand);
     }

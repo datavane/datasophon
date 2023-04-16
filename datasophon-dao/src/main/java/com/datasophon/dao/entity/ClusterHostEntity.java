@@ -17,19 +17,20 @@
 
 package com.datasophon.dao.entity;
 
+import java.io.Serializable;
+import java.util.Date;
+
+import lombok.Data;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.datasophon.dao.enums.MANAGED;
-import lombok.Data;
-
-import java.io.Serializable;
-import java.util.Date;
-
 
 @TableName("t_ddh_cluster_host")
 @Data
 public class ClusterHostEntity implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**

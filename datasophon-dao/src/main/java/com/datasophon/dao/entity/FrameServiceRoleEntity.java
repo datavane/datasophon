@@ -17,56 +17,57 @@
 
 package com.datasophon.dao.entity;
 
+import java.io.Serializable;
+import java.util.List;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.datasophon.dao.enums.RoleType;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.util.List;
-
 
 @TableName("t_ddh_frame_service_role")
 @Data
 @Accessors(chain = true)
 public class FrameServiceRoleEntity implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 主键
-	 */
-	@TableId
-	private Integer id;
-	/**
-	 * 服务id
-	 */
-	private Integer serviceId;
-	/**
-	 * 角色名称
-	 */
-	private String serviceRoleName;
-	/**
-	 * 角色类型 1:master2:worker3:client
-	 */
-	private RoleType serviceRoleType;
-	/**
-	 * 1  1+
-	 */
-	private String cardinality;
+    private static final long serialVersionUID = 1L;
 
-	private String serviceRoleJson;
+    /**
+     * 主键
+     */
+    @TableId
+    private Integer id;
+    /**
+     * 服务id
+     */
+    private Integer serviceId;
+    /**
+     * 角色名称
+     */
+    private String serviceRoleName;
+    /**
+     * 角色类型 1:master2:worker3:client
+     */
+    private RoleType serviceRoleType;
+    /**
+     * 1  1+
+     */
+    private String cardinality;
 
-	private String serviceRoleJsonMd5;
+    private String serviceRoleJson;
 
-	private String frameCode;
+    private String serviceRoleJsonMd5;
 
-	private String jmxPort;
+    private String frameCode;
 
-	@TableField(exist = false)
-	private List<String> hosts;
+    private String jmxPort;
 
-	private String logFile;
+    @TableField(exist = false)
+    private List<String> hosts;
+
+    private String logFile;
 
 }

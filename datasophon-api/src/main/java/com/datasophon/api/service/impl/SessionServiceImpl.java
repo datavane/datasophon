@@ -17,35 +17,34 @@
 
 package com.datasophon.api.service.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.datasophon.api.utils.HttpUtils;
-import com.datasophon.common.Constants;
-import com.datasophon.dao.entity.UserInfoEntity;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
-
-import com.datasophon.dao.mapper.SessionMapper;
-import com.datasophon.dao.entity.SessionEntity;
-import com.datasophon.api.service.SessionService;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.util.WebUtils;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.WebUtils;
+
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.datasophon.api.service.SessionService;
+import com.datasophon.api.utils.HttpUtils;
+import com.datasophon.common.Constants;
+import com.datasophon.dao.entity.SessionEntity;
+import com.datasophon.dao.entity.UserInfoEntity;
+import com.datasophon.dao.mapper.SessionMapper;
 
 @Service("sessionService")
 public class SessionServiceImpl extends ServiceImpl<SessionMapper, SessionEntity> implements SessionService {
+
     private static final Logger logger = LoggerFactory.getLogger(SessionService.class);
 
     @Autowired
@@ -78,7 +77,6 @@ public class SessionServiceImpl extends ServiceImpl<SessionMapper, SessionEntity
 
         return sessionMapper.selectById(sessionId);
     }
-
 
     /**
      * create session
@@ -153,7 +151,7 @@ public class SessionServiceImpl extends ServiceImpl<SessionMapper, SessionEntity
              */
             SessionEntity session = sessionMapper.queryByUserIdAndIp(loginUser.getId(), ip);
 
-            //delete session
+            // delete session
             sessionMapper.deleteById(session.getId());
         } catch (Exception e) {
             logger.warn("userId : {} , ip : {} , find more one session", loginUser.getId(), ip);

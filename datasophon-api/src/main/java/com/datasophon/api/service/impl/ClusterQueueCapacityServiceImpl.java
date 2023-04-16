@@ -17,7 +17,19 @@
 
 package com.datasophon.api.service.impl;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import cn.hutool.core.bean.BeanUtil;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -37,19 +49,11 @@ import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.mapper.ClusterQueueCapacityMapper;
 import com.datasophon.dao.model.ClusterQueueCapacityList;
 import com.datasophon.dao.model.Links;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 
 @Service("clusterQueueCapacityService")
-public class ClusterQueueCapacityServiceImpl extends ServiceImpl<ClusterQueueCapacityMapper, ClusterQueueCapacity> implements ClusterQueueCapacityService {
+public class ClusterQueueCapacityServiceImpl extends ServiceImpl<ClusterQueueCapacityMapper, ClusterQueueCapacity>
+        implements
+            ClusterQueueCapacityService {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterQueueCapacityServiceImpl.class);
 
@@ -61,9 +65,10 @@ public class ClusterQueueCapacityServiceImpl extends ServiceImpl<ClusterQueueCap
         List<ClusterQueueCapacity> list = this.list(new QueryWrapper<ClusterQueueCapacity>()
                 .eq(Constants.CLUSTER_ID, clusterId));
         ClusterInfoEntity clusterInfo = ProcessUtils.getClusterInfo(clusterId);
-        List<ClusterServiceRoleInstanceEntity> roleList = roleInstanceService.getServiceRoleInstanceListByClusterIdAndRoleName(clusterId, "ResourceManager");
+        List<ClusterServiceRoleInstanceEntity> roleList =
+                roleInstanceService.getServiceRoleInstanceListByClusterIdAndRoleName(clusterId, "ResourceManager");
 
-        //build configfilemap
+        // build configfilemap
         HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
         Generators generators = new Generators();
         generators.setFilename("capacity-scheduler.xml");
@@ -140,6 +145,5 @@ public class ClusterQueueCapacityServiceImpl extends ServiceImpl<ClusterQueueCap
         clusterQueueCapacityList.setLinks(linksList);
         return Result.success(clusterQueueCapacityList);
     }
-
 
 }

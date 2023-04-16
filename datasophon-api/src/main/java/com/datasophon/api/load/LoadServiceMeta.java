@@ -19,9 +19,31 @@
 
 package com.datasophon.api.load;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileReader;
 import cn.hutool.crypto.SecureUtil;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -51,25 +73,6 @@ import com.datasophon.dao.entity.ClusterVariable;
 import com.datasophon.dao.entity.FrameInfoEntity;
 import com.datasophon.dao.entity.FrameServiceEntity;
 import com.datasophon.dao.entity.FrameServiceRoleEntity;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.File;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Component
 public class LoadServiceMeta implements ApplicationRunner {
@@ -78,23 +81,32 @@ public class LoadServiceMeta implements ApplicationRunner {
 
     private static final String PATH = "meta";
 
-    @Autowired private FrameServiceService frameServiceService;
+    @Autowired
+    private FrameServiceService frameServiceService;
 
-    @Autowired private FrameInfoService frameInfoService;
+    @Autowired
+    private FrameInfoService frameInfoService;
 
-    @Autowired private FrameServiceRoleService roleService;
+    @Autowired
+    private FrameServiceRoleService roleService;
 
-    @Autowired private ClusterVariableService variableService;
+    @Autowired
+    private ClusterVariableService variableService;
 
-    @Autowired private ClusterInfoService clusterInfoService;
+    @Autowired
+    private ClusterInfoService clusterInfoService;
 
-    @Autowired private ConfigBean configBean;
+    @Autowired
+    private ConfigBean configBean;
 
-    @Autowired private ClusterServiceInstanceService serviceInstanceService;
+    @Autowired
+    private ClusterServiceInstanceService serviceInstanceService;
 
-    @Autowired private ClusterServiceInstanceRoleGroupService roleGroupService;
+    @Autowired
+    private ClusterServiceInstanceRoleGroupService roleGroupService;
 
-    @Autowired private ClusterServiceRoleGroupConfigService roleGroupConfigService;
+    @Autowired
+    private ClusterServiceRoleGroupConfigService roleGroupConfigService;
 
     private static final String HDFS = "HDFS";
 
@@ -157,7 +169,8 @@ public class LoadServiceMeta implements ApplicationRunner {
     }
 
     private void putServiceHomeToVariable(
-            List<ClusterInfoEntity> clusters, String serviceName, String decompressPackageName) {
+                                          List<ClusterInfoEntity> clusters, String serviceName,
+                                          String decompressPackageName) {
         for (ClusterInfoEntity cluster : clusters) {
             Map<String, String> globalVariables = GlobalVariables.get(cluster.getId());
             if (HDFS.equals(serviceName)) {
@@ -170,10 +183,10 @@ public class LoadServiceMeta implements ApplicationRunner {
     }
 
     private void saveFrameServiceRole(
-            String frameCode,
-            String serviceName,
-            ServiceInfo serviceInfo,
-            FrameServiceEntity serviceEntity) {
+                                      String frameCode,
+                                      String serviceName,
+                                      ServiceInfo serviceInfo,
+                                      FrameServiceEntity serviceEntity) {
         List<ServiceRoleInfo> serviceRoles = serviceInfo.getRoles();
 
         for (ServiceRoleInfo serviceRole : serviceRoles) {
@@ -229,14 +242,14 @@ public class LoadServiceMeta implements ApplicationRunner {
     }
 
     private FrameServiceEntity saveFrameService(
-            String frameCode,
-            FrameInfoEntity frameInfo,
-            String serviceName,
-            String serviceDdl,
-            ServiceInfo serviceInfo,
-            String serviceInfoMd5,
-            List<ServiceConfig> allParameters,
-            Map<Generators, List<ServiceConfig>> configFileMap) {
+                                                String frameCode,
+                                                FrameInfoEntity frameInfo,
+                                                String serviceName,
+                                                String serviceDdl,
+                                                ServiceInfo serviceInfo,
+                                                String serviceInfoMd5,
+                                                List<ServiceConfig> allParameters,
+                                                Map<Generators, List<ServiceConfig>> configFileMap) {
         FrameServiceEntity serviceEntity =
                 frameServiceService.getServiceByFrameIdAndServiceName(
                         frameInfo.getId(), serviceName);
@@ -286,9 +299,9 @@ public class LoadServiceMeta implements ApplicationRunner {
     }
 
     private void buildConfigFileMap(
-            ServiceInfo serviceInfo,
-            Map<String, ServiceConfig> map,
-            Map<Generators, List<ServiceConfig>> configFileMap) {
+                                    ServiceInfo serviceInfo,
+                                    Map<String, ServiceConfig> map,
+                                    Map<Generators, List<ServiceConfig>> configFileMap) {
         ConfigWriter configWriter = serviceInfo.getConfigWriter();
         List<Generators> generators = configWriter.getGenerators();
         for (Generators generator : generators) {
@@ -345,7 +358,7 @@ public class LoadServiceMeta implements ApplicationRunner {
     }
 
     private void updateServiceInstanceConfig(
-            String frameCode, String serviceName, List<ServiceConfig> parameters) {
+                                             String frameCode, String serviceName, List<ServiceConfig> parameters) {
         // 查询frameCode相同的集群
         List<ClusterInfoEntity> clusters = clusterInfoService.getClusterByFrameCode(frameCode);
         // 查询集群的服务实例
@@ -368,12 +381,12 @@ public class LoadServiceMeta implements ApplicationRunner {
     }
 
     private void buildFrameServiceRole(
-            String frameCode,
-            FrameServiceEntity serviceEntity,
-            ServiceRoleInfo serviceRole,
-            String serviceRoleJson,
-            String serviceRoleJsonMd5,
-            FrameServiceRoleEntity role) {
+                                       String frameCode,
+                                       FrameServiceEntity serviceEntity,
+                                       ServiceRoleInfo serviceRole,
+                                       String serviceRoleJson,
+                                       String serviceRoleJsonMd5,
+                                       FrameServiceRoleEntity role) {
         role.setServiceId(serviceEntity.getId());
         role.setServiceRoleName(serviceRole.getName());
         role.setCardinality(serviceRole.getCardinality());
@@ -386,15 +399,15 @@ public class LoadServiceMeta implements ApplicationRunner {
     }
 
     private void buildServiceEntity(
-            String frameCode,
-            Integer frameInfoId,
-            String serviceName,
-            String serviceDdl,
-            ServiceInfo serviceInfo,
-            String serviceInfoMd5,
-            FrameServiceEntity serviceEntity,
-            Map<Generators, List<ServiceConfig>> configFileMap,
-            String decompressPackageName) {
+                                    String frameCode,
+                                    Integer frameInfoId,
+                                    String serviceName,
+                                    String serviceDdl,
+                                    ServiceInfo serviceInfo,
+                                    String serviceInfoMd5,
+                                    FrameServiceEntity serviceEntity,
+                                    Map<Generators, List<ServiceConfig>> configFileMap,
+                                    String decompressPackageName) {
         serviceEntity.setServiceName(serviceName);
         serviceEntity.setLabel(serviceInfo.getLabel());
         serviceEntity.setFrameId(frameInfoId);

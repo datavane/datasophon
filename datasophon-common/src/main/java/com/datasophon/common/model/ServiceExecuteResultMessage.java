@@ -17,13 +17,14 @@
 
 package com.datasophon.common.model;
 
+import java.io.Serializable;
+import java.util.Map;
+
+import lombok.Data;
+
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.enums.ServiceExecuteState;
 import com.datasophon.common.enums.ServiceRoleType;
-import lombok.Data;
-
-import java.io.Serializable;
-import java.util.Map;
 
 @Data
 public class ServiceExecuteResultMessage implements Serializable {
@@ -41,9 +42,7 @@ public class ServiceExecuteResultMessage implements Serializable {
     private DAGGraph<String, ServiceNode, String> dag;
     private Map<String, String> errorTaskList;
     private Map<String, ServiceExecuteState> activeTaskList;
-    private Map<String, String>  readyToSubmitTaskList;
-    private Map<String, String>  completeTaskList;
-
-
+    private Map<String, String> readyToSubmitTaskList;
+    private Map<String, String> completeTaskList;
 
 }

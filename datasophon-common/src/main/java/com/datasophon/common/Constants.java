@@ -17,9 +17,9 @@
 
 package com.datasophon.common;
 
-import com.datasophon.common.utils.PropertyUtils;
-
 import java.util.regex.Pattern;
+
+import com.datasophon.common.utils.PropertyUtils;
 
 /**
  * Constants
@@ -40,13 +40,13 @@ public final class Constants {
     public static final String HOSTNAME = "hostname";
 
     public static final String MASTER_MANAGE_PACKAGE_PATH = INSTALL_PATH + "/DDP/packages";
-    public static final String UNZIP_DDH_WORKER_CMD = "tar -zxvf " + INSTALL_PATH + "/datasophon-worker.tar.gz -C " + INSTALL_PATH;
+    public static final String UNZIP_DDH_WORKER_CMD =
+            "tar -zxvf " + INSTALL_PATH + "/datasophon-worker.tar.gz -C " + INSTALL_PATH;
     public static final String START_DDH_WORKER_CMD = "service datasophon-worker restart";
 
     public static final String WORKER_PACKAGE_NAME = "datasophon-worker.tar.gz";
     public static final String WORKER_SCRIPT_PATH = INSTALL_PATH + "/datasophon-worker/script/";
     public static final String WORKER_PATH = INSTALL_PATH + "/datasophon-worker";
-
 
     public static final String CLUSTER_ID = "cluster_id";
     public static final String MANAGED = "managed";
@@ -66,12 +66,13 @@ public final class Constants {
     public static final String CODE = "code";
     public static final String CLUSTER_CODE = "cluster_code";
     public static final String START_DISTRIBUTE_AGENT = "start_distribute_agent";
-    public static final String CHECK_WORKER_MD5_CMD = "md5sum "+INSTALL_PATH+"/datasophon-worker.tar.gz | awk '{print $1}'";
+    public static final String CHECK_WORKER_MD5_CMD =
+            "md5sum " + INSTALL_PATH + "/datasophon-worker.tar.gz | awk '{print $1}'";
     public static final String CREATE_TIME = "create_time";
     public static final String COMMAND_TYPE = "command_type";
     public static final String SERVICE_ROLE_NAME = "service_role_name";
     public static final String FRAME_CODE_1 = "frame_code";
-    public static final String UPDATE_COMMON_CMD = "sh "+INSTALL_PATH+"/datasophon-worker/script/sed_common.sh ";
+    public static final String UPDATE_COMMON_CMD = "sh " + INSTALL_PATH + "/datasophon-worker/script/sed_common.sh ";
     public static final String MASTER_HOST = "masterHost";
     public static final String MASTER_WEB_PORT = "masterWebPort";
 
@@ -168,7 +169,6 @@ public final class Constants {
      */
     public static final String SLASH = "/";
 
-
     /**
      * SPACE " "
      */
@@ -190,11 +190,11 @@ public final class Constants {
 
     public static final String REGEX_VARIABLE = "\\$\\{(.*?)\\}";
 
-
     /**
      * email regex
      */
-    public static final Pattern REGEX_MAIL_NAME = Pattern.compile("^([a-z0-9A-Z]+[_|\\-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$");
+    public static final Pattern REGEX_MAIL_NAME =
+            Pattern.compile("^([a-z0-9A-Z]+[_|\\-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$");
 
     /**
      * 常量-数值100
@@ -209,20 +209,20 @@ public final class Constants {
     /**
      * 常量-数值10
      */
-    public static final int TEN= 10;
+    public static final int TEN = 10;
 
     /**
      * 常量-zkserver
      */
-    public static final String ZKSERVER= "zkserver";
+    public static final String ZKSERVER = "zkserver";
 
-    public static final String  CENTER_BRACKET_LEFT= "[";
+    public static final String CENTER_BRACKET_LEFT = "[";
 
-    public static final String   CENTER_BRACKET_RIGHT= "]";
+    public static final String CENTER_BRACKET_RIGHT = "]";
     /**
      * 常量-连接号
      */
-    public static final String   HYPHEN= "-";
+    public static final String HYPHEN = "-";
 
     public static final String TASK_MANAGER = "taskmanager";
     public static final String JOB_MANAGER = "jobmanager";
@@ -251,5 +251,5 @@ public final class Constants {
     /**
      * root user
      */
-    public static final String   ROOT= "root";
+    public static final String ROOT = "root";
 }

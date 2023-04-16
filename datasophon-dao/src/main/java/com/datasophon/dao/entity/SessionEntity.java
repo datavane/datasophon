@@ -17,17 +17,18 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 
+import lombok.Data;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 
 @Data
 @TableName("t_ddh_session")
 public class SessionEntity implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**

@@ -18,7 +18,6 @@
 package com.datasophon.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.dao.entity.ClusterVariable;
 
 /**
@@ -30,7 +29,5 @@ import com.datasophon.dao.entity.ClusterVariable;
  */
 public interface ClusterVariableService extends IService<ClusterVariable> {
 
-
     ClusterVariable getVariableByVariableName(String variableName, Integer clusterId);
 }
-

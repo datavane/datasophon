@@ -17,8 +17,17 @@
 
 package com.datasophon.worker.handler;
 
+import org.apache.commons.lang.StringUtils;
+
+import java.net.InetAddress;
+import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.datasophon.common.Constants;
@@ -29,14 +38,9 @@ import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.utils.FreemakerUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.net.InetAddress;
-import java.util.*;
 
 public class ConfigureServiceHandler {
+
     private static final Logger logger = LoggerFactory.getLogger(ConfigureServiceHandler.class);
 
     private static final String RANGER_ADMIN = "RangerAdmin";
@@ -65,7 +69,8 @@ public class ConfigureServiceHandler {
                     if (StringUtils.isNotBlank(config.getType())) {
                         switch (config.getType()) {
                             case Constants.INPUT:
-                                String value = PlaceholderUtils.replacePlaceholders((String) config.getValue(), paramMap, Constants.REGEX_VARIABLE);
+                                String value = PlaceholderUtils.replacePlaceholders((String) config.getValue(),
+                                        paramMap, Constants.REGEX_VARIABLE);
                                 config.setValue(value);
                                 break;
                             case Constants.MULTIPLE:
@@ -101,7 +106,8 @@ public class ConfigureServiceHandler {
                         serviceConfig.setValue("false");
                         customConfList.add(serviceConfig);
                     }
-                    if ("fe_priority_networks".equals(config.getName()) || "be_priority_networks".equals(config.getName())) {
+                    if ("fe_priority_networks".equals(config.getName())
+                            || "be_priority_networks".equals(config.getName())) {
                         config.setName("priority_networks");
                     }
 
@@ -139,11 +145,14 @@ public class ConfigureServiceHandler {
         logger.info("start to execute ranger admin setup.sh");
         ArrayList<String> commands = new ArrayList<>();
         commands.add(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "setup.sh");
-        ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName, commands, 300L);
+        ExecResult execResult = ShellUtils
+                .execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName, commands, 300L);
 
         ArrayList<String> globalCommand = new ArrayList<>();
-        globalCommand.add(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "set_globals.sh");
-        ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName, globalCommand, 300L);
+        globalCommand.add(
+                Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "set_globals.sh");
+        ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName, globalCommand,
+                300L);
         if (execResult.getExecResult()) {
             logger.info("ranger admin setup success");
             return true;
@@ -163,7 +172,8 @@ public class ConfigureServiceHandler {
         }
     }
 
-    private void addToCustomList(Iterator<ServiceConfig> iterator, ArrayList<ServiceConfig> customConfList, ServiceConfig config) {
+    private void addToCustomList(Iterator<ServiceConfig> iterator, ArrayList<ServiceConfig> customConfList,
+                                 ServiceConfig config) {
         List<JSONObject> list = (List<JSONObject>) config.getValue();
         iterator.remove();
         for (JSONObject json : list) {

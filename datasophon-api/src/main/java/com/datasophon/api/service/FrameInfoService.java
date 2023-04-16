@@ -18,7 +18,6 @@
 package com.datasophon.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.FrameInfoEntity;
 
@@ -33,4 +32,3 @@ public interface FrameInfoService extends IService<FrameInfoEntity> {
 
     Result getAllClusterFrame();
 }
-

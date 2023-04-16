@@ -17,12 +17,11 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import java.util.List;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.FrameServiceEntity;
-
-import java.util.List;
 
 /**
  * 集群框架版本服务表
@@ -45,4 +44,3 @@ public interface FrameServiceService extends IService<FrameServiceEntity> {
 
     List<FrameServiceEntity> listServices(String serviceIds);
 }
-

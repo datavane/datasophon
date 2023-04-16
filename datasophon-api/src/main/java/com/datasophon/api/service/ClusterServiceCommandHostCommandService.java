@@ -17,12 +17,11 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import java.util.List;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
-
-import java.util.List;
 
 /**
  * 集群服务操作指令主机指令表
@@ -33,7 +32,7 @@ import java.util.List;
  */
 public interface ClusterServiceCommandHostCommandService extends IService<ClusterServiceCommandHostCommandEntity> {
 
-    Result getHostCommandList(String hostname,String commandHostId, Integer page, Integer pageSize);
+    Result getHostCommandList(String hostname, String commandHostId, Integer page, Integer pageSize);
 
     List<ClusterServiceCommandHostCommandEntity> getHostCommandListByCommandId(String id);
 
@@ -45,10 +44,9 @@ public interface ClusterServiceCommandHostCommandService extends IService<Cluste
 
     Integer getHostCommandTotalProgressByHostnameAndCommandHostId(String hostname, String commandHostId);
 
-    Result getHostCommandLog(Integer clusterId , String hostCommandId) throws Exception;
+    Result getHostCommandLog(Integer clusterId, String hostCommandId) throws Exception;
 
     List<ClusterServiceCommandHostCommandEntity> findFailedHostCommand(String hostname, String commandHostId);
 
     List<ClusterServiceCommandHostCommandEntity> findCanceledHostCommand(String hostname, String commandHostId);
 }
-

@@ -17,6 +17,7 @@
  */
 
 package com.datasophon.common.model.alert;
+
 import lombok.Data;
 
 @Data

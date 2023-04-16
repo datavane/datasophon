@@ -17,19 +17,21 @@
 
 package com.datasophon.common.command;
 
+import java.util.List;
+import java.util.Map;
+
+import lombok.Data;
+
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.enums.ServiceExecuteState;
 import com.datasophon.common.enums.ServiceRoleType;
 import com.datasophon.common.model.DAGGraph;
 import com.datasophon.common.model.ServiceNode;
 import com.datasophon.common.model.ServiceRoleInfo;
-import lombok.Data;
-
-import java.util.List;
-import java.util.Map;
 
 @Data
 public class ExecuteServiceRoleCommand {
+
     private Integer clusterId;
 
     private String clusterCode;
@@ -48,8 +50,8 @@ public class ExecuteServiceRoleCommand {
 
     private Map<String, String> errorTaskList;
     private Map<String, ServiceExecuteState> activeTaskList;
-    private Map<String, String>  readyToSubmitTaskList;
-    private Map<String, String>  completeTaskList;
+    private Map<String, String> readyToSubmitTaskList;
+    private Map<String, String> completeTaskList;
 
     public ExecuteServiceRoleCommand(Integer clusterId, String serviceName, List<ServiceRoleInfo> serviceRoles) {
         this.clusterId = clusterId;

@@ -17,15 +17,17 @@
 
 package com.datasophon.api.master.handler.host;
 
+import org.apache.sshd.client.session.ClientSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.datasophon.api.utils.CommonUtils;
 import com.datasophon.api.utils.MessageResolverUtils;
 import com.datasophon.api.utils.MinaUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.common.model.HostInfo;
-import org.apache.sshd.client.session.ClientSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DecompressWorkerHandler implements DispatcherWorkerHandler {
 
@@ -43,7 +45,8 @@ public class DecompressWorkerHandler implements DispatcherWorkerHandler {
         }
         logger.info("decompress datasophon-worker.tar.gz success");
         hostInfo.setProgress(50);
-        hostInfo.setMessage(MessageResolverUtils.getMessage("installation.package.decompressed.success.and.modify.configuration.file"));
+        hostInfo.setMessage(MessageResolverUtils
+                .getMessage("installation.package.decompressed.success.and.modify.configuration.file"));
         return true;
     }
 }

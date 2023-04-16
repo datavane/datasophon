@@ -17,26 +17,25 @@
 
 package com.datasophon.api.strategy;
 
+import java.util.List;
+import java.util.Map;
+
 import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.utils.ProcessUtils;
-import com.datasophon.common.Constants;
-import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 
-import java.util.List;
-import java.util.Map;
-
 public class ElasticSearchHandlerStrategy implements ServiceRoleStrategy {
+
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
-        Map<String,String> globalVariables =  GlobalVariables.get(clusterId);
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
 
-        ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${initMasterNodes}",String.join(",",hosts));
+        ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${initMasterNodes}", String.join(",", hosts));
         String join = String.join(":9300,", hosts);
         String seedHosts = join + ":9300";
-        ProcessUtils.generateClusterVariable(globalVariables, clusterId,"${seedHosts}",seedHosts);
+        ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${seedHosts}", seedHosts);
 
     }
 
@@ -56,7 +55,8 @@ public class ElasticSearchHandlerStrategy implements ServiceRoleStrategy {
     }
 
     @Override
-    public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity, Map<String, ClusterServiceRoleInstanceEntity> map) {
+    public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity,
+                                        Map<String, ClusterServiceRoleInstanceEntity> map) {
 
     }
 }

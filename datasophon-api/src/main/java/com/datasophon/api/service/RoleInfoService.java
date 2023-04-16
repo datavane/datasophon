@@ -18,7 +18,6 @@
 package com.datasophon.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.dao.entity.RoleInfoEntity;
 
 /**
@@ -31,4 +30,3 @@ import com.datasophon.dao.entity.RoleInfoEntity;
 public interface RoleInfoService extends IService<RoleInfoEntity> {
 
 }
-

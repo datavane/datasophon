@@ -18,7 +18,6 @@
 package com.datasophon.api.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.dao.entity.ClusterAlertRule;
 
 /**
@@ -30,6 +29,4 @@ import com.datasophon.dao.entity.ClusterAlertRule;
  */
 public interface ClusterAlertRuleService extends IService<ClusterAlertRule> {
 
-
 }
-

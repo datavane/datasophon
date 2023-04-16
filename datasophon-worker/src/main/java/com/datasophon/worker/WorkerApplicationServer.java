@@ -19,6 +19,25 @@
 
 package com.datasophon.worker;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.event.EventStream;
+import akka.remote.AssociatedEvent;
+import akka.remote.AssociationErrorEvent;
+import akka.remote.DisassociatedEvent;
+
+import com.alibaba.fastjson.JSONObject;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.lifecycle.ServerLifeCycleManager;
@@ -29,28 +48,8 @@ import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.actor.RemoteEventActor;
 import com.datasophon.worker.actor.WorkerActor;
 import com.datasophon.worker.utils.UnixUtils;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.alibaba.fastjson.JSONObject;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-
-import akka.actor.ActorRef;
-import akka.actor.ActorSelection;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
-import akka.event.EventStream;
-import akka.remote.AssociatedEvent;
-import akka.remote.AssociationErrorEvent;
-import akka.remote.DisassociatedEvent;
 
 public class WorkerApplicationServer {
 
@@ -141,11 +140,11 @@ public class WorkerApplicationServer {
     }
 
     private static void tellToMaster(
-            String hostname,
-            String workDir,
-            String masterHost,
-            String cpuArchitecture,
-            ActorSystem system) {
+                                     String hostname,
+                                     String workDir,
+                                     String masterHost,
+                                     String cpuArchitecture,
+                                     ActorSystem system) {
         ActorSelection workerStartActor =
                 system.actorSelection(
                         "akka.tcp://datasophon@" + masterHost + ":2551/user/workerStartActor");
@@ -175,7 +174,7 @@ public class WorkerApplicationServer {
     }
 
     private static void operateNodeExporter(
-            String workDir, String cpuArchitecture, String operate) {
+                                            String workDir, String cpuArchitecture, String operate) {
         ArrayList<String> commands = new ArrayList<>();
         commands.add(SH);
         if (Constants.x86_64.equals(cpuArchitecture)) {

@@ -17,10 +17,11 @@
 
 package com.datasophon.dao.mapper;
 
-import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
 
 /**
  * 集群服务操作指令主机指令表
@@ -32,5 +33,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface ClusterServiceCommandHostCommandMapper extends BaseMapper<ClusterServiceCommandHostCommandEntity> {
 
-    Integer getHostCommandTotalProgressByHostnameAndCommandHostId(@Param("hostname") String hostname,@Param("commandHostId") String commandHostId);
+    Integer getHostCommandTotalProgressByHostnameAndCommandHostId(@Param("hostname") String hostname,
+                                                                  @Param("commandHostId") String commandHostId);
 }

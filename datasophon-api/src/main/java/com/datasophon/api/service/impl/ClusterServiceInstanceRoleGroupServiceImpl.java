@@ -19,6 +19,13 @@
 
 package com.datasophon.api.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.api.enums.Status;
@@ -34,29 +41,28 @@ import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.enums.NeedRestart;
 import com.datasophon.dao.mapper.ClusterServiceInstanceRoleGroupMapper;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service("clusterServiceInstanceRoleGroupService")
 public class ClusterServiceInstanceRoleGroupServiceImpl
-        extends ServiceImpl<ClusterServiceInstanceRoleGroupMapper, ClusterServiceInstanceRoleGroup>
-        implements ClusterServiceInstanceRoleGroupService {
+        extends
+            ServiceImpl<ClusterServiceInstanceRoleGroupMapper, ClusterServiceInstanceRoleGroup>
+        implements
+            ClusterServiceInstanceRoleGroupService {
 
-    @Autowired private ClusterServiceInstanceService serviceInstanceService;
+    @Autowired
+    private ClusterServiceInstanceService serviceInstanceService;
 
-    @Autowired private ClusterServiceRoleInstanceService roleInstanceService;
+    @Autowired
+    private ClusterServiceRoleInstanceService roleInstanceService;
 
-    @Autowired private ClusterServiceRoleGroupConfigService roleGroupConfigService;
+    @Autowired
+    private ClusterServiceRoleGroupConfigService roleGroupConfigService;
 
     private static final String DEFAULT = "default";
 
     @Override
     public ClusterServiceInstanceRoleGroup getRoleGroupByServiceInstanceId(
-            Integer serviceInstanceId) {
+                                                                           Integer serviceInstanceId) {
         return this.getOne(
                 new QueryWrapper<ClusterServiceInstanceRoleGroup>()
                         .eq(Constants.SERVICE_INSTANCE_ID, serviceInstanceId)
@@ -65,7 +71,7 @@ public class ClusterServiceInstanceRoleGroupServiceImpl
 
     @Override
     public Result saveRoleGroup(
-            Integer serviceInstanceId, Integer roleGroupId, String roleGroupName) {
+                                Integer serviceInstanceId, Integer roleGroupId, String roleGroupName) {
         ClusterServiceInstanceEntity serviceInstance =
                 serviceInstanceService.getById(serviceInstanceId);
         // is repeat name
@@ -157,7 +163,7 @@ public class ClusterServiceInstanceRoleGroupServiceImpl
         if (hasRoleInstanceUse(roleGroupId)) {
             return Result.error(Status.THE_CURRENT_ROLE_GROUP_BE_USING.getMsg());
         }
-        if(isDefaultRoleGroup(roleGroupId)){
+        if (isDefaultRoleGroup(roleGroupId)) {
             return Result.error(Status.THE_CURRENT_ROLE_GROUP_IS_DEFAULT.getMsg());
         }
         this.removeById(roleGroupId);
@@ -168,7 +174,7 @@ public class ClusterServiceInstanceRoleGroupServiceImpl
     private boolean isDefaultRoleGroup(Integer roleGroupId) {
         ClusterServiceInstanceRoleGroup roleGroup = this.getById(roleGroupId);
         String roleGroupType = roleGroup.getRoleGroupType();
-        if(DEFAULT.equals(roleGroupType)){
+        if (DEFAULT.equals(roleGroupType)) {
             return true;
         }
         return false;
@@ -176,7 +182,7 @@ public class ClusterServiceInstanceRoleGroupServiceImpl
 
     @Override
     public List<ClusterServiceInstanceRoleGroup> listRoleGroupByServiceInstanceId(
-            Integer serviceInstanceId) {
+                                                                                  Integer serviceInstanceId) {
 
         return this.list(
                 new QueryWrapper<ClusterServiceInstanceRoleGroup>()

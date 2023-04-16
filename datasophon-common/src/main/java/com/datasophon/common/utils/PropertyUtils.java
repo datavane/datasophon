@@ -16,16 +16,14 @@
  */
 package com.datasophon.common.utils;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * property utils
@@ -65,8 +63,6 @@ public class PropertyUtils {
             }
         }
     }
-
-
 
     /**
      * get property value
@@ -125,7 +121,7 @@ public class PropertyUtils {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            logger.info(e.getMessage(),e);
+            logger.info(e.getMessage(), e);
         }
         return defaultValue;
     }
@@ -138,7 +134,7 @@ public class PropertyUtils {
      */
     public static boolean getBoolean(String key) {
         String value = properties.getProperty(key.trim());
-        if(null != value){
+        if (null != value) {
             return Boolean.parseBoolean(value);
         }
 
@@ -154,7 +150,7 @@ public class PropertyUtils {
      */
     public static Boolean getBoolean(String key, boolean defaultValue) {
         String value = properties.getProperty(key.trim());
-        if(null != value){
+        if (null != value) {
             return Boolean.parseBoolean(value);
         }
 
@@ -178,7 +174,7 @@ public class PropertyUtils {
      * @return property value
      */
     public static long getLong(String key) {
-        return getLong(key,-1);
+        return getLong(key, -1);
     }
 
     /**
@@ -191,7 +187,6 @@ public class PropertyUtils {
         String val = getString(key);
         return val == null ? defaultVal : Double.parseDouble(val);
     }
-
 
     /**
      *  get array
@@ -208,7 +203,7 @@ public class PropertyUtils {
             String[] propertyArray = value.split(splitStr);
             return propertyArray;
         } catch (NumberFormatException e) {
-            logger.info(e.getMessage(),e);
+            logger.info(e.getMessage(), e);
         }
         return new String[0];
     }

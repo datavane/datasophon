@@ -17,21 +17,21 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
 import java.io.Serializable;
 import java.util.Date;
 
-import com.datasophon.dao.enums.NeedRestart;
-import com.datasophon.dao.enums.ServiceState;
 import lombok.Data;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.datasophon.dao.enums.NeedRestart;
+import com.datasophon.dao.enums.ServiceState;
 
 @TableName("t_ddh_cluster_service_instance")
 @Data
 public class ClusterServiceInstanceEntity implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**
