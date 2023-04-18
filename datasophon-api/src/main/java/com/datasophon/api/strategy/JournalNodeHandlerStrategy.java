@@ -17,9 +17,8 @@
 
 package com.datasophon.api.strategy;
 
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.utils.ProcessUtils;
-import com.datasophon.common.Constants;
-import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
@@ -27,14 +26,15 @@ import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import java.util.List;
 import java.util.Map;
 
-public class JournalNodeHandlerStrategy implements ServiceRoleStrategy{
+public class JournalNodeHandlerStrategy implements ServiceRoleStrategy {
+
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
-        Map<String,String> globalVariables = (Map<String, String>) CacheUtils.get("globalVariables"+ Constants.UNDERLINE+clusterId);
-        if(hosts.size() >= 3 ){
-            ProcessUtils.generateClusterVariable(globalVariables,clusterId,"${journalNode1}",hosts.get(0));
-            ProcessUtils.generateClusterVariable(globalVariables,clusterId,"${journalNode2}",hosts.get(1));
-            ProcessUtils.generateClusterVariable(globalVariables,clusterId,"${journalNode3}",hosts.get(2));
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
+        if (hosts.size() >= 3) {
+            ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${journalNode1}", hosts.get(0));
+            ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${journalNode2}", hosts.get(1));
+            ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${journalNode3}", hosts.get(2));
         }
     }
 
@@ -54,7 +54,8 @@ public class JournalNodeHandlerStrategy implements ServiceRoleStrategy{
     }
 
     @Override
-    public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity, Map<String, ClusterServiceRoleInstanceEntity> map) {
+    public void handlerServiceRoleCheck(ClusterServiceRoleInstanceEntity roleInstanceEntity,
+                                        Map<String, ClusterServiceRoleInstanceEntity> map) {
 
     }
 }

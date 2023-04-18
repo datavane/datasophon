@@ -17,10 +17,10 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceInstanceConfigEntity;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 集群服务角色实例配置表
@@ -31,10 +31,10 @@ import com.datasophon.dao.entity.ClusterServiceInstanceConfigEntity;
  */
 public interface ClusterServiceInstanceConfigService extends IService<ClusterServiceInstanceConfigEntity> {
 
-    Result getServiceInstanceConfig(Integer serviceInstanceId, Integer version, Integer roleGroupId, Integer page, Integer pageSize);
+    Result getServiceInstanceConfig(Integer serviceInstanceId, Integer version, Integer roleGroupId, Integer page,
+                                    Integer pageSize);
 
     ClusterServiceInstanceConfigEntity getServiceConfigByServiceId(Integer id);
 
-    Result getConfigVersion(Integer serviceInstanceId,Integer roleGroupId);
+    Result getConfigVersion(Integer serviceInstanceId, Integer roleGroupId);
 }
-

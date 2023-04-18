@@ -18,9 +18,10 @@
 package com.datasophon.api.utils;
 
 import com.datasophon.common.Constants;
-import org.apache.commons.lang.StringUtils;
-import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class HttpUtils {
 

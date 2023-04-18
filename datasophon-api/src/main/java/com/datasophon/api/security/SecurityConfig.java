@@ -18,6 +18,7 @@
 package com.datasophon.api.security;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SecurityConfig {
+
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     @Value("${security.authentication.type:PASSWORD}")

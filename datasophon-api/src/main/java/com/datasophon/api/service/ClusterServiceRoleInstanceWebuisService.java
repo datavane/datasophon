@@ -17,9 +17,12 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceWebuis;
+
+import java.util.ArrayList;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 集群服务角色对应web ui表 
@@ -33,5 +36,12 @@ public interface ClusterServiceRoleInstanceWebuisService extends IService<Cluste
     Result getWebUis(Integer serviceInstanceId);
 
     void removeByServiceInsId(Integer serviceInstanceId);
-}
 
+    void updateWebUiToActive(Integer id);
+
+    ClusterServiceRoleInstanceWebuis getRoleInstanceWebUi(Integer roleInstanceId);
+
+    void removeByRoleInsIds(ArrayList<Integer> needRemoveList);
+
+    void updateWebUiToStandby(Integer id);
+}

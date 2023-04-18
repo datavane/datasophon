@@ -18,12 +18,14 @@
 package com.datasophon.common.model;
 
 import com.datasophon.common.enums.ServiceRoleType;
-import lombok.Data;
 
 import java.io.Serializable;
 
+import lombok.Data;
+
 @Data
 public class UpdateCommandHostMessage implements Serializable {
+
     private String commandHostId;
 
     private String hostname;

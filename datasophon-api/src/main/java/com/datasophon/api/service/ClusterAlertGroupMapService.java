@@ -17,9 +17,9 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.dao.entity.ClusterAlertGroupMap;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 
@@ -30,6 +30,4 @@ import com.datasophon.dao.entity.ClusterAlertGroupMap;
  */
 public interface ClusterAlertGroupMapService extends IService<ClusterAlertGroupMap> {
 
-
 }
-

@@ -17,9 +17,9 @@
 
 package com.datasophon.common.command.remote;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import lombok.Data;
 
 @Data
 public class DelUnixUserCommand implements Serializable {

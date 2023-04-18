@@ -21,7 +21,7 @@
 
     <groupId>com.datasophon</groupId>
     <artifactId>datasophon</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <packaging>pom</packaging>
     <description>It is committed to rapidly implementing the deployment, management, monitoring and automatic operation
         and maintenance of the big data cloud native platform, helping you quickly build a stable, efficient, elastic
@@ -58,7 +58,7 @@
         <spotless.version>2.27.1</spotless.version>
         <spring.boot.version>2.1.18.RELEASE</spring.boot.version>
         <spring.version>5.1.19.RELEASE</spring.version>
-
+        <spotless.version>2.27.2</spotless.version>
         <versions-maven-plugin.version>2.14.2</versions-maven-plugin.version>
     </properties>
     <dependencyManagement>
@@ -220,31 +220,14 @@
                 <artifactId>spotless-maven-plugin</artifactId>
                 <version>${spotless.version}</version>
                 <configuration>
-                    <!--
-                    By default, only modified and uncommitted files are added.
-
-                    If you need to add license header to all files,
-                    comment the `<ratchetFrom>${spotless.ratchetFrom}</ratchetFrom>` and execute: `mvn spotless:apply`
-                    -->
-                    <ratchetFrom>${spotless.ratchetFrom}</ratchetFrom>
                     <java>
-                        <googleJavaFormat>
-                            <version>1.7</version>
-                            <style>AOSP</style>
-                        </googleJavaFormat>
-
+                        <eclipse>
+                            <file>style/spotless_datasophon_formatter.xml</file>
+                        </eclipse>
                         <removeUnusedImports />
                         <importOrder>
-                            <order>\#,com.datasophon,org.apache,java,javassist,javax,org,com,</order>
+                            <file>style/eclipse.importorder</file>
                         </importOrder>
-                        <licenseHeader>
-                            <file>style/license_header</file>
-                        </licenseHeader>
-                        <replaceRegex>
-                            <name>Remove wildcard imports</name>
-                            <searchRegex>import\s+[^\*\s]+\*;(\r\n|\r|\n)</searchRegex>
-                            <replacement>$1</replacement>
-                        </replaceRegex>
                     </java>
                     <pom>
                         <sortPom>
@@ -258,7 +241,7 @@
                             <sortExecutions>false</sortExecutions>
                             <predefinedSortOrder>custom_1</predefinedSortOrder>
                             <expandEmptyElements>false</expandEmptyElements>
-                            <sortProperties>true</sortProperties>
+                            <sortProperties>false</sortProperties>
                         </sortPom>
                         <replace>
                             <name>Leading blank line</name>
@@ -266,14 +249,22 @@
                             <replacement>project</replacement>
                         </replace>
                     </pom>
+                    <markdown>
+                        <includes>
+                            <include>docs/**/*.md</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/.github/**/*.md</exclude>
+                        </excludes>
+                        <flexmark />
+                    </markdown>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>spotless-check</id>
                         <goals>
                             <goal>check</goal>
                         </goals>
-                        <phase>validate</phase>
+                        <phase>compile</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -285,77 +276,6 @@
             </plugin>
         </plugins>
 
-        <!--    <pluginManagement>-->
-        <!--        <plugins>-->
-        <!--            <plugin>-->
-        <!--                <groupId>org.apache.maven.plugins</groupId>-->
-        <!--                <artifactId>maven-compiler-plugin</artifactId>-->
-        <!--                <version>${maven-compiler-plugin.version}</version>-->
-        <!--                <configuration>-->
-        <!--                    <source>${java.version}</source>-->
-        <!--                    <target>${java.version}</target>-->
-        <!--                    <testSource>${java.version}</testSource>-->
-        <!--                    <testTarget>${java.version}</testTarget>-->
-        <!--                </configuration>-->
-        <!--            </plugin>-->
-        <!--            <plugin>-->
-        <!--                <groupId>org.apache.maven.plugins</groupId>-->
-        <!--                <artifactId>maven-surefire-plugin</artifactId>-->
-        <!--                <version>${maven-surefire-plugin.version}</version>-->
-        <!--            </plugin>-->
-
-        <!--            <plugin>-->
-        <!--                <groupId>org.apache.maven.plugins</groupId>-->
-        <!--                <artifactId>maven-checkstyle-plugin</artifactId>-->
-        <!--                <version>${maven-checkstyle-plugin.version}</version>-->
-        <!--                <configuration>-->
-        <!--                    <consoleOutput>true</consoleOutput>-->
-        <!--                    <encoding>UTF-8</encoding>-->
-        <!--                    <configLocation>style/checkstyle.xml</configLocation>-->
-        <!--                    <suppressionsLocation>style/checkstyle-suppressions.xml</suppressionsLocation>-->
-        <!--                    <failOnViolation>true</failOnViolation>-->
-        <!--                    <includeTestSourceDirectory>true</includeTestSourceDirectory>-->
-        <!--                    <sourceDirectories>-->
-        <!--                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>-->
-        <!--                    </sourceDirectories>-->
-        <!--                    <excludes>**\/generated-sources\/</excludes>-->
-        <!--                </configuration>-->
-        <!--                <dependencies>-->
-        <!--                    <dependency>-->
-        <!--                        <groupId>com.puppycrawl.tools</groupId>-->
-        <!--                        <artifactId>checkstyle</artifactId>-->
-        <!--                        <version>8.14</version>-->
-        <!--                    </dependency>-->
-        <!--                </dependencies>-->
-        <!--                <executions>-->
-        <!--                    <execution>-->
-        <!--                        <goals>-->
-        <!--                            <goal>check</goal>-->
-        <!--                        </goals>-->
-        <!--                        <phase>compile</phase>-->
-        <!--                    </execution>-->
-        <!--                </executions>-->
-        <!--            </plugin>-->
-        <!--        </plugins>-->
-        <!--    </pluginManagement>-->
-
-        <!--        <plugins>-->
-        <!--        <plugin>-->
-        <!--            <groupId>org.apache.maven.plugins</groupId>-->
-        <!--            <artifactId>maven-compiler-plugin</artifactId>-->
-        <!--            <version>${maven-compiler-plugin.version}</version>-->
-        <!--        </plugin>-->
-        <!--        <plugin>-->
-        <!--            <groupId>org.apache.maven.plugins</groupId>-->
-        <!--            <artifactId>maven-surefire-plugin</artifactId>-->
-        <!--            <version>${maven-surefire-plugin.version}</version>-->
-        <!--        </plugin>-->
-        <!--        <plugin>-->
-        <!--            <groupId>org.apache.maven.plugins</groupId>-->
-        <!--            <artifactId>maven-checkstyle-plugin</artifactId>-->
-        <!--            <version>${maven-checkstyle-plugin.version}</version>-->
-        <!--        </plugin>-->
-        <!--        </plugins>-->
     </build>
 
     <url>https://datasophon.github.io/datasophon-website/</url>

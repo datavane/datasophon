@@ -17,14 +17,8 @@
 
 package com.datasophon.api.utils;
 
-import cn.hutool.core.convert.Convert;
 import com.datasophon.common.Constants;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -33,8 +27,18 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import cn.hutool.core.convert.Convert;
 
 public class ServletUtils {
+
     /**
      * 获取String参数
      */
@@ -132,7 +136,6 @@ public class ServletUtils {
         }
         return null;
     }
-
 
     /**
      * 内容编码

@@ -18,8 +18,10 @@
 package com.datasophon.dao.mapper;
 
 import com.datasophon.dao.entity.AlertGroupEntity;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import org.apache.ibatis.annotations.Mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * 告警组表
@@ -30,5 +32,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface AlertGroupMapper extends BaseMapper<AlertGroupEntity> {
-	
+
 }

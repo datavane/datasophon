@@ -17,12 +17,13 @@
 
 package com.datasophon.common.model;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import lombok.Data;
 
 @Data
 public class AlertItem implements Serializable {
+
     private String alertName;
 
     private Integer clusterId;

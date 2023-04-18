@@ -18,9 +18,10 @@
 package com.datasophon.common.model;
 
 import com.datasophon.common.enums.InstallState;
-import lombok.Data;
 
 import java.util.Date;
+
+import lombok.Data;
 
 @Data
 public class HostInfo {
@@ -62,6 +63,5 @@ public class HostInfo {
     private Date createTime;
 
     private String cpuArchitecture;
-
 
 }

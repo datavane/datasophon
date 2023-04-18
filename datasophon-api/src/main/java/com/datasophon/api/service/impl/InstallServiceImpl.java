@@ -20,14 +20,16 @@
 package com.datasophon.api.service.impl;
 
 import com.datasophon.api.enums.Status;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.DispatcherWorkerActor;
-import com.datasophon.api.master.HostActor;
+import com.datasophon.api.master.HostConnectActor;
 import com.datasophon.api.service.ClusterHostService;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.InstallService;
 import com.datasophon.api.utils.MessageResolverUtils;
 import com.datasophon.api.utils.MinaUtils;
+import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.DispatcherHostAgentCommand;
@@ -62,24 +64,29 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
 import akka.actor.ActorRef;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.crypto.SecureUtil;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
 @Service("installService")
 public class InstallServiceImpl implements InstallService {
 
     private static final Logger logger = LoggerFactory.getLogger(InstallServiceImpl.class);
 
-    @Autowired InstallStepMapper stepMapper;
+    @Autowired
+    InstallStepMapper stepMapper;
 
-    @Autowired ClusterInfoService clusterInfoService;
+    @Autowired
+    ClusterInfoService clusterInfoService;
 
-    @Autowired ClusterHostService hostService;
+    @Autowired
+    ClusterHostService hostService;
+
+    private static final String SSHUSER = "SSHUSER";
 
     @Override
     public Result getInstallStep(Integer type) {
@@ -100,12 +107,14 @@ public class InstallServiceImpl implements InstallService {
      */
     @Override
     public Result analysisHostList(
-            Integer clusterId,
-            String hosts,
-            String sshUser,
-            Integer sshPort,
-            Integer page,
-            Integer pageSize) {
+                                   Integer clusterId,
+                                   String hosts,
+                                   String sshUser,
+                                   Integer sshPort,
+                                   Integer page,
+                                   Integer pageSize) {
+        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
+        ProcessUtils.generateClusterVariable(globalVariables, clusterId, SSHUSER, sshUser);
 
         List<HostInfo> list = new ArrayList<>();
         hosts = hosts.replace(" ", "");
@@ -186,12 +195,12 @@ public class InstallServiceImpl implements InstallService {
 
     private void tellHostCheck(String clusterCode, HostInfo hostInfo) {
         ActorRef actor =
-                ActorUtils.getLocalActor(HostActor.class, "hostActor-" + hostInfo.getHostname());
+                ActorUtils.getLocalActor(HostConnectActor.class, "hostActor-" + hostInfo.getHostname());
         actor.tell(new HostCheckCommand(hostInfo, clusterCode), ActorRef.noSender());
     }
 
     public HostInfo createHostInfo(
-            String host, Integer sshPort, String sshUser, String clusterCode) {
+                                   String host, Integer sshPort, String sshUser, String clusterCode) {
         HostInfo hostInfo = new HostInfo();
 
         hostInfo.setHostname(HostUtils.getHostName(host));
@@ -240,7 +249,7 @@ public class InstallServiceImpl implements InstallService {
 
     @Override
     public Result rehostCheck(
-            Integer clusterId, String hostnames, String sshUser, Integer sshPort) {
+                              Integer clusterId, String hostnames, String sshUser, Integer sshPort) {
         // 开启主机校验
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         String clusterCode = clusterInfo.getClusterCode();
@@ -249,7 +258,7 @@ public class InstallServiceImpl implements InstallService {
         for (String hostname : hostnames.split(",")) {
             if (map.containsKey(hostname)) {
                 ActorRef hostActor =
-                        ActorUtils.getLocalActor(HostActor.class, "hostActor-" + hostname);
+                        ActorUtils.getLocalActor(HostConnectActor.class, "hostActor-" + hostname);
                 HostInfo hostInfo = map.get(hostname);
                 hostInfo.setCheckResult(
                         new CheckResult(
@@ -263,7 +272,7 @@ public class InstallServiceImpl implements InstallService {
 
     @Override
     public Result dispatcherHostAgentList(
-            Integer clusterId, Integer installStateCode, Integer page, Integer pageSize) {
+                                          Integer clusterId, Integer installStateCode, Integer page, Integer pageSize) {
 
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         String clusterCode = clusterInfo.getClusterCode();
@@ -378,7 +387,7 @@ public class InstallServiceImpl implements InstallService {
 
     @Override
     public Result cancelDispatcherHostAgent(
-            Integer clusterId, String hostname, Integer installStateCode) {
+                                            Integer clusterId, String hostname, Integer installStateCode) {
 
         return null;
     }
@@ -392,8 +401,7 @@ public class InstallServiceImpl implements InstallService {
         for (Map.Entry<String, HostInfo> hostInfoEntry : map.entrySet()) {
             HostInfo hostInfo = hostInfoEntry.getValue();
             if (hostInfo.getProgress() == 75
-                    && DateUtil.between(hostInfo.getCreateTime(), new Date(), DateUnit.MINUTE)
-                            > 1) {
+                    && DateUtil.between(hostInfo.getCreateTime(), new Date(), DateUnit.MINUTE) > 1) {
                 logger.info("dispatcher host agent timeout");
                 hostInfo.setInstallState(InstallState.FAILED);
                 hostInfo.setInstallStateCode(InstallState.FAILED.getValue());
@@ -407,8 +415,7 @@ public class InstallServiceImpl implements InstallService {
     }
 
     @Override
-    public Result generateHostAgentCommand(String clusterHostIds, String commandType)
-            throws Exception {
+    public Result generateHostAgentCommand(String clusterHostIds, String commandType) throws Exception {
         if (StringUtils.isBlank(clusterHostIds)) {
             return Result.error(Status.SELECT_LEAST_ONE_HOST.getMsg());
         }

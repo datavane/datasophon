@@ -17,24 +17,25 @@
 
 package com.datasophon.api.utils;
 
-import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.util.CharsetUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.ssh.ChannelType;
-import com.jcraft.jsch.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.ssh.ChannelType;
+
+import com.jcraft.jsch.*;
 
 public class SshTools {
 
     private static final Logger logger = LoggerFactory.getLogger(SshTools.class);
 
     private static final String SFTP = "sftp";
-
 
     /**
      * 获取实例
@@ -98,7 +99,8 @@ public class SshTools {
 
     }
 
-    public static String exec(Session session, String cmd, Charset charset, OutputStream errStream) throws JSchException, IOException {
+    public static String exec(Session session, String cmd, Charset charset,
+                              OutputStream errStream) throws JSchException, IOException {
         if (null == charset) {
             charset = CharsetUtil.CHARSET_UTF_8;
         }
@@ -117,8 +119,8 @@ public class SshTools {
         }
     }
 
-
-    public static void upload(Session session,String targetDirectory, String uploadFile) throws FileNotFoundException, SftpException, JSchException {
+    public static void upload(Session session, String targetDirectory,
+                              String uploadFile) throws FileNotFoundException, SftpException, JSchException {
         final ChannelSftp sftp = (ChannelSftp) createChannel(session, ChannelType.SFTP);
         sftp.cd(targetDirectory);
         File file = new File(uploadFile);
@@ -126,14 +128,13 @@ public class SshTools {
         sftp.disconnect();
     }
 
-
-    public static void download(String directory, String downloadFile, String saveFile, ChannelSftp sftp) throws SftpException, FileNotFoundException {
+    public static void download(String directory, String downloadFile, String saveFile,
+                                ChannelSftp sftp) throws SftpException, FileNotFoundException {
         sftp.cd(directory);
         File file = new File(saveFile);
         sftp.get(downloadFile, new FileOutputStream(file));
         sftp.disconnect();
     }
-
 
     public static Channel createChannel(Session session, ChannelType channelType) throws JSchException {
         Channel channel;
@@ -206,10 +207,9 @@ public class SshTools {
         try {
             session = SshTools.createSession("172.31.96.16", 22, "root", "D:\\360Downloads\\id_rsa");
             String exec = SshTools.exec(session, "tar -zxvf /opt/datasophon/ddh/ddh-worker.tar.gz");
-        }finally {
+        } finally {
             SshTools.close(session);
         }
     }
-
 
 }

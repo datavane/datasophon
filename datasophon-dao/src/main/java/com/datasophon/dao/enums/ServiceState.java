@@ -21,7 +21,8 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ServiceState {
-    WAIT_INSTALL(1,"待安装"),
+
+    WAIT_INSTALL(1, "待安装"),
     RUNNING(2, "正常"),
     EXISTS_ALARM(3, "存在告警"),
     EXISTS_EXCEPTION(4, "存在异常"),
@@ -53,7 +54,6 @@ public enum ServiceState {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-
 
     @Override
     public String toString() {

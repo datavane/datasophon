@@ -17,27 +17,19 @@
 
 package com.datasophon.api.controller;
 
+import com.datasophon.api.service.FrameServiceService;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.FrameServiceEntity;
+
 import java.util.Arrays;
 import java.util.List;
 
-import com.datasophon.api.service.FrameServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.FrameServiceEntity;
-import com.datasophon.common.utils.Result;
-
-
-/**
- * 集群框架版本服务表
- *
- * @author dygao2
- * @email gaodayu2022@163.com
- * @date 2022-03-15 17:36:08
- */
 @RestController
 @RequestMapping("api/frame/service")
 public class FrameServiceController {

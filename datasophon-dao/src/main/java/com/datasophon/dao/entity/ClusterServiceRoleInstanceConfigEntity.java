@@ -17,23 +17,18 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 集群服务角色实例配置表
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-03-15 17:21:05
- */
+import lombok.Data;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 @Data
 @TableName("t_ddh_cluster_service_role_instance_config")
 public class ClusterServiceRoleInstanceConfigEntity implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**

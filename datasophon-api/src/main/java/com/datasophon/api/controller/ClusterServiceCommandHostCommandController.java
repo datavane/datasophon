@@ -17,6 +17,10 @@
 
 package com.datasophon.api.controller;
 
+import com.datasophon.api.service.ClusterServiceCommandHostCommandService;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
+
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,24 +29,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
-import com.datasophon.api.service.ClusterServiceCommandHostCommandService;
-import com.datasophon.common.utils.Result;
-
-
-/**
- * 集群服务操作指令主机指令表
- *
- * @author dygao2
- * @email gaodayu2022@163.com
- * @date 2022-04-12 11:28:06
- */
 @RestController
 @RequestMapping("api/cluster/service/command/host/command")
 public class ClusterServiceCommandHostCommandController {
+
     @Autowired
     private ClusterServiceCommandHostCommandService clusterServiceCommandHostCommandService;
-
 
     /**
      * 列表
@@ -63,7 +55,8 @@ public class ClusterServiceCommandHostCommandController {
      */
     @RequestMapping("/info/{id}")
     public Result info(@PathVariable("id") Integer id) {
-        ClusterServiceCommandHostCommandEntity clusterServiceCommandHostCommand = clusterServiceCommandHostCommandService.getById(id);
+        ClusterServiceCommandHostCommandEntity clusterServiceCommandHostCommand =
+                clusterServiceCommandHostCommandService.getById(id);
 
         return Result.success().put("clusterServiceCommandHostCommand", clusterServiceCommandHostCommand);
     }

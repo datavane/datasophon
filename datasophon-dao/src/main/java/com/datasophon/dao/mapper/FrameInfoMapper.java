@@ -18,9 +18,11 @@
 package com.datasophon.dao.mapper;
 
 import com.datasophon.dao.entity.FrameInfoEntity;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * 集群框架表
@@ -31,5 +33,6 @@ import org.apache.ibatis.annotations.Param;
  */
 @Mapper
 public interface FrameInfoMapper extends BaseMapper<FrameInfoEntity> {
+
     FrameInfoEntity getFrameInfoByFrameCode(@Param("frameCode") String frameCode);
 }

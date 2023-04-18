@@ -17,24 +17,19 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 告警组表
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-03-15 17:28:12
- */
+import lombok.Data;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 @TableName("t_ddh_alert_group")
 @Data
 public class AlertGroupEntity implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**

@@ -16,12 +16,10 @@
  */
 package com.datasophon.common.utils;
 
-
 import org.apache.commons.collections.BeanMap;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
-
 
 /**
  * Provides utility methods and decorators for {@link Collection} instances.
@@ -102,14 +100,14 @@ public class CollectionUtils {
             return emptyMap;
         }
         String[] strings = str.split(separator);
-        int initialCapacity = (int)(strings.length / DEFAULT_LOAD_FACTOR) + 1;
+        int initialCapacity = (int) (strings.length / DEFAULT_LOAD_FACTOR) + 1;
         Map<String, String> map = new HashMap<>(initialCapacity);
         for (int i = 0; i < strings.length; i++) {
             String[] strArray = strings[i].split("=");
             if (strArray.length != 2) {
                 return emptyMap;
             }
-            //strArray[0] KEY  strArray[1] VALUE
+            // strArray[0] KEY strArray[1] VALUE
             if (StringUtils.isEmpty(keyPrefix)) {
                 map.put(strArray[0], strArray[1]);
             } else {
@@ -118,7 +116,6 @@ public class CollectionUtils {
         }
         return map;
     }
-
 
     /**
      * Helper class to easily access cardinality properties of two collections.
@@ -246,7 +243,6 @@ public class CollectionUtils {
         return count;
     }
 
-
     /**
      * Removes certain attributes of each object in the list
      * @param originList origin list
@@ -254,7 +250,8 @@ public class CollectionUtils {
      * @param <T> T
      * @return removes certain attributes of each object in the list
      */
-    public static <T extends Object> List<Map<String, Object>> getListByExclusion(List<T> originList, Set<String> exclusionSet) {
+    public static <T extends Object> List<Map<String, Object>> getListByExclusion(List<T> originList,
+                                                                                  Set<String> exclusionSet) {
         List<Map<String, Object>> instanceList = new ArrayList<>();
         if (exclusionSet == null) {
             exclusionSet = new HashSet<>();
@@ -265,8 +262,8 @@ public class CollectionUtils {
         Map<String, Object> instanceMap;
         for (T instance : originList) {
             Map<String, Object> dataMap = new BeanMap(instance);
-            instanceMap = new LinkedHashMap<>(16,0.75f,true);
-            for (Map.Entry<String, Object> entry: dataMap.entrySet()) {
+            instanceMap = new LinkedHashMap<>(16, 0.75f, true);
+            for (Map.Entry<String, Object> entry : dataMap.entrySet()) {
                 if (exclusionSet.contains(entry.getKey())) {
                     continue;
                 }

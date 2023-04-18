@@ -18,10 +18,12 @@
 package com.datasophon.common.command;
 
 import com.datasophon.common.model.HostInfo;
+
 import lombok.Data;
 
 @Data
 public class DispatcherHostAgentCommand {
+
     private HostInfo hostInfo;
 
     private Integer clusterId;

@@ -17,13 +17,13 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.enums.ServiceRoleState;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 集群服务角色实例表
@@ -34,13 +34,18 @@ import java.util.List;
  */
 public interface ClusterServiceRoleInstanceService extends IService<ClusterServiceRoleInstanceEntity> {
 
+    List<ClusterServiceRoleInstanceEntity> listStoppedServiceRoleListByHostnameAndClusterId(String hostname,
+                                                                                            Integer clusterId);
+
     List<ClusterServiceRoleInstanceEntity> getServiceRoleListByHostnameAndClusterId(String hostname, Integer clusterId);
 
-    List<ClusterServiceRoleInstanceEntity> getServiceRoleInstanceListByServiceIdAndRoleState(Integer id, ServiceRoleState stop);
+    List<ClusterServiceRoleInstanceEntity> getServiceRoleInstanceListByServiceIdAndRoleState(Integer id,
+                                                                                             ServiceRoleState stop);
 
     ClusterServiceRoleInstanceEntity getOneServiceRole(String serviceRoleName, String hostname, Integer clusterId);
 
-    Result listAll(Integer serviceInstanceId, String hostname, Integer serviceRoleState,String serviceRoleName,Integer roleGroupId, Integer page, Integer pageSize);
+    Result listAll(Integer serviceInstanceId, String hostname, Integer serviceRoleState, String serviceRoleName,
+                   Integer roleGroupId, Integer page, Integer pageSize);
 
     Result getLog(Integer serviceRoleInstanceId) throws Exception;
 
@@ -48,19 +53,21 @@ public interface ClusterServiceRoleInstanceService extends IService<ClusterServi
 
     Result deleteServiceRole(List<String> idList);
 
-    List<ClusterServiceRoleInstanceEntity> getServiceRoleInstanceListByClusterIdAndRoleName(Integer clusterId, String roleName);
+    List<ClusterServiceRoleInstanceEntity> getServiceRoleInstanceListByClusterIdAndRoleName(Integer clusterId,
+                                                                                            String roleName);
 
     List<ClusterServiceRoleInstanceEntity> getRunningServiceRoleInstanceListByServiceId(Integer serviceInstanceId);
 
     Result restartObsoleteService(Integer roleGroupId);
 
-    Result decommissionNode(String serviceRoleInstanceIds,String serviceName) throws Exception;
+    Result decommissionNode(String serviceRoleInstanceIds, String serviceName) throws Exception;
 
     void updateToNeedRestart(Integer roleGroupId);
 
     List<ClusterServiceRoleInstanceEntity> getObsoleteService(Integer id);
 
-    List<ClusterServiceRoleInstanceEntity> getStoppedRoleInstanceOnHost(Integer clusterId, String hostname, ServiceRoleState state);
+    List<ClusterServiceRoleInstanceEntity> getStoppedRoleInstanceOnHost(Integer clusterId, String hostname,
+                                                                        ServiceRoleState state);
 
     void reomveRoleInstance(Integer serviceInstanceId);
 
@@ -70,4 +77,3 @@ public interface ClusterServiceRoleInstanceService extends IService<ClusterServi
 
     ClusterServiceRoleInstanceEntity getServiceRoleInsByHostAndName(String hostName, String serviceRoleName);
 }
-

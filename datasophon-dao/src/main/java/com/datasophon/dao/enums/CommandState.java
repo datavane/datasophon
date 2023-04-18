@@ -21,12 +21,13 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum CommandState {
-    //命令状态 1：正在运行2：成功3：失败
-    WAIT(0,"待运行"),
-    RUNNING(1,"正在运行"),
-    SUCCESS(2,"成功"),
-    FAILED(3,"失败"),
-    CANCEL(4,"取消");
+
+    // 命令状态 1：正在运行2：成功3：失败
+    WAIT(0, "待运行"),
+    RUNNING(1, "正在运行"),
+    SUCCESS(2, "成功"),
+    FAILED(3, "失败"),
+    CANCEL(4, "取消");
 
     @EnumValue
     private int value;
@@ -54,7 +55,6 @@ public enum CommandState {
     public void setDesc(String desc) {
         this.desc = desc;
     }
-
 
     @Override
     public String toString() {

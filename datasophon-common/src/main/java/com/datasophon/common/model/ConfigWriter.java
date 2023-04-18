@@ -17,11 +17,12 @@
 
 package com.datasophon.common.model;
 
-import lombok.Data;
-
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class ConfigWriter {
+
     private List<Generators> generators;
 }

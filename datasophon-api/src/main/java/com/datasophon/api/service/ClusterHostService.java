@@ -17,12 +17,12 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterHostEntity;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 集群主机表 
@@ -35,11 +35,12 @@ public interface ClusterHostService extends IService<ClusterHostEntity> {
 
     ClusterHostEntity getClusterHostByHostname(String hostname);
 
-    Result listByPage(Integer clusterId, String hostname,String ip,String cpuArchitecture,Integer hostState,String orderField,String orderType, Integer page, Integer pageSize);
+    Result listByPage(Integer clusterId, String hostname, String ip, String cpuArchitecture, Integer hostState,
+                      String orderField, String orderType, Integer page, Integer pageSize);
 
     List<ClusterHostEntity> getHostListByClusterId(Integer id);
 
-    Result getRoleListByHostname(Integer clusterId,String hostname);
+    Result getRoleListByHostname(Integer clusterId, String hostname);
 
     Result deleteHost(Integer hostId);
 
@@ -51,8 +52,7 @@ public interface ClusterHostService extends IService<ClusterHostEntity> {
 
     List<ClusterHostEntity> getHostListByIds(List<String> ids);
 
-    Result assignRack(Integer clusterId ,String rack, String hostIds) ;
+    Result assignRack(Integer clusterId, String rack, String hostIds);
 
-    List<ClusterHostEntity> getClusterHostByRack(Integer clusterId ,String rack);
+    List<ClusterHostEntity> getClusterHostByRack(Integer clusterId, String rack);
 }
-

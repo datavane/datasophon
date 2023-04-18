@@ -17,13 +17,12 @@
 
 package com.datasophon.common.command;
 
-
 import com.datasophon.common.model.HostInfo;
+
 import lombok.Data;
 
 @Data
 public class HostCheckCommand {
-
 
     private HostInfo hostInfo;
 

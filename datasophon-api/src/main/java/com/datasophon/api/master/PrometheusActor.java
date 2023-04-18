@@ -38,6 +38,10 @@ import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 
+import scala.concurrent.Await;
+import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,18 +52,16 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
 import akka.actor.ActorSelection;
 import akka.actor.UntypedActor;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import cn.hutool.http.HttpUtil;
-import scala.concurrent.Await;
-import scala.concurrent.Future;
-import scala.concurrent.duration.Duration;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 public class PrometheusActor extends UntypedActor {
+
     private static final Logger logger = LoggerFactory.getLogger(PrometheusActor.class);
 
     @Override
@@ -104,13 +106,15 @@ public class PrometheusActor extends UntypedActor {
                 generators.setTemplateName("scrape.ftl");
                 List<String> value = roleEntry.getValue();
                 ArrayList<ServiceConfig> serviceConfigs = new ArrayList<>();
+                String serviceName = serviceInstance.getServiceName();
+                String serviceRoleName = roleEntry.getKey();
+                String clusterFrame = command.getClusterFrame();
                 for (String hostname : value) {
-                    String jmxKey =
-                            command.getClusterFrame()
-                                    + Constants.UNDERLINE
-                                    + serviceInstance.getServiceName()
-                                    + Constants.UNDERLINE
-                                    + roleEntry.getKey();
+                    String jmxKey = clusterFrame
+                            + Constants.UNDERLINE
+                            + serviceName
+                            + Constants.UNDERLINE
+                            + serviceRoleName;
                     if (ServiceRoleJmxMap.exists(jmxKey)) {
                         ServiceConfig serviceConfig = new ServiceConfig();
                         serviceConfig.setName(roleEntry.getKey() + Constants.UNDERLINE + hostname);

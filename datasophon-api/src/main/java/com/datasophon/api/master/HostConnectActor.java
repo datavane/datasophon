@@ -27,15 +27,17 @@ import com.datasophon.common.model.HostInfo;
 
 import org.apache.sshd.client.session.ClientSession;
 
+import scala.Option;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import akka.actor.UntypedActor;
 import cn.hutool.core.util.ObjectUtil;
-import scala.Option;
 
-public class HostActor extends UntypedActor {
-    private static final Logger logger = LoggerFactory.getLogger(HostActor.class);
+public class HostConnectActor extends UntypedActor {
+
+    private static final Logger logger = LoggerFactory.getLogger(HostConnectActor.class);
 
     @Override
     public void preRestart(Throwable reason, Option<Object> message) throws Exception {

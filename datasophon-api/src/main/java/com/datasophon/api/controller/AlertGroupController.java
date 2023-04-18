@@ -17,32 +17,25 @@
 
 package com.datasophon.api.controller;
 
-import java.util.*;
-
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.service.AlertGroupService;
 import com.datasophon.api.service.ClusterAlertQuotaService;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.AlertGroupEntity;
 import com.datasophon.dao.entity.ClusterAlertQuota;
+
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.AlertGroupEntity;
-import com.datasophon.common.utils.Result;
-
-
-/**
- * 告警组表
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-03-15 17:36:08
- */
 @RestController
 @RequestMapping("alert/group")
 public class AlertGroupController {
+
     @Autowired
     private AlertGroupService alertGroupService;
 
@@ -53,10 +46,9 @@ public class AlertGroupController {
      * 列表
      */
     @RequestMapping("/list")
-    public Result list(Integer clusterId,String alertGroupName,Integer page,Integer pageSize) {
-       return alertGroupService.getAlertGroupList(clusterId,alertGroupName,page,pageSize);
+    public Result list(Integer clusterId, String alertGroupName, Integer page, Integer pageSize) {
+        return alertGroupService.getAlertGroupList(clusterId, alertGroupName, page, pageSize);
     }
-
 
     /**
      * 信息
@@ -93,9 +85,10 @@ public class AlertGroupController {
     @RequestMapping("/delete")
     public Result delete(@RequestBody Integer[] ids) {
 
-        //校验是否绑定告警指标
-        List<ClusterAlertQuota> list = alertQuotaService.lambdaQuery().in(ClusterAlertQuota::getAlertGroupId, ids).list();
-        if(list.size() > 0){
+        // 校验是否绑定告警指标
+        List<ClusterAlertQuota> list =
+                alertQuotaService.lambdaQuery().in(ClusterAlertQuota::getAlertGroupId, ids).list();
+        if (list.size() > 0) {
             return Result.error(Status.ALERT_GROUP_TIPS_ONE.getMsg());
         }
         alertGroupService.removeByIds(Arrays.asList(ids));

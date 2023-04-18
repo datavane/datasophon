@@ -1,4 +1,5 @@
 /*
+ *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -13,76 +14,61 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.datasophon.api.master.alert;
 
-import akka.actor.ActorSelection;
-import akka.actor.UntypedActor;
-import akka.pattern.Patterns;
-import akka.util.Timeout;
-import cn.hutool.http.HttpUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.datasophon.api.load.ServiceInfoMap;
-import com.datasophon.api.load.ServiceRoleMap;
-import com.datasophon.api.master.ActorUtils;
-import com.datasophon.api.service.ClusterAlertHistoryService;
-import com.datasophon.api.service.ClusterInfoService;
-import com.datasophon.api.service.ClusterServiceInstanceService;
+import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.api.strategy.ServiceRoleStrategy;
 import com.datasophon.api.strategy.ServiceRoleStrategyContext;
-import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SpringTool;
-import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.common.Constants;
-import com.datasophon.common.cache.CacheUtils;
-import com.datasophon.common.command.ExecuteCmdCommand;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
-import com.datasophon.common.model.ProcInfo;
-import com.datasophon.common.utils.StarRocksUtils;
-import com.datasophon.common.model.ServiceInfo;
-import com.datasophon.common.model.ServiceRoleInfo;
-import com.datasophon.common.utils.ExecResult;
-import com.datasophon.dao.entity.ClusterAlertHistory;
-import com.datasophon.dao.entity.ClusterInfoEntity;
-import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
-import com.datasophon.dao.enums.AlertLevel;
-import com.datasophon.dao.enums.ServiceRoleState;
-import com.datasophon.dao.enums.ServiceState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.commons.lang.StringUtils;
-import scala.concurrent.Await;
-import scala.concurrent.Future;
-import scala.concurrent.duration.Duration;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+
+import akka.actor.UntypedActor;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 public class ServiceRoleCheckActor extends UntypedActor {
-
-
-    private static final Logger logger = LoggerFactory.getLogger(ServiceRoleCheckActor.class);
-
 
     @Override
     public void onReceive(Object msg) throws Throwable {
         if (msg instanceof ServiceRoleCheckCommand) {
-            ClusterServiceRoleInstanceService roleInstanceService = SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceService.class);
+            ClusterServiceRoleInstanceService roleInstanceService =
+                    SpringTool.getApplicationContext()
+                            .getBean(ClusterServiceRoleInstanceService.class);
 
-            List<ClusterServiceRoleInstanceEntity> list = roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                    .in(Constants.SERVICE_ROLE_NAME, "Prometheus", "AlertManager", "Krb5Kdc", "KAdmin", "SRFE", "SRBE", "DorisFE", "DorisBE"));
+            List<ClusterServiceRoleInstanceEntity> list =
+                    roleInstanceService.list(
+                            new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                                    .in(
+                                            Constants.SERVICE_ROLE_NAME,
+                                            "Prometheus",
+                                            "AlertManager",
+                                            "Krb5Kdc",
+                                            "KAdmin",
+                                            "SRFE",
+                                            "SRBE",
+                                            "DorisFE",
+                                            "DorisBE",
+                                            "NameNode",
+                                            "ResourceManager"));
 
-            Map<String, ClusterServiceRoleInstanceEntity> map = list.stream().collect(Collectors.toMap(e -> e.getHostname() + e.getServiceRoleName(), e -> e, (v1, v2) -> v1));
-
-            if (Objects.nonNull(list) && list.size() > 0) {
+            if (!list.isEmpty()) {
+                Map<String, ClusterServiceRoleInstanceEntity> map = translateListToMap(list);
                 for (ClusterServiceRoleInstanceEntity roleInstanceEntity : list) {
-                    ServiceRoleStrategy serviceRoleHandler = ServiceRoleStrategyContext.getServiceRoleHandler(roleInstanceEntity.getServiceRoleName());
+                    ServiceRoleStrategy serviceRoleHandler =
+                            ServiceRoleStrategyContext.getServiceRoleHandler(
+                                    roleInstanceEntity.getServiceRoleName());
                     if (Objects.nonNull(serviceRoleHandler)) {
-                        serviceRoleHandler.handlerServiceRoleCheck(roleInstanceEntity,map);
+                        serviceRoleHandler.handlerServiceRoleCheck(roleInstanceEntity, map);
                     }
                 }
             } else {
@@ -91,7 +77,13 @@ public class ServiceRoleCheckActor extends UntypedActor {
         }
     }
 
-
-
-
+    private Map<String, ClusterServiceRoleInstanceEntity> translateListToMap(
+                                                                             List<ClusterServiceRoleInstanceEntity> list) {
+        return list.stream()
+                .collect(
+                        Collectors.toMap(
+                                e -> e.getHostname() + e.getServiceRoleName(),
+                                e -> e,
+                                (v1, v2) -> v1));
+    }
 }
