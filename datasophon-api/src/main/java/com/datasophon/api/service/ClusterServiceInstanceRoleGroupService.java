@@ -1,4 +1,5 @@
 /*
+ *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -13,11 +14,10 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
 package com.datasophon.api.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
 
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceInstanceRoleGroup;
@@ -25,15 +25,11 @@ import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 
 import java.util.List;
 
-/**
- * 
- *
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-08-16 16:56:00
- */
-public interface ClusterServiceInstanceRoleGroupService extends IService<ClusterServiceInstanceRoleGroup> {
+import com.baomidou.mybatisplus.extension.service.IService;
 
+public interface ClusterServiceInstanceRoleGroupService
+        extends
+            IService<ClusterServiceInstanceRoleGroup> {
 
     ClusterServiceInstanceRoleGroup getRoleGroupByServiceInstanceId(Integer id);
 
@@ -47,6 +43,8 @@ public interface ClusterServiceInstanceRoleGroupService extends IService<Cluster
 
     Result deleteRoleGroup(Integer roleGroupId);
 
-    List<ClusterServiceInstanceRoleGroup> listRoleGroupByServiceInstanceId(Integer serviceInstanceId);
-}
+    List<ClusterServiceInstanceRoleGroup> listRoleGroupByServiceInstanceId(
+                                                                           Integer serviceInstanceId);
 
+    void updateToNeedRestart(Integer roleGroupId);
+}

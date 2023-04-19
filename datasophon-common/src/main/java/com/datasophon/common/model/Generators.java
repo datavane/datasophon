@@ -17,13 +17,14 @@
 
 package com.datasophon.common.model;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
 
+import lombok.Data;
+
 @Data
 public class Generators implements Serializable {
+
     private String filename;
 
     private String configFormat;
@@ -35,10 +36,10 @@ public class Generators implements Serializable {
     private String templateName;
     @Override
     public boolean equals(Object o) {
-        if (this == o){
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         Generators generators = (Generators) o;

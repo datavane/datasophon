@@ -17,13 +17,13 @@
 
 package com.datasophon.api.security;
 
-
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.UserInfoEntity;
 
 import javax.servlet.http.HttpServletRequest;
 
 public interface Authenticator {
+
     /**
      * Verifying legality via username and password
      *

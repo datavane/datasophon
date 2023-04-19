@@ -46,6 +46,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.LoggerFactory;
 
 public class MinaUtils {
+
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MinaUtils.class);
 
     /** 打开远程会话 */
@@ -120,7 +121,7 @@ public class MinaUtils {
                     ce.waitFor(
                             EnumSet.of(ClientChannelEvent.CLOSED),
                             TimeUnit.SECONDS.toMillis(100000));
-            //  检查请求是否超时
+            // 检查请求是否超时
             if (events.contains(ClientChannelEvent.TIMEOUT)) {
                 throw new Exception("mina 连接超时");
             }
@@ -204,10 +205,10 @@ public class MinaUtils {
             String ls = MinaUtils.execCmdWithResult(session, "arch");
             System.out.println(ls);
         }
-        //        boolean dir = MinaUtils.createDir(session,"/home/shinow/test/");
-        //        System.out.println(dir);
-        //        boolean uploadFile = MinaUtils.uploadFile(session, "/Users/liuxin/opt/test",
+        // boolean dir = MinaUtils.createDir(session,"/home/shinow/test/");
+        // System.out.println(dir);
+        // boolean uploadFile = MinaUtils.uploadFile(session, "/Users/liuxin/opt/test",
         // "/Users/liuxin/Downloads/yarn-default.xml");
-        //        System.out.println(uploadFile);
+        // System.out.println(uploadFile);
     }
 }

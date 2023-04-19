@@ -21,6 +21,7 @@ import lombok.Data;
 
 @Data
 public class ProcInfo {
+
     private String HostName;
 
     private Boolean Alive;

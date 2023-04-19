@@ -18,9 +18,10 @@
 package com.datasophon.dao.model;
 
 import com.datasophon.dao.entity.ClusterQueueCapacity;
-import lombok.Data;
 
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class ClusterQueueCapacityList {

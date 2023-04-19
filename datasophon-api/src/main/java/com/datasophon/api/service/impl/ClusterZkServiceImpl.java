@@ -17,20 +17,18 @@
 
 package com.datasophon.api.service.impl;
 
+import com.datasophon.api.service.ClusterZkService;
 import com.datasophon.common.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.datasophon.dao.entity.ClusterZk;
+import com.datasophon.dao.mapper.ClusterZkMapper;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
-
-import com.datasophon.dao.mapper.ClusterZkMapper;
-import com.datasophon.dao.entity.ClusterZk;
-import com.datasophon.api.service.ClusterZkService;
-
 
 @Service("clusterZkService")
 public class ClusterZkServiceImpl extends ServiceImpl<ClusterZkMapper, ClusterZk> implements ClusterZkService {
@@ -45,6 +43,6 @@ public class ClusterZkServiceImpl extends ServiceImpl<ClusterZkMapper, ClusterZk
 
     @Override
     public List<ClusterZk> getAllZkServer(Integer clusterId) {
-        return this.list(new QueryWrapper<ClusterZk>().eq(Constants.CLUSTER_ID,clusterId));
+        return this.list(new QueryWrapper<ClusterZk>().eq(Constants.CLUSTER_ID, clusterId));
     }
 }

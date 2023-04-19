@@ -17,6 +17,10 @@
 
 package com.datasophon.api.controller;
 
+import com.datasophon.api.service.NoticeGroupUserService;
+import com.datasophon.common.utils.Result;
+import com.datasophon.dao.entity.NoticeGroupUserEntity;
+
 import java.util.Arrays;
 import java.util.Map;
 
@@ -27,15 +31,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datasophon.dao.entity.NoticeGroupUserEntity;
-import com.datasophon.api.service.NoticeGroupUserService;
-import com.datasophon.common.utils.Result;
-
-
-
 @RestController
 @RequestMapping("api/notice/group/user")
 public class NoticeGroupUserController {
+
     @Autowired
     private NoticeGroupUserService noticeGroupUserService;
 
@@ -45,10 +44,8 @@ public class NoticeGroupUserController {
     @RequestMapping("/list")
     public Result list(@RequestParam Map<String, Object> params) {
 
-
         return Result.success();
     }
-
 
     /**
      * 信息

@@ -17,9 +17,9 @@
 
 package com.datasophon.common.exception;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import lombok.Data;
 
 @Data
 public class AkkaRemoteException implements Serializable {

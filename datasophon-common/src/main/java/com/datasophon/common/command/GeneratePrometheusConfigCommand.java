@@ -17,11 +17,13 @@
 
 package com.datasophon.common.command;
 
-import lombok.Data;
-
 import java.io.Serializable;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 @Data
+@Accessors(chain = true)
 public class GeneratePrometheusConfigCommand implements Serializable {
 
     private Integer serviceInstanceId;

@@ -17,19 +17,12 @@
 
 package com.datasophon.api.service.impl;
 
-import akka.actor.ActorSelection;
-import akka.actor.ActorSystem;
-import akka.pattern.Patterns;
-import akka.util.Timeout;
-import cn.hutool.core.bean.BeanUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.ActorUtils;
-import com.datasophon.api.service.ClusterYarnQueueService;
 import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
+import com.datasophon.api.service.ClusterYarnQueueService;
 import com.datasophon.common.Constants;
-import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ExecuteCmdCommand;
 import com.datasophon.common.model.Generators;
 import com.datasophon.common.model.ServiceConfig;
@@ -37,30 +30,39 @@ import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
+import com.datasophon.dao.entity.ClusterYarnQueue;
+import com.datasophon.dao.mapper.ClusterYarnQueueMapper;
+
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+
+import scala.concurrent.Await;
+import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import akka.actor.ActorSelection;
+import akka.pattern.Patterns;
+import akka.util.Timeout;
+import cn.hutool.core.bean.BeanUtil;
+
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-
-import com.datasophon.dao.mapper.ClusterYarnQueueMapper;
-import com.datasophon.dao.entity.ClusterYarnQueue;
-import scala.concurrent.Await;
-import scala.concurrent.Future;
-import scala.concurrent.duration.Duration;
-
-
 @Service("clusterYarnQueueService")
-public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMapper, ClusterYarnQueue> implements ClusterYarnQueueService {
+public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMapper, ClusterYarnQueue>
+        implements
+            ClusterYarnQueueService {
+
     private static final Logger logger = LoggerFactory.getLogger(ClusterYarnQueueServiceImpl.class);
 
     @Autowired
@@ -88,10 +90,11 @@ public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMap
     public Result refreshQueues(Integer clusterId) throws Exception {
         List<ClusterYarnQueue> list = this.list(new QueryWrapper<ClusterYarnQueue>()
                 .eq(Constants.CLUSTER_ID, clusterId));
-        //查询resourcemanager节点
-        List<ClusterServiceRoleInstanceEntity> roleList = roleInstanceService.getServiceRoleInstanceListByClusterIdAndRoleName(clusterId, "ResourceManager");
+        // 查询resourcemanager节点
+        List<ClusterServiceRoleInstanceEntity> roleList =
+                roleInstanceService.getServiceRoleInstanceListByClusterIdAndRoleName(clusterId, "ResourceManager");
 
-        //构建configfilemap
+        // 构建configfilemap
         HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
         Generators generators = new Generators();
         generators.setFilename("fair-scheduler.xml");
@@ -120,7 +123,7 @@ public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMap
         configFileMap.put(generators, serviceConfigs);
         String hostname = "";
         for (ClusterServiceRoleInstanceEntity roleInstanceEntity : roleList) {
-            //调用指令刷新yarn队列配置
+            // 调用指令刷新yarn队列配置
             ServiceRoleInfo serviceRoleInfo = new ServiceRoleInfo();
             serviceRoleInfo.setName("ResourceManager");
             serviceRoleInfo.setParentName("YARN");
@@ -136,7 +139,8 @@ public class ClusterYarnQueueServiceImpl extends ServiceImpl<ClusterYarnQueueMap
                 hostname = roleInstanceEntity.getHostname();
             }
         }
-        ActorSelection execCmdActor = ActorUtils.actorSystem.actorSelection("akka.tcp://datasophon@" + hostname + ":2552/user/worker/executeCmdActor");
+        ActorSelection execCmdActor = ActorUtils.actorSystem
+                .actorSelection("akka.tcp://datasophon@" + hostname + ":2552/user/worker/executeCmdActor");
         ExecuteCmdCommand command = new ExecuteCmdCommand();
         Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
         ArrayList<String> commands = new ArrayList<>();

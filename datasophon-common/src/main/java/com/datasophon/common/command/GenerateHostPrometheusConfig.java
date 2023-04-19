@@ -17,12 +17,12 @@
 
 package com.datasophon.common.command;
 
-import lombok.Data;
-
 import java.io.Serializable;
 
+import lombok.Data;
+
 @Data
-public class GenerateHostPrometheusConfig  implements Serializable {
+public class GenerateHostPrometheusConfig implements Serializable {
 
     private Integer clusterId;
 }

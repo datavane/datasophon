@@ -45,10 +45,10 @@ public class FileUtils {
                 rf.seek(pointer--);
                 // 读取数据
                 int readLength = rf.read(c);
-                if (readLength != -1 && Arrays.equals(lineSeparator,c)) {
+                if (readLength != -1 && Arrays.equals(lineSeparator, c)) {
                     lineSeparatorNum++;
                 }
-                //扫描完依然没有找到足够的行数,将指针归0
+                // 扫描完依然没有找到足够的行数,将指针归0
                 if (pointer == -1 && lineSeparatorNum < rows) {
                     rf.seek(0);
                 }
