@@ -17,6 +17,10 @@
 
 package com.datasophon.api.service.impl;
 
+import akka.actor.ActorRef;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.PrometheusActor;
 import com.datasophon.api.service.AlertGroupService;
@@ -31,22 +35,22 @@ import com.datasophon.dao.entity.AlertGroupEntity;
 import com.datasophon.dao.entity.ClusterAlertQuota;
 import com.datasophon.dao.enums.QuotaState;
 import com.datasophon.dao.mapper.ClusterAlertQuotaMapper;
-
 import org.apache.commons.lang.StringUtils;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import akka.actor.ActorRef;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service("clusterAlertQuotaService")
 public class ClusterAlertQuotaServiceImpl extends ServiceImpl<ClusterAlertQuotaMapper, ClusterAlertQuota>
@@ -65,7 +69,7 @@ public class ClusterAlertQuotaServiceImpl extends ServiceImpl<ClusterAlertQuotaM
         LambdaQueryChainWrapper<ClusterAlertQuota> wrapper = this.lambdaQuery()
                 .eq(alertGroupId != null, ClusterAlertQuota::getAlertGroupId, alertGroupId)
                 .like(StringUtils.isNotBlank(quotaName), ClusterAlertQuota::getAlertQuotaName, quotaName);
-
+        int count = wrapper.count() == null ? 0 : wrapper.count();
         List<ClusterAlertQuota> alertQuotaList = wrapper.last("limit " + offset + "," + pageSize).list();
         if (CollectionUtils.isEmpty(alertQuotaList)) {
             return Result.successEmptyCount();
@@ -85,8 +89,6 @@ public class ClusterAlertQuotaServiceImpl extends ServiceImpl<ClusterAlertQuotaM
                 a.setQuotaStateCode(a.getQuotaState().getValue());
             });
         }
-
-        int count = wrapper.count() == null ? 0 : wrapper.count();
         return Result.success(alertQuotaList).put(Constants.TOTAL, count);
     }
 
