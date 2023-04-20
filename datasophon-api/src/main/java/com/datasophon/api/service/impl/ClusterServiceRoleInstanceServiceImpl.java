@@ -17,12 +17,6 @@
 
 package com.datasophon.api.service.impl;
 
-import akka.actor.ActorSelection;
-import akka.pattern.Patterns;
-import akka.util.Timeout;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.ActorUtils;
@@ -51,11 +45,9 @@ import com.datasophon.dao.enums.NeedRestart;
 import com.datasophon.dao.enums.RoleType;
 import com.datasophon.dao.enums.ServiceRoleState;
 import com.datasophon.dao.mapper.ClusterServiceRoleInstanceMapper;
+
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -68,6 +60,19 @@ import java.util.Objects;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+import akka.actor.ActorSelection;
+import akka.pattern.Patterns;
+import akka.util.Timeout;
 
 @Service("clusterServiceRoleInstanceService")
 public class ClusterServiceRoleInstanceServiceImpl
@@ -172,7 +177,6 @@ public class ClusterServiceRoleInstanceServiceImpl
             }
             roleInstanceEntity.setServiceRoleStateCode(roleInstanceEntity.getServiceRoleState().getValue());
         }
-
 
         return Result.success(cluServiceRoleInstList).put(Constants.TOTAL, count);
     }

@@ -31,7 +31,7 @@
         <module>datasophon-dao</module>
         <module>datasophon-common</module>
         <module>datasophon-worker</module>
-        <module>datasophon-ui</module>
+        <!--        <module>datasophon-ui</module>-->
     </modules>
 
     <properties>

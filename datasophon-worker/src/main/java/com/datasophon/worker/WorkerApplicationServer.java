@@ -39,6 +39,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSONObject;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
@@ -47,10 +51,6 @@ import akka.event.EventStream;
 import akka.remote.AssociatedEvent;
 import akka.remote.AssociationErrorEvent;
 import akka.remote.DisassociatedEvent;
-
-import com.alibaba.fastjson.JSONObject;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 
 public class WorkerApplicationServer {
 
