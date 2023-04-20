@@ -12,14 +12,6 @@ import java.util.ArrayList;
 /**
  * <pre>
  *
- * Created by zhenqin.
- * User: zhenqin
- * Date: 2023/4/19
- * Time: 下午3:54
- * Vendor: yiidata.com
- *
- * </pre>
- *
  * @author zhenqin
  */
 public class MutilTemplateFileTest {
@@ -29,24 +21,24 @@ public class MutilTemplateFileTest {
         Generators generators = new Generators();
         generators.setConfigFormat("custom");
         generators.setFilename("application.yml");
-        generators.setTemplateName("dataops-application.ftl");
-        generators.setOutputDirectory("templa");
+        generators.setTemplateName("dolphinscheduler_env.ftl");
+        generators.setOutputDirectory("./");
 
         // config data
         ServiceConfig serviceConfig = new ServiceConfig();
         serviceConfig.setConfigType("map");
         serviceConfig.setName("flowschedulerUrl");
-        serviceConfig.setValue("http://192.168.1.10:12345/dolphinscheduler");
+        serviceConfig.setValue("var1");
 
         ServiceConfig serviceConfig2 = new ServiceConfig();
         serviceConfig2.setConfigType("map");
         serviceConfig2.setName("flowschedulerToken");
-        serviceConfig2.setValue("337d43d7aaa062a2a6032a14aa836240");
+        serviceConfig2.setValue("var2");
 
         ArrayList<ServiceConfig> serviceConfigs = new ArrayList<>();
         serviceConfigs.add(serviceConfig);
         serviceConfigs.add(serviceConfig2);
 
-        FreemakerUtils.generateConfigFile(generators, serviceConfigs,"", "manual/docs");
+        FreemakerUtils.generateConfigFile(generators, serviceConfigs,"", "mytemplates");
     }
 }
