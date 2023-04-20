@@ -36,11 +36,11 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import akka.actor.*;
-import akka.util.Timeout;
-
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+
+import akka.actor.*;
+import akka.util.Timeout;
 
 public class ActorUtils {
 
@@ -64,6 +64,8 @@ public class ActorUtils {
                 getActorRefName(ServiceRoleCheckActor.class));
         ActorRef hostCheckActor =
                 actorSystem.actorOf(Props.create(HostCheckActor.class), getActorRefName(HostCheckActor.class));
+        actorSystem.actorOf(Props.create(MasterNodeProcessingActor.class),
+                getActorRefName(MasterNodeProcessingActor.class));
 
         actorSystem.scheduler().schedule(
                 FiniteDuration.apply(60L, TimeUnit.SECONDS),

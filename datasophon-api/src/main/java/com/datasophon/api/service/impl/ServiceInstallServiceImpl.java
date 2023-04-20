@@ -92,11 +92,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import cn.hutool.crypto.SecureUtil;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
+import cn.hutool.crypto.SecureUtil;
 
 @Service("serviceInstallService")
 @Transactional

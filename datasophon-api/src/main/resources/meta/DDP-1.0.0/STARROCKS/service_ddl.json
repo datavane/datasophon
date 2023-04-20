@@ -2,11 +2,11 @@
   "name": "STARROCKS",
   "label": "StarRocks",
   "description": "简单易用、高性能和统一的分析数据库",
-  "version": "2.4.1",
+  "version": "2.2.2",
   "sortNum": 12,
   "dependencies":[],
-  "packageName": "StarRocks-2.4.1.tar.gz",
-  "decompressPackageName": "StarRocks-2.4.1",
+  "packageName": "StarRocks-2.2.2.tar.gz",
+  "decompressPackageName": "StarRocks-2.2.2",
   "roles": [
     {
       "name": "SRFE",

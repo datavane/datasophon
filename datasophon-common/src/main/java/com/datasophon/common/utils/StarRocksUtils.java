@@ -43,6 +43,32 @@ public class StarRocksUtils {
         executeSql(feMaster, hostname, sql);
     }
 
+    public static ExecResult addFollowerBySqlClient(String feMaster,
+                                                    String hostname) {
+        String sqlCommand =
+                "mysql -h"
+                        + feMaster
+                        + " -uroot -P9030 -e"
+                        + " 'ALTER SYSTEM add FOLLOWER  \""
+                        + hostname
+                        + ":9010\"';";
+        logger.info("sqlCommand is {}", sqlCommand);
+        return ShellUtils.exceShell(sqlCommand);
+    }
+
+    public static ExecResult addBackendSqlClient(String feMaster,
+                                                 String hostname) {
+        String sqlCommand =
+                "mysql -h"
+                        + feMaster
+                        + " -uroot -P9030 -e"
+                        + " 'ALTER SYSTEM add BACKEND  \""
+                        + hostname
+                        + ":9050\"';";
+        logger.info("sqlCommand is {}", sqlCommand);
+        return ShellUtils.exceShell(sqlCommand);
+    }
+
     private static void executeSql(String feMaster, String hostname,
                                    String sql) throws ClassNotFoundException, SQLException {
         Connection connection = getConnection(feMaster);

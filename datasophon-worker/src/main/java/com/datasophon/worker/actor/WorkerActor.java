@@ -28,9 +28,9 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import akka.actor.*;
-
 import com.alibaba.fastjson.JSONObject;
+
+import akka.actor.*;
 
 public class WorkerActor extends UntypedActor {
 

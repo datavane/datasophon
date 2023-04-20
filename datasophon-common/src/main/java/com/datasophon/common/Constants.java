@@ -252,4 +252,10 @@ public final class Constants {
      * root user
      */
     public static final String ROOT = "root";
+
+    /**
+     * starrocks operate type
+     */
+    public static final String ADD_FE = "ADD_FE";
+    public static final String ADD_BE = "ADD_BE";
 }
