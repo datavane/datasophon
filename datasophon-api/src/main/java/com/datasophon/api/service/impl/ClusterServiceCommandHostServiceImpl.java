@@ -17,6 +17,8 @@
 
 package com.datasophon.api.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.api.service.ClusterServiceCommandHostCommandService;
 import com.datasophon.api.service.ClusterServiceCommandHostService;
 import com.datasophon.common.Constants;
@@ -24,14 +26,10 @@ import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterServiceCommandHostEntity;
 import com.datasophon.dao.enums.CommandState;
 import com.datasophon.dao.mapper.ClusterServiceCommandHostMapper;
-
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import java.util.List;
 
 @Service("clusterServiceCommandHostService")
 public class ClusterServiceCommandHostServiceImpl
@@ -52,7 +50,7 @@ public class ClusterServiceCommandHostServiceImpl
 
         LambdaQueryChainWrapper<ClusterServiceCommandHostEntity> wrapper = this.lambdaQuery()
                 .eq(ClusterServiceCommandHostEntity::getCommandId, commandId);
-
+        int total = wrapper.count();
         List<ClusterServiceCommandHostEntity> list = wrapper
                 .orderByDesc(ClusterServiceCommandHostEntity::getCreateTime)
                 .last("limit " + offset + "," + pageSize)
@@ -61,7 +59,6 @@ public class ClusterServiceCommandHostServiceImpl
             commandHostEntity.setCommandStateCode(commandHostEntity.getCommandState().getValue());
         }
 
-        int total = wrapper.count();
         return Result.success(list).put(Constants.TOTAL, total);
     }
 
