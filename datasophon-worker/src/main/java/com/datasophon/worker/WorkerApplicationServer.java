@@ -39,10 +39,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSONObject;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
@@ -51,6 +47,10 @@ import akka.event.EventStream;
 import akka.remote.AssociatedEvent;
 import akka.remote.AssociationErrorEvent;
 import akka.remote.DisassociatedEvent;
+
+import com.alibaba.fastjson.JSONObject;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 
 public class WorkerApplicationServer {
 
@@ -141,11 +141,11 @@ public class WorkerApplicationServer {
     }
 
     private static void tellToMaster(
-            String hostname,
-            String workDir,
-            String masterHost,
-            String cpuArchitecture,
-            ActorSystem system) {
+                                     String hostname,
+                                     String workDir,
+                                     String masterHost,
+                                     String cpuArchitecture,
+                                     ActorSystem system) {
         ActorSelection workerStartActor =
                 system.actorSelection(
                         "akka.tcp://datasophon@" + masterHost + ":2551/user/workerStartActor");
@@ -175,7 +175,7 @@ public class WorkerApplicationServer {
     }
 
     private static void operateNodeExporter(
-            String workDir, String cpuArchitecture, String operate) {
+                                            String workDir, String cpuArchitecture, String operate) {
         ArrayList<String> commands = new ArrayList<>();
         commands.add(SH);
         if (Constants.x86_64.equals(cpuArchitecture)) {

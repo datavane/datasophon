@@ -18,9 +18,11 @@
 package com.datasophon.dao.mapper;
 
 import com.datasophon.dao.entity.ClusterHostEntity;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * 集群主机表 
@@ -34,5 +36,5 @@ public interface ClusterHostMapper extends BaseMapper<ClusterHostEntity> {
 
     ClusterHostEntity getClusterHostByHostname(@Param("hostname") String hostname);
 
-    void updateBatchNodeLabel(@Param("hostIds") String hostIds,@Param("nodeLabel") String nodeLabel);
+    void updateBatchNodeLabel(@Param("hostIds") String hostIds, @Param("nodeLabel") String nodeLabel);
 }

@@ -17,31 +17,31 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import java.io.Serializable;
+
 import lombok.Data;
 
-import java.io.Serializable;
-import java.util.Date;
-
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 
 @Data
 @TableName("t_ddh_cluster_service_dashboard")
 public class ClusterServiceDashboard implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 主机
-	 */
-	@TableId
-	private Integer id;
-	/**
-	 * 服务名称
-	 */
-	private String serviceName;
-	/**
-	 * 总览页面地址
-	 */
-	private String dashboardUrl;
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 主机
+     */
+    @TableId
+    private Integer id;
+    /**
+     * 服务名称
+     */
+    private String serviceName;
+    /**
+     * 总览页面地址
+     */
+    private String dashboardUrl;
 
 }

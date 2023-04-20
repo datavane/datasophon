@@ -18,9 +18,11 @@
 package com.datasophon.dao.mapper;
 
 import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * 集群服务表
@@ -32,5 +34,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface ClusterServiceInstanceMapper extends BaseMapper<ClusterServiceInstanceEntity> {
 
-    String getServiceConfigByClusterIdAndServiceName(@Param("clusterId") Integer clusterId, @Param("serviceName") String serviceName);
+    String getServiceConfigByClusterIdAndServiceName(@Param("clusterId") Integer clusterId,
+                                                     @Param("serviceName") String serviceName);
 }

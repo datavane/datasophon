@@ -17,12 +17,13 @@
 
 package com.datasophon.common.command;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import lombok.Data;
 
 @Data
 public class BaseCommandResult implements Serializable {
+
     private Boolean execResult;
 
     private String execOut;

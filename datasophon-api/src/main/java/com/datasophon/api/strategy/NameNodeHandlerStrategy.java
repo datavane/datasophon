@@ -33,6 +33,10 @@ import com.datasophon.common.utils.ExecResult;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 
+import scala.concurrent.Await;
+import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,9 +48,6 @@ import org.slf4j.LoggerFactory;
 import akka.actor.ActorRef;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
-import scala.concurrent.Await;
-import scala.concurrent.Future;
-import scala.concurrent.duration.Duration;
 
 public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements ServiceRoleStrategy {
 
@@ -111,7 +112,8 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
     }
 
     @Override
-    public void getConfig(Integer clusterId, List<ServiceConfig> list) {}
+    public void getConfig(Integer clusterId, List<ServiceConfig> list) {
+    }
 
     @Override
     public void handlerServiceRoleInfo(ServiceRoleInfo serviceRoleInfo, String hostname) {
@@ -125,8 +127,8 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
 
     @Override
     public void handlerServiceRoleCheck(
-            ClusterServiceRoleInstanceEntity roleInstanceEntity,
-            Map<String, ClusterServiceRoleInstanceEntity> map) {
+                                        ClusterServiceRoleInstanceEntity roleInstanceEntity,
+                                        Map<String, ClusterServiceRoleInstanceEntity> map) {
         Map<String, String> globalVariable = GlobalVariables.get(roleInstanceEntity.getClusterId());
         String nn2 = globalVariable.get("${nn2}");
         String commandLine =
@@ -139,7 +141,7 @@ public class NameNodeHandlerStrategy extends ServiceHandlerAbstract implements S
     }
 
     private void getNMState(
-            ClusterServiceRoleInstanceEntity roleInstanceEntity, String commandLine) {
+                            ClusterServiceRoleInstanceEntity roleInstanceEntity, String commandLine) {
         ClusterServiceRoleInstanceWebuisService webuisService =
                 SpringTool.getApplicationContext()
                         .getBean(ClusterServiceRoleInstanceWebuisService.class);

@@ -18,8 +18,10 @@
 package com.datasophon.dao.mapper;
 
 import com.datasophon.dao.entity.FrameServiceEntity;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import org.apache.ibatis.annotations.Mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * 集群框架版本服务表
@@ -30,6 +32,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface FrameServiceMapper extends BaseMapper<FrameServiceEntity> {
-
 
 }

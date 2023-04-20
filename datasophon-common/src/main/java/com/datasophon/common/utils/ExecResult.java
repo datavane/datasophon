@@ -17,8 +17,6 @@
 
 package com.datasophon.common.utils;
 
-import lombok.Data;
-
 import java.io.Serializable;
 
 public class ExecResult implements Serializable {

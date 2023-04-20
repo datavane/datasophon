@@ -20,13 +20,12 @@ package com.datasophon.dao.enums;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 
 public enum MANAGED {
-    YES(1,true),
-    NO(2,false);
 
+    YES(1, true),
+    NO(2, false);
 
     @EnumValue
     private int value;
-
 
     private boolean desc;
 

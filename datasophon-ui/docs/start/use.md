@@ -1,21 +1,31 @@
 ---
+
 title: 使用
 lang: zh-CN
----
+-----------
+
 # 使用
+
 ## 准备
+
 你的本地环境需要安装 yarn、node 和 git。我们的技术栈基于 ES2015+、Vue、Antd，提前学习这些知识会非常有帮助。
+
 ## 安装
+
 克隆本项目到本地
+
 ```bash
 $ git clone https://github.com/iczer/vue-antd-admin.git
 ```
+
 安装依赖
+
 ```bash
 $ yarn install
 or
 $ npm install
 ```
+
 :::tip
 master 分支是 Vue Antd Admin 的标准版代码，此分支代码适合用于用于学习研究，不推荐在此分支做正式开发。
 我们在 basic 分支提供了 Vue Antd Admin 的基础版代码，正式开发请切换至此分支，以便于后续的版本更新。
@@ -24,7 +34,9 @@ master 分支是 Vue Antd Admin 的标准版代码，此分支代码适合用于
 如果基于 `master分支` 进行开发，在版本更新时遇到的代码冲突问题请自行解决，我们不对基于 `master分支` 开发时遇到的问题提供技术支持。  
 再次强调，`master分支` 仅推荐用于学习参考，正式开发请切换至 `basic` 分支！！！
 :::
+
 ## 目录结构
+
 我们已经为你生成了一个完整的开发框架，提供了涵盖中后台开发的各类功能和坑位，下面是整个项目的目录结构。
 
 ```bash
@@ -52,11 +64,15 @@ master 分支是 Vue Antd Admin 的标准版代码，此分支代码适合用于
 ├── README.md                # README.md
 └── vue.config.js            # vue 配置文件
 ```
+
 ## 本地开发
+
 启动服务
+
 ```bash
 $ yarn serve
 or
 $ npm run serve
 ```
+
 启动成功后，会看到一个本地预览地址，通常是 http://localhost:8080 。接下来就可以修改代码，并实时预览修改结果啦！

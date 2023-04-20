@@ -17,11 +17,11 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-
 import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 
@@ -32,7 +32,6 @@ import java.util.List;
  */
 public interface ClusterServiceRoleGroupConfigService extends IService<ClusterServiceRoleGroupConfig> {
 
-
     ClusterServiceRoleGroupConfig getConfigByRoleGroupId(Integer roleGroupId);
 
     ClusterServiceRoleGroupConfig getConfigByRoleGroupIdAndVersion(Integer roleGroupId, Integer version);
@@ -41,4 +40,3 @@ public interface ClusterServiceRoleGroupConfigService extends IService<ClusterSe
 
     List<ClusterServiceRoleGroupConfig> listRoleGroupConfigsByRoleGroupIds(List<Integer> roleGroupIds);
 }
-

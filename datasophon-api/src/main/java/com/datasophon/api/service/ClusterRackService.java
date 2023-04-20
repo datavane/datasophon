@@ -17,11 +17,12 @@
 
 package com.datasophon.api.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterRack;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 
@@ -32,7 +33,6 @@ import java.util.List;
  */
 public interface ClusterRackService extends IService<ClusterRack> {
 
-
     List<ClusterRack> queryClusterRack(Integer clusterId);
 
     void saveRack(Integer clusterId, String rack);
@@ -41,4 +41,3 @@ public interface ClusterRackService extends IService<ClusterRack> {
 
     void createDefaultRack(Integer clusterId);
 }
-

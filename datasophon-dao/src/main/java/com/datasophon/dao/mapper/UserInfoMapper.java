@@ -18,9 +18,11 @@
 package com.datasophon.dao.mapper;
 
 import com.datasophon.dao.entity.UserInfoEntity;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * 用户信息表

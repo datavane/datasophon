@@ -17,16 +17,15 @@
 
 package com.datasophon.worker.handler;
 
+import static ch.qos.logback.classic.ClassicConstants.FINALIZE_SESSION_MARKER;
 
 import com.datasophon.common.Constants;
 import com.datasophon.common.model.RunAs;
 import com.datasophon.common.model.ServiceRoleRunner;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.PropertyUtils;
-import com.datasophon.common.utils.ShellUtils;
+
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
@@ -35,10 +34,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import static ch.qos.logback.classic.ClassicConstants.FINALIZE_SESSION_MARKER;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServiceHandler {
+
     private static final Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
 
     /**
@@ -58,7 +58,8 @@ public class ServiceHandler {
         this.logHandler = this::logHandle;
     }
 
-    public ExecResult start(ServiceRoleRunner startRunner, ServiceRoleRunner statusRunner, String decompressPackageName, RunAs runAs) {
+    public ExecResult start(ServiceRoleRunner startRunner, ServiceRoleRunner statusRunner, String decompressPackageName,
+                            RunAs runAs) {
         ExecResult statusResult = execRunner(statusRunner, decompressPackageName, null);
         if (statusResult.getExecResult()) {
             logger.info("{} already started", decompressPackageName);
@@ -66,9 +67,9 @@ public class ServiceHandler {
             execResult.setExecResult(true);
             return execResult;
         }
-        //start service
-        ExecResult startResult =execRunner(startRunner, decompressPackageName, runAs);
-        //check start result
+        // start service
+        ExecResult startResult = execRunner(startRunner, decompressPackageName, runAs);
+        // check start result
         if (startResult.getExecResult()) {
             int times = PropertyUtils.getInt("times");
             int count = 0;
@@ -95,13 +96,13 @@ public class ServiceHandler {
         return startResult;
     }
 
-
-    public ExecResult stop(ServiceRoleRunner runner, ServiceRoleRunner statusRunner, String decompressPackageName, RunAs runAs) {
+    public ExecResult stop(ServiceRoleRunner runner, ServiceRoleRunner statusRunner, String decompressPackageName,
+                           RunAs runAs) {
         ExecResult statusResult = execRunner(statusRunner, decompressPackageName, runAs);
         ExecResult execResult = new ExecResult();
         if (statusResult.getExecResult()) {
             execResult = execRunner(runner, decompressPackageName, runAs);
-            //检测是否停止成功
+            // 检测是否停止成功
             if (execResult.getExecResult()) {
                 int times = PropertyUtils.getInt("times");
                 int count = 0;
@@ -120,11 +121,11 @@ public class ServiceHandler {
                     }
                     count++;
                 }
-                if (count == times) {//超时，置为失败
+                if (count == times) {// 超时，置为失败
                     execResult.setExecResult(false);
                 }
             }
-        } else {//已经是停止状态，直接返回
+        } else {// 已经是停止状态，直接返回
             logger.info("{} already stopped", decompressPackageName);
             execResult.setExecResult(true);
         }
@@ -151,7 +152,8 @@ public class ServiceHandler {
             command.add("-u");
             command.add(runAs.getUser());
         }
-        if (runner.getProgram().contains(Constants.TASK_MANAGER) || runner.getProgram().contains(Constants.JOB_MANAGER)) {
+        if (runner.getProgram().contains(Constants.TASK_MANAGER)
+                || runner.getProgram().contains(Constants.JOB_MANAGER)) {
             logger.info("do not use sh");
         } else {
             command.add("sh");
@@ -159,10 +161,10 @@ public class ServiceHandler {
         command.add(shell);
         command.addAll(args);
         logger.info("execute shell command : {}", command.toString());
-        ExecResult execResult = execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName, command, timeout);
+        ExecResult execResult =
+                execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName, command, timeout);
         return execResult;
     }
-
 
     public ExecResult execWithStatus(String workPath, List<String> command, long timeout) {
         ExecResult result = new ExecResult();

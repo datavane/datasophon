@@ -17,8 +17,6 @@
 
 package com.datasophon.common.lifecycle;
 
-
-
 /**
  * This enum is used to represent the server status, include master/worker.
  */

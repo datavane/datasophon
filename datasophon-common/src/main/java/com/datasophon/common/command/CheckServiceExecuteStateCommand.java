@@ -19,9 +19,10 @@ package com.datasophon.common.command;
 
 import com.datasophon.common.enums.ServiceRoleType;
 import com.datasophon.common.model.ServiceNode;
-import lombok.Data;
 
 import java.io.Serializable;
+
+import lombok.Data;
 
 @Data
 public class CheckServiceExecuteStateCommand implements Serializable {

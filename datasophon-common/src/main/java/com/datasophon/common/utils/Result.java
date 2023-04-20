@@ -19,15 +19,16 @@
 package com.datasophon.common.utils;
 
 import com.datasophon.common.Constants;
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Data;
 
 @Data
 public class Result extends HashMap<String, Object> {
+
     private static final long serialVersionUID = 1L;
 
     private Integer code;
@@ -69,15 +70,15 @@ public class Result extends HashMap<String, Object> {
 
     public static Result success(Object data) {
         Result result = new Result();
-        result.put(Constants.CODE,200);
-        result.put(Constants.MSG,"success");
-        result.put("data",data);
+        result.put(Constants.CODE, 200);
+        result.put(Constants.MSG, "success");
+        result.put("data", data);
         return result;
     }
     public static Result success() {
         Result result = new Result();
-        result.put(Constants.CODE,200);
-        result.put(Constants.MSG,"success");
+        result.put(Constants.CODE, 200);
+        result.put(Constants.MSG, "success");
         return result;
     }
 

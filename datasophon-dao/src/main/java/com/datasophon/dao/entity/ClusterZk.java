@@ -17,35 +17,35 @@
 
 package com.datasophon.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import java.io.Serializable;
+
 import lombok.Data;
 
-import java.io.Serializable;
-import java.util.Date;
-
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 
 @Data
 @TableName("t_ddh_cluster_zk")
 public class ClusterZk implements Serializable {
-	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	@TableId
-	private Integer id;
-	/**
-	 * 
-	 */
-	private String zkServer;
-	/**
-	 * 
-	 */
-	private Integer myid;
-	/**
-	 * 
-	 */
-	private Integer clusterId;
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 
+     */
+    @TableId
+    private Integer id;
+    /**
+     * 
+     */
+    private String zkServer;
+    /**
+     * 
+     */
+    private Integer myid;
+    /**
+     * 
+     */
+    private Integer clusterId;
 
 }

@@ -35,9 +35,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 @Service("clusterServiceRoleInstanceWebuisService")
 public class ClusterServiceRoleInstanceWebuisServiceImpl
-        extends ServiceImpl<
-                ClusterServiceRoleInstanceWebuisMapper, ClusterServiceRoleInstanceWebuis>
-        implements ClusterServiceRoleInstanceWebuisService {
+        extends
+            ServiceImpl<ClusterServiceRoleInstanceWebuisMapper, ClusterServiceRoleInstanceWebuis>
+        implements
+            ClusterServiceRoleInstanceWebuisService {
 
     private static final String ACTIVE = "(Active)";
 

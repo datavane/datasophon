@@ -18,13 +18,14 @@
 package com.datasophon.common.model;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DAGGraph<Node,NodeInfo,EdgeInfo> {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class DAGGraph<Node, NodeInfo, EdgeInfo> {
 
     private static final Logger logger = LoggerFactory.getLogger(DAGGraph.class);
 
@@ -35,7 +36,7 @@ public class DAGGraph<Node,NodeInfo,EdgeInfo> {
     private Map<Node, Map<Node, EdgeInfo>> reverseEdgesMap;
 
     public DAGGraph() {
-        //初始化邻接表
+        // 初始化邻接表
         nodesMap = new HashMap<>();
         edgesMap = new HashMap<>();
         reverseEdgesMap = new HashMap<>();
@@ -69,8 +70,8 @@ public class DAGGraph<Node,NodeInfo,EdgeInfo> {
         nodesMap.put(node, nodeInfo);
     }
 
-    public boolean addEdge(Node fromNode, Node toNode,boolean createNode) {
-        //由于有向图中边是有向的，v->w 边
+    public boolean addEdge(Node fromNode, Node toNode, boolean createNode) {
+        // 由于有向图中边是有向的，v->w 边
         if (!isLegalAddEdge(fromNode, toNode, createNode)) {
             logger.error("serious error: add edge({} -> {}) is invalid, cause cycle！", fromNode, toNode);
             return false;
@@ -78,14 +79,14 @@ public class DAGGraph<Node,NodeInfo,EdgeInfo> {
         addNodeIfAbsent(fromNode, null);
         addNodeIfAbsent(toNode, null);
 
-        addEdge(fromNode, toNode,  edgesMap);
-        addEdge(toNode, fromNode,  reverseEdgesMap);
+        addEdge(fromNode, toNode, edgesMap);
+        addEdge(toNode, fromNode, reverseEdgesMap);
 
         return true;
 
     }
 
-    private void addEdge(Node fromNode, Node toNode,  Map<Node, Map<Node, EdgeInfo>> edges) {
+    private void addEdge(Node fromNode, Node toNode, Map<Node, Map<Node, EdgeInfo>> edges) {
         edges.putIfAbsent(fromNode, new HashMap<>());
         Map<Node, EdgeInfo> toNodeEdges = edges.get(fromNode);
         toNodeEdges.put(toNode, null);
@@ -117,7 +118,7 @@ public class DAGGraph<Node,NodeInfo,EdgeInfo> {
         }
 
         if (!createNode) {
-            if (!containsNode(fromNode) || !containsNode(toNode)){
+            if (!containsNode(fromNode) || !containsNode(toNode)) {
                 logger.error("edge fromNode({}) or toNode({}) is not in vertices map", fromNode, toNode);
                 return false;
             }
@@ -172,7 +173,7 @@ public class DAGGraph<Node,NodeInfo,EdgeInfo> {
         return nodesMap.get(node);
     }
 
-    public DAGGraph<Node,NodeInfo,EdgeInfo> getReverseDagGraph(DAGGraph<Node,NodeInfo,EdgeInfo> dagGraph){
+    public DAGGraph<Node, NodeInfo, EdgeInfo> getReverseDagGraph(DAGGraph<Node, NodeInfo, EdgeInfo> dagGraph) {
         DAGGraph<Node, NodeInfo, EdgeInfo> reverseDagGraph = new DAGGraph<>();
         reverseDagGraph.setNodesMap(dagGraph.getNodesMap());
         reverseDagGraph.setEdgesMap(dagGraph.getReverseEdgesMap());
@@ -183,30 +184,29 @@ public class DAGGraph<Node,NodeInfo,EdgeInfo> {
     public static void main(String[] args) {
         DAGGraph<String, String, String> dag = new DAGGraph<>();
 
-        Map<String,String> activeTaskNode = new ConcurrentHashMap<>();
-        dag.addNode("a","1");
-        dag.addNode("b","2");
-        dag.addNode("c","3");
-        dag.addNode("d","4");
-        dag.addEdge("a","b",false);
-        dag.addEdge("a","c",false);
+        Map<String, String> activeTaskNode = new ConcurrentHashMap<>();
+        dag.addNode("a", "1");
+        dag.addNode("b", "2");
+        dag.addNode("c", "3");
+        dag.addNode("d", "4");
+        dag.addEdge("a", "b", false);
+        dag.addEdge("a", "c", false);
 
         Collection<String> beginNode1 = dag.getBeginNode();
         for (String node : beginNode1) {
-            activeTaskNode.put(node,"");
+            activeTaskNode.put(node, "");
 
         }
         for (String node : activeTaskNode.keySet()) {
             Set<String> subsequentNodes = dag.getSubsequentNodes(node);
             for (String subsequentNode : subsequentNodes) {
                 System.out.println(subsequentNode);
-                activeTaskNode.put(subsequentNode,"");
+                activeTaskNode.put(subsequentNode, "");
             }
             activeTaskNode.remove(node);
         }
         System.out.println(beginNode1);
 
     }
-
 
 }

@@ -18,8 +18,10 @@
 package com.datasophon.dao.mapper;
 
 import com.datasophon.dao.entity.ClusterServiceDashboard;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import org.apache.ibatis.annotations.Mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * 集群服务总览仪表盘
@@ -30,5 +32,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface ClusterServiceDashboardMapper extends BaseMapper<ClusterServiceDashboard> {
-	
+
 }

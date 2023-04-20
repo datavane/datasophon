@@ -17,18 +17,19 @@
 
 package com.datasophon.api.utils;
 
-import com.datasophon.common.model.HostInfo;
 import com.datasophon.common.enums.InstallState;
+import com.datasophon.common.model.HostInfo;
 import com.datasophon.dao.enums.RoleType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class CommonUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonUtils.class);
 
-    private CommonUtils() {}
+    private CommonUtils() {
+    }
 
     public static void updateInstallState(InstallState installState, HostInfo hostInfo) {
         hostInfo.setInstallState(installState);

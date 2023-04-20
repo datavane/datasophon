@@ -17,12 +17,13 @@
 
 package com.datasophon.common.model;
 
-import lombok.Data;
-
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class ServiceInfo {
+
     private String name;
 
     private String label;
@@ -46,6 +47,5 @@ public class ServiceInfo {
     private ExternalLink externalLink;
 
     private Integer sortNum;
-
 
 }

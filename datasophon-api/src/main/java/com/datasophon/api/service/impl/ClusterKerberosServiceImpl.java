@@ -30,6 +30,10 @@ import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 
+import scala.concurrent.Await;
+import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -49,9 +53,6 @@ import akka.actor.ActorRef;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import cn.hutool.core.io.FileUtil;
-import scala.concurrent.Await;
-import scala.concurrent.Future;
-import scala.concurrent.duration.Duration;
 
 @Service("clusterKerberosService")
 @Transactional
@@ -63,16 +64,16 @@ public class ClusterKerberosServiceImpl implements ClusterKerberosService {
 
     private static final String KEYTAB_PATH = "/etc/security/keytab";
 
-    @Autowired private ClusterServiceRoleInstanceService roleInstanceService;
+    @Autowired
+    private ClusterServiceRoleInstanceService roleInstanceService;
 
     @Override
     public void downloadKeytab(
-            Integer clusterId,
-            String principal,
-            String keytabName,
-            String hostname,
-            HttpServletResponse response)
-            throws IOException {
+                               Integer clusterId,
+                               String principal,
+                               String keytabName,
+                               String hostname,
+                               HttpServletResponse response) throws IOException {
         String keytabFilePath =
                 KEYTAB_PATH + Constants.SLASH + hostname + Constants.SLASH + keytabName;
         File file = new File(keytabFilePath);
@@ -99,19 +100,18 @@ public class ClusterKerberosServiceImpl implements ClusterKerberosService {
     }
 
     @Override
-    public void uploadKeytab(MultipartFile file, String hostname, String keytabFileName)
-            throws IOException {
+    public void uploadKeytab(MultipartFile file, String hostname, String keytabFileName) throws IOException {
         String keytabFilePath =
                 KEYTAB_PATH + Constants.SLASH + hostname + Constants.SLASH + keytabFileName;
         file.transferTo(new File(keytabFilePath));
     }
 
     private void generateKeytabFile(
-            Integer clusterId,
-            String keytabFilePath,
-            String principal,
-            String keytabName,
-            String hostname) {
+                                    Integer clusterId,
+                                    String keytabFilePath,
+                                    String principal,
+                                    String keytabName,
+                                    String hostname) {
         ClusterServiceRoleInstanceEntity roleInstanceEntity =
                 roleInstanceService.getKAdminRoleIns(clusterId);
         ActorRef kerberosActor =

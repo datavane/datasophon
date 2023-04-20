@@ -1,12 +1,16 @@
 ---
+
 title: 主题定制
 lang: zh-CN
----
+-----------
+
 # 主题定制
 
 ## 主题颜色
+
 ### 主题色
-我们内置了一个色盘供您选择 
+
+我们内置了一个色盘供您选择
 
 <color color="#fa541c"/>
 <color color="#fadb14"/>
@@ -17,6 +21,7 @@ lang: zh-CN
 <color color="#eb2f96"/>
 
 如果这不能满足你的需求，你也可以使用任何你喜欢的颜色，只需要在 src/config/config.js 文件中配置你的主题色即可。如：
+
 ```js {3}
 module.exports = {
   theme: {
@@ -30,14 +35,17 @@ module.exports = {
   }
 }
 ```
+
 当你设置好主题色后，系统会根据这个主题色为你生成一系列配套的颜色，并应用到vue组件中。
-:::tip 
+:::tip
 你可以在你的样式文件中直接使用 less 变量 ``@theme-color``。
-::: 
+:::
 :::warning
 主题色目前只支持 ``hex`` 模式的色值。如果设置为 ``rgb`` 或其它模式的色值，可能会导致配套颜色无法生成。
 :::
+
 ### 功能色
+
 除了主题色，系统还有一些功能性颜色，分别为：成功色、警告色和错误色。默认色值分别为：
 |名称|success   |warning  |error  |
 |:-:|:--------:|:-------:|:-----:|
@@ -46,6 +54,7 @@ module.exports = {
 |less变量|@success-color|@warning-color|@error-color|
 
 你也可以在 src/config/config.js 重新定义这些功能色
+
 ```js {5-7}
 module.exports = {
   theme: {
@@ -62,13 +71,16 @@ module.exports = {
   }
 }
 ```
+
 :::tip
 想在在你的样式文件中使用以上各功能色，引用各功能色对应的 less 变量即可。
 :::
 :::warning
 功能色目前也只支持 ``hex`` 模式的色值。如果设置为 ``rgb`` 或其它模式的色值，可能会导致配套颜色无法生成。
 :::
+
 ### 文本色
+
 <table style="text-align: center" >
   <tr>
     <th>主题模式</th>
@@ -174,6 +186,7 @@ module.exports = {
 :::
 
 ### antd 的色系
+
 除了以上颜色，我们还引入了 ant-design 内置的色系。如下：
 
 <table style="text-align: center">
@@ -404,7 +417,9 @@ module.exports = {
 :::tip
 我们建议在开发中使用 `less变量` 而不是直接使用 `颜色值` 来设置颜色。这样做对主题色和主题模式切换很有帮助。
 :::
+
 ## 主题模式
+
 Vue Antd Admin 有三种主题模式，分别为：`light/亮色菜单模式`、`dark/暗色菜单模式` 和 `night/黑夜模式`。
 
 light / 亮色菜单模式:
@@ -415,6 +430,7 @@ night / 黑夜模式:
 ![night](../assets/mode-night.png)
 
 你可以在这三种模式之间随意切换，也可以在 src/config/config.js 中设置默认的主题模式。
+
 ```js {4}
 module.exports = {
   theme: {
@@ -430,8 +446,10 @@ module.exports = {
 ```
 
 ## 导航布局
+
 Vue Antd Admin 有两种导航布局，`side/侧边导航` 和 `head/顶部导航`。  
 默认为侧边导航，你可以在 src/config/config.js 中修改导航布局
+
 ```js {6}
 module.exports = {
   theme: {
@@ -446,8 +464,11 @@ module.exports = {
   }
 }
 ```
+
 ## 动画
+
 Vue Antd Admin 内置了 [animate.css](https://animate.style) 动画库，在页面切换时会应用动画效果。你可以在 src/config/config.js 中配置动画效果或者禁用动画。
+
 ```js {7-11}
 module.exports = {
   theme: {
@@ -462,10 +483,15 @@ module.exports = {
   }
 }
 ```
+
 支持的动画特效种类，可以参考 src/config/default/animate.config.js 文件。
+
 ## 其它
+
 ### 色弱模式
+
 对于有视觉障碍的群体，我们提供了色弱模式，你可以通过配置 src/config/config.js 启用色弱模式
+
 ```js {7}
 module.exports = {
   theme: {
@@ -480,8 +506,11 @@ module.exports = {
   }
 }
 ```
+
 ### 多页签
+
 在 src/config/config.js 设置 multiPage 来启用或关闭多页签模式
+
 ```js {6}
 module.exports = {
   theme: {
@@ -495,6 +524,7 @@ module.exports = {
   }
 }
 ```
+
 完整的系统设置参考 src/config/default/setting.config.js
 :::tip
 以上所有主题设置项，均已映射到 vuex/setting 模块的 state 中，你可以通过提交 setting/mutations 实时修改设置项。  

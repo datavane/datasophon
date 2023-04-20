@@ -32,9 +32,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
 import akka.actor.UntypedActor;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 public class ServiceRoleCheckActor extends UntypedActor {
 
@@ -78,7 +78,7 @@ public class ServiceRoleCheckActor extends UntypedActor {
     }
 
     private Map<String, ClusterServiceRoleInstanceEntity> translateListToMap(
-            List<ClusterServiceRoleInstanceEntity> list) {
+                                                                             List<ClusterServiceRoleInstanceEntity> list) {
         return list.stream()
                 .collect(
                         Collectors.toMap(

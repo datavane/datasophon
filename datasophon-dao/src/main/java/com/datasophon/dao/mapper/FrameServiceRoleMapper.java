@@ -18,8 +18,10 @@
 package com.datasophon.dao.mapper;
 
 import com.datasophon.dao.entity.FrameServiceRoleEntity;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import org.apache.ibatis.annotations.Mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * 框架服务角色表

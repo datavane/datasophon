@@ -17,18 +17,20 @@
 
 package com.datasophon.dao.entity;
 
+import java.io.Serializable;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-
-import java.io.Serializable;
-import java.util.Date;
-
 
 @TableName("t_ddh_frame_service")
 @Data
+@Accessors(chain = true)
 public class FrameServiceEntity implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -77,7 +79,5 @@ public class FrameServiceEntity implements Serializable {
     private Boolean installed;
 
     private Integer sortNum;
-
-   
 
 }
