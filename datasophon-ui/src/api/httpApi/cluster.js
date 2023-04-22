@@ -1,24 +1,7 @@
 /*
- *  Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  See the NOTICE file distributed with
- *  this work for additional information regarding copyright ownership.
- *  The ASF licenses this file to You under the Apache License, Version 2.0
- *  (the "License"); you may not use this file except in compliance with
- *  the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-
-/*
  * @Author: mjzhu
  * @Date: 2022-05-24 10:22:10
- * @LastEditTime: 2022-11-25 16:51:51
+ * @LastEditTime: 2023-03-15 17:14:27
  * @FilePath: \ddh-ui\src\api\httpApi\cluster.js
  */
 import paths from '@/api/baseUrl'// 后台服务地址
@@ -42,5 +25,6 @@ export default {
   saveRack: path + '/cluster/rack/save',
   assginRack: path + '/api/cluster/host/assignRack',
   deleteRack: path + '/cluster/rack/delete',
+  deleteClusterRack: path + '/cluster/rack/delete',
   getRackList: path + '/cluster/rack/list',
 }
