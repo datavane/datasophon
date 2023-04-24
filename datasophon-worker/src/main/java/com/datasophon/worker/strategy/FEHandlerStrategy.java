@@ -23,7 +23,7 @@ import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.model.ServiceRoleRunner;
 import com.datasophon.common.utils.ExecResult;
-import com.datasophon.common.utils.StarRocksUtils;
+import com.datasophon.common.utils.OlapUtils;
 import com.datasophon.common.utils.ThrowableUtils;
 import com.datasophon.worker.handler.ServiceHandler;
 
@@ -58,7 +58,7 @@ public class FEHandlerStrategy implements ServiceRoleStrategy {
                 if (startResult.getExecResult()) {
                     // add follower
                     try {
-                        StarRocksUtils.addFollower(command.getMasterHost(), CacheUtils.getString(Constants.HOSTNAME));
+                        OlapUtils.addFollower(command.getMasterHost(), CacheUtils.getString(Constants.HOSTNAME));
                     } catch (SQLException | ClassNotFoundException e) {
                         logger.info("add slave fe failed {}", ThrowableUtils.getStackTrace(e));
                     }

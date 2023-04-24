@@ -22,15 +22,14 @@ import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.utils.ExecResult;
+import com.datasophon.common.utils.OlapUtils;
 import com.datasophon.common.utils.ShellUtils;
-import com.datasophon.common.utils.StarRocksUtils;
 import com.datasophon.common.utils.ThrowableUtils;
 import com.datasophon.worker.handler.ServiceHandler;
-
-import java.sql.SQLException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.SQLException;
 
 public class BEHandlerStrategy implements ServiceRoleStrategy {
 
@@ -49,7 +48,7 @@ public class BEHandlerStrategy implements ServiceRoleStrategy {
                     command.getDecompressPackageName(), command.getRunAs());
             if (startResult.getExecResult()) {
                 try {
-                    StarRocksUtils.addBackend(command.getMasterHost(), CacheUtils.getString(Constants.HOSTNAME));
+                    OlapUtils.addBackend(command.getMasterHost(), CacheUtils.getString(Constants.HOSTNAME));
                 } catch (SQLException | ClassNotFoundException e) {
                     logger.info("add backend failed {}", ThrowableUtils.getStackTrace(e));
                 }
