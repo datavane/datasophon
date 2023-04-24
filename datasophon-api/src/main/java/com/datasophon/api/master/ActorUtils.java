@@ -17,12 +17,20 @@
 
 package com.datasophon.api.master;
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
+import akka.actor.ActorSystem;
+import akka.actor.InvalidActorNameException;
+import akka.actor.Props;
+import akka.util.Timeout;
 import com.datasophon.api.master.alert.ServiceRoleCheckActor;
 import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
-
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import org.apache.commons.lang.StringUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -30,20 +38,11 @@ import scala.concurrent.duration.FiniteDuration;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-
-import akka.actor.ActorRef;
-import akka.actor.ActorSelection;
-import akka.actor.ActorSystem;
-import akka.actor.Props;
-import akka.util.Timeout;
 
 public class ActorUtils {
 
@@ -55,10 +54,12 @@ public class ActorUtils {
 
     public static final String AKKA_REMOTE_NETTY_TCP_HOSTNAME = "akka.remote.netty.tcp.hostname";
 
-    private ActorUtils() {
+    private static Random rand ;
+
+    private ActorUtils() throws NoSuchAlgorithmException {
     }
 
-    public static void init() throws UnknownHostException {
+    public static void init() throws UnknownHostException, NoSuchAlgorithmException {
         String hostname = InetAddress.getLocalHost().getHostName();
         Config config = ConfigFactory.parseString(AKKA_REMOTE_NETTY_TCP_HOSTNAME + "=" + hostname);
         actorSystem = ActorSystem.create(DATASOPHON, config.withFallback(ConfigFactory.load()));
@@ -83,6 +84,7 @@ public class ActorUtils {
                 new ServiceRoleCheckCommand(),
                 actorSystem.dispatcher(),
                 ActorRef.noSender());
+        rand = SecureRandom.getInstanceStrong();
     }
 
     public static ActorRef getLocalActor(Class actorClass, String actorName) {
@@ -92,15 +94,17 @@ public class ActorUtils {
         ActorRef actorRef = null;
         try {
             actorRef = Await.result(future, Duration.create(30, TimeUnit.SECONDS));
+            if (Objects.isNull(actorRef)) {
+                logger.info("create actor {}", actorName);
+                actorRef = actorSystem.actorOf(Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"), actorName);
+            } else {
+                logger.info("find actor {}", actorName);
+            }
+        } catch (InvalidActorNameException e) {
+            int num = rand.nextInt(100);
+            actorRef = actorSystem.actorOf(Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"), actorName + num);
         } catch (Exception e) {
             logger.error("{} actor not found", actorName);
-        }
-        if (Objects.isNull(actorRef)) {
-            logger.info("create actor {}", actorName);
-            actorRef =
-                    actorSystem.actorOf(Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"), actorName);
-        } else {
-            logger.info("find actor {}", actorName);
         }
         return actorRef;
     }
