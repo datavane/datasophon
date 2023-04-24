@@ -72,6 +72,7 @@ export default {
           dataIndex: "alertTargetName",
         },
         { title: "告警详情", key: "alertInfo", dataIndex: "alertInfo",ellipsis: true },
+        { title: "告警时间", key: "createTime", dataIndex: "createTime",ellipsis: true },
         { title: "建议操作", key: "alertAdvice", dataIndex: "alertAdvice",ellipsis: true, }
       ],
       pagination: {
