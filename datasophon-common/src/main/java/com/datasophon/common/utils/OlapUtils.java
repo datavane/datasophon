@@ -70,7 +70,7 @@ public class OlapUtils {
         return ShellUtils.exceShell(sqlCommand);
     }
 
-    public static ExecResult addBackendSqlClient(String feMaster,
+    public static ExecResult addBackendBySqlClient(String feMaster,
                                                  String hostname) {
         String sqlCommand =
                 "mysql -h"
