@@ -20,7 +20,6 @@ package com.datasophon.api.master;
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.ActorSystem;
-import akka.actor.InvalidActorNameException;
 import akka.actor.Props;
 import akka.util.Timeout;
 import com.datasophon.api.master.alert.ServiceRoleCheckActor;
@@ -54,7 +53,7 @@ public class ActorUtils {
 
     public static final String AKKA_REMOTE_NETTY_TCP_HOSTNAME = "akka.remote.netty.tcp.hostname";
 
-    private static Random rand ;
+    private static Random rand;
 
     private ActorUtils() throws NoSuchAlgorithmException {
     }
@@ -94,18 +93,27 @@ public class ActorUtils {
         ActorRef actorRef = null;
         try {
             actorRef = Await.result(future, Duration.create(30, TimeUnit.SECONDS));
-            if (Objects.isNull(actorRef)) {
-                logger.info("create actor {}", actorName);
-                actorRef = actorSystem.actorOf(Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"), actorName);
-            } else {
-                logger.info("find actor {}", actorName);
-            }
-        } catch (InvalidActorNameException e) {
-            int num = rand.nextInt(100);
-            actorRef = actorSystem.actorOf(Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"), actorName + num);
         } catch (Exception e) {
             logger.error("{} actor not found", actorName);
         }
+        if (Objects.isNull(actorRef)) {
+            logger.info("create actor {}", actorName);
+            actorRef = createActor(actorClass, actorName);
+        } else {
+            logger.info("find actor {}", actorName);
+        }
+        return actorRef;
+    }
+
+    private static ActorRef createActor(Class actorClass, String actorName) {
+        ActorRef actorRef;
+        try {
+            actorRef = actorSystem.actorOf(Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"), actorName);
+        } catch (Exception e) {
+            int num = rand.nextInt(1000);
+            actorRef = actorSystem.actorOf(Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"), actorName + num);
+        }
+
         return actorRef;
     }
 
