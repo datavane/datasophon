@@ -101,13 +101,13 @@ public class OlapUtils {
 
     public static List<ProcInfo> showFrontends(String feMaster) throws SQLException, ClassNotFoundException {
         String sql = "SHOW PROC '/frontends';";
-        logger.info("sql is {}", sql);
+//        logger.info("sql is {}", sql);
         return executeQueryProcInfo(feMaster, sql);
     }
 
     public static List<ProcInfo> listDeadFrontends(String feMaster) throws SQLException, ClassNotFoundException {
         String sql = "SHOW PROC '/frontends';";
-        logger.info("sql is {}", sql);
+//        logger.info("sql is {}", sql);
         return getDeadProcInfos(feMaster, sql);
     }
 
