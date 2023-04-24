@@ -67,6 +67,8 @@ public class ActorUtils {
                 getActorRefName(ServiceRoleCheckActor.class));
         ActorRef hostCheckActor =
                 actorSystem.actorOf(Props.create(HostCheckActor.class), getActorRefName(HostCheckActor.class));
+        actorSystem.actorOf(Props.create(MasterNodeProcessingActor.class),
+                getActorRefName(MasterNodeProcessingActor.class));
 
         actorSystem.scheduler().schedule(
                 FiniteDuration.apply(60L, TimeUnit.SECONDS),
