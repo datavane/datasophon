@@ -17,8 +17,11 @@
 
 package com.datasophon.worker.strategy;
 
+import akka.actor.ActorRef;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
+import com.datasophon.common.command.OlapOpsType;
+import com.datasophon.common.command.OlapSqlExecCommand;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.utils.ExecResult;
@@ -26,6 +29,7 @@ import com.datasophon.common.utils.OlapUtils;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.common.utils.ThrowableUtils;
 import com.datasophon.worker.handler.ServiceHandler;
+import com.datasophon.worker.utils.ActorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +52,13 @@ public class BEHandlerStrategy implements ServiceRoleStrategy {
                     command.getDecompressPackageName(), command.getRunAs());
             if (startResult.getExecResult()) {
                 try {
-                    OlapUtils.addBackend(command.getMasterHost(), CacheUtils.getString(Constants.HOSTNAME));
-                } catch (SQLException | ClassNotFoundException e) {
+                    OlapSqlExecCommand sqlExecCommand = new OlapSqlExecCommand();
+                    sqlExecCommand.setFeMaster(command.getMasterHost());
+                    sqlExecCommand.setHostName(CacheUtils.getString(Constants.HOSTNAME));
+                    sqlExecCommand.setOpsType(OlapOpsType.ADD_BE);
+                    ActorUtils.getRemoteActor(command.getManagerHost(), "masterNodeProcessingActor")
+                            .tell(sqlExecCommand, ActorRef.noSender());
+                } catch (Exception e) {
                     logger.info("add backend failed {}", ThrowableUtils.getStackTrace(e));
                 }
                 logger.info("slave be start success");
