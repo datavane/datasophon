@@ -18,11 +18,6 @@
  *
  */
 
-
- * @Date: 2022-05-24 10:28:22
- * @LastEditTime: 2022-06-02 15:40:05
- * @FilePath: \ddh-ui\docs\.vuepress\config.js
- */
 module.exports = {
   title: 'DataSophon',
   description: 'DataSophon',

@@ -19,10 +19,6 @@
  */
 
 
- * @Date: 2022-05-24 10:22:10
- * @LastEditTime: 2023-03-15 17:14:27
- * @FilePath: \ddh-ui\src\api\httpApi\cluster.js
- */
 import paths from '@/api/baseUrl'// 后台服务地址
 
 let path = paths.path() + '/ddh'

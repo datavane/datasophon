@@ -18,12 +18,6 @@
  *
  */
 
-
- * @describe: 
- * @Date: 2022-06-15 10:00:47
- * @LastEditTime: 2022-06-15 10:03:42
- * @FilePath: \ddh-ui\src\components\steps\mockData\steps2.js
- */
 export const data = {
     "msg": "success",
 

@@ -18,12 +18,6 @@
  *
  */
 
-
- * @describe: 
- * @Date: 2022-06-21 19:51:16
- * @LastEditTime: 2023-03-15 10:47:51
- * @FilePath: \ddh-ui\src\utils\changeRouter.js
- */
 import store from '@/store'
 
 function changeRouter(resData, clusterId) {

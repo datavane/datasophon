@@ -18,12 +18,6 @@
  *
  */
 
-
- * @describe: 
- * @Date: 2022-05-24 10:28:22
- * @LastEditTime: 2022-07-11 15:24:52
- * @FilePath: \ddh-ui\src\store\modules\account.js
- */
 export default {
   namespaced: true,
   state: {

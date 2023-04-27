@@ -110,10 +110,12 @@ public class ActorUtils {
     private static ActorRef createActor(Class actorClass, String actorName) {
         ActorRef actorRef;
         try {
-            actorRef = actorSystem.actorOf(Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"), actorName);
+            actorRef =
+                    actorSystem.actorOf(Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"), actorName);
         } catch (Exception e) {
             int num = rand.nextInt(1000);
-            actorRef = actorSystem.actorOf(Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"), actorName + num);
+            actorRef = actorSystem.actorOf(Props.create(actorClass).withDispatcher("my-forkjoin-dispatcher"),
+                    actorName + num);
         }
 
         return actorRef;

@@ -19,11 +19,6 @@
  */
 
 
- * @describe: 
- * @Date: 2022-06-20 16:28:22
- * @LastEditTime: 2022-08-15 14:09:36
- * @FilePath: \ddh-ui\src\api\httpApi\system.js
- */
 
 import paths from '@/api/baseUrl'// 后台服务地址
 

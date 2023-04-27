@@ -19,10 +19,7 @@
  */
 
 
- * @Date: 2022-05-24 10:22:10
- * @LastEditTime: 2022-06-10 14:24:26
- * @FilePath: \ddh-ui\src\api\request.js
- */
+
 import Vue from 'vue'
 import axios from 'axios'
 // import '@/api/interceptors'

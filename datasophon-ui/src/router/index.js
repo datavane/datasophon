@@ -18,12 +18,6 @@
  *
  */
 
-
- * @describe: 
- * @Date: 2022-05-24 10:22:10
- * @LastEditTime: 2022-06-20 15:29:03
- * @FilePath: \ddh-ui\src\router\index.js
- */
 import Vue from 'vue'
 import Router from 'vue-router'
 import {formatRoutes} from '@/utils/routerUtil'

@@ -26,16 +26,13 @@ import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.model.ServiceRoleRunner;
 import com.datasophon.common.utils.ExecResult;
-import com.datasophon.common.utils.OlapUtils;
 import com.datasophon.common.utils.ThrowableUtils;
 import com.datasophon.worker.handler.ServiceHandler;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-
 import com.datasophon.worker.utils.ActorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 
 public class FEHandlerStrategy implements ServiceRoleStrategy {
 

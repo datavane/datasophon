@@ -18,11 +18,6 @@
  *
  */
 
-
- * @Date: 2022-05-24 10:28:22
- * @LastEditTime: 2022-06-10 15:24:35
- * @FilePath: \ddh-ui\src\mock\user\routes.js
- */
 import Mock from 'mockjs'
 
 Mock.mock(`${process.env.VUE_APP_API_BASE_URL}/routes`, 'get', () => {

@@ -18,11 +18,6 @@
  *
  */
 
-
- * @Date: 2022-05-24 10:22:10
- * @LastEditTime: 2022-06-27 17:02:37
- * @FilePath: \ddh-ui\src\main.js
- */
 import Vue from 'vue'
 import App from './App.vue'
 import {initRouter} from './router'

@@ -18,11 +18,6 @@
  *
  */
 
-
- * @Date: 2022-05-24 10:22:10
- * @LastEditTime: 2022-06-08 17:18:05
- * @FilePath: \ddh-ui\src\api\interceptors.js
- */
 import axios from 'axios'
 
 // axios请求拦截

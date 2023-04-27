@@ -19,10 +19,6 @@
  */
 
 
- * @Date: 2022-05-24 10:28:22
- * @LastEditTime: 2022-10-27 19:10:56
- * @FilePath: \ddh-ui\src\config\default\antd.config.js
- */
 // antd 配置
 const ANTD = {
   primary: {

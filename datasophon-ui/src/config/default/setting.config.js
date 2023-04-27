@@ -19,10 +19,6 @@
  */
 
 
- * @Date: 2022-05-24 10:28:22
- * @LastEditTime: 2022-11-02 15:03:08
- * @FilePath: \ddh-ui\src\config\default\setting.config.js
- */
 // 此配置为系统默认设置，需修改的设置项，在src/config/config.js中添加修改项即可。也可直接在此文件中修改。
 module.exports = {
   lang: 'CN',                           //语言，可选 CN(简体)、HK(繁体)、US(英语)，也可扩展其它语言

@@ -18,13 +18,6 @@
  *
  */
 
-
- * @describe: 
- * @Date: 2022-06-14 20:06:51
- * @LastEditTime: 2022-06-22 17:07:41
- * @FilePath: \ddh-ui\src\store\modules\steps\steps.js
- */
-
 const state = {
   clusterId: '',
   steps1: {

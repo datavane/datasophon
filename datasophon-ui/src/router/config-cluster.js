@@ -18,12 +18,6 @@
  *
  */
 
-
- * @describe: 
- * @Date: 2022-06-20 11:34:29
- * @LastEditTime: 2022-07-12 10:47:51
- * @FilePath: \ddh-ui\src\router\config-cluster.js
- */
 import TabsView from '@/layouts/tabs/TabsView'
 import BlankView from '@/layouts/BlankView'
 import PageView from '@/layouts/PageView'

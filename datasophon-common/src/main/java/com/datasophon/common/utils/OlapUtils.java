@@ -66,12 +66,12 @@ public class OlapUtils {
                         + " 'ALTER SYSTEM add FOLLOWER  \""
                         + hostname
                         + ":9010\"';";
-//        logger.info("sqlCommand is {}", sqlCommand);
+        // logger.info("sqlCommand is {}", sqlCommand);
         return ShellUtils.exceShell(sqlCommand);
     }
 
     public static ExecResult addBackendBySqlClient(String feMaster,
-                                                 String hostname) {
+                                                   String hostname) {
         String sqlCommand =
                 "mysql -h"
                         + feMaster
@@ -79,7 +79,7 @@ public class OlapUtils {
                         + " 'ALTER SYSTEM add BACKEND  \""
                         + hostname
                         + ":9050\"';";
-//        logger.info("sqlCommand is {}", sqlCommand);
+        // logger.info("sqlCommand is {}", sqlCommand);
         return ShellUtils.exceShell(sqlCommand);
     }
 
@@ -101,13 +101,13 @@ public class OlapUtils {
 
     public static List<ProcInfo> showFrontends(String feMaster) throws SQLException, ClassNotFoundException {
         String sql = "SHOW PROC '/frontends';";
-//        logger.info("sql is {}", sql);
+        // logger.info("sql is {}", sql);
         return executeQueryProcInfo(feMaster, sql);
     }
 
     public static List<ProcInfo> listDeadFrontends(String feMaster) throws SQLException, ClassNotFoundException {
         String sql = "SHOW PROC '/frontends';";
-//        logger.info("sql is {}", sql);
+        // logger.info("sql is {}", sql);
         return getDeadProcInfos(feMaster, sql);
     }
 

@@ -18,11 +18,6 @@
  *
  */
 
-
- * @Date: 2022-05-24 10:22:10
- * @LastEditTime: 2022-06-14 19:59:16
- * @FilePath: \ddh-ui\src\api\httpApi\user.js
- */
 import paths from '@/api/baseUrl'// 后台服务地址
 
 let path = paths.path() + '/ddh'

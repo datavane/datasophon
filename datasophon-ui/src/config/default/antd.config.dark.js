@@ -19,10 +19,7 @@
  */
 
 
- * @Date: 2022-05-24 10:28:22
- * @LastEditTime: 2022-08-15 14:16:00
- * @FilePath: \ddh-ui\src\config\default\antd.config.dark.js
- */
+
 // antd 配置
 const ANTD = {
     primary: {

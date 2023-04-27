@@ -18,11 +18,6 @@
  *
  */
 
-
- * @Date: 2022-05-24 10:28:22
- * @LastEditTime: 2022-06-27 10:06:15
- * @FilePath: \ddh-ui\src\utils\axios-interceptors.js
- */
 import Cookie from 'js-cookie'
 import Router from 'vue-router'
 import {logout} from '@/services/user'
