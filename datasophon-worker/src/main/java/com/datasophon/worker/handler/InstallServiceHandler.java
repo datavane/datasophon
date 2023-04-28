@@ -21,11 +21,13 @@ import com.datasophon.common.Constants;
 import com.datasophon.common.model.RunAs;
 import com.datasophon.common.utils.CompressUtils;
 import com.datasophon.common.utils.ExecResult;
+import com.datasophon.common.utils.FileUtils;
 import com.datasophon.common.utils.PropertyUtils;
 import com.datasophon.common.utils.ShellUtils;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.io.File;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -68,8 +70,7 @@ public class InstallServiceHandler {
         logger.info("Remote package md5 is {}", packageMd5);
         if (FileUtil.exist(packagePath)) {
             // check md5
-            String md5cmd = "sh " + Constants.WORKER_SCRIPT_PATH + "md5.sh " + packagePath;
-            String md5 = ShellUtils.getPackageMd5(md5cmd);
+            String md5 = FileUtils.md5(new File(packagePath));
 
             logger.info("Local md5 is {}", md5);
 

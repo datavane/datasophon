@@ -23,6 +23,7 @@ import com.datasophon.common.Constants;
 import com.datasophon.common.model.RunAs;
 import com.datasophon.common.model.ServiceRoleRunner;
 import com.datasophon.common.utils.ExecResult;
+import com.datasophon.common.utils.FileUtils;
 import com.datasophon.common.utils.PropertyUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -156,7 +157,25 @@ public class ServiceHandler {
                 || runner.getProgram().contains(Constants.JOB_MANAGER)) {
             logger.info("do not use sh");
         } else {
-            command.add("sh");
+            File shellFile = new File(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + shell);
+            if(shellFile.exists()) {
+                try {
+                    // 读取第一行，检查采用的 shell 是哪个，bash、sh ？
+                    final String firstLine = StringUtils.trimToEmpty(FileUtils.readFirstLine(shellFile));
+                    if(firstLine.contains("bash")) {
+                        command.add("bash");
+                    } else if(firstLine.contains("sh")) {
+                        command.add("sh");
+                    } else {
+                        command.add("sh");
+                    }
+                } catch (Exception e) {
+                    logger.warn("read shell script file: " + shell + " error, reason: " + e.getMessage());
+                    command.add("sh");
+                }
+            } else {
+                command.add("sh");
+            }
         }
         command.add(shell);
         command.addAll(args);
@@ -185,7 +204,7 @@ public class ServiceHandler {
                 result.setExecOut("script execute failed");
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            logger.error("start service error!", e);
         }
         return result;
     }
