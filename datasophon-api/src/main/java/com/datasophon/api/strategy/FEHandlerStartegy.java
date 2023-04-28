@@ -79,16 +79,11 @@ public class FEHandlerStartegy implements ServiceRoleStrategy {
                 && roleInstanceEntity.getServiceRoleState() == ServiceRoleState.RUNNING) {
             try {
                 List<ProcInfo> frontends = OlapUtils.showFrontends(feMaster);
-                resolveProcInfoAlert("DorisFE", frontends, map);
+                resolveProcInfoAlert(roleInstanceEntity.getServiceRoleName(), frontends, map);
             } catch (Exception e) {
 
             }
-            try {
-                List<ProcInfo> backends = OlapUtils.showBackends(feMaster);
-                resolveProcInfoAlert("DorisBE", backends, map);
-            } catch (Exception e) {
 
-            }
 
         }
     }
