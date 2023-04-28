@@ -17,7 +17,6 @@
 
 package com.datasophon.worker.strategy;
 
-import akka.actor.ActorRef;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.OlapOpsType;
@@ -25,15 +24,15 @@ import com.datasophon.common.command.OlapSqlExecCommand;
 import com.datasophon.common.command.ServiceRoleOperateCommand;
 import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.utils.ExecResult;
-import com.datasophon.common.utils.OlapUtils;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.common.utils.ThrowableUtils;
 import com.datasophon.worker.handler.ServiceHandler;
 import com.datasophon.worker.utils.ActorUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
+import akka.actor.ActorRef;
 
 public class BEHandlerStrategy implements ServiceRoleStrategy {
 

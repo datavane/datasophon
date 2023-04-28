@@ -52,9 +52,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-
 @Service("clusterAlertHistoryService")
-public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHistoryMapper, ClusterAlertHistory> implements ClusterAlertHistoryService {
+public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHistoryMapper, ClusterAlertHistory>
+        implements
+            ClusterAlertHistoryService {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterAlertHistoryServiceImpl.class);
 
@@ -80,16 +81,16 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
             int clusterId = labels.getClusterId();
             String instance = labels.getInstance();
             String hostname = instance.split(":")[0];
-            //查询告警历史
+            // 查询告警历史
             ClusterAlertHistory clusterAlertHistory = this.getOne(new QueryWrapper<ClusterAlertHistory>()
                     .eq(Constants.ALERT_TARGET_NAME, labels.getAlertname())
                     .eq(Constants.CLUSTER_ID, labels.getClusterId())
                     .eq(Constants.HOSTNAME, hostname)
                     .eq(Constants.IS_ENABLED, 1));
             String serviceRoleName = labels.getServiceRoleName();
-            if ("firing".equals(status)) {//生成告警历史
-                //查询服务实例，服务角色实例
-                if("node".equals(serviceRoleName)){
+            if ("firing".equals(status)) {// 生成告警历史
+                // 查询服务实例，服务角色实例
+                if ("node".equals(serviceRoleName)) {
                     ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
                     if (Objects.isNull(clusterAlertHistory)) {
                         clusterAlertHistory = new ClusterAlertHistory();
@@ -119,10 +120,12 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
                         }
                     }
                     hostService.updateById(clusterHost);
-                }else{
-                    ClusterServiceRoleInstanceEntity roleInstance = roleInstanceService.getOneServiceRole(serviceRoleName, hostname, clusterId);
+                } else {
+                    ClusterServiceRoleInstanceEntity roleInstance =
+                            roleInstanceService.getOneServiceRole(serviceRoleName, hostname, clusterId);
                     if (Objects.nonNull(roleInstance)) {
-                        ClusterServiceInstanceEntity serviceInstance = serviceInstanceService.getById(roleInstance.getServiceId());
+                        ClusterServiceInstanceEntity serviceInstance =
+                                serviceInstanceService.getById(roleInstance.getServiceId());
                         if (Objects.isNull(clusterAlertHistory)) {
                             clusterAlertHistory = new ClusterAlertHistory();
                             clusterAlertHistory.setClusterId(clusterId);
@@ -146,7 +149,7 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
                             if ("exception".equals(labels.getSeverity())) {
                                 clusterAlertHistory.setAlertLevel(AlertLevel.EXCEPTION);
                                 serviceInstance.setServiceState(ServiceState.EXISTS_EXCEPTION);
-                                //查询服务角色实例
+                                // 查询服务角色实例
                                 roleInstance.setServiceRoleState(ServiceRoleState.STOP);
                             }
                             this.save(clusterAlertHistory);
@@ -155,7 +158,7 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
                             roleInstance.setServiceRoleState(ServiceRoleState.EXISTS_ALARM);
                             if ("exception".equals(labels.getSeverity())) {
                                 serviceInstance.setServiceState(ServiceState.EXISTS_EXCEPTION);
-                                //查询服务角色实例
+                                // 查询服务角色实例
                                 roleInstance.setServiceRoleState(ServiceRoleState.STOP);
                             }
                         }
@@ -173,44 +176,46 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
                             .eq(ClusterAlertHistory::getAlertGroupName, serviceRoleName.toLowerCase())
                             .eq(ClusterAlertHistory::getIsEnabled, 1)
                             .eq(ClusterAlertHistory::getAlertLevel, AlertLevel.WARN)
-                            .ne(ClusterAlertHistory::getId,clusterAlertHistory.getId())
+                            .ne(ClusterAlertHistory::getId, clusterAlertHistory.getId())
                             .list();
-                    if("exception".equals(labels.getSeverity())){//异常告警处理
-                        if("node".equals(serviceRoleName)){
-                            //置为正常
+                    if ("exception".equals(labels.getSeverity())) {// 异常告警处理
+                        if ("node".equals(serviceRoleName)) {
+                            // 置为正常
                             ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
                             clusterHost.setHostState(1);
-                            if(Objects.nonNull(warnAlertList) && warnAlertList.size() >0){
+                            if (Objects.nonNull(warnAlertList) && warnAlertList.size() > 0) {
                                 clusterHost.setHostState(3);
                             }
                             hostService.updateById(clusterHost);
                         } else {
-                            //查询服务角色实例
-                            ClusterServiceRoleInstanceEntity roleInstance = roleInstanceService.getOneServiceRole(labels.getServiceRoleName(), hostname, clusterId);
+                            // 查询服务角色实例
+                            ClusterServiceRoleInstanceEntity roleInstance = roleInstanceService
+                                    .getOneServiceRole(labels.getServiceRoleName(), hostname, clusterId);
                             if (roleInstance.getServiceRoleState() != ServiceRoleState.RUNNING) {
                                 roleInstance.setServiceRoleState(ServiceRoleState.RUNNING);
-                                if(Objects.nonNull(warnAlertList) && warnAlertList.size() >0){
+                                if (Objects.nonNull(warnAlertList) && warnAlertList.size() > 0) {
                                     roleInstance.setServiceRoleState(ServiceRoleState.EXISTS_ALARM);
                                 }
                                 roleInstanceService.updateById(roleInstance);
                             }
                         }
-                    }else{
-                        //警告告警处理
-                        if("node".equals(serviceRoleName)){
-                            //置为正常
+                    } else {
+                        // 警告告警处理
+                        if ("node".equals(serviceRoleName)) {
+                            // 置为正常
                             ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
                             clusterHost.setHostState(1);
-                            if(Objects.nonNull(warnAlertList) && warnAlertList.size() >0){
+                            if (Objects.nonNull(warnAlertList) && warnAlertList.size() > 0) {
                                 clusterHost.setHostState(3);
                             }
                             hostService.updateById(clusterHost);
                         } else {
-                            //查询服务角色实例
-                            ClusterServiceRoleInstanceEntity roleInstance = roleInstanceService.getOneServiceRole(labels.getServiceRoleName(), hostname, clusterId);
+                            // 查询服务角色实例
+                            ClusterServiceRoleInstanceEntity roleInstance = roleInstanceService
+                                    .getOneServiceRole(labels.getServiceRoleName(), hostname, clusterId);
                             if (roleInstance.getServiceRoleState() != ServiceRoleState.RUNNING) {
                                 roleInstance.setServiceRoleState(ServiceRoleState.RUNNING);
-                                if(Objects.nonNull(warnAlertList) && warnAlertList.size() >0){
+                                if (Objects.nonNull(warnAlertList) && warnAlertList.size() > 0) {
                                     roleInstance.setServiceRoleState(ServiceRoleState.EXISTS_ALARM);
                                 }
                                 roleInstanceService.updateById(roleInstance);
@@ -227,7 +232,8 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
     @Override
     public Result getAlertList(Integer serviceInstanceId) {
         List<ClusterAlertHistory> list = this.list(new QueryWrapper<ClusterAlertHistory>()
-                .eq(serviceInstanceId != null, Constants.SERVICE_INSTANCE_ID, serviceInstanceId).eq(Constants.IS_ENABLED, 1));
+                .eq(serviceInstanceId != null, Constants.SERVICE_INSTANCE_ID, serviceInstanceId)
+                .eq(Constants.IS_ENABLED, 1));
         return Result.success(list);
     }
 
@@ -235,14 +241,14 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
     public Result getAllAlertList(Integer clusterId, Integer page, Integer pageSize) {
         Integer offset = (page - 1) * pageSize;
         List<ClusterAlertHistory> list = this.list(new QueryWrapper<ClusterAlertHistory>()
-                .eq( Constants.CLUSTER_ID, clusterId)
+                .eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.IS_ENABLED, 1)
                 .orderByDesc(Constants.CREATE_TIME)
                 .last("limit " + offset + "," + pageSize));
         int count = this.count(new QueryWrapper<ClusterAlertHistory>()
                 .eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.IS_ENABLED, 1));
-        return Result.success(list).put(Constants.TOTAL,count);
+        return Result.success(list).put(Constants.TOTAL, count);
     }
 
     @Override
@@ -250,10 +256,11 @@ public class ClusterAlertHistoryServiceImpl extends ServiceImpl<ClusterAlertHist
         ClusterServiceRoleInstanceEntity roleInstanceEntity = roleInstanceService.getById(ids.get(0));
         ClusterInfoEntity clusterInfoEntity = clusterInfoService.getById(roleInstanceEntity.getClusterId());
         this.remove(new QueryWrapper<ClusterAlertHistory>()
-                .eq(Constants.IS_ENABLED,1)
-                .in(Constants.SERVICE_ROLE_INSTANCE_ID,ids));
-        //重新配置prometheus
-        ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class,ActorUtils.getActorRefName(PrometheusActor.class));
+                .eq(Constants.IS_ENABLED, 1)
+                .in(Constants.SERVICE_ROLE_INSTANCE_ID, ids));
+        // 重新配置prometheus
+        ActorRef prometheusActor =
+                ActorUtils.getLocalActor(PrometheusActor.class, ActorUtils.getActorRefName(PrometheusActor.class));
         GeneratePrometheusConfigCommand prometheusConfigCommand = new GeneratePrometheusConfigCommand();
         prometheusConfigCommand.setServiceInstanceId(roleInstanceEntity.getServiceId());
         prometheusConfigCommand.setClusterFrame(clusterInfoEntity.getClusterFrame());
