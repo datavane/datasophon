@@ -19,6 +19,12 @@
 
 package com.datasophon.api.service.impl;
 
+import akka.actor.ActorRef;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.crypto.SecureUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.ActorUtils;
@@ -45,9 +51,12 @@ import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.InstallStepEntity;
 import com.datasophon.dao.mapper.InstallStepMapper;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.sshd.client.session.ClientSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,20 +67,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
-import akka.actor.ActorRef;
-
-import cn.hutool.core.date.DateUnit;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.crypto.SecureUtil;
 
 @Service("installService")
 public class InstallServiceImpl implements InstallService {
@@ -358,9 +353,13 @@ public class InstallServiceImpl implements InstallService {
             ActorRef hostActor =
                     ActorUtils.getLocalActor(
                             DispatcherWorkerActor.class, "dispatcherWorkerActor-" + hostname);
+
             hostInfo.setInstallState(InstallState.RUNNING);
-            hostInfo.setErrMsg("");
             hostInfo.setInstallStateCode(InstallState.RUNNING.getValue());
+            hostInfo.setErrMsg("");
+            hostInfo.setProgress(0);
+            map.put(hostname,hostInfo);
+
             hostActor.tell(
                     new DispatcherHostAgentCommand(
                             hostInfo, clusterId, clusterInfo.getClusterFrame()),
