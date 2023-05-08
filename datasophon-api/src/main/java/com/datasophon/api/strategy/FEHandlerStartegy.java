@@ -79,16 +79,11 @@ public class FEHandlerStartegy implements ServiceRoleStrategy {
                 && roleInstanceEntity.getServiceRoleState() == ServiceRoleState.RUNNING) {
             try {
                 List<ProcInfo> frontends = OlapUtils.showFrontends(feMaster);
-                resolveProcInfoAlert("DorisFE", frontends, map);
+                resolveProcInfoAlert(roleInstanceEntity.getServiceRoleName(), frontends, map);
             } catch (Exception e) {
 
             }
-            try {
-                List<ProcInfo> backends = OlapUtils.showBackends(feMaster);
-                resolveProcInfoAlert("DorisBE", backends, map);
-            } catch (Exception e) {
 
-            }
 
         }
     }
@@ -97,9 +92,9 @@ public class FEHandlerStartegy implements ServiceRoleStrategy {
         for (ProcInfo frontend : frontends) {
             ClusterServiceRoleInstanceEntity roleInstanceEntity = map.get(frontend.getHostName() + serviceRoleName);
             if (!frontend.getAlive()) {
-                String alertTargetName = serviceRoleName + " Alive";
-                logger.info("{} at host {} is not alive", serviceRoleName, frontend.getHostName());
-                String alertAdvice = "the errmsg is " + frontend.getErrMsg();
+                String alertTargetName = serviceRoleName + " Not Add To Cluster";
+                logger.info("{} at host {} is not add to cluster", serviceRoleName, frontend.getHostName());
+                String alertAdvice = "The errmsg is " + frontend.getErrMsg();
                 ProcessUtils.saveAlert(roleInstanceEntity, alertTargetName, AlertLevel.WARN, alertAdvice);
             } else {
                 ProcessUtils.recoverAlert(roleInstanceEntity);

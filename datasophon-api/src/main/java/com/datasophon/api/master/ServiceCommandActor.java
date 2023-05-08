@@ -17,6 +17,9 @@
 
 package com.datasophon.api.master;
 
+import akka.actor.ActorRef;
+import akka.actor.UntypedActor;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.service.ClusterAlertQuotaService;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceCommandHostCommandService;
@@ -35,22 +38,14 @@ import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
 import com.datasophon.dao.entity.ClusterServiceCommandHostEntity;
 import com.datasophon.dao.enums.ClusterState;
 import com.datasophon.dao.enums.CommandState;
-
 import org.apache.commons.lang.StringUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scala.Option;
 
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
-import akka.actor.ActorRef;
-import akka.actor.UntypedActor;
 
 public class ServiceCommandActor extends UntypedActor {
 
@@ -131,6 +126,8 @@ public class ServiceCommandActor extends UntypedActor {
                         HdfsEcCommand hdfsEcCommand = new HdfsEcCommand();
                         hdfsEcCommand.setServiceInstanceId(command.getServiceInstanceId());
                         hdfsECActor.tell(hdfsEcCommand, getSelf());
+                        //update web ui
+
                     }
                     logger.info("start to generate prometheus config");
                     ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class,

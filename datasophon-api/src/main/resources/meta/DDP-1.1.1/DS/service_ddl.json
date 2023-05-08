@@ -49,7 +49,7 @@
       },
       "externalLink": {
         "name": "DolphinScheduler Ui",
-        "label": "NameNode Ui",
+        "label": "DolphinScheduler Ui",
         "url": "http://${host}:12345/dolphinscheduler/ui"
       }
     },
