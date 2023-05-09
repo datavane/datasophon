@@ -358,7 +358,6 @@ public class InstallServiceImpl implements InstallService {
             hostInfo.setInstallStateCode(InstallState.RUNNING.getValue());
             hostInfo.setErrMsg("");
             hostInfo.setProgress(0);
-            map.put(hostname,hostInfo);
 
             hostActor.tell(
                     new DispatcherHostAgentCommand(
