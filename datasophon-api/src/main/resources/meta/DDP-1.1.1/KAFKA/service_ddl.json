@@ -79,10 +79,10 @@
         ]
       },
       {
-        "filename": "kafka-run-class.sh",
+        "filename": "kafka-server-start.sh",
         "configFormat": "custom",
         "outputDirectory": "bin",
-        "templateName": "kafka-run-class.ftl",
+        "templateName": "kafka-server-start.ftl",
         "includeParams": [
           "kafkaHeapSize",
           "javaSecurityKrb5Conf",
