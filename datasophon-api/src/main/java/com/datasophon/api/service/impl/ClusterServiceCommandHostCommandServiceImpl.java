@@ -22,7 +22,6 @@ import akka.pattern.Patterns;
 import akka.util.Timeout;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceCommandHostCommandService;
@@ -47,7 +46,6 @@ import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -136,8 +134,8 @@ public class ClusterServiceCommandHostCommandServiceImpl
 
         GetLogCommand command = new GetLogCommand();
         command.setLogFile(logFile);
-        command.setDecompressPackageName("/opt/datasophon/datasophon-worker");
-        logger.info("start to get {} log from {}", serviceRoleName, hostCommand.getHostname());
+        command.setDecompressPackageName("datasophon-worker");
+        logger.info("Start to get {} install log from host {}", serviceRoleName, hostCommand.getHostname());
         ActorSelection configActor = ActorUtils.actorSystem
                 .actorSelection("akka.tcp://datasophon@" + hostCommand.getHostname() + ":2552/user/worker/logActor");
         Timeout timeout = new Timeout(Duration.create(60, TimeUnit.SECONDS));
