@@ -116,6 +116,7 @@ public final class Constants {
     public static final String GROUP_NAME = "group_name";
     public static final String RACK = "rack";
     public static final String SERVICE_STATE = "service_state";
+    public static final String EQUAL_SIGN = "=";
 
     private Constants() {
         throw new IllegalStateException("Constants Exception");
