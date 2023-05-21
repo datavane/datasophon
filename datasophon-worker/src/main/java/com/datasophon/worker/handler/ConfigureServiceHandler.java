@@ -85,7 +85,6 @@ public class ConfigureServiceHandler {
                 ArrayList<ServiceConfig> customConfList = new ArrayList<>();
                 while (iterator.hasNext()) {
                     ServiceConfig config = iterator.next();
-                    logger.info("Find config {}", config.getName());
                     if (StringUtils.isNotBlank(config.getType())) {
                         switch (config.getType()) {
                             case Constants.INPUT:
