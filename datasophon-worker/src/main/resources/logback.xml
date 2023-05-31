@@ -39,7 +39,7 @@
                 <file>${log.base}/${taskAppId}.log</file>
                 <encoder>
                     <pattern>
-                        [%level] %date{yyyy-MM-dd HH:mm:ss.SSS Z} - %msg%n
+                        [%level] %date{yyyy-MM-dd HH:mm:ss} %logger{96}:[%line] - %msg%n
                     </pattern>
                     <charset>UTF-8</charset>
                 </encoder>
