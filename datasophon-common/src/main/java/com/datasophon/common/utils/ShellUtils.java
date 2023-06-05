@@ -204,6 +204,18 @@ public class ShellUtils {
             } finally {
                 closeQuietly(inReader);
             }
+            BufferedReader errorReader = null;
+            try {
+                errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                String line;
+                while ((line = errorReader.readLine()) != null) {
+                    logger.error(line);
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            } finally {
+                closeQuietly(errorReader);
+            }
         });
         getOutputLogService.shutdown();
     }
