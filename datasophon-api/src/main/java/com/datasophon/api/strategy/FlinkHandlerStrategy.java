@@ -48,7 +48,7 @@ public class FlinkHandlerStrategy extends ServiceHandlerAbstract implements Serv
                 enableJM2HA = isEnableHA(clusterId, globalVariables, enableJM2HA, config, "FLINK");
             }
         }
-        String key = clusterInfo.getClusterCode() + Constants.UNDERLINE + "FLINK" + Constants.CONFIG;
+        String key = clusterInfo.getClusterFrame() + Constants.UNDERLINE + "FLINK" + Constants.CONFIG;
         List<ServiceConfig> configs = ServiceConfigMap.get(key);
         ArrayList<ServiceConfig> kbConfigs = new ArrayList<>();
         if (enableJM2HA) {
