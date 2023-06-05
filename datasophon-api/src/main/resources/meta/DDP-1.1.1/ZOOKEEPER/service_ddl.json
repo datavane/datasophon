@@ -31,10 +31,9 @@
       },
       "statusRunner": {
         "timeout": "60",
-        "program": "bin/zkStatus.sh",
+        "program": "bin/zkServer.sh",
         "args": [
-          "status",
-          "zookeeper"
+          "status"
         ]
       },
       "restartRunner": {
