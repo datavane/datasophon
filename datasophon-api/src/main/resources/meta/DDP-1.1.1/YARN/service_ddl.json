@@ -181,6 +181,7 @@
           "yarn.resourcemanager.store.class",
           "yarn.application.classpath",
           "yarn.nodemanager.local-dirs",
+          "yarn.nodemanager.log-dirs",
           "yarn.nodemanager.address",
           "yarn.nodemanager.resource.count-logical-processors-as-cores",
           "yarn.nodemanager.resource.detect-hardware-capabilities",
@@ -661,6 +662,21 @@
       "type": "multiple",
       "value": [
         "/data/nm"
+      ],
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": ""
+    },
+    {
+      "name": "yarn.nodemanager.log-dirs",
+      "label": "NodeManager日志存储目录",
+      "description": "NodeManager日志存储目录，可配置多个，按逗号分隔",
+      "required": true,
+      "configType": "path",
+      "separator": ",",
+      "type": "multiple",
+      "value": [
+        "/data/nm/userlogs"
       ],
       "configurableInWizard": true,
       "hidden": false,
