@@ -32,6 +32,7 @@ import com.datasophon.worker.utils.TaskConstants;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.File;
 import java.util.Objects;
 
 import org.slf4j.Logger;
