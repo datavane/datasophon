@@ -133,7 +133,11 @@
       "name": "YarnClient",
       "label": "YarnClient",
       "roleType": "client",
-      "cardinality": "1+"
+      "cardinality": "1+",
+      "runAs": {
+        "user": "yarn",
+        "group": "hadoop"
+      }
     }
   ],
   "configWriter": {
@@ -821,7 +825,7 @@
       "description": "启用Kerberos认证",
       "required": true,
       "type": "switch",
-      "value": "",
+      "value": false,
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": false
