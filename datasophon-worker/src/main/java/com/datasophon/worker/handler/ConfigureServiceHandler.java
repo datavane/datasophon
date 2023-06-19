@@ -155,6 +155,11 @@ public class ConfigureServiceHandler {
                     } else {
                         FreemakerUtils.generateConfigFile(generators, configs, decompressPackageName);
                     }
+                }else{
+                    String packagePath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH;
+                    String outputFile =
+                            packagePath + generators.getOutputDirectory() + Constants.SLASH + generators.getFilename();
+                    FileUtil.writeUtf8String("",outputFile);
                 }
                 execResult.setExecOut("configure success");
                 logger.info("configure success");
