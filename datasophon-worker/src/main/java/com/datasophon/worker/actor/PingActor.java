@@ -15,26 +15,33 @@
  *  limitations under the License.
  */
 
-package com.datasophon.worker.strategy;
+package com.datasophon.worker.actor;
 
-import com.datasophon.worker.utils.TaskConstants;
-import lombok.Data;
+import akka.actor.UntypedActor;
+import com.datasophon.common.command.PingCommand;
+import com.datasophon.common.utils.ExecResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Data
-public class AbstractHandlerStrategy {
-    public String serviceName;
+/**
+ * 发送 ping，返回 pong
+ *
+ * @author zhenqin
+ */
+public class PingActor extends UntypedActor {
 
-    public String serviceRoleName;
+    private static final Logger logger = LoggerFactory.getLogger(PingActor.class);
 
-    public Logger logger;
-
-    public AbstractHandlerStrategy(String serviceName,String serviceRoleName) {
-        this.serviceName = serviceName;
-        this.serviceRoleName = serviceRoleName;
-        String loggerName = String.format("%s-%s-%s", TaskConstants.TASK_LOG_LOGGER_NAME, serviceName, serviceRoleName);
-        logger = LoggerFactory.getLogger(loggerName);
+    @Override
+    public void onReceive(Object msg) throws Throwable {
+        if (msg instanceof PingCommand) {
+            PingCommand command = (PingCommand) msg;
+            ExecResult execResult = new ExecResult();
+            execResult.setExecResult(true);
+            execResult.setExecOut("pong");
+            getSender().tell(execResult, getSelf());
+        } else {
+            unhandled(msg);
+        }
     }
-
 }
