@@ -192,8 +192,8 @@ public class HostCheckActor extends UntypedActor {
                             checkedHost.setManaged(MANAGED.YES);
                         } catch (Exception e) {
                             logger.warn("host: " + host.getHostname() + " rpc error, cause: " + e.getMessage());
-                            checkedHost.setManaged(MANAGED.NO);
-                            checkedHost.setHostState(3);
+//                            checkedHost.setManaged(MANAGED.NO);
+                            checkedHost.setHostState(2);
                         }
                         checkedHosts.add(checkedHost);
                     }
