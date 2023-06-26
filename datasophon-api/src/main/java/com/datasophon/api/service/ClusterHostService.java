@@ -44,6 +44,16 @@ public interface ClusterHostService extends IService<ClusterHostEntity> {
 
     Result deleteHost(Integer hostId);
 
+    /**
+     * 批量删除主机。
+     * 删除主机，首先停止主机上的服务
+     * 其次删除主机 worker，同时移除 Prometheus hosts
+     * 然后删除主机运行的实例
+     * @param hostIds
+     * @return
+     */
+    Result deleteHosts(String hostIds);
+
     Result getRack(Integer clusterId);
 
     void deleteHostByClusterId(Integer id);
