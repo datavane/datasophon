@@ -7,8 +7,8 @@
       :form="form"
       class="p0-32-10-32 form-content"
     >
-       <a-form-item label="角色组列表">
-           <a-select allowClear v-decorator="['characterGroupId', { rules: [{ required: true, message: '角色组列表不能为空!' }]}]"  placeholder="请选择告角色组列表">
+       <a-form-item label="角色组模版">
+           <a-select allowClear v-decorator="['characterGroupId', { rules: [{ required: true, message: '角色组模版不能为空!' }]}]"  placeholder="请选择告角色组模版">
                <a-select-option :value="item.id" v-for="(item,index) in GroupList" :key="index">{{item.roleGroupName}}</a-select-option>
           </a-select>
       </a-form-item>

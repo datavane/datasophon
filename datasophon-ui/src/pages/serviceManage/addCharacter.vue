@@ -22,8 +22,8 @@
                <a-select-option :value="item.serviceRoleName" v-for="(item,index) in cateList" :key="index">{{item.serviceRoleName}}</a-select-option>
           </a-select>
       </a-form-item> -->
-       <a-form-item label="角色组列表">
-           <a-select v-decorator="['characterGroupId', { rules: [{ required: true, message: '角色组列表不能为空!' }]}]"  placeholder="请选择告角色组列表">
+       <a-form-item label="角色组模版">
+           <a-select v-decorator="['characterGroupId', { rules: [{ required: true, message: '角色组模版不能为空!' }]}]"  placeholder="请选择角色组模版">
                <a-select-option :value="item.id" v-for="(item,index) in GroupList" :key="index">{{item.roleGroupName}}</a-select-option>
           </a-select>
       </a-form-item>
