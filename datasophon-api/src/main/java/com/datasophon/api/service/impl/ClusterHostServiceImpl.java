@@ -33,6 +33,7 @@ import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ExecuteCmdCommand;
 import com.datasophon.common.command.GenerateHostPrometheusConfig;
 import com.datasophon.common.command.GenerateRackPropCommand;
+import com.datasophon.common.model.HostInfo;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.dao.entity.ClusterInfoEntity;
@@ -48,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -156,6 +158,12 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
         prometheusActor.tell(prometheusConfigCommand, ActorRef.noSender());
 
         this.removeById(hostId);
+
+        // remove the host from the cache
+        Map<String, HostInfo> map =
+            (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
+        map.remove(host.getHostname());
+
         return Result.success();
     }
 
