@@ -123,6 +123,7 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     @Override
     public Result deleteHost(Integer hostId) {
         ClusterHostEntity host = this.getById(hostId);
+        // 获取主机上安装的服务
         List<ClusterServiceRoleInstanceEntity> list =
                 roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                         .eq(Constants.CLUSTER_ID, host.getClusterId())
@@ -153,6 +154,8 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
         //remove host from prometheus
         ActorRef prometheusActor =
                 ActorUtils.getLocalActor(PrometheusActor.class, ActorUtils.getActorRefName(PrometheusActor.class));
+
+        // Prometheus 移除 hosts 信息
         GenerateHostPrometheusConfig prometheusConfigCommand = new GenerateHostPrometheusConfig();
         prometheusConfigCommand.setClusterId(clusterInfo.getId());
         prometheusActor.tell(prometheusConfigCommand, ActorRef.noSender());
@@ -166,6 +169,23 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
 
         return Result.success();
     }
+
+    /**
+     * 批量删除主机。
+     * 删除主机，首先停止主机上的服务
+     * 其次删除主机 worker，同时移除 Prometheus hosts
+     * 然后删除主机运行的实例
+     * @param hostIds
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result deleteHosts(String hostIds) {
+        // 批量移除
+        Arrays.stream(hostIds.split(",", -1)).map(Integer::parseInt).forEach(this::deleteHost);
+        return Result.success();
+    }
+
 
     @Override
     public Result getRack(Integer clusterId) {
