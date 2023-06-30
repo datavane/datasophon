@@ -20,6 +20,9 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     view:
       suffix: .html
+  flyway:
+    locations: classpath:db/migration
+    placeholder-replacement: false
   #国际化配置
   messages:
     basename: i18n/messages
