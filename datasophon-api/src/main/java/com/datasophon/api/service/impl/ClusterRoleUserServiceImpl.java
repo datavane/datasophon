@@ -17,6 +17,7 @@
 
 package com.datasophon.api.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.datasophon.api.service.ClusterRoleUserService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.utils.Result;
@@ -38,7 +39,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 @Service("clusterRoleUserService")
 public class ClusterRoleUserServiceImpl extends ServiceImpl<ClusterRoleUserMapper, ClusterRoleUserEntity>
         implements
-            ClusterRoleUserService {
+        ClusterRoleUserService {
 
     @Autowired
     private ClusterRoleUserMapper clusterRoleUserMapper;
@@ -56,7 +57,12 @@ public class ClusterRoleUserServiceImpl extends ServiceImpl<ClusterRoleUserMappe
 
     @Override
     public Result saveClusterManager(Integer clusterId, String userIds) {
+        // 首先删除原有管理员
         this.remove(new QueryWrapper<ClusterRoleUserEntity>().eq(Constants.CLUSTER_ID, clusterId));
+        if (StringUtils.isEmpty(userIds)) {
+            // userIds 为空,表示取消授权
+            return Result.success();
+        }
         ArrayList<ClusterRoleUserEntity> list = new ArrayList<>();
         for (String userId : userIds.split(",")) {
             Integer id = Integer.parseInt(userId);

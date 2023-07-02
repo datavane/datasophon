@@ -21,7 +21,7 @@
     <parent>
         <groupId>com.datasophon</groupId>
         <artifactId>datasophon</artifactId>
-        <version>1.1.1</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>datasophon-api</artifactId>
@@ -137,6 +137,15 @@
             <artifactId>mockito-core</artifactId>
             <version>2.23.4</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
         </dependency>
 
     </dependencies>

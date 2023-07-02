@@ -8,12 +8,8 @@ security:
     type: PASSWORD
 # mysql
 spring:
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://ddp2:3306/datasophon?useUnicode=true&characterEncoding=utf-8
-    username: root
-    password: root
-    driver-class-name: com.mysql.jdbc.Driver
+  profiles:
+    active: dev
   resources:
     static-locations: classpath:/front/views/
   #json格式化全局配置
@@ -24,6 +20,9 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     view:
       suffix: .html
+  flyway:
+    locations: classpath:db/migration
+    placeholder-replacement: false
   #国际化配置
   messages:
     basename: i18n/messages
