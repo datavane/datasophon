@@ -39,6 +39,7 @@ public class HiveServer2HandlerStrategy extends  AbstractHandlerStrategy impleme
     @Override
     public ExecResult handler(ServiceRoleOperateCommand command) {
         ExecResult startResult = new ExecResult();
+        final String workPath = Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName();
         ServiceHandler serviceHandler = new ServiceHandler(command.getServiceName(), command.getServiceRoleName());
         if (command.getEnableRangerPlugin()) {
             logger.info("start to enable hive hdfs plugin");
@@ -93,6 +94,12 @@ public class HiveServer2HandlerStrategy extends  AbstractHandlerStrategy impleme
                     .exceShell("sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -chown hive:hadoop /user/hive/warehouse");
             ShellUtils.exceShell("sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -chown hive:hadoop /tmp/hive");
             ShellUtils.exceShell("sudo -u hdfs " + hadoopHome + "/bin/hdfs dfs -chmod 777 /tmp/hive");
+
+            // 存在 tez 则创建软连接
+            final String tezHomePath = Constants.INSTALL_PATH + Constants.SLASH + "tez";
+            if(FileUtil.exist(tezHomePath)) {
+                ShellUtils.exceShell("ln -s " + tezHomePath + "/conf/tez-site.xml " + workPath + "/conf/tez-site.xml");
+            }
         }
 
         startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(),
