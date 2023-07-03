@@ -33,6 +33,7 @@ import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ExecuteCmdCommand;
 import com.datasophon.common.command.GenerateHostPrometheusConfig;
 import com.datasophon.common.command.GenerateRackPropCommand;
+import com.datasophon.common.model.HostInfo;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.dao.entity.ClusterInfoEntity;
@@ -48,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -121,6 +123,7 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     @Override
     public Result deleteHost(Integer hostId) {
         ClusterHostEntity host = this.getById(hostId);
+        // 获取主机上安装的服务
         List<ClusterServiceRoleInstanceEntity> list =
                 roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                         .eq(Constants.CLUSTER_ID, host.getClusterId())
@@ -151,13 +154,38 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
         //remove host from prometheus
         ActorRef prometheusActor =
                 ActorUtils.getLocalActor(PrometheusActor.class, ActorUtils.getActorRefName(PrometheusActor.class));
+
+        // Prometheus 移除 hosts 信息
         GenerateHostPrometheusConfig prometheusConfigCommand = new GenerateHostPrometheusConfig();
         prometheusConfigCommand.setClusterId(clusterInfo.getId());
         prometheusActor.tell(prometheusConfigCommand, ActorRef.noSender());
 
         this.removeById(hostId);
+
+        // remove the host from the cache
+        Map<String, HostInfo> map =
+            (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
+        map.remove(host.getHostname());
+
         return Result.success();
     }
+
+    /**
+     * 批量删除主机。
+     * 删除主机，首先停止主机上的服务
+     * 其次删除主机 worker，同时移除 Prometheus hosts
+     * 然后删除主机运行的实例
+     * @param hostIds
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result deleteHosts(String hostIds) {
+        // 批量移除
+        Arrays.stream(hostIds.split(",", -1)).map(Integer::parseInt).forEach(this::deleteHost);
+        return Result.success();
+    }
+
 
     @Override
     public Result getRack(Integer clusterId) {
