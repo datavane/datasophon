@@ -34,6 +34,7 @@ public class ServiceRoleStrategyContext {
         map.put("Grafana", new GrafanaHandlerStrategy());
         map.put("ZkServer", new ZkServerHandlerStrategy());
         map.put("HistoryServer", new HistoryServerHandlerStrategy());
+        map.put("TimelineServer", new TSHandlerStrategy());
         map.put("TrinoCoordinator", new TrinoHandlerStrategy());
         map.put("JournalNode", new JournalNodeHandlerStrategy());
         map.put("ZKFC", new ZKFCHandlerStrategy());

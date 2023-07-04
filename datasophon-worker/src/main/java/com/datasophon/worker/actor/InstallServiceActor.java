@@ -24,6 +24,11 @@ import com.datasophon.common.enums.ServiceRoleType;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.handler.InstallServiceHandler;
+
+import java.io.File;
+import java.util.ArrayList;
+
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +69,14 @@ public class InstallServiceActor extends UntypedActor {
             } else {
                 installResult = serviceHandler.install(command.getPackageName(), command.getDecompressPackageName(),
                         command.getPackageMd5(), command.getRunAs());
+                // 其他服务创建软连接
+                String appHome = Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName();
+                String appLinkHome = Constants.INSTALL_PATH + Constants.SLASH + StringUtils.lowerCase(command.getServiceName());
+                if(!new File(appLinkHome).exists()) {
+                    ShellUtils
+                            .exceShell("ln -s " + appHome + " " + appLinkHome);
+                    logger.info("create symbolic dir: {}", appLinkHome);
+                }
             }
             getSender().tell(installResult, getSelf());
             logger.info("install package {}", installResult.getExecResult() ? "success" : "failed");
