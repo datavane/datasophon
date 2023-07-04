@@ -135,5 +135,14 @@
                 <include>static/**</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>${basedir}/src/main/resources/db/migration</directory>
+            <outputDirectory>/conf/db/migration</outputDirectory>
+            <directoryMode>0755</directoryMode>
+            <fileMode>0755</fileMode>
+            <includes>
+                <include>**</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>
