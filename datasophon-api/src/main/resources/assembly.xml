@@ -109,8 +109,8 @@
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
-            <directory>${basedir}/../datasophon-api/src/main/resources/sql</directory>
-            <outputDirectory>sql</outputDirectory>
+            <directory>${basedir}/../datasophon-api/src/main/resources/db/migration</directory>
+            <outputDirectory>/conf/db/migration</outputDirectory>
             <directoryMode>0755</directoryMode>
             <fileMode>0755</fileMode>
         </fileSet>
