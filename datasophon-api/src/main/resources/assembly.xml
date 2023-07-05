@@ -108,32 +108,5 @@
             <directoryMode>0755</directoryMode>
             <fileMode>0755</fileMode>
         </fileSet>
-        <fileSet>
-            <directory>${basedir}/../datasophon-api/src/main/resources/sql</directory>
-            <outputDirectory>sql</outputDirectory>
-            <directoryMode>0755</directoryMode>
-            <fileMode>0755</fileMode>
-        </fileSet>
-        <fileSet>
-            <directory>${basedir}/../datasophon-ui/dist</directory>
-            <outputDirectory>/conf/front/views</outputDirectory>
-            <includes>
-                <include>*.html</include>
-                <include>*.ico</include>
-                <include>*.js</include>
-            </includes>
-            <directoryMode>0755</directoryMode>
-            <fileMode>0755</fileMode>
-        </fileSet>
-        <fileSet>
-            <directory>${basedir}/../datasophon-ui/dist</directory>
-            <outputDirectory>/conf/front/static/resources/bundle-main</outputDirectory>
-            <directoryMode>0755</directoryMode>
-            <fileMode>0755</fileMode>
-            <includes>
-                <include>css/**</include>
-                <include>static/**</include>
-            </includes>
-        </fileSet>
     </fileSets>
 </assembly>
