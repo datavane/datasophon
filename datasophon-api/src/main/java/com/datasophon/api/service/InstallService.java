@@ -41,4 +41,14 @@ public interface InstallService {
     Result dispatcherHostAgentCompleted(Integer clusterId);
 
     Result generateHostAgentCommand(String clusterHostIds, String commandType) throws Exception;
+
+
+    /**
+     * 启动 主机上安装的服务启动
+     * @param clusterHostIds
+     * @param commandType
+     * @return
+     * @throws Exception
+     */
+    Result generateHostServiceCommand(String clusterHostIds, String commandType) throws Exception;
 }
