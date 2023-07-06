@@ -241,7 +241,7 @@ public class ConfigureServiceHandler {
         if (!FileUtil.exist(path)) {
             logger.info("create file path {}", path);
             FileUtil.mkdir(path);
-            ShellUtils.addChmod(path, "755");
+            ShellUtils.addChmod(path, "775");
             if (Objects.nonNull(runAs)) {
                 ShellUtils.addChown(path, runAs.getUser(), runAs.getGroup());
             }
