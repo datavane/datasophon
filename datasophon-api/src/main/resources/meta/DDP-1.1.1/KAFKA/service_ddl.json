@@ -86,7 +86,15 @@
         "outputDirectory": "bin",
         "templateName": "kafka-server-start.ftl",
         "includeParams": [
-          "kafkaHeapSize",
+          "kafkaHeapSize"
+        ]
+      },
+      {
+        "filename": "kafka-run-class.sh",
+        "configFormat": "custom",
+        "outputDirectory": "bin",
+        "templateName": "kafka-run-class.ftl",
+        "includeParams": [
           "javaSecurityKrb5Conf",
           "javaSecurityAuthLoginConfig"
         ]
