@@ -21,6 +21,10 @@ spring:
     view:
       suffix: .html
   flyway:
+    enabled: true
+    clean-disabled: true
+    baseline-on-migrate: true
+    baseline-version: 1.1.2.0
     locations: classpath:db/migration
     placeholder-replacement: false
   #国际化配置
