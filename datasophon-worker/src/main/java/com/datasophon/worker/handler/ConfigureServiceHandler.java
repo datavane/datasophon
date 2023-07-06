@@ -51,6 +51,8 @@ public class ConfigureServiceHandler {
 
     private static final String RANGER_ADMIN = "RangerAdmin";
 
+    private static final String SH = "sh";
+
     private String serviceName;
 
     private String serviceRoleName;
@@ -155,7 +157,7 @@ public class ConfigureServiceHandler {
                     } else {
                         FreemakerUtils.generateConfigFile(generators, configs, decompressPackageName);
                     }
-                }else{
+                }else if(!generators.getFilename().endsWith(SH)){
                     String packagePath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH;
                     String outputFile =
                             packagePath + generators.getOutputDirectory() + Constants.SLASH + generators.getFilename();
