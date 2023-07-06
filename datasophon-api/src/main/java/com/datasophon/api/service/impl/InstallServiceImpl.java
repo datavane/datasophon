@@ -30,6 +30,7 @@ import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.DispatcherWorkerActor;
 import com.datasophon.api.master.HostConnectActor;
+import com.datasophon.api.master.WorkerStartActor;
 import com.datasophon.api.service.ClusterHostService;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.InstallService;
@@ -43,6 +44,7 @@ import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.common.model.CheckResult;
 import com.datasophon.common.model.HostInfo;
+import com.datasophon.common.model.WorkerServiceMessage;
 import com.datasophon.common.utils.HostUtils;
 import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.common.utils.PropertyUtils;
@@ -427,10 +429,41 @@ public class InstallServiceImpl implements InstallService {
             MinaUtils.execCmdWithResult(session, "service datasophon-worker " + commandType);
             logger.info("hostAgent command:{}", "service datasophon-worker " + commandType);
             if (ObjectUtil.isNotEmpty(session)) {
-                session.close();
+                    session.close();
             }
         }
         return Result.success();
+    }
+
+    /**
+     * 一键 启动 主机上安装的服务
+     *
+     * @param clusterHostIds
+     * @param commandType
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Result generateHostServiceCommand(String clusterHostIds, String commandType) throws Exception {
+        if (StringUtils.isBlank(clusterHostIds)) {
+            return Result.error(Status.SELECT_LEAST_ONE_HOST.getMsg());
+        }
+        String[] clusterHostIdArray = clusterHostIds.split(Constants.COMMA);
+        List<ClusterHostEntity> clusterHostList = hostService.getHostListByIds(Arrays.asList(clusterHostIdArray));
+        Result result = null;
+        for (ClusterHostEntity clusterHostEntity : clusterHostList) {
+            WorkerServiceMessage serviceMessage = new WorkerServiceMessage(
+                    clusterHostEntity.getHostname(), clusterHostEntity.getClusterId());
+            try {
+                ActorRef actor =
+                        ActorUtils.getLocalActor(WorkerStartActor.class, "workerStartActor");
+                actor.tell(serviceMessage, ActorRef.noSender());
+            } catch (Exception e) {
+                logger.error("launcher worker service error!", e);
+                result = Result.error("启动服务异常，Cause: " + e.getMessage());
+            }
+        }
+        return result == null ? Result.success() : result;
     }
 
     private List<HostInfo> getListPage(List<HostInfo> list, Integer offset, Integer pageSize) {

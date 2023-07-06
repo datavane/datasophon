@@ -36,6 +36,7 @@ import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.common.model.HostInfo;
 import com.datasophon.common.model.StartWorkerMessage;
+import com.datasophon.common.model.WorkerServiceMessage;
 import com.datasophon.common.utils.CollectionUtils;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterGroup;
@@ -110,6 +111,11 @@ public class WorkerStartActor extends UntypedActor {
 
             // tell to worker what need to start
             autoStartServiceNeeded(msg.getHostname(), cluster.getId());
+        } else if(message instanceof WorkerServiceMessage) {
+            // 启动节点上安装的服务
+            WorkerServiceMessage msg = (WorkerServiceMessage) message;
+            // tell to worker what need to start
+            autoStartServiceNeeded(msg.getHostname(), msg.getClusterId());
         }
     }
 
