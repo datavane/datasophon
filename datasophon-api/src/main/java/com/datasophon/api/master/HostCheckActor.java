@@ -107,7 +107,7 @@ public class HostCheckActor extends UntypedActor {
                         } catch (Exception e) {
                             logger.warn("host: " + clusterHostEntity.getHostname() + " rpc error, cause: " + e.getMessage());
                             clusterHostEntity.setHostState(3);
-                            clusterHostEntity.setManaged(MANAGED.NO);
+//                            clusterHostEntity.setManaged(MANAGED.NO);
                             // ping 失败，则修改节点状态为 false
                             continue;
                         }
