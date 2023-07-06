@@ -212,7 +212,7 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
 
     @Override
     public List<ClusterHostEntity> getHostListByIds(List<String> ids) {
-        return this.lambdaQuery().in(ClusterHostEntity::getId, ids).list();
+        return this.lambdaQuery().in(ClusterHostEntity::getId, ids).or().in(ClusterHostEntity::getHostname, ids).list();
     }
 
     @Override
