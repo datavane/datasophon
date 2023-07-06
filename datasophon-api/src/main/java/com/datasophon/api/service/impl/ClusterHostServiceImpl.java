@@ -160,12 +160,14 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
         prometheusConfigCommand.setClusterId(clusterInfo.getId());
         prometheusActor.tell(prometheusConfigCommand, ActorRef.noSender());
 
-        this.removeById(hostId);
-
         // remove the host from the cache
         Map<String, HostInfo> map =
             (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
-        map.remove(host.getHostname());
+        if(Objects.nonNull(map)){
+            map.remove(host.getHostname());
+        }
+
+        this.removeById(hostId);
 
         return Result.success();
     }
