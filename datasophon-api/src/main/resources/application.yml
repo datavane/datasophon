@@ -52,3 +52,5 @@ mybatis-plus:
     call-setters-on-nulls: true
     jdbc-type-for-null: 'null'
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+logging:
+  config: classpath:logback-api.xml
