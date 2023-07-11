@@ -82,7 +82,6 @@ pid=$DDH_PID_DIR/$command.pid
 cd $DDH_HOME
 
 if [ "$command" = "api" ]; then
-  LOG_FILE="-Dlogging.config=classpath:logback-api.xml -Dspring.profiles.active=api"
   CLASS=com.datasophon.api.DDHApplicationServer
   JMX="-javaagent:$DDH_HOME/jmx/jmx_prometheus_javaagent-0.16.1.jar=8586:$DDH_HOME/jmx/jmx_exporter_config.yaml"
   HEAP_OPTS="-Xms1g -Xmx1g -Xmn512m"
@@ -107,7 +106,7 @@ case $startStop in
 
     echo starting $command, logging to $log
 
-    exec_command="$LOG_FILE $DDH_OPTS -classpath $DDH_CONF_DIR:$DDH_LIB_JARS $CLASS"
+    exec_command="$DDH_OPTS -classpath $DDH_CONF_DIR:$DDH_LIB_JARS $CLASS"
 
     echo "nohup $JAVA $exec_command > $log 2>&1 &"
     nohup $JAVA $exec_command > $log 2>&1 &
@@ -161,7 +160,7 @@ case $startStop in
       fi
       echo starting $command, logging to $log
 
-      exec_command="$LOG_FILE $DDH_OPTS -classpath $DDH_CONF_DIR:$DDH_LIB_JARS $CLASS"
+      exec_command="$DDH_OPTS -classpath $DDH_CONF_DIR:$DDH_LIB_JARS $CLASS"
 
       echo "nohup $JAVA $exec_command > $log 2>&1 &"
       nohup $JAVA $exec_command > $log 2>&1 &

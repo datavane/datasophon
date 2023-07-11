@@ -215,6 +215,14 @@
                     <artifactId>jsch</artifactId>
                     <groupId>com.jcraft</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-reload4j</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>reload4j</artifactId>
+                    <groupId>ch.qos.reload4j</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -250,6 +258,14 @@
                 <exclusion>
                     <artifactId>nimbus-jose-jwt</artifactId>
                     <groupId>com.nimbusds</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>reload4j</artifactId>
+                    <groupId>ch.qos.reload4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-reload4j</artifactId>
+                    <groupId>org.slf4j</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
