@@ -17,12 +17,11 @@
 
 package com.datasophon.api.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterHostEntity;
 
 import java.util.List;
-
-import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * 集群主机表 
@@ -42,7 +41,7 @@ public interface ClusterHostService extends IService<ClusterHostEntity> {
 
     Result getRoleListByHostname(Integer clusterId, String hostname);
 
-    Result deleteHost(Integer hostId);
+
 
     /**
      * 批量删除主机。
