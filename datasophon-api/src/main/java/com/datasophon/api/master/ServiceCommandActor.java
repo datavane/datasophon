@@ -126,22 +126,30 @@ public class ServiceCommandActor extends UntypedActor {
             if (progress1 == 100) {
                 command.setCommandState(CommandState.SUCCESS);
                 command.setEndTime(new Date());
+
+                String serviceName = command.getServiceName();
+                ClusterInfoEntity clusterInfo = clusterInfoService.getById(command.getClusterId());
+
+                if(command.getCommandType() == 4 && HDFS.equals(serviceName.toLowerCase())){
+                    //update web ui
+                    updateHDFSWebUi(clusterInfo.getId(), command.getServiceInstanceId());
+                }
+
                 // update cluster state
                 if (command.getCommandType() == 1) {
-                    ClusterInfoEntity clusterInfo = clusterInfoService.getById(command.getClusterId());
+
                     if (clusterInfo.getClusterState().equals(ClusterState.NEED_CONFIG)) {
                         clusterInfo.setClusterState(ClusterState.RUNNING);
                         clusterInfoService.updateById(clusterInfo);
                     }
-                    String serviceName = command.getServiceName();
+
                     if (HDFS.equals(serviceName.toLowerCase())) {
                         ActorRef hdfsECActor = ActorUtils.getLocalActor(HdfsECActor.class,
                                 ActorUtils.getActorRefName(HdfsECActor.class));
                         HdfsEcCommand hdfsEcCommand = new HdfsEcCommand();
                         hdfsEcCommand.setServiceInstanceId(command.getServiceInstanceId());
                         hdfsECActor.tell(hdfsEcCommand, getSelf());
-                        //update web ui
-                        updateHDFSWebUi(clusterInfo.getId(), command.getServiceInstanceId());
+
                     }
                     logger.info("start to generate prometheus config");
                     ActorRef prometheusActor = ActorUtils.getLocalActor(PrometheusActor.class,
