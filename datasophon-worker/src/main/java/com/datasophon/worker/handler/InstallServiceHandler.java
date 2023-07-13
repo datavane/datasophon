@@ -22,6 +22,8 @@ import cn.hutool.core.io.StreamProgress;
 import cn.hutool.core.lang.Console;
 import cn.hutool.http.HttpUtil;
 import com.datasophon.common.Constants;
+import com.datasophon.common.cache.CacheUtils;
+import com.datasophon.common.command.InstallServiceRoleCommand;
 import com.datasophon.common.model.RunAs;
 import com.datasophon.common.utils.CompressUtils;
 import com.datasophon.common.utils.ExecResult;
@@ -38,7 +40,6 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
 
 @Data
 public class InstallServiceHandler {
@@ -59,19 +60,21 @@ public class InstallServiceHandler {
         logger = LoggerFactory.getLogger(loggerName);
     }
 
-    public ExecResult install(String packageName, String decompressPackageName, String packageMd5, RunAs runAs) {
+    public ExecResult install(InstallServiceRoleCommand command) {
         ExecResult execResult = new ExecResult();
         try {
             String destDir = Constants.INSTALL_PATH + Constants.SLASH + "DDP/packages" + Constants.SLASH;
+            String packageName = command.getPackageName();
             String packagePath = destDir + packageName;
 
-            Boolean needDownLoad = isNeedDownloadPkg(packagePath, packageMd5);
+            Boolean needDownLoad = !Objects.equals(PropertyUtils.getString(Constants.MASTER_HOST), CacheUtils.get(Constants.HOSTNAME))
+                    && isNeedDownloadPkg(packagePath, command.getPackageMd5());
 
             if (Boolean.TRUE.equals(needDownLoad)) {
                 downloadPkg(packageName, packagePath);
             }
 
-            boolean result = decompressPkg(packageName, decompressPackageName, runAs, packagePath);
+            boolean result = decompressPkg(packageName, command.getDecompressPackageName(), command.getRunAs(), packagePath);
             execResult.setExecResult(result);
         } catch (Exception e) {
             execResult.setExecOut(e.getMessage());
