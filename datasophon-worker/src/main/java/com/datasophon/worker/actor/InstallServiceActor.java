@@ -42,19 +42,19 @@ public class InstallServiceActor extends UntypedActor {
             ExecResult installResult = new ExecResult();
             InstallServiceHandler serviceHandler = new InstallServiceHandler(command.getServiceName(), command.getServiceRoleName());
 
-            logger.info("start install package {}", command.getPackageName());
+            logger.info("Start install package {}", command.getPackageName());
             if (command.getDecompressPackageName().contains("kerberos")) {
                 ArrayList<String> commands = new ArrayList<>();
                 commands.add("yum");
                 commands.add("install");
                 commands.add("-y");
                 if (ServiceRoleType.MASTER == command.getServiceRoleType()) {
-                    logger.info("start to {}", commands.toString());
+                    logger.info("Start to {}", commands.toString());
                     commands.add("krb5-server");
                     commands.add("krb5-workstation");
                     commands.add("krb5-libs");
                 } else {
-                    logger.info("start to {}", commands.toString());
+                    logger.info("Start to {}", commands.toString());
                     commands.add("krb5-workstation");
                     commands.add("krb5-libs");
                 }
@@ -70,11 +70,11 @@ public class InstallServiceActor extends UntypedActor {
                 if (!new File(appLinkHome).exists()) {
                     ShellUtils
                             .exceShell("ln -s " + appHome + " " + appLinkHome);
-                    logger.info("create symbolic dir: {}", appLinkHome);
+                    logger.info("Create symbolic dir: {}", appLinkHome);
                 }
             }
             getSender().tell(installResult, getSelf());
-            logger.info("install package {}", installResult.getExecResult() ? "success" : "failed");
+            logger.info("Install {} {}", command.getPackageName(), installResult.getExecResult() ? "success" : "failed");
         } else {
             unhandled(msg);
         }
