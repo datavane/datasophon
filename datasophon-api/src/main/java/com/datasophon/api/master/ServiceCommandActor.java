@@ -20,11 +20,13 @@ package com.datasophon.api.master;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.service.ClusterAlertQuotaService;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceCommandHostCommandService;
 import com.datasophon.api.service.ClusterServiceCommandHostService;
 import com.datasophon.api.service.ClusterServiceCommandService;
+import com.datasophon.api.service.ClusterServiceRoleInstanceWebuisService;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.GeneratePrometheusConfigCommand;
@@ -36,6 +38,7 @@ import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceCommandEntity;
 import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
 import com.datasophon.dao.entity.ClusterServiceCommandHostEntity;
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceWebuis;
 import com.datasophon.dao.enums.ClusterState;
 import com.datasophon.dao.enums.CommandState;
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +48,7 @@ import scala.Option;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ServiceCommandActor extends UntypedActor {
@@ -56,6 +60,16 @@ public class ServiceCommandActor extends UntypedActor {
     private static final String DORIS = "doris";
 
     private static final String HDFS = "hdfs";
+
+    private static final String ENABLE_HDFS_KERBEROS = "${enableHDFSKerberos}";
+
+    private static final String TRUE = "true";
+
+    private static final String FALSE = "false";
+
+    private static final String HTTP = "http";
+
+    private static final String HTTPS = "https";
 
     @Override
     public void preRestart(Throwable reason, Option<Object> message) throws Exception {
@@ -112,21 +126,29 @@ public class ServiceCommandActor extends UntypedActor {
             if (progress1 == 100) {
                 command.setCommandState(CommandState.SUCCESS);
                 command.setEndTime(new Date());
+
+                String serviceName = command.getServiceName();
+                ClusterInfoEntity clusterInfo = clusterInfoService.getById(command.getClusterId());
+
+                if(command.getCommandType() == 4 && HDFS.equals(serviceName.toLowerCase())){
+                    //update web ui
+                    updateHDFSWebUi(clusterInfo.getId(), command.getServiceInstanceId());
+                }
+
                 // update cluster state
                 if (command.getCommandType() == 1) {
-                    ClusterInfoEntity clusterInfo = clusterInfoService.getById(command.getClusterId());
+
                     if (clusterInfo.getClusterState().equals(ClusterState.NEED_CONFIG)) {
                         clusterInfo.setClusterState(ClusterState.RUNNING);
                         clusterInfoService.updateById(clusterInfo);
                     }
-                    String serviceName = command.getServiceName();
+
                     if (HDFS.equals(serviceName.toLowerCase())) {
                         ActorRef hdfsECActor = ActorUtils.getLocalActor(HdfsECActor.class,
                                 ActorUtils.getActorRefName(HdfsECActor.class));
                         HdfsEcCommand hdfsEcCommand = new HdfsEcCommand();
                         hdfsEcCommand.setServiceInstanceId(command.getServiceInstanceId());
                         hdfsECActor.tell(hdfsEcCommand, getSelf());
-                        //update web ui
 
                     }
                     logger.info("start to generate prometheus config");
@@ -169,6 +191,27 @@ public class ServiceCommandActor extends UntypedActor {
             }
             commandService.lambdaUpdate().eq(ClusterServiceCommandEntity::getCommandId, command.getCommandId())
                     .update(command);
+        }
+    }
+
+    private void updateHDFSWebUi(Integer clusterId, Integer serviceInstanceId) {
+        Map<String, String> variables = GlobalVariables.get(clusterId);
+        if (variables.containsKey(ENABLE_HDFS_KERBEROS)) {
+            ClusterServiceRoleInstanceWebuisService webuisService =
+                    SpringTool.getApplicationContext().getBean(ClusterServiceRoleInstanceWebuisService.class);
+            List<ClusterServiceRoleInstanceWebuis> webUis = webuisService.listWebUisByServiceInstanceId(serviceInstanceId);
+            for (ClusterServiceRoleInstanceWebuis webUi : webUis) {
+                if (TRUE.equals(variables.get(ENABLE_HDFS_KERBEROS)) && webUi.getWebUrl().contains("9870")) {
+                    String newWebUi = webUi.getWebUrl().replace(HTTP, HTTPS).replace("9870", "9871");
+                    webUi.setWebUrl(newWebUi);
+                    webuisService.updateById(webUi);
+                }
+                if (FALSE.equals(variables.get(ENABLE_HDFS_KERBEROS)) && webUi.getWebUrl().contains("9871")) {
+                    String newWebUi = webUi.getWebUrl().replace(HTTPS, HTTP).replace("9871", "9870");
+                    webUi.setWebUrl(newWebUi);
+                    webuisService.updateById(webUi);
+                }
+            }
         }
     }
 

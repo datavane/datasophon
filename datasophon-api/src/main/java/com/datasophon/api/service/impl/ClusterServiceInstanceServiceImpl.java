@@ -17,32 +17,45 @@
 
 package com.datasophon.api.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.load.GlobalVariables;
-import com.datasophon.api.service.*;
+import com.datasophon.api.service.ClusterAlertHistoryService;
+import com.datasophon.api.service.ClusterInfoService;
+import com.datasophon.api.service.ClusterServiceDashboardService;
+import com.datasophon.api.service.ClusterServiceInstanceRoleGroupService;
+import com.datasophon.api.service.ClusterServiceInstanceService;
+import com.datasophon.api.service.ClusterServiceRoleGroupConfigService;
+import com.datasophon.api.service.ClusterServiceRoleInstanceService;
+import com.datasophon.api.service.ClusterServiceRoleInstanceWebuisService;
+import com.datasophon.api.service.FrameServiceRoleService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.model.SimpleServiceConfig;
 import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.*;
+import com.datasophon.dao.entity.ClusterAlertHistory;
+import com.datasophon.dao.entity.ClusterInfoEntity;
+import com.datasophon.dao.entity.ClusterServiceDashboard;
+import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
+import com.datasophon.dao.entity.ClusterServiceInstanceRoleGroup;
+import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
+import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
+import com.datasophon.dao.entity.FrameServiceRoleEntity;
 import com.datasophon.dao.enums.NeedRestart;
 import com.datasophon.dao.enums.ServiceRoleState;
 import com.datasophon.dao.enums.ServiceState;
 import com.datasophon.dao.mapper.ClusterServiceInstanceMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.alibaba.fastjson.JSONArray;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 @Service("clusterServiceInstanceService")
 @Transactional
@@ -145,7 +158,8 @@ public class ClusterServiceInstanceServiceImpl
                     .eq(ClusterServiceRoleInstanceEntity::getServiceRoleState, ServiceRoleState.EXISTS_ALARM)
                     .list();
             if (Objects.nonNull(alarmRoleList) && alarmRoleList.size() > 0) {
-                if (!ServiceState.EXISTS_ALARM.equals(serviceInstance.getServiceState())) {
+                if (!ServiceState.EXISTS_ALARM.equals(serviceInstance.getServiceState())
+                        && !ServiceState.EXISTS_EXCEPTION.equals(serviceInstance.getServiceState())) {
                     serviceInstance.setServiceState(ServiceState.EXISTS_ALARM);
                     needUpdate = true;
                 }

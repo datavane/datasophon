@@ -89,29 +89,6 @@ public class HostCheckActor extends UntypedActor {
                             continue;
                         }
                         try {
-                            // rpc 检测
-                            final ActorRef pingActor = ActorUtils.getRemoteActor(clusterHostEntity.getHostname(), "pingActor");
-                            PingCommand pingCommand = new PingCommand();
-                            pingCommand.setMessage("ping");
-                            Timeout timeout = new Timeout(Duration.create(180, TimeUnit.SECONDS));
-                            Future<Object> execFuture = Patterns.ask(pingActor, pingCommand, timeout);
-                            ExecResult execResult = (ExecResult) Await.result(execFuture, timeout.duration());
-                            if (execResult.getExecResult()) {
-                                logger.info("ping host: {} success", clusterHostEntity.getHostname());
-                            } else {
-                                logger.warn("ping host: {} fail, reason: {}", clusterHostEntity.getHostname(), execResult.getExecOut());
-                                throw new IllegalStateException("ping host: " + clusterHostEntity.getHostname() + " failed.");
-                            }
-                            clusterHostEntity.setHostState(1);
-                            clusterHostEntity.setManaged(MANAGED.YES);
-                        } catch (Exception e) {
-                            logger.warn("host: " + clusterHostEntity.getHostname() + " rpc error, cause: " + e.getMessage());
-                            clusterHostEntity.setHostState(3);
-                            clusterHostEntity.setManaged(MANAGED.NO);
-                            // ping 失败，则修改节点状态为 false
-                            continue;
-                        }
-                        try {
                             String hostname = clusterHostEntity.getHostname();
                             // 查询内存总量
                             String totalMemPromQl = "node_memory_MemTotal_bytes{job=~\"node\",instance=\"" + hostname
@@ -192,7 +169,6 @@ public class HostCheckActor extends UntypedActor {
                             checkedHost.setManaged(MANAGED.YES);
                         } catch (Exception e) {
                             logger.warn("host: " + host.getHostname() + " rpc error, cause: " + e.getMessage());
-//                            checkedHost.setManaged(MANAGED.NO);
                             checkedHost.setHostState(2);
                         }
                         checkedHosts.add(checkedHost);

@@ -20,13 +20,13 @@ package com.datasophon.api.controller;
 import com.datasophon.api.service.ClusterAlertQuotaService;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterAlertQuota;
-
-import java.util.Arrays;
-
+import com.datasophon.dao.enums.QuotaState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("cluster/alert/quota")
@@ -74,7 +74,7 @@ public class ClusterAlertQuotaController {
      */
     @RequestMapping("/update")
     public Result update(@RequestBody ClusterAlertQuota clusterAlertQuota) {
-
+        clusterAlertQuota.setQuotaState(QuotaState.WAIT_TO_UPDATE);
         clusterAlertQuotaService.updateById(clusterAlertQuota);
 
         return Result.success();

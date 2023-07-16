@@ -23,7 +23,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum QuotaState {
 
     RUNNING(1, "启用"),
-    STOPPED(2, "未启用");
+    STOPPED(2, "未启用"),
+    WAIT_TO_UPDATE(3, "待更新");
 
     @EnumValue
     private int value;

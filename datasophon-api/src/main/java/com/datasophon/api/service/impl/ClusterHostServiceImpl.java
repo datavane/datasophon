@@ -18,6 +18,7 @@
 package com.datasophon.api.service.impl;
 
 import akka.actor.ActorRef;
+import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -45,12 +46,14 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import scala.concurrent.duration.FiniteDuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service("clusterHostService")
@@ -120,61 +123,13 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
         return Result.success(list);
     }
 
-    @Override
-    public Result deleteHost(Integer hostId) {
-        ClusterHostEntity host = this.getById(hostId);
-        // 获取主机上安装的服务
-        List<ClusterServiceRoleInstanceEntity> list =
-                roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                        .eq(Constants.CLUSTER_ID, host.getClusterId())
-                        .eq(Constants.HOSTNAME, host.getHostname())
-                        .eq(Constants.SERVICE_ROLE_STATE, ServiceRoleState.RUNNING)
-                        .ne(Constants.ROLE_TYPE, RoleType.CLIENT));
-        List<String> roles = list.stream().map(e -> e.getServiceRoleName()).collect(Collectors.toList());
-        if (Objects.nonNull(list) && list.size() > 0) {
-            return Result.error(host.getHostname() + Status.HOST_EXIT_ONE_RUNNING_ROLE.getMsg() + roles.toString());
-        }
-        ClusterInfoEntity clusterInfo = clusterInfoService.getById(host.getClusterId());
-        String clusterCode = clusterInfo.getClusterCode();
-        String distributeAgentKey = clusterCode + Constants.UNDERLINE + Constants.START_DISTRIBUTE_AGENT;
-        if (CacheUtils.constainsKey(distributeAgentKey + Constants.UNDERLINE + host.getHostname())) {
-            CacheUtils.removeKey(distributeAgentKey + Constants.UNDERLINE + host.getHostname());
-        }
-        //stop the worker on this host
-        ActorRef execCmdActor = ActorUtils.getRemoteActor(host.getHostname(),"executeCmdActor");
-        ExecuteCmdCommand command = new ExecuteCmdCommand();
-
-        ArrayList<String> commands = new ArrayList<>();
-        commands.add("service");
-        commands.add("datasophon-worker");
-        commands.add("stop");
-
-        command.setCommands(commands);
-        execCmdActor.tell(command, ActorRef.noSender());
-        //remove host from prometheus
-        ActorRef prometheusActor =
-                ActorUtils.getLocalActor(PrometheusActor.class, ActorUtils.getActorRefName(PrometheusActor.class));
-
-        // Prometheus 移除 hosts 信息
-        GenerateHostPrometheusConfig prometheusConfigCommand = new GenerateHostPrometheusConfig();
-        prometheusConfigCommand.setClusterId(clusterInfo.getId());
-        prometheusActor.tell(prometheusConfigCommand, ActorRef.noSender());
-
-        this.removeById(hostId);
-
-        // remove the host from the cache
-        Map<String, HostInfo> map =
-            (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
-        map.remove(host.getHostname());
-
-        return Result.success();
-    }
 
     /**
      * 批量删除主机。
      * 删除主机，首先停止主机上的服务
      * 其次删除主机 worker，同时移除 Prometheus hosts
      * 然后删除主机运行的实例
+     *
      * @param hostIds
      * @return
      */
@@ -182,7 +137,68 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     @Transactional
     public Result deleteHosts(String hostIds) {
         // 批量移除
-        Arrays.stream(hostIds.split(",", -1)).map(Integer::parseInt).forEach(this::deleteHost);
+        List<String> ids = Arrays.asList(hostIds.split(","));
+        for (String hostId : ids) {
+            ClusterHostEntity host = this.getById(hostId);
+            // 获取主机上安装的服务
+            List<ClusterServiceRoleInstanceEntity> list =
+                    roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+                            .eq(Constants.CLUSTER_ID, host.getClusterId())
+                            .eq(Constants.HOSTNAME, host.getHostname())
+                            .eq(Constants.SERVICE_ROLE_STATE, ServiceRoleState.RUNNING)
+                            .ne(Constants.ROLE_TYPE, RoleType.CLIENT));
+            List<String> roles = list.stream().map(e -> e.getServiceRoleName()).collect(Collectors.toList());
+            if (Objects.nonNull(list) && list.size() > 0) {
+                return Result.error(host.getHostname() + Status.HOST_EXIT_ONE_RUNNING_ROLE.getMsg() + roles.toString());
+            }
+            ClusterInfoEntity clusterInfo = clusterInfoService.getById(host.getClusterId());
+            String clusterCode = clusterInfo.getClusterCode();
+            String distributeAgentKey = clusterCode + Constants.UNDERLINE + Constants.START_DISTRIBUTE_AGENT;
+            if (CacheUtils.constainsKey(distributeAgentKey + Constants.UNDERLINE + host.getHostname())) {
+                CacheUtils.removeKey(distributeAgentKey + Constants.UNDERLINE + host.getHostname());
+            }
+
+            this.removeById(hostId);
+
+            if(host.getHostState().intValue() != 2){
+                //stop the worker on this host
+                ActorRef execCmdActor = ActorUtils.getRemoteActor(host.getHostname(), "executeCmdActor");
+                ExecuteCmdCommand command = new ExecuteCmdCommand();
+                ArrayList<String> commands = new ArrayList<>();
+                commands.add("service");
+                commands.add("datasophon-worker");
+                commands.add("stop");
+
+                command.setCommands(commands);
+                execCmdActor.tell(command, ActorRef.noSender());
+            }
+            //remove host from prometheus
+            ActorRef prometheusActor =
+                    ActorUtils.getLocalActor(PrometheusActor.class, ActorUtils.getActorRefName(PrometheusActor.class));
+
+            // Prometheus 移除 hosts 信息
+            GenerateHostPrometheusConfig prometheusConfigCommand = new GenerateHostPrometheusConfig();
+            prometheusConfigCommand.setClusterId(clusterInfo.getId());
+
+            ActorUtils.actorSystem.scheduler().scheduleOnce(
+                    FiniteDuration.apply(3L, TimeUnit.SECONDS),
+                    prometheusActor,
+                    prometheusConfigCommand,
+                    ActorUtils.actorSystem.dispatcher(),
+                    ActorRef.noSender());
+
+            // remove the host from the cache
+            Map<String, HostInfo> map =
+                    (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
+            String md5 = SecureUtil.md5(host.getHostname());
+            if (Objects.nonNull(map)) {
+                map.remove(host.getHostname());
+            }
+            if (CacheUtils.constainsKey(clusterCode + Constants.HOST_MD5)
+                    && md5.equals(CacheUtils.getString(clusterCode + Constants.HOST_MD5))) {
+                CacheUtils.removeKey(clusterCode + Constants.HOST_MD5);
+            }
+        }
         return Result.success();
     }
 
@@ -212,7 +228,7 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
 
     @Override
     public List<ClusterHostEntity> getHostListByIds(List<String> ids) {
-        return this.lambdaQuery().in(ClusterHostEntity::getId, ids).list();
+        return this.lambdaQuery().in(ClusterHostEntity::getId, ids).or().in(ClusterHostEntity::getHostname, ids).list();
     }
 
     @Override

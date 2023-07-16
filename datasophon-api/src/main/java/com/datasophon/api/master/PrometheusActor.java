@@ -127,12 +127,14 @@ public class PrometheusActor extends UntypedActor {
             serviceRoleInfo.setParentName("PROMETHEUS");
             serviceRoleInfo.setConfigFileMap(configFileMap);
             serviceRoleInfo.setDecompressPackageName("prometheus-2.17.2");
-            serviceRoleInfo.setHostname(prometheusInstance.getHostname());
-            ServiceConfigureHandler configureHandler = new ServiceConfigureHandler();
-            ExecResult execResult = configureHandler.handlerRequest(serviceRoleInfo);
-            if (execResult.getExecResult()) {
-                // 重新加载prometheus配置
-                HttpUtil.post("http://" + prometheusInstance.getHostname() + ":9090/-/reload", "");
+            if (Objects.nonNull(prometheusInstance)) {
+                serviceRoleInfo.setHostname(prometheusInstance.getHostname());
+                ServiceConfigureHandler configureHandler = new ServiceConfigureHandler();
+                ExecResult execResult = configureHandler.handlerRequest(serviceRoleInfo);
+                if (execResult.getExecResult()) {
+                    // 重新加载prometheus配置
+                    HttpUtil.post("http://" + prometheusInstance.getHostname() + ":9090/-/reload", "");
+                }
             }
         } else if (msg instanceof GenerateHostPrometheusConfig) {
             GenerateHostPrometheusConfig command = (GenerateHostPrometheusConfig) msg;

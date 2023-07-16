@@ -33,7 +33,7 @@ CREATE TABLE `t_ddh_access_token`  (
   `update_time` datetime DEFAULT NULL,
   `expire_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 
 -- ----------------------------
@@ -46,7 +46,7 @@ CREATE TABLE `t_ddh_alert_group`  (
   `alert_group_category` varchar(32)  DEFAULT NULL COMMENT '告警组类别',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 24 DEFAULT CHARSET=utf8mb4 COMMENT = '告警组表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 24 DEFAULT CHARSET=utf8mb4 COMMENT = '告警组表' ROW_FORMAT = DYNAMIC;
 
 
 -- ----------------------------
@@ -65,7 +65,7 @@ CREATE TABLE `t_ddh_cluster_alert_expression`  (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 134002 DEFAULT CHARSET=utf8mb4 COMMENT = '表达式常量表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 134002 DEFAULT CHARSET=utf8mb4 COMMENT = '表达式常量表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_alert_group_map
@@ -76,7 +76,7 @@ CREATE TABLE `t_ddh_cluster_alert_group_map`  (
   `cluster_id` int(10) DEFAULT NULL,
   `alert_group_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_alert_history
@@ -97,7 +97,7 @@ CREATE TABLE `t_ddh_cluster_alert_history`  (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `cluster_id` int(10) DEFAULT NULL COMMENT '集群id',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群告警历史表 ' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群告警历史表 ' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_alert_quota
@@ -121,7 +121,7 @@ CREATE TABLE `t_ddh_cluster_alert_quota`  (
   `quota_state` int(2) DEFAULT NULL COMMENT '1: 启用  2：未启用',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 628 DEFAULT CHARSET=utf8mb4 COMMENT = '集群告警指标表 ' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 628 DEFAULT CHARSET=utf8mb4 COMMENT = '集群告警指标表 ' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_alert_rule
@@ -145,7 +145,7 @@ CREATE TABLE `t_ddh_cluster_alert_rule`  (
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   `cluster_id` int(10) DEFAULT NULL COMMENT '集群id',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 134002 DEFAULT CHARSET=utf8mb4 COMMENT = '规则表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 134002 DEFAULT CHARSET=utf8mb4 COMMENT = '规则表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_group
@@ -156,7 +156,7 @@ CREATE TABLE `t_ddh_cluster_group`  (
   `group_name` varchar(255)  DEFAULT NULL,
   `cluster_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_host
@@ -181,7 +181,7 @@ CREATE TABLE `t_ddh_cluster_host`  (
   `cpu_architecture` varchar(255)  DEFAULT NULL COMMENT 'cpu架构',
   `node_label` varchar(255)  DEFAULT NULL COMMENT '节点标签',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群主机表 ' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群主机表 ' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_info
@@ -198,7 +198,7 @@ CREATE TABLE `t_ddh_cluster_info`  (
   `cluster_state` int(11) DEFAULT NULL COMMENT '集群状态 1:待配置2：正在运行',
   `frame_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群信息表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_node_label
@@ -209,7 +209,7 @@ CREATE TABLE `t_ddh_cluster_node_label`  (
   `cluster_id` int(10) DEFAULT NULL,
   `node_label` varchar(255)  DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_queue_capacity
@@ -224,7 +224,7 @@ CREATE TABLE `t_ddh_cluster_queue_capacity`  (
   `acl_users` varchar(255)  DEFAULT NULL,
   `parent` varchar(255)  DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 
 -- ----------------------------
@@ -236,7 +236,7 @@ CREATE TABLE `t_ddh_cluster_rack`  (
   `rack` varchar(255)  DEFAULT NULL,
   `cluster_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_role_user
@@ -248,7 +248,7 @@ CREATE TABLE `t_ddh_cluster_role_user`  (
   `user_type` int(2) DEFAULT NULL COMMENT '集群用户类型1：管理员2：普通用户',
   `user_id` int(11) DEFAULT NULL COMMENT '用户id',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群角色用户中间表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群角色用户中间表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_service_command
@@ -267,7 +267,7 @@ CREATE TABLE `t_ddh_cluster_service_command`  (
   `end_time` datetime DEFAULT NULL COMMENT '结束时间',
   `service_instance_id` int(10) DEFAULT NULL COMMENT '服务实例id',
   UNIQUE INDEX `command_id`(`command_id`)
-) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务操作指令表' ROW_FORMAT = DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务操作指令表' ROW_FORMAT = DYNAMIC;
 
 
 -- ----------------------------
@@ -283,7 +283,7 @@ CREATE TABLE `t_ddh_cluster_service_command_host`  (
   `create_time` datetime DEFAULT NULL,
   UNIQUE INDEX `command_host_id`(`command_host_id`) ,
   UNIQUE INDEX `command_host_id_2`(`command_host_id`)
-) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务操作指令主机表' ROW_FORMAT = DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务操作指令主机表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_service_command_host_command
@@ -303,7 +303,7 @@ CREATE TABLE `t_ddh_cluster_service_command_host_command`  (
   `command_type` int(2) DEFAULT NULL COMMENT '1：安装服务 2：启动服务 3：停止服务 4：重启服务 5：更新配置后启动 6：更新配置后重启',
   `result_msg` text  NULL,
   UNIQUE INDEX `host_command_id`(`host_command_id`)
-) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务操作指令主机指令表' ROW_FORMAT = DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务操作指令主机指令表' ROW_FORMAT = DYNAMIC;
 
 
 -- ----------------------------
@@ -315,7 +315,7 @@ CREATE TABLE `t_ddh_cluster_service_dashboard`  (
   `service_name` varchar(128)  DEFAULT NULL COMMENT '服务名称',
   `dashboard_url` varchar(256)  DEFAULT NULL COMMENT '总览页面地址',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 22 DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务总览仪表盘' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 22 DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务总览仪表盘' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_service_instance
@@ -333,7 +333,7 @@ CREATE TABLE `t_ddh_cluster_service_instance`  (
   `sort_num` int(2) DEFAULT NULL COMMENT '排序字段',
   `label` varchar(255)  DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_service_instance_role_group
@@ -348,7 +348,7 @@ CREATE TABLE `t_ddh_cluster_service_instance_role_group`  (
   `role_group_type` varchar(255)  DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_service_role_group_config
@@ -367,7 +367,7 @@ CREATE TABLE `t_ddh_cluster_service_role_group_config`  (
   `update_time` datetime DEFAULT NULL,
   `service_name` varchar(255)  DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_service_role_instance
@@ -387,7 +387,7 @@ CREATE TABLE `t_ddh_cluster_service_role_instance`  (
   `role_group_id` int(10) DEFAULT NULL COMMENT '角色组id',
   `need_restart` int(10) DEFAULT NULL COMMENT '是否需要重启 1：正常 2：需要重启',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务角色实例表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务角色实例表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_service_role_instance_webuis
@@ -400,7 +400,7 @@ CREATE TABLE `t_ddh_cluster_service_role_instance_webuis`  (
   `service_instance_id` int(10) DEFAULT NULL,
   `name` varchar(255)  DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务角色对应web ui表 ' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务角色对应web ui表 ' ROW_FORMAT = DYNAMIC;
 
 
 -- ----------------------------
@@ -412,7 +412,7 @@ CREATE TABLE `t_ddh_cluster_user`  (
   `username` varchar(255)  DEFAULT NULL,
   `cluster_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_user_group
@@ -425,7 +425,7 @@ CREATE TABLE `t_ddh_cluster_user_group`  (
   `cluster_id` int(10) DEFAULT NULL,
   `user_group_type` int(2) DEFAULT NULL COMMENT '1:主用户组 2：附加组',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_variable
@@ -437,7 +437,7 @@ CREATE TABLE `t_ddh_cluster_variable`  (
   `variable_name` varchar(255)  DEFAULT NULL,
   `variable_value` varchar(255)  DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 
 -- ----------------------------
@@ -459,7 +459,7 @@ CREATE TABLE `t_ddh_cluster_yarn_queue`  (
   `am_share` varchar(255)  DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_yarn_scheduler
@@ -471,7 +471,7 @@ CREATE TABLE `t_ddh_cluster_yarn_scheduler`  (
   `scheduler` varchar(255)  DEFAULT NULL,
   `in_use` int(2) DEFAULT NULL COMMENT '1: 是  2：否',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_cluster_zk
@@ -483,7 +483,7 @@ CREATE TABLE `t_ddh_cluster_zk`  (
   `myid` int(10) DEFAULT NULL,
   `cluster_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_command
@@ -493,7 +493,7 @@ CREATE TABLE `t_ddh_command`  (
   `id` int(10) NOT NULL,
   `command_type` int(2) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_frame_info
@@ -505,7 +505,7 @@ CREATE TABLE `t_ddh_frame_info`  (
   `frame_code` varchar(128)  DEFAULT NULL COMMENT '框架编码',
   `frame_version` varchar(128)  DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群框架表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群框架表' ROW_FORMAT = DYNAMIC;
 
 
 -- ----------------------------
@@ -530,7 +530,7 @@ CREATE TABLE `t_ddh_frame_service`  (
   `decompress_package_name` varchar(255)  DEFAULT NULL,
   `sort_num` int(2) DEFAULT NULL COMMENT '排序字段',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群框架版本服务表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '集群框架版本服务表' ROW_FORMAT = DYNAMIC;
 
 
 -- ----------------------------
@@ -549,7 +549,7 @@ CREATE TABLE `t_ddh_frame_service_role`  (
   `jmx_port` varchar(255)  DEFAULT NULL,
   `log_file` varchar(255)  DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '框架服务角色表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '框架服务角色表' ROW_FORMAT = DYNAMIC;
 
 
 -- ----------------------------
@@ -562,7 +562,7 @@ CREATE TABLE `t_ddh_install_step`  (
   `step_desc` varchar(256)  DEFAULT NULL,
   `install_type` int(1) DEFAULT NULL COMMENT '1:集群配置2：添加服务3：添加主机',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 10 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 10 DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 
 -- ----------------------------
@@ -574,7 +574,7 @@ CREATE TABLE `t_ddh_notice_group`  (
   `notice_group_name` varchar(32)  DEFAULT NULL COMMENT '通知组名称',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '通知组表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '通知组表' ROW_FORMAT = DYNAMIC;
 
 
 -- ----------------------------
@@ -586,7 +586,7 @@ CREATE TABLE `t_ddh_notice_group_user`  (
   `notice_group_id` int(11) DEFAULT NULL COMMENT '通知组id',
   `user_id` int(11) DEFAULT NULL COMMENT '用户id',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '通知组-用户中间表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '通知组-用户中间表' ROW_FORMAT = DYNAMIC;
 
 
 -- ----------------------------
@@ -599,7 +599,7 @@ CREATE TABLE `t_ddh_role_info`  (
   `role_code` varchar(128)  DEFAULT NULL COMMENT '角色编码',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '角色信息表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 1 DEFAULT CHARSET=utf8mb4 COMMENT = '角色信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for t_ddh_session
@@ -611,7 +611,7 @@ CREATE TABLE `t_ddh_session`  (
   `ip` varchar(128)  DEFAULT NULL,
   `last_login_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT = DYNAMIC;
 
 
 
@@ -628,7 +628,7 @@ CREATE TABLE `t_ddh_user_info`  (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `user_type` int(2) DEFAULT NULL COMMENT '1：超级管理员 2：普通用户',
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARSET=utf8mb4 COMMENT = '用户信息表' ROW_FORMAT = DYNAMIC;
+) AUTO_INCREMENT = 2 DEFAULT CHARSET=utf8mb4 COMMENT = '用户信息表' ROW_FORMAT = DYNAMIC;
 
 
 SET FOREIGN_KEY_CHECKS = 1;

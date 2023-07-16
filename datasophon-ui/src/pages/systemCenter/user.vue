@@ -238,6 +238,7 @@ export default {
     getUserList(key) {
       this.loading = true;
       let params = {
+        clusterId: Number(localStorage.getItem("clusterId") || -1),
         pageSize: this.pagination.pageSize,
         page: this.pagination.current,
       };
