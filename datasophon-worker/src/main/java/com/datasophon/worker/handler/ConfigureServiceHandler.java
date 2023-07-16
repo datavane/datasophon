@@ -59,7 +59,7 @@ public class ConfigureServiceHandler {
 
     private Logger logger;
 
-    public ConfigureServiceHandler(String serviceName,String serviceRoleName) {
+    public ConfigureServiceHandler(String serviceName, String serviceRoleName) {
         this.serviceName = serviceName;
         this.serviceRoleName = serviceRoleName;
         String loggerName = String.format("%s-%s-%s", TaskConstants.TASK_LOG_LOGGER_NAME, serviceName, serviceRoleName);
@@ -157,11 +157,11 @@ public class ConfigureServiceHandler {
                     } else {
                         FreemakerUtils.generateConfigFile(generators, configs, decompressPackageName);
                     }
-                }else if(!generators.getFilename().endsWith(SH)){
+                } else if (!generators.getFilename().endsWith(SH)) {
                     String packagePath = Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH;
                     String outputFile =
                             packagePath + generators.getOutputDirectory() + Constants.SLASH + generators.getFilename();
-                    FileUtil.writeUtf8String("",outputFile);
+                    FileUtil.writeUtf8String("", outputFile);
                 }
                 execResult.setExecOut("configure success");
                 logger.info("configure success");
@@ -188,7 +188,7 @@ public class ConfigureServiceHandler {
         globalCommand.add(
                 Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName + Constants.SLASH + "set_globals.sh");
         ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH + decompressPackageName, globalCommand,
-                300L);
+                300L, logger);
         if (execResult.getExecResult()) {
             logger.info("ranger admin setup success");
             return true;

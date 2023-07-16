@@ -31,8 +31,8 @@ import java.util.ArrayList;
 
 public class JournalNodeHandlerStrategy extends AbstractHandlerStrategy implements ServiceRoleStrategy {
 
-    public JournalNodeHandlerStrategy(String serviceName,String serviceRoleName) {
-        super(serviceName,serviceRoleName);
+    public JournalNodeHandlerStrategy(String serviceName, String serviceRoleName) {
+        super(serviceName, serviceRoleName);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class JournalNodeHandlerStrategy extends AbstractHandlerStrategy implemen
                 commands.add("sh");
                 commands.add("keystore.sh");
                 commands.add(hostname);
-                ExecResult execResult = ShellUtils.execWithStatus(Constants.WORKER_SCRIPT_PATH, commands, 30L);
+                ExecResult execResult = ShellUtils.execWithStatus(Constants.WORKER_SCRIPT_PATH, commands, 30L, logger);
                 if (!execResult.getExecResult()) {
                     logger.info("generate keystore file failed");
                     return execResult;
