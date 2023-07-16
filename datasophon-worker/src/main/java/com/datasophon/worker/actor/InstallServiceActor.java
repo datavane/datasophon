@@ -60,12 +60,10 @@ public class InstallServiceActor extends UntypedActor {
                 }
                 ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH, commands, 180, logger);
                 if (execResult.getExecResult()) {
-                    installResult = serviceHandler.install(command.getPackageName(), command.getDecompressPackageName(),
-                            command.getPackageMd5(), command.getRunAs());
+                    installResult = serviceHandler.install(command);
                 }
             } else {
-                installResult = serviceHandler.install(command.getPackageName(), command.getDecompressPackageName(),
-                        command.getPackageMd5(), command.getRunAs());
+                installResult = serviceHandler.install(command);
                 // 其他服务创建软连接
                 String appHome = Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName();
                 String appLinkHome = Constants.INSTALL_PATH + Constants.SLASH + StringUtils.lowerCase(command.getServiceName());

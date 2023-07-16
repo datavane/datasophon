@@ -151,6 +151,7 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
     public Result listPage(Integer clusterId, String username, Integer page, Integer pageSize) {
         Integer offset = (page - 1) * pageSize;
         List<ClusterUser> list = this.list(new QueryWrapper<ClusterUser>().like(Constants.USERNAME, username)
+                .eq(Constants.CLUSTER_ID, clusterId)
                 .last("limit " + offset + "," + pageSize));
         for (ClusterUser clusterUser : list) {
             ClusterGroup mainGroup = userGroupService.queryMainGroup(clusterUser.getId());
