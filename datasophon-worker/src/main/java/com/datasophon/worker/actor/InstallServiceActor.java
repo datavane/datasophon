@@ -24,14 +24,11 @@ import com.datasophon.common.enums.ServiceRoleType;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.ShellUtils;
 import com.datasophon.worker.handler.InstallServiceHandler;
-
-import java.io.File;
-import java.util.ArrayList;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class InstallServiceActor extends UntypedActor {
@@ -43,25 +40,25 @@ public class InstallServiceActor extends UntypedActor {
         if (msg instanceof InstallServiceRoleCommand) {
             InstallServiceRoleCommand command = (InstallServiceRoleCommand) msg;
             ExecResult installResult = new ExecResult();
-            InstallServiceHandler serviceHandler = new InstallServiceHandler(command.getServiceName(),command.getServiceRoleName());
+            InstallServiceHandler serviceHandler = new InstallServiceHandler(command.getServiceName(), command.getServiceRoleName());
 
-            logger.info("start install package {}", command.getPackageName());
+            logger.info("Start install package {}", command.getPackageName());
             if (command.getDecompressPackageName().contains("kerberos")) {
                 ArrayList<String> commands = new ArrayList<>();
                 commands.add("yum");
                 commands.add("install");
                 commands.add("-y");
                 if (ServiceRoleType.MASTER == command.getServiceRoleType()) {
-                    logger.info("start to {}", commands.toString());
+                    logger.info("Start to {}", commands.toString());
                     commands.add("krb5-server");
                     commands.add("krb5-workstation");
                     commands.add("krb5-libs");
                 } else {
-                    logger.info("start to {}", commands.toString());
+                    logger.info("Start to {}", commands.toString());
                     commands.add("krb5-workstation");
                     commands.add("krb5-libs");
                 }
-                ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH, commands, 180);
+                ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH, commands, 180, logger);
                 if (execResult.getExecResult()) {
                     installResult = serviceHandler.install(command);
                 }
@@ -70,14 +67,14 @@ public class InstallServiceActor extends UntypedActor {
                 // 其他服务创建软连接
                 String appHome = Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName();
                 String appLinkHome = Constants.INSTALL_PATH + Constants.SLASH + StringUtils.lowerCase(command.getServiceName());
-                if(!new File(appLinkHome).exists()) {
+                if (!new File(appLinkHome).exists()) {
                     ShellUtils
                             .exceShell("ln -s " + appHome + " " + appLinkHome);
-                    logger.info("create symbolic dir: {}", appLinkHome);
+                    logger.info("Create symbolic dir: {}", appLinkHome);
                 }
             }
             getSender().tell(installResult, getSelf());
-            logger.info("install package {}", installResult.getExecResult() ? "success" : "failed");
+            logger.info("Install {} {}", command.getPackageName(), installResult.getExecResult() ? "success" : "failed");
         } else {
             unhandled(msg);
         }
