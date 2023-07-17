@@ -77,11 +77,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -128,7 +123,6 @@
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-persistence_2.11</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.sshd</groupId>
             <artifactId>sshd-core</artifactId>
@@ -140,15 +134,7 @@
         <dependency>
             <groupId>net.i2p.crypto</groupId>
             <artifactId>eddsa</artifactId>
-            <version>0.3.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>2.23.4</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
