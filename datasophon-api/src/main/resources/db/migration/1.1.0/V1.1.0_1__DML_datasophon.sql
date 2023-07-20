@@ -163,79 +163,79 @@ INSERT INTO `t_ddh_cluster_alert_expression` VALUES (134001, 'Neo4j进程存活'
 -- ----------------------------
 -- Records of t_ddh_cluster_alert_quota
 -- ----------------------------
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (464, '主机内存使用率', 'NODE', '(1-(node_memory_MemAvailable_bytes/(node_memory_MemTotal_bytes)))*100', 2, 11, 1, '1234', '>', 95, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (465, '主机CPU使用率', 'NODE', '(1-avg(irate(node_cpu_seconds_total{mode=\"idle\"}[5m]))by(instance))*100', 2, 11, 1, '444', '>', 95, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (464, '主机内存使用率', 'NODE', '(1-(node_memory_MemAvailable_bytes/(node_memory_MemTotal_bytes)))*100', 1, 11, 1, '内存使用率过高，可迁出部分进程', '>', 95, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (465, '主机CPU使用率', 'NODE', '(1-avg(irate(node_cpu_seconds_total{mode=\"idle\"}[5m]))by(instance))*100', 1, 11, 1, 'cpu使用率过高，注意观察cpu密集型进程，必要时需停止或迁移该进程', '>', 90, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (466, '主机CPU系统使用率', 'NODE', 'avg(irate(node_cpu_seconds_total{mode=\"system\"}[5m]))by(instance)*100', 1, 11, 1, 'cpu使用过高，评估是否有任务倾斜', '>', 95, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (467, '主机CPU用户使用率', 'NODE', 'avg(irate(node_cpu_seconds_total{mode=\"user\"}[5m]))by(instance)*100', 2, 11, 1, 'cpu使用过高，评估是否有任务倾斜', '>', 95, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (468, '主机磁盘IO使用率', 'NODE', 'avg(irate(node_cpu_seconds_total{mode=\"iowait\"}[5m]))by(instance)*100', 1, 11, 1, '磁盘IO过高，评估任务执行是否过于密集', '>', 95, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (469, '主机交换分区使用率', 'NODE', '(1-((node_memory_SwapFree_bytes+1)/(node_memory_SwapTotal_bytes+1)))*100', 1, 11, 1, '主机交换分区使用率过高，评估是否存在任务密集执行', '>', 95, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (470, '主机磁盘使用率', 'NODE', '(node_filesystem_size_bytes{fstype=~\"ext.*|xfs\",mountpoint!~\".*pod.*\"}-node_filesystem_free_bytes{fstype=~\"ext.*|xfs\",mountpoint!~\".*pod.*\"})*100/(node_filesystem_avail_bytes{fstype=~\"ext.*|xfs\",mountpoint!~\".*pod.*\"}+(node_filesystem_size_bytes{fstype=~\"ext.*|xfs\",mountpoint!~\".*pod.*\"}-node_filesystem_free_bytes{fstype=~\"ext.*|xfs\",mountpoint!~\".*pod.*\"}))', 1, 11, 1, '1', '>', 95, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (470, '主机磁盘使用率', 'NODE', '(node_filesystem_size_bytes{fstype=~\"ext.*|xfs\",mountpoint!~\".*pod.*\"}-node_filesystem_free_bytes{fstype=~\"ext.*|xfs\",mountpoint!~\".*pod.*\"})*100/(node_filesystem_avail_bytes{fstype=~\"ext.*|xfs\",mountpoint!~\".*pod.*\"}+(node_filesystem_size_bytes{fstype=~\"ext.*|xfs\",mountpoint!~\".*pod.*\"}-node_filesystem_free_bytes{fstype=~\"ext.*|xfs\",mountpoint!~\".*pod.*\"}))', 1, 11, 1, '请清理磁盘', '>', 85, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (471, '主机入网带宽', 'NODE', 'irate(node_network_receive_bytes_total[5m])*8', 1, 11, 1, '网络流量过高', '>', 8589934592, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (472, '主机出网带宽', 'NODE', 'irate(node_network_transmit_bytes_total[5m])*8', 1, 11, 1, '网络流量过高', '>', 8589934592, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (473, '系统平均负载[1m]', 'NODE', 'node_load1', 1, 11, 1, '系统负载过高', '>', 100, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (474, '系统平均负载[5m]', 'NODE', 'node_load5', 1, 11, 1, '系统负载过高', '>', 100, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (475, '系统平均负载[15m]', 'NODE', 'node_load15', 1, 11, 1, '系统负载过高', '>', 100, 1, 1, 60, 'node', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (479, 'NameNode进程存活', 'HDFS', 'up{job=\"namenode\"}', 2, 2, 2, '查看日志，分析宕机原因，解决问题后重新启动', '!=', 1, 1, 1, 15, 'NameNode', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (480, 'NameNodeRPC延迟[5m]', 'HDFS', 'avg_over_time(Hadoop_NameNode_RpcProcessingTimeAvgTime{job=\"HDFS-NameNode\"}[5m])', 2, 2, 2, '请检查网络流量使用情况', '>', 5, 1, 1, 60, 'NameNode', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (481, 'NameNodeRPC延迟[15m]', 'HDFS', 'avg_over_time(Hadoop_NameNode_RpcProcessingTimeAvgTime{job=\"HDFS-NameNode\"}[15m])', 1, 2, 2, '请检查网络流量使用情况', '>', 5, 1, 1, 60, 'NameNode', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (482, 'NameNode堆内存使用率', 'HDFS', 'java_lang_Memory_HeapMemoryUsage_used{job=\"HDFS-NameNode\"}*100/java_lang_Memory_HeapMemoryUsage_max{job=\"HDFS-NameNode\"}', 1, 2, 2, 'NameNode堆内存不足，增大NameNode堆内存', '>', 95, 1, 1, 60, 'NameNode', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (483, 'NameNode老年代GC持续时间[5m]', 'HDFS', 'avg_over_time(Hadoop_NameNode_GcTimeMillisConcurrentMarkSweep{job=\"HDFS-NameNode\"}[5m])/(5*60*1000)', 1, 2, 2, '老年代GC时间过长，可考虑加大堆内存', '>', 60, 1, 1, 60, 'NameNode', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (484, 'NameNode新生代GC持续时间[5m]', 'HDFS', 'avg_over_time(Hadoop_NameNode_GcTimeMillisParNew{job=\"HDFS-NameNode\"}[5m])/(5*60*1000)', 1, 2, 2, '新生代GC时间过长，可考虑加大堆内存', '>', 60, 1, 1, 60, 'NameNode', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (485, 'NameNodeGC持续时间[5m]', 'HDFS', 'avg_over_time(Hadoop_NameNode_GcTimeMillis{job=\"HDFS-NameNode\"}[5m])/(5*60*1000)', 1, 2, 2, 'GC时间过长，可考虑加大堆内存', '>', 60, 1, 1, 60, 'NameNode', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (482, 'NameNode堆内存使用率', 'HDFS', '(Hadoop_NameNode_MemHeapUsedM/Hadoop_NameNode_MemHeapMaxM )*100', 1, 2, 2, 'NameNode堆内存不足，增大NameNode堆内存', '>', 95, 1, 1, 60, 'NameNode', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (483, 'NameNode老年代GC持续时间[5m]', 'HDFS', 'avg_over_time(Hadoop_NameNode_GcTimeMillisPS_MarkSweep{job=\"namenode\"}[5m])/1000', 1, 2, 2, '老年代GC时间过长，可考虑加大堆内存', '>', 60, 1, 1, 60, 'NameNode', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (484, 'NameNode新生代GC持续时间[5m]', 'HDFS', 'avg_over_time(Hadoop_NameNode_GcTimeMillisPS_Scavenge{job=\"namenode\"}[5m])/1000', 1, 2, 2, '新生代GC时间过长，可考虑加大堆内存', '>', 60, 1, 1, 60, 'NameNode', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (485, 'NameNodeGC持续时间[5m]', 'HDFS', 'avg_over_time(Hadoop_NameNode_GcTimeMillis{job=\"namenode\"}[5m])/1000', 1, 2, 2, 'GC时间过长，可考虑加大堆内存', '>', 60, 1, 1, 60, 'NameNode', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (486, 'DataNode进程存活', 'HDFS', 'up{job=\"datanode\"}', 2, 2, 2, '查看日志，分析宕机原因，解决问题后重新启动', '!=', 1, 1, 1, 15, 'DataNode', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (487, 'DataNodeRPC[5m]', 'HDFS', 'avg_over_time(Hadoop_DataNode_RpcProcessingTimeAvgTime{job=\"HDFS-DataNode\"}[5m])', 1, 2, 2, '请检查网络流量使用情况', '>', 5, 1, 1, 60, 'DataNode', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (488, 'DataNodeRPC[15m]', 'HDFS', 'avg_over_time(Hadoop_DataNode_RpcProcessingTimeAvgTime{job=\"HDFS-DataNode\"}[15m])', 1, 2, 2, '请检查网络流量使用情况', '>', 5, 1, 1, 60, 'DataNode', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (489, 'DataNode堆内存使用率', 'HDFS', 'java_lang_Memory_HeapMemoryUsage_used{job=\"HDFS-DataNode\"}*100/java_lang_Memory_HeapMemoryUsage_max{job=\"HDFS-DataNode\"}', 1, 2, 2, 'NameNode堆内存不足，增大NameNode堆内存', '>', 95, 1, 1, 60, 'DataNode', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (490, 'DataNode老年代GC持续时间[5m]', 'HDFS', 'avg_over_time(Hadoop_DataNode_GcTimeMillisConcurrentMarkSweep{job=\"HDFS-DataNode\"}[5m])/(5*60*1000)', 1, 2, 2, '老年代GC时间过长，可考虑加大堆内存', '>', 60, 1, 1, 60, 'DataNode', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (491, 'DataNode新生代GC持续时间[5m]', 'HDFS', 'avg_over_time(Hadoop_DataNode_GcTimeMillisParNew{job=\"HDFS-DataNode\"}[5m])/(5*60*1000)', 1, 2, 2, '新生代GC时间过长，可考虑加大堆内存', '>', 60, 1, 1, 60, 'DataNode', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (492, 'DataNodeGC持续时间[5m]', 'HDFS', 'avg_over_time(Hadoop_DataNode_GcTimeMillis{job=\"HDFS-DataNode\"}[5m])/(5*60*1000)', 1, 2, 2, 'GC时间过长，可考虑加大堆内存', '>', 60, 1, 1, 60, 'DataNode', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (487, 'DataNodeRPC[5m]', 'HDFS', 'avg_over_time(Hadoop_DataNode_RpcProcessingTimeAvgTime{job=\"datanode\"}[5m])', 1, 2, 2, '请检查网络流量使用情况', '>', 5, 1, 1, 60, 'DataNode', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (488, 'DataNodeRPC[15m]', 'HDFS', 'avg_over_time(Hadoop_DataNode_RpcProcessingTimeAvgTime{job=\"datanode\"}[15m])', 1, 2, 2, '请检查网络流量使用情况', '>', 5, 1, 1, 60, 'DataNode', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (489, 'DataNode堆内存使用率', 'HDFS', '(Hadoop_DataNode_MemHeapUsedM/Hadoop_DataNode_MemHeapMaxM )*100', 1, 2, 2, 'NameNode堆内存不足，增大NameNode堆内存', '>', 95, 1, 1, 60, 'DataNode', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (490, 'DataNode老年代GC持续时间[5m]', 'HDFS', 'avg_over_time(Hadoop_DataNode_GcTimeMillisPS_MarkSweep{job=\"datanode\"}[5m])/(1000)', 1, 2, 2, '老年代GC时间过长，可考虑加大堆内存', '>', 60, 1, 1, 60, 'DataNode', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (491, 'DataNode新生代GC持续时间[5m]', 'HDFS', 'avg_over_time(Hadoop_DataNode_GcTimeMillisPS_Scavenge{job=\"datanode\"}[5m])/(1000)', 1, 2, 2, '新生代GC时间过长，可考虑加大堆内存', '>', 60, 1, 1, 60, 'DataNode', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (492, 'DataNodeGC持续时间[5m]', 'HDFS', 'avg_over_time(Hadoop_DataNode_GcTimeMillis{job=\"datanode\"}[5m])/(1000)', 1, 2, 2, 'GC时间过长，可考虑加大堆内存', '>', 60, 1, 1, 60, 'DataNode', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (493, 'JournalNode进程存活', 'HDFS', 'up{job=\"journalnode\"}', 2, 2, 2, 'JournalNode宕机，请重新启动', '!=', 1, 1, 1, 15, 'JournalNode', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (494, 'ZKFailoverController进程存活', 'HDFS', 'up{job=\"zkfc\"}', 2, 2, 2, 'ZKFC宕机，请重新启动', '!=', 1, 1, 1, 15, 'ZKFC', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (496, 'HDFS坏盘', 'HDFS', 'Hadoop_NameNode_VolumeFailuresTotal{name=\"FSNamesystem\"}', 1, 2, 2, '存在坏盘', '>', 0, 1, 1, 60, 'NameNode', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (497, 'HDFS块丢失', 'HDFS', 'Hadoop_NameNode_MissingBlocks{name=\"FSNamesystem\"}', 1, 2, 2, '存在块丢失', '>', 0, 1, 1, 60, 'NameNode', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (512, 'AlertManager进程存活', 'ALERTMANAGER', 'up{job=\"alertmanager\"}', 2, 13, 1, 'AlertManager宕机，请重新启动', '!=', 1, 1, 1, 15, 'AlertManager', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (518, 'Grafana进程存活', 'GRAFANA', 'up{job=\"grafana\"}', 2, 14, 1, 'Grafana宕机，请重新启动', '!=', 1, 1, 1, 15, 'Grafana', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (519, 'HBaseMaster进程存活', 'HBASE', 'up{job=\"hbasemaster\"}', 2, 8, 1, 'Hbase Master宕机，请重新启动', '!=', 1, 1, 1, 15, 'HbaseMaster', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (520, 'HRegionServer进程存活', 'HBASE', 'up{job=\"regionserver\"}', 2, 8, 1, 'RegionServer宕机，请重新启动', '!=', 1, 1, 1, 15, 'RegionServer', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (541, 'HiveServer2进程存活', 'HIVE', 'up{job=\"hiveserver2\"}', 2, 1, 1, 'HiveServer2宕机，请重新启动', '!=', 1, 1, 1, 15, 'HiveServer2', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (542, 'HiveServer2堆内存使用率', 'HIVE', 'java_lang_Memory_HeapMemoryUsage_used{job=\"HIVE-HiveServer2\"}*100/java_lang_Memory_HeapMemoryUsage_max{job=\"HIVE-HiveServer2\"}', 1, 1, 1, 'HiveServer2堆内存不足，增大NameNode堆内存', '>', 95, 1, 1, 60, 'HiveServer2', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (543, 'HiveServer2老年代GC持续时间[5m]', 'HIVE', 'avg_over_time(java_lang_GarbageCollector_CollectionTime{job=\"HIVE-HiveServer2\",name=\"PS MarkSweep\"}[5m])/(5*60*1000)', 1, 1, NULL, '请联系管理员', '>', 60, NULL, NULL, 60, 'HiveServer2', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (544, 'HiveServer2新生代GC持续时间[5m]', 'HIVE', 'avg_over_time(java_lang_GarbageCollector_CollectionTime{job=\"HIVE-HiveServer2\",name=\"PS Scavenge\"}[5m])/(5*60*1000)', 1, 1, NULL, '请联系管理员', '>', 60, NULL, NULL, 60, 'HiveServer2', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (542, 'HiveServer2堆内存使用率', 'HIVE', 'java_lang_Memory_HeapMemoryUsage_used{job=\"hiveserver2\"}*100/java_lang_Memory_HeapMemoryUsage_max{job=\"hiveserver2\"}', 1, 1, 1, 'HiveServer2堆内存不足，增大NameNode堆内存', '>', 95, 1, 1, 60, 'HiveServer2', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (543, 'HiveServer2老年代GC持续时间[5m]', 'HIVE', 'avg_over_time(java_lang_GarbageCollector_CollectionTime{job=\"hiveserver2\",name=\"PS MarkSweep\"}[5m])/(1000)', 1, 1, 1, '请联系管理员', '>', 60, 1, 1, 60, 'HiveServer2', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (544, 'HiveServer2新生代GC持续时间[5m]', 'HIVE', 'avg_over_time(java_lang_GarbageCollector_CollectionTime{job=\"hiveserver2\",name=\"PS Scavenge\"}[5m])/(1000)', 1, 1, 1, '请联系管理员', '>', 60, 1, 1, 60, 'HiveServer2', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (545, 'HiveMetastore进程存活', 'HIVE', 'up{job=\"hivemetastore\"}', 2, 1, 1, 'HiveMetastore宕机，请重新启动', '!=', 1, 1, 1, 15, 'HiveMetaStore', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (546, 'HiveMetastore堆内存使用率', 'HIVE', 'java_lang_Memory_HeapMemoryUsage_used{job=\"HIVE-MetaStore\"}*100/java_lang_Memory_HeapMemoryUsage_max{job=\"HIVE-MetaStore\"}', 1, 1, NULL, '请联系管理员', '>', 95, NULL, NULL, 60, 'HiveMetaStore', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (547, 'HiveMetastore老年代GC持续时间[5m]', 'HIVE', 'avg_over_time(java_lang_GarbageCollector_CollectionTime{job=\"HIVE-MetaStore\",name=\"PS MarkSweep\"}[5m])/(5*60*1000)', 1, 1, NULL, '请联系管理员', '>', 60, NULL, NULL, 60, 'HiveMetaStore', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (548, 'HiveMetastore新生代GC持续时间[5m]', 'HIVE', 'avg_over_time(java_lang_GarbageCollector_CollectionTime{job=\"HIVE-MetaStore\",name=\"PS Scavenge\"}[5m])/(5*60*1000)', 1, 1, NULL, '请联系管理员', '>', 60, NULL, NULL, 60, 'HiveMetaStore', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (567, 'Prometheus进程存活', 'PROMETHEUS', 'up{job=\"prometheus\"}', 2, 15, 1, 'Prometheus宕机，请重新启动', '!=', 1, 1, 1, 15, 'Prometheus', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (546, 'HiveMetastore堆内存使用率', 'HIVE', 'java_lang_Memory_HeapMemoryUsage_used{job=\"hivemetastore\"}*100/java_lang_Memory_HeapMemoryUsage_max{job=\"hivemetastore\"}', 1, 1, 1, '请联系管理员', '>', 95, 1, 1, 60, 'HiveMetaStore', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (547, 'HiveMetastore老年代GC持续时间[5m]', 'HIVE', 'avg_over_time(java_lang_GarbageCollector_CollectionTime{job=\"hivemetastore\",name=\"PS MarkSweep\"}[5m])/(1000)', 1, 1, 1, '请联系管理员', '>', 60, 1, 1, 60, 'HiveMetaStore', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (548, 'HiveMetastore新生代GC持续时间[5m]', 'HIVE', 'avg_over_time(java_lang_GarbageCollector_CollectionTime{job=\"hivemetastore\",name=\"PS Scavenge\"}[5m])/(1000)', 1, 1, 1, '请联系管理员', '>', 60, 1, 1, 60, 'HiveMetaStore', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (568, 'RangerServer进程存活', 'RANGER', 'up{job=\"rangeradmin\"}', 2, 18, 1, '请联系管理员', '!=', 1, 1, 1, 15, 'RangerAdmin', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (569, 'SparkHistoryServer进程存活', 'SPARK', 'up{job=\"sparkhistoryserver\"}', 2, 16, 1, '请联系管理员', '!=', 1, 1, 1, 15, 'SparkHistoryServer', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (573, 'ZK进程存活', 'ZOOKEEPER', 'up{job=\"zkserver\"}', 2, 12, 1, 'zk宕机，请重新启动', '!=', 1, 1, 1, 15, 'ZkServer', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (574, 'ResourceManager进程存活', 'YARN', 'up{job=\"resourcemanager\"}', 2, 3, 1, 'ResourceManager宕机，请重新启动', '!=', 1, 1, 1, 15, 'ResourceManager', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (575, 'ResourceManager堆内存使用率', 'YARN', 'java_lang_Memory_HeapMemoryUsage_used{job=\"YARN-ResourceManager\"}*100/java_lang_Memory_HeapMemoryUsage_max{job=\"YARN-ResourceManager\"}', 1, 3, 1, '请联系管理员', '>', 95, 1, 1, 60, 'ResourceManager', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (576, 'ResourceManager老年代GC持续时间[5m]', 'YARN', 'avg_over_time(Hadoop_ResourceManager_GcTimeMillisPS_MarkSweep{job=\"YARN-ResourceManager\"}[5m])/(5*60*1000)', 1, 3, 1, '请联系管理员', '>', 60, 1, 1, 60, 'ResourceManager', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (577, 'ResourceManager新生代GC持续时间[5m]', 'YARN', 'avg_over_time(Hadoop_ResourceManager_GcTimeMillisPS_Scavenge{job=\"YARN-ResourceManager\"}[5m])/(5*60*1000)', 1, 3, 1, '请联系管理员', '>', 60, 1, 1, 60, 'ResourceManager', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (578, 'ResourceManagerGC持续时间[5m]', 'YARN', 'avg_over_time(Hadoop_ResourceManager_GcTimeMillis{job=\"YARN-ResourceManager\"}[5m])/(5*60*1000)', 1, 3, 1, '请联系管理员', '>', 60, 1, 1, 60, 'ResourceManager', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (575, 'ResourceManager堆内存使用率', 'YARN', 'java_lang_Memory_HeapMemoryUsage_used{job=\"resourcemanager\"}*100/java_lang_Memory_HeapMemoryUsage_max{job=\"resourcemanager\"}', 1, 3, 1, '请联系管理员', '>', 95, 1, 1, 60, 'ResourceManager', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (576, 'ResourceManager老年代GC持续时间[5m]', 'YARN', 'avg_over_time(Hadoop_ResourceManager_GcTimeMillisPS_MarkSweep{job=\"resourcemanager\"}[5m])/(1000)', 1, 3, 1, '请联系管理员', '>', 60, 1, 1, 60, 'ResourceManager', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (577, 'ResourceManager新生代GC持续时间[5m]', 'YARN', 'avg_over_time(Hadoop_ResourceManager_GcTimeMillisPS_Scavenge{job=\"resourcemanager\"}[5m])/(1000)', 1, 3, 1, '请联系管理员', '>', 60, 1, 1, 60, 'ResourceManager', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (578, 'ResourceManagerGC持续时间[5m]', 'YARN', 'avg_over_time(Hadoop_ResourceManager_GcTimeMillis{job=\"resourcemanager\"}[5m])/(1000)', 1, 3, 1, '请联系管理员', '>', 60, 1, 1, 60, 'ResourceManager', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (579, 'NodeManager进程存活', 'YARN', 'up{job=\"nodemanager\"}', 2, 3, 1, 'NodeManager宕机，请重新启动', '!=', 1, 1, 1, 15, 'NodeManager', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (580, 'NodeManager堆内存使用率', 'YARN', 'java_lang_Memory_HeapMemoryUsage_used{job=\"YARN-NodeManager\"}*100/java_lang_Memory_HeapMemoryUsage_max{job=\"YARN-NodeManager\"}', 1, 3, 1, '请联系管理员', '>', 95, 1, 1, 60, 'NodeManager', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (581, 'NodeManager老年代GC持续时间[5m]', 'YARN', 'avg_over_time(Hadoop_NodeManager_GcTimeMillisPS_MarkSweep{job=\"YARN-NodeManager\"}[5m])/(5*60*1000)', 1, 3, 1, '请联系管理员', '>', 60, 1, 1, 60, 'NodeManager', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (582, 'NodeManager新生代GC持续时间[5m]', 'YARN', 'avg_over_time(Hadoop_NodeManager_GcTimeMillisPS_Scavenge{job=\"YARN-NodeManager\"}[5m])/(5*60*1000)', 1, 3, 1, '请联系管理员', '>', 60, 1, 1, 60, 'NodeManager', 1, '2022-07-14 14:22:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (583, 'NodeManagerGC持续时间[5m]', 'YARN', 'avg_over_time(Hadoop_NodeManager_GcTimeMillis{job=\"YARN-NodeManager\"}[5m])/(5*60*1000)', 1, 3, 1, '请联系管理员', '>', 60, 1, 1, 60, 'NodeManager', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (580, 'NodeManager堆内存使用率', 'YARN', 'java_lang_Memory_HeapMemoryUsage_used{job=\"nodemanager\"}*100/java_lang_Memory_HeapMemoryUsage_max{job=\"nodemanager\"}', 1, 3, 1, '请联系管理员', '>', 95, 1, 1, 60, 'NodeManager', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (581, 'NodeManager老年代GC持续时间[5m]', 'YARN', 'avg_over_time(Hadoop_NodeManager_GcTimeMillisPS_MarkSweep{job=\"nodemanager\"}[5m])/(1000)', 1, 3, 1, '请联系管理员', '>', 60, 1, 1, 60, 'NodeManager', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (582, 'NodeManager新生代GC持续时间[5m]', 'YARN', 'avg_over_time(Hadoop_NodeManager_GcTimeMillisPS_Scavenge{job=\"nodemanager\"}[5m])/(1000)', 1, 3, 1, '请联系管理员', '>', 60, 1, 1, 60, 'NodeManager', 1, '2022-07-14 14:22:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (583, 'NodeManagerGC持续时间[5m]', 'YARN', 'avg_over_time(Hadoop_NodeManager_GcTimeMillis{job=\"nodemanager\"}[5m])/(1000)', 1, 3, 1, '请联系管理员', '>', 60, 1, 1, 60, 'NodeManager', 1, '2022-07-14 14:22:36');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (611, 'KafkaBorker进程存活', 'KAFKA', 'up{job=\"kafkabroker\"}', 2, 10, 1, 'KafkaBroker宕机，请重新启动', '!=', 1, 1, 1, 15, 'KafkaBroker', 1, '2022-07-15 14:32:25');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (612, 'TrinoCoordinator进程存活', 'TRINO', 'up{job=\"trinocoordinator\"}', 2, 17, 1, '重新启动', '!=', 1, 1, 1, 15, 'TrinoCoordinator', 1, NULL);
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (613, 'TrinoWorker进程存活', 'TRINO', 'up{job=\"trinoworker\"}', 2, 17, 1, '重新启动', '!=', 1, 1, 1, 15, 'TrinoWorker', 1, NULL);
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (614, '主机状态', 'NODE', 'up{job=\"node\"}', 2, 11, 1, '重新启动该服务器', '!=', 1, 1, 1, 0, 'node', 1, NULL);
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (615, 'FE进程存活', 'STARROCKS', 'up{group=\"fe\"}', 2, 19, 1, '重新启动', '!=', 1, 1, 1, 15, 'FE', 1, '2022-09-13 14:54:39');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (616, 'BE进程存活', 'STARROCKS', 'up{group=\"be\"}', 2, 19, 1, '重新启动', '!=', 1, 1, 1, 15, 'BE', 1, '2022-09-13 14:55:16');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (614, '主机采集器Node状态', 'NODE', 'up{job=\"node\"}', 1, 11, 1, '重新启动该Node服务', '!=', 1, 1, 1, 0, 'node', 1, NULL);
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (615, 'FE进程存活', 'STARROCKS', 'up{group=\'fe\',job=\"StarRocks\"}', 2, 19, 1, '重新启动', '!=', 1, 1, 1, 15, 'SRFE', 1, '2022-09-13 14:54:39');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (616, 'BE进程存活', 'STARROCKS', 'up{group=\'be\',job=\"StarRocks\"}', 2, 19, 1, '重新启动', '!=', 1, 1, 1, 15, 'SRBE', 1, '2022-09-13 14:55:16');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (617, 'SparkMaster进程存活', 'SPARK3', 'up{job=\"sparkmaster\"}', 2, 16, 1, '重新启动', '!=', 1, 1, 1, 15, 'SparkMaster', 1, '2022-09-16 10:24:38');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (618, 'SparkWorker进程存活', 'SPARK3', 'up{job=\"sparkworker\"}', 2, 16, 1, '重新启动', '!=', 1, 1, 1, 15, 'SparkWorker', 1, '2022-09-16 10:25:18');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (619, 'ElasticSearch进程存活', 'ELASTICSEARCH', 'com_datasophon_ddh_worker_metrics_esMetrics_EsUp', 2, 20, 1, '重新启动', '!=', 1, 1, 1, 15, 'ElasticSearch', 1, '2022-10-08 16:17:00');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (620, 'DS API存活', 'DS', 'up{job=\"apiserver\"}', 2, 21, 1, '重新启动', '!=', 1, 1, 1, 15, 'ApiServer', 1, '2022-11-20 21:00:54');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (621, 'DSMaster存活', 'DS', 'up{job=\"masterserver\"}', 2, 21, 1, '重新启动', '!=', 1, 1, 1, 15, 'MasterServer', 1, '2022-11-20 21:01:33');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (622, 'DSWorker存活', 'DS', 'up{job=\"workerserver\"}', 2, 21, 1, '重新启动', '!=', 1, 1, 1, 15, 'WorkerServer', 1, '2022-11-20 21:02:10');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (623, 'DSAlert存活', 'DS', 'up{job=\"alertserver\"}', 2, 21, 1, '重新启动', '!=', 1, 1, 1, 15, 'AlertServer', 1, '2022-11-20 21:02:46');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (624, 'StreamPark存活', 'STREAMPARK', 'up{job=\"streampark\"}', 2, 22, 1, '重新启动', '!=', 1, 1, 1, 15, 'StreamPark', 1, '2022-11-21 18:20:51');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (625, 'FE进程存活', 'DORIS', 'up{group=\"fe\",job=\"doris\"}', 2, 23, 1, 'restart', '!=', 1, 1, 1, 15, 'FE', 1, '2023-01-07 22:21:36');
-INSERT INTO `t_ddh_cluster_alert_quota` VALUES (626, 'BE进程存活', 'DORIS', 'up{group=\"be\",job=\"doris\"}', 2, 23, 1, 'restart', '!=', 1, 1, 1, 15, 'BE', 1, '2023-01-07 22:22:10');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (620, 'DS API存活', 'DS', 'up{job=\'apiserver\'}', 2, 21, 1, '重新启动', '!=', 1, 1, 1, 15, 'ApiServer', 1, '2022-11-20 21:00:54');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (621, 'DSMaster存活', 'DS', 'up{job=\'masterserver\'}', 2, 21, 1, '重新启动', '!=', 1, 1, 1, 15, 'MasterServer', 1, '2022-11-20 21:01:33');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (622, 'DSWorker存活', 'DS', 'up{job=\'workerserver\'}', 2, 21, 1, '重新启动', '!=', 1, 1, 1, 15, 'WorkerServer', 1, '2022-11-20 21:02:10');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (623, 'DSAlert存活', 'DS', 'up{job=\'alertserver\'}', 2, 21, 1, '重新启动', '!=', 1, 1, 1, 15, 'AlertServer', 1, '2022-11-20 21:02:46');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (624, 'StreamPark存活', 'STREAMPARK', 'up{job=\'streampark\'}', 2, 22, 1, '重新启动', '!=', 1, 1, 1, 15, 'StreamPark', 1, '2022-11-21 18:20:51');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (625, 'FE进程存活', 'DORIS', 'up{group=\"fe\",job=\"doris\"}', 2, 23, 1, 'restart', '!=', 1, 1, 1, 15, 'DorisFE', 1, '2023-01-07 22:21:36');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (626, 'BE进程存活', 'DORIS', 'up{group=\"be\",job=\"doris\"}', 2, 23, 1, 'restart', '!=', 1, 1, 1, 15, 'DorisBE', 1, '2023-01-07 22:22:10');
 INSERT INTO `t_ddh_cluster_alert_quota` VALUES (627, 'HistoryServer进程存活', 'YARN', 'up{job=\"historyserver\"}', 2, 3, 1, '重新启动', '!=', 1, 1, 1, 15, 'HistoryServer', 1, '2023-01-12 14:20:23');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (628, 'DataSophonWorker存活', 'NODE', 'up{job=\'worker\'}', 2, 11, 1, '使用service datasophon-worker start命令启动worker', '!=', 1, 1, 1, 15, 'node', 1, '2023-04-17 21:10:01');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (629, 'Pulsar Broker存活', 'PULSAR', 'up{job=\"pulsarbroker\"}', 2, 24, 1, '重新启动', '!=', 1, 1, 1, 15, 'PulsarBroker', 1, '2023-06-19 10:51:17');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (630, 'Pulsar Bookie进程存活', 'PULSAR', 'up{job=\"bookie\"}', 2, 24, 1, '重新启动', '!=', 1, 1, 1, 15, 'Bookie', 1, '2023-06-19 11:17:07');
+INSERT INTO `t_ddh_cluster_alert_quota` VALUES (631, '存在NodeManager Unhealthy节点', 'YARN', 'Hadoop_ResourceManager_NumUnhealthyNMs', 1, 3, 1, '打开Yarn Web Ui 查看Unhealthy NodeManager节点', '>', 0, 1, 1, 15, 'NodeManager', 1, '2023-06-26 17:12:47');
 
 
 
@@ -395,8 +395,33 @@ INSERT INTO `t_ddh_install_step` VALUES (7, '服务配置', NULL, 1);
 INSERT INTO `t_ddh_install_step` VALUES (8, '服务安装总览', NULL, 1);
 INSERT INTO `t_ddh_install_step` VALUES (9, '服务安装启动', NULL, 1);
 
+-- ----------------------------
+-- Records of t_ddh_cluster_group
+-- ----------------------------
+INSERT INTO `t_ddh_cluster_group` VALUES (1, 'hadoop', 1);
+INSERT INTO `t_ddh_cluster_group` VALUES (2, 'elastic', 1);
 
+-- ----------------------------
+-- Records of t_ddh_cluster_user
+-- ----------------------------
+INSERT INTO `t_ddh_cluster_user` VALUES (1, 'hdfs', 1);
+INSERT INTO `t_ddh_cluster_user` VALUES (2, 'hive', 1);
+INSERT INTO `t_ddh_cluster_user` VALUES (3, 'yarn', 1);
+INSERT INTO `t_ddh_cluster_user` VALUES (4, 'mapred', 1);
+INSERT INTO `t_ddh_cluster_user` VALUES (5, 'elastic', 1);
+INSERT INTO `t_ddh_cluster_user` VALUES (6, 'hbase', 1);
+INSERT INTO `t_ddh_cluster_user` VALUES (9, 'admin', 1);
 
+-- ----------------------------
+-- Records of t_ddh_cluster_user_group
+-- ----------------------------
+INSERT INTO `t_ddh_cluster_user_group` VALUES (1, 1, 1, 1, 1);
+INSERT INTO `t_ddh_cluster_user_group` VALUES (2, 2, 1, 1, 1);
+INSERT INTO `t_ddh_cluster_user_group` VALUES (3, 3, 1, 1, 1);
+INSERT INTO `t_ddh_cluster_user_group` VALUES (4, 4, 1, 1, 1);
+INSERT INTO `t_ddh_cluster_user_group` VALUES (5, 5, 2, 1, 1);
+INSERT INTO `t_ddh_cluster_user_group` VALUES (6, 6, 1, 1, 1);
+INSERT INTO `t_ddh_cluster_user_group` VALUES (11, 9, 1, 1, 1);
 
 -- ----------------------------
 -- Records of t_ddh_session
