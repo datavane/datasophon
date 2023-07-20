@@ -15,6 +15,8 @@
  *  limitations under the License.
  */
 
+use `datasophon`;
+
 -- ----------------------------
 -- Records of t_ddh_access_token
 -- ----------------------------

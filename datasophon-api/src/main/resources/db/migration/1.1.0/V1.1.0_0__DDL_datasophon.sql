@@ -15,8 +15,11 @@
  *  limitations under the License.
  */
 
-
-
+create database if not exists `datasophon` character set utf8 collate utf8_general_ci;
+grant all privileges on *.* to datasophon@"%" identified by 'datasophon' with grant option;
+GRANT ALL PRIVILEGES ON *.* TO 'datasophon'@'%';
+FLUSH PRIVILEGES;
+use `datasophon`;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
