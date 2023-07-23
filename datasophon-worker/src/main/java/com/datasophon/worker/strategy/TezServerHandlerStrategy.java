@@ -35,16 +35,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- *
  * TEZ Server 启动支持类
  *
  * @author zhenqin
- *
  */
 public class TezServerHandlerStrategy extends AbstractHandlerStrategy implements ServiceRoleStrategy {
 
     public TezServerHandlerStrategy(String serviceName, String serviceRoleName) {
-        super(serviceName,serviceRoleName);
+        super(serviceName, serviceRoleName);
     }
 
     @Override
@@ -65,7 +63,7 @@ public class TezServerHandlerStrategy extends AbstractHandlerStrategy implements
             commands.add("-mkdir");
             commands.add("-p");
             commands.add(tezLibParentDir);
-            ExecResult execResult = ShellUtils.execWithStatus(workPath, commands, 90);
+            ExecResult execResult = ShellUtils.execWithStatus(workPath, commands, 90, logger);
             logger.info("mkdir {} output: {}", tezLibParentDir, execResult.getExecOut());
 
             // 改变文件组权限
@@ -77,9 +75,9 @@ public class TezServerHandlerStrategy extends AbstractHandlerStrategy implements
                 commands.add(hadoopHome + "/bin/hdfs");
                 commands.add("dfs");
                 commands.add("-chown");
-                commands.add(command.getRunAs().getUser()+":"+command.getRunAs().getGroup());
+                commands.add(command.getRunAs().getUser() + ":" + command.getRunAs().getGroup());
                 commands.add(tezLibParentDir);
-                execResult = ShellUtils.execWithStatus(workPath, commands, 90);
+                execResult = ShellUtils.execWithStatus(workPath, commands, 90, logger);
                 logger.info("chown {} output: {}", tezLibParentDir, execResult.getExecOut());
             }
 
@@ -95,7 +93,7 @@ public class TezServerHandlerStrategy extends AbstractHandlerStrategy implements
             commands.add("-put");
             commands.add("./share/tez.tar.gz");
             commands.add(tezLibParentDir);
-            execResult = ShellUtils.execWithStatus(workPath, commands, 90);
+            execResult = ShellUtils.execWithStatus(workPath, commands, 90, logger);
             logger.info("upload tez.tar.gz to {} output: {}", tezLibParentDir, execResult.getExecOut());
         }
         ExecResult startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(),
@@ -106,9 +104,10 @@ public class TezServerHandlerStrategy extends AbstractHandlerStrategy implements
 
     /**
      * tez 的元数据
+     *
      * @param workPath
      */
-    String createEnvPath(final String workPath){
+    String createEnvPath(final String workPath) {
         Configuration conf = new Configuration();
         try {
             final File tezSiteFile = new File(workPath, "conf/tez-site.xml");

@@ -30,10 +30,10 @@ import com.datasophon.worker.utils.KerberosUtils;
 
 import java.util.ArrayList;
 
-public class HiveServer2HandlerStrategy extends  AbstractHandlerStrategy implements ServiceRoleStrategy {
+public class HiveServer2HandlerStrategy extends AbstractHandlerStrategy implements ServiceRoleStrategy {
 
-    public HiveServer2HandlerStrategy(String serviceName,String serviceRoleName) {
-        super(serviceName,serviceRoleName);
+    public HiveServer2HandlerStrategy(String serviceName, String serviceRoleName) {
+        super(serviceName, serviceRoleName);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class HiveServer2HandlerStrategy extends  AbstractHandlerStrategy impleme
             if (!FileUtil.exist(Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName()
                     + "/ranger-hive-plugin/success.id")) {
                 ExecResult execResult = ShellUtils.execWithStatus(Constants.INSTALL_PATH + Constants.SLASH
-                        + command.getDecompressPackageName() + "/ranger-hive-plugin", commands, 30L);
+                        + command.getDecompressPackageName() + "/ranger-hive-plugin", commands, 30L, logger);
                 if (execResult.getExecResult()) {
                     logger.info("enable ranger hive plugin success");
                     FileUtil.writeUtf8String("success", Constants.INSTALL_PATH + Constants.SLASH
@@ -70,7 +70,7 @@ public class HiveServer2HandlerStrategy extends  AbstractHandlerStrategy impleme
             commands.add("mysql");
             commands.add("-initSchema");
             ExecResult execResult = ShellUtils.execWithStatus(
-                    Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName(), commands, 60L);
+                    Constants.INSTALL_PATH + Constants.SLASH + command.getDecompressPackageName(), commands, 60L, logger);
             if (execResult.getExecResult()) {
                 logger.info("init hive schema success");
             } else {
@@ -97,7 +97,7 @@ public class HiveServer2HandlerStrategy extends  AbstractHandlerStrategy impleme
 
             // 存在 tez 则创建软连接
             final String tezHomePath = Constants.INSTALL_PATH + Constants.SLASH + "tez";
-            if(FileUtil.exist(tezHomePath)) {
+            if (FileUtil.exist(tezHomePath)) {
                 ShellUtils.exceShell("ln -s " + tezHomePath + "/conf/tez-site.xml " + workPath + "/conf/tez-site.xml");
             }
         }
