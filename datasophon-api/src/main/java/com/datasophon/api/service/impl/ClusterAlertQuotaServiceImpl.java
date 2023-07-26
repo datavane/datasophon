@@ -17,10 +17,13 @@
 
 package com.datasophon.api.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.PrometheusActor;
 import com.datasophon.api.service.AlertGroupService;
 import com.datasophon.api.service.ClusterAlertQuotaService;
+import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.GenerateAlertConfigCommand;
 import com.datasophon.common.model.AlertItem;
@@ -40,6 +43,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -57,6 +61,9 @@ import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQu
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import akka.actor.ActorRef;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 @Service("clusterAlertQuotaService")
 public class ClusterAlertQuotaServiceImpl extends ServiceImpl<ClusterAlertQuotaMapper, ClusterAlertQuota>
@@ -66,6 +73,8 @@ public class ClusterAlertQuotaServiceImpl extends ServiceImpl<ClusterAlertQuotaM
     private static final Logger logger = LoggerFactory.getLogger(ClusterAlertQuotaServiceImpl.class);
     @Autowired
     AlertGroupService alertGroupService;
+    @Resource
+    private ClusterServiceRoleInstanceService serviceRoleInstanceService;
 
     @Override
     public Result getAlertQuotaList(Integer clusterId, Integer alertGroupId, String quotaName, Integer page,
@@ -98,11 +107,8 @@ public class ClusterAlertQuotaServiceImpl extends ServiceImpl<ClusterAlertQuotaM
         return Result.success(alertQuotaList).put(Constants.TOTAL, count);
     }
 
-    @Override
-    public Result start(Integer clusterId, String alertQuotaIds) {
+    private void alertRuleFile(Integer clusterId, Collection<ClusterAlertQuota> alertQuotaList) {
         HashMap<String, List<ClusterAlertQuota>> map = new HashMap<>();
-        List<String> ids = Arrays.asList(alertQuotaIds.split(","));
-        List<ClusterAlertQuota> alertQuotaList = this.lambdaQuery().in(ClusterAlertQuota::getId, ids).list();
         for (ClusterAlertQuota alertQuota : alertQuotaList) {
             if (!map.containsKey(alertQuota.getServiceCategory())) {
                 // list all started alert quota
@@ -159,12 +165,47 @@ public class ClusterAlertQuotaServiceImpl extends ServiceImpl<ClusterAlertQuotaM
         alertConfigCommand.setClusterId(clusterId);
         alertConfigCommand.setConfigFileMap(configFileMap);
         prometheusActor.tell(alertConfigCommand, ActorRef.noSender());
-        return Result.success();
     }
 
     @Override
-    public Result stop(Integer clusterId, String alertQuotaIds) {
-        return null;
+    public void start(Integer clusterId, String alertQuotaIds) {
+        List<String> ids = Arrays.asList(alertQuotaIds.split(","));
+        if(CollUtil.isEmpty(ids)) {
+            return;
+        }
+
+        Collection<ClusterAlertQuota> alertQuotaList = this.listByIds(ids);
+
+        alertRuleFile(clusterId, alertQuotaList);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void stop(Integer clusterId, String alertQuotaIds) {
+        List<String> ids = Arrays.asList(alertQuotaIds.split(StrUtil.COMMA));
+        if(CollUtil.isEmpty(ids)) {
+            return;
+        }
+
+        Set<String> categories = new HashSet<>(ids.size());
+        //1、修改禁用状态 & 更新
+        Collection<ClusterAlertQuota> alertQuotas = this.listByIds(ids);
+        alertQuotas.forEach(q -> {
+            q.setQuotaState(QuotaState.STOPPED);
+            categories.add(q.getServiceCategory());
+        });
+        this.updateBatchById(alertQuotas);
+
+        //2、查询需要重新生成 alert rule file 的告警指标
+        Collection<ClusterAlertQuota> clusterAlertQuotas = this.lambdaQuery()
+                .eq(ClusterAlertQuota::getQuotaState, QuotaState.RUNNING)
+                .in(ClusterAlertQuota::getServiceCategory, categories)
+                .list();
+        if(CollUtil.isEmpty(clusterAlertQuotas)) {
+            return;
+        }
+
+        alertRuleFile(clusterId, clusterAlertQuotas);
     }
 
     @Override
