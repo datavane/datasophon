@@ -35,9 +35,9 @@ public interface ClusterAlertQuotaService extends IService<ClusterAlertQuota> {
 
     Result getAlertQuotaList(Integer clusterId, Integer alertGroupId, String quotaName, Integer page, Integer pageSize);
 
-    Result start(Integer clusterId, String alertQuotaIds);
+    void start(Integer clusterId, String alertQuotaIds);
 
-    Result stop(Integer clusterId, String alertQuotaIds);
+    void stop(Integer clusterId, String alertQuotaIds);
 
     void saveAlertQuota(ClusterAlertQuota clusterAlertQuota);
 
