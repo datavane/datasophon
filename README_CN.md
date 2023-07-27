@@ -53,3 +53,12 @@ DataSophon也是个类似的管理平台，只不过与智子不同的是，智�
 # 提问
 如果您有任何的疑问或需要支持、报告漏洞，请点击 [issue](https://github.com/datasophon/datasophon/issues/new/choose) 并提交您的问题, 我们将及时回复您。
 
+# 交流与贡献
+
+欢迎您加入社区交流分享，也欢迎您为社区贡献自己的力量。
+
+在此非常感谢大家的支持~
+
+微信社区群（推荐）：扫描二维码添加微信，邀请进群，申请备注 “ DataSophon”。
+
+![img](website/static/img/weixing.png)
