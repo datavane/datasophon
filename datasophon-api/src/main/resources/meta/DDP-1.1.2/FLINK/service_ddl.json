@@ -25,6 +25,8 @@
         "templateName": "properties3.ftl",
         "outputDirectory": "conf",
         "includeParams": [
+          "jobmanager.memory.heap.size",
+          "taskmanager.memory.flink.size",
           "high-availability",
           "high-availability.storageDir",
           "high-availability.zookeeper.quorum",
@@ -36,6 +38,28 @@
     ]
   },
   "parameters": [
+    {
+      "name": "jobmanager.memory.heap.size",
+      "label": "jobmanager堆内存大小",
+      "description": "",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "1600m"
+    },
+    {
+      "name": "taskmanager.memory.flink.size",
+      "label": "taskmanager堆内存大小",
+      "description": "",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "1280m"
+    },
     {
       "name": "enableJMHA",
       "label": "开启JobManager高可用",

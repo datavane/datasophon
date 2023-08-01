@@ -36,10 +36,10 @@ import java.security.NoSuchAlgorithmException;
 @ServletComponentScan
 @ComponentScan("com.datasophon")
 @MapperScan("com.datasophon.dao")
-public class DDHApplicationServer extends SpringBootServletInitializer {
+public class DataSophonApplicationServer extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        SpringApplication.run(DDHApplicationServer.class, args);
+        SpringApplication.run(DataSophonApplicationServer.class, args);
 		// add shutdown hook， close and shutdown resources
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             shutdown();

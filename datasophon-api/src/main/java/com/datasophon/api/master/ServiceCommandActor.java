@@ -71,6 +71,8 @@ public class ServiceCommandActor extends UntypedActor {
 
     private static final String HTTPS = "https";
 
+    private static final String NODE = "NODE";
+
     @Override
     public void preRestart(Throwable reason, Option<Object> message) throws Exception {
         logger.info("service command actor restart because {}", reason.getMessage());
@@ -130,7 +132,7 @@ public class ServiceCommandActor extends UntypedActor {
                 String serviceName = command.getServiceName();
                 ClusterInfoEntity clusterInfo = clusterInfoService.getById(command.getClusterId());
 
-                if(command.getCommandType() == 4 && HDFS.equals(serviceName.toLowerCase())){
+                if (command.getCommandType() == 4 && HDFS.equals(serviceName.toLowerCase())) {
                     //update web ui
                     updateHDFSWebUi(clusterInfo.getId(), command.getServiceInstanceId());
                 }
@@ -167,13 +169,9 @@ public class ServiceCommandActor extends UntypedActor {
                         prometheusConfigCommand.setClusterFrame(clusterInfo.getClusterFrame());
                         prometheusConfigCommand.setClusterId(clusterInfo.getId());
                         prometheusActor.tell(prometheusConfigCommand, getSelf());
+                        enableAlertConfig(NODE, clusterInfo.getId());
                     }
-                    ClusterAlertQuotaService alertQuotaService =
-                            SpringTool.getApplicationContext().getBean(ClusterAlertQuotaService.class);
-                    List<ClusterAlertQuota> list = alertQuotaService.listAlertQuotaByServiceName(serviceName);
-                    List<Integer> ids = list.stream().map(e -> e.getId()).collect(Collectors.toList());
-                    String alertQuotaIds = StringUtils.join(ids, ",");
-                    alertQuotaService.start(clusterInfo.getId(), alertQuotaIds);
+                    enableAlertConfig(serviceName, clusterInfo.getId());
                 }
                 List<ClusterServiceCommandHostEntity> list =
                         commandHostService.findFailedCommandHost(message.getCommandId());
@@ -192,6 +190,15 @@ public class ServiceCommandActor extends UntypedActor {
             commandService.lambdaUpdate().eq(ClusterServiceCommandEntity::getCommandId, command.getCommandId())
                     .update(command);
         }
+    }
+
+    private void enableAlertConfig(String serviceName, Integer clusterId) {
+        ClusterAlertQuotaService alertQuotaService =
+                SpringTool.getApplicationContext().getBean(ClusterAlertQuotaService.class);
+        List<ClusterAlertQuota> list = alertQuotaService.listAlertQuotaByServiceName(serviceName);
+        List<Integer> ids = list.stream().map(e -> e.getId()).collect(Collectors.toList());
+        String alertQuotaIds = StringUtils.join(ids, ",");
+        alertQuotaService.start(clusterId, alertQuotaIds);
     }
 
     private void updateHDFSWebUi(Integer clusterId, Integer serviceInstanceId) {
