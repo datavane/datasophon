@@ -23,6 +23,7 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.util.Timeout;
 import com.datasophon.api.master.alert.ServiceRoleCheckActor;
+import com.datasophon.common.command.ClusterCheckCommand;
 import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
 import com.typesafe.config.Config;
@@ -70,6 +71,9 @@ public class ActorUtils {
         actorSystem.actorOf(Props.create(MasterNodeProcessingActor.class),
                 getActorRefName(MasterNodeProcessingActor.class));
 
+        ActorRef clusterCheckActor =
+            actorSystem.actorOf(Props.create(ClusterCheckActor.class), getActorRefName(ClusterCheckActor.class));
+
         // 节点检测 5m 检测一次
         actorSystem.scheduler().schedule(
                 FiniteDuration.apply(30L, TimeUnit.SECONDS),
@@ -86,6 +90,17 @@ public class ActorUtils {
                 new ServiceRoleCheckCommand(),
                 actorSystem.dispatcher(),
                 ActorRef.noSender());
+
+        // 集群检测 1m 检测一次
+        actorSystem.scheduler().schedule(
+            FiniteDuration.apply(30L, TimeUnit.SECONDS),
+            FiniteDuration.apply(60L, TimeUnit.SECONDS),
+            clusterCheckActor,
+            new ClusterCheckCommand(),
+            actorSystem.dispatcher(),
+            ActorRef.noSender());
+
+
         rand = SecureRandom.getInstanceStrong();
     }
 

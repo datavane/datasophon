@@ -95,15 +95,14 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
 
     @Override
     public ClusterInfoEntity getClusterByClusterCode(String clusterCode) {
-        ClusterInfoEntity clusterInfoEntity = clusterInfoMapper.getClusterByClusterCode(clusterCode);
-        return clusterInfoEntity;
+      return clusterInfoMapper.getClusterByClusterCode(clusterCode);
     }
 
     @Override
     public Result saveCluster(ClusterInfoEntity clusterInfo) {
         List<ClusterInfoEntity> list = this
                 .list(new QueryWrapper<ClusterInfoEntity>().eq(Constants.CLUSTER_CODE, clusterInfo.getClusterCode()));
-        if (Objects.nonNull(list) && list.size() >= 1) {
+        if (Objects.nonNull(list) && !list.isEmpty()) {
             return Result.error(Status.CLUSTER_CODE_EXISTS.getMsg());
         }
         clusterInfo.setCreateTime(new Date());
@@ -170,11 +169,15 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
     @Override
     public Result updateClusterState(Integer clusterId, Integer clusterState) {
         ClusterInfoEntity clusterInfo = this.getById(clusterId);
-        if (clusterState == 2) {
-            clusterInfo.setClusterState(ClusterState.RUNNING);
+        ClusterState state = ClusterState.of(clusterState);
+        if (state != null) {
+            clusterInfo.setClusterState(state);
+            this.updateById(clusterInfo);
+            return Result.success();
         }
-        this.updateById(clusterInfo);
-        return Result.success();
+        else {
+            return Result.error("未知状态");
+        }
     }
 
     @Override
@@ -187,7 +190,7 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         // 集群编码判重
         List<ClusterInfoEntity> list = this
                 .list(new QueryWrapper<ClusterInfoEntity>().eq(Constants.CLUSTER_CODE, clusterInfo.getClusterCode()));
-        if (Objects.nonNull(list) && list.size() >= 1) {
+        if (Objects.nonNull(list) && !list.isEmpty()) {
             ClusterInfoEntity clusterInfoEntity = list.get(0);
             if (!clusterInfoEntity.getId().equals(clusterInfo.getId())) {
                 return Result.error(Status.CLUSTER_CODE_EXISTS.getMsg());

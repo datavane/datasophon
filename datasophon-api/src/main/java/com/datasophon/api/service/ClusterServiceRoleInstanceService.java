@@ -50,6 +50,8 @@ public interface ClusterServiceRoleInstanceService extends IService<ClusterServi
 
     List<ClusterServiceRoleInstanceEntity> getServiceRoleInstanceListByServiceId(int id);
 
+    List<ClusterServiceRoleInstanceEntity> getServiceRoleInstanceListByClusterId(int clusterId);
+
     Result deleteServiceRole(List<String> idList);
 
     List<ClusterServiceRoleInstanceEntity> getServiceRoleInstanceListByClusterIdAndRoleName(Integer clusterId,
@@ -77,4 +79,6 @@ public interface ClusterServiceRoleInstanceService extends IService<ClusterServi
     ClusterServiceRoleInstanceEntity getServiceRoleInsByHostAndName(String hostName, String serviceRoleName);
 
     List<ClusterServiceRoleInstanceEntity> listRoleIns(String hostname, String serviceName);
+
+
 }
