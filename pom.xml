@@ -33,6 +33,7 @@
         <module>datasophon-worker</module>
         <module>datasophon-ui</module>
         <module>datasophon-service</module>
+        <module>datasophon-domain</module>
     </modules>
 
     <properties>
@@ -58,8 +59,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spotless.ratchetFrom>origin/dev</spotless.ratchetFrom>
         <spotless.version>2.27.1</spotless.version>
-        <spring.boot.version>2.1.18.RELEASE</spring.boot.version>
-        <spring.version>5.1.19.RELEASE</spring.version>
+        <spring.boot.version>2.6.1</spring.boot.version>
+        <spring.version>5.3.13</spring.version>
         <spotless.version>2.27.2</spotless.version>
         <versions-maven-plugin.version>2.14.2</versions-maven-plugin.version>
         <flyway.version>9.20.0</flyway.version>
@@ -80,6 +81,13 @@
     </properties>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
@@ -104,40 +112,6 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
                 <version>${druid.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
-                <version>${spring.boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-                <version>${spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
