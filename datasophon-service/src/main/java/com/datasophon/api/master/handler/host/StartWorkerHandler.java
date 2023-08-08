@@ -69,7 +69,10 @@ public class StartWorkerHandler implements DispatcherWorkerHandler {
             hostInfo.setMessage(MessageResolverUtils.getMessage("modify.configuration.file.fail"));
             CommonUtils.updateInstallState(InstallState.FAILED, hostInfo);
         } else {
-            // 设置开机自动启动
+            //Initialize environment
+            MinaUtils.execCmdWithResult(session, "ulimit -n 102400");
+            MinaUtils.execCmdWithResult(session, "sysctl -w vm.max_map_count=2000000");
+            //Set startup and self start
             MinaUtils.execCmdWithResult(session,
                     "\\cp " + installPath + "/datasophon-worker/script/datasophon-worker /etc/rc.d/init.d/");
             MinaUtils.execCmdWithResult(session, "chmod +x /etc/rc.d/init.d/datasophon-worker");
