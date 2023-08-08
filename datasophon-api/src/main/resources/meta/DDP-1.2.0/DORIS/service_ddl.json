@@ -2,11 +2,11 @@
   "name": "DORIS",
   "label": "Doris",
   "description": "简单易用、高性能和统一的分析数据库",
-  "version": "1.1.5",
+  "version": "1.2.6",
   "sortNum": 20,
   "dependencies":[],
-  "packageName": "doris-1.1.5.tar.gz",
-  "decompressPackageName": "doris-1.1.5",
+  "packageName": "doris-1.2.6.tar.gz",
+  "decompressPackageName": "doris-1.2.6",
   "roles": [
     {
       "name": "DorisFE",
