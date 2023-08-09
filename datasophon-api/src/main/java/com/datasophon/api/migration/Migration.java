@@ -25,10 +25,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 
 @Data
+@NoArgsConstructor
 public class Migration implements Comparable<Migration> {
 
   private String version;
