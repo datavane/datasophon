@@ -261,8 +261,7 @@ CREATE TABLE `t_ddh_cluster_service_command_host`  (
   `command_progress` int(11) DEFAULT NULL COMMENT '命令进度',
   `command_id` varchar(128)  DEFAULT NULL COMMENT '操作指令id',
   `create_time` datetime DEFAULT NULL,
-  UNIQUE INDEX `command_host_id`(`command_host_id`) ,
-  UNIQUE INDEX `command_host_id_2`(`command_host_id`)
+  UNIQUE INDEX `command_host_id`(`command_host_id`)
 ) DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务操作指令主机表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -282,7 +281,7 @@ CREATE TABLE `t_ddh_cluster_service_command_host_command`  (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `command_type` int(2) DEFAULT NULL COMMENT '1：安装服务 2：启动服务 3：停止服务 4：重启服务 5：更新配置后启动 6：更新配置后重启',
   `result_msg` text  NULL,
-  UNIQUE INDEX `host_command_id`(`host_command_id`)
+  UNIQUE INDEX `command_host_command_id`(`host_command_id`)
 ) DEFAULT CHARSET=utf8mb4 COMMENT = '集群服务操作指令主机指令表' ROW_FORMAT = DYNAMIC;
 
 
