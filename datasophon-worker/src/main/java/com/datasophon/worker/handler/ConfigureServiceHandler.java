@@ -148,7 +148,7 @@ public class ConfigureServiceHandler {
                     customConfList.add(serviceConfig);
                 }
                 configs.addAll(customConfList);
-                if (configs.size() > 0) {
+                if (!configs.isEmpty()) {
                     // extra app, package: META, templates
                     File extTemplateDir =
                             new File(Constants.INSTALL_PATH + File.separator + decompressPackageName, "templates");

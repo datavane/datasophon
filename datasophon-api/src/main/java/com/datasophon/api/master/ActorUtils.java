@@ -147,7 +147,7 @@ public class ActorUtils {
         try {
             actorRef = Await.result(future, Duration.create(30, TimeUnit.SECONDS));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
 
         return actorRef;

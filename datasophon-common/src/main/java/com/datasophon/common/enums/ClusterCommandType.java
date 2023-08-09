@@ -4,5 +4,5 @@ public enum ClusterCommandType {
 
     CHECK,
 
-    UNINSTALL;
+    UNINSTALL
 }

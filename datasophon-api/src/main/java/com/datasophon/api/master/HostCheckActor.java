@@ -25,7 +25,6 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.datasophon.api.service.ClusterHostService;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
-import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.command.PingCommand;
 import com.datasophon.common.model.HostInfo;
@@ -136,7 +135,7 @@ public class HostCheckActor extends UntypedActor {
               logger.warn("check cluster state error, cause: {}", e.getMessage());
             }
           }
-          if (list.size() > 0) {
+          if (!list.isEmpty()) {
             clusterHostService.updateBatchById(list);
           }
         } else {
@@ -174,7 +173,7 @@ public class HostCheckActor extends UntypedActor {
             }
             checkedHosts.add(checkedHost);
           }
-          if (checkedHosts.size() > 0) {
+          if (!checkedHosts.isEmpty()) {
             clusterHostService.updateBatchById(checkedHosts);
           }
         }

@@ -138,7 +138,7 @@ public class ClusterServiceRoleInstanceServiceImpl
                 .eq(Constants.SERVICE_ROLE_NAME, name)
                 .eq(StringUtils.isNotBlank(hostname), Constants.HOSTNAME, hostname)
                 .eq(Constants.CLUSTER_ID, id));
-        if (Objects.nonNull(list) && list.size() > 0) {
+        if (Objects.nonNull(list) && !list.isEmpty()) {
             return list.get(0);
         }
         return null;
@@ -274,7 +274,7 @@ public class ClusterServiceRoleInstanceServiceImpl
 
     @Override
     public Result decommissionNode(String serviceRoleInstanceIds, String serviceName) throws Exception {
-        TreeSet<String> hosts = new TreeSet<String>();
+        TreeSet<String> hosts = new TreeSet<>();
         Integer serviceInstanceId = null;
         String serviceRoleName = "";
         for (String str : serviceRoleInstanceIds.split(",")) {

@@ -135,7 +135,7 @@ public class ProcessUtils {
             roleInstance.setRoleGroupId(roleGroup.getId());
             roleInstance.setNeedRestart(NeedRestart.NO);
             serviceRoleInstanceService.save(roleInstance);
-            if (Constants.ZKSERVER.equals(roleInstance.getServiceRoleName().toLowerCase())) {
+            if (Constants.ZKSERVER.equalsIgnoreCase(roleInstance.getServiceRoleName())) {
                 ClusterZkService clusterZkService = SpringTool.getApplicationContext().getBean(ClusterZkService.class);
                 ClusterZk clusterZk = new ClusterZk();
                 clusterZk.setMyid((Integer) CacheUtils.get("zkserver_" + serviceRoleInfo.getHostname()));
@@ -586,9 +586,7 @@ public class ProcessUtils {
             set.add(item.getName());
         }
         // 迭代器遍历listA
-        Iterator<ServiceConfig> iter = res.iterator();
-        while (iter.hasNext()) {
-            ServiceConfig item = iter.next();
+        for (ServiceConfig item : res) {
             // 如果set中包含id则remove
             if (!set.contains(item.getName())) {
                 left.add(item);

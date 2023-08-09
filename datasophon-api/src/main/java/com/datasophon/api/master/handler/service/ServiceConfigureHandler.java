@@ -44,7 +44,7 @@ public class ServiceConfigureHandler extends ServiceHandler {
         generateServiceConfigCommand.setCofigFileMap(serviceRoleInfo.getConfigFileMap());
         generateServiceConfigCommand.setDecompressPackageName(serviceRoleInfo.getDecompressPackageName());
         generateServiceConfigCommand.setRunAs(serviceRoleInfo.getRunAs());
-        if ("zkserver".equals(serviceRoleInfo.getName().toLowerCase())) {
+        if ("zkserver".equalsIgnoreCase(serviceRoleInfo.getName())) {
             generateServiceConfigCommand.setMyid((Integer) CacheUtils.get("zkserver_" + serviceRoleInfo.getHostname()));
         }
         generateServiceConfigCommand.setServiceRoleName(serviceRoleInfo.getName());
