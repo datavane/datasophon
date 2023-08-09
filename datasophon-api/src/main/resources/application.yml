@@ -55,3 +55,8 @@ mybatis-plus:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 logging:
   config: classpath:logback-api.xml
+
+
+datasophon:
+  migration:
+    enable: true
