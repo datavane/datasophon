@@ -19,10 +19,15 @@ package com.datasophon.dao.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.Arrays;
 import java.util.Optional;
 
 public enum ClusterState {
+
+    UNINSTALLED(5, "已删除"),
+
+    UNINSTALLING(4, "删除中"),
 
     STOP(3, "停止"),
 

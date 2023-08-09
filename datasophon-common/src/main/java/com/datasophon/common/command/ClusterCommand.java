@@ -17,12 +17,26 @@
 
 package com.datasophon.common.command;
 
+import com.datasophon.common.enums.ClusterCommandType;
+
 import java.io.Serializable;
+
 import lombok.Data;
 
 @Data
-public class ClusterCheckCommand implements Serializable {
+public class ClusterCommand implements Serializable {
 
-  public ClusterCheckCommand() {
-  }
+    private final ClusterCommandType commandType;
+
+    private Integer clusterId;
+
+    public ClusterCommand(ClusterCommandType commandType) {
+        this.commandType = commandType;
+    }
+
+    public ClusterCommand(ClusterCommandType commandType, Integer clusterId) {
+        this.commandType = commandType;
+        this.clusterId = clusterId;
+    }
+
 }

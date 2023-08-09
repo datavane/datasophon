@@ -62,7 +62,7 @@ public class WorkerServiceActor extends UntypedActor {
                     serviceRoleInfo.getName(),
                     serviceRoleInfo.getHostname(),
                     serviceRoleInfo.getClusterId());
-            HashMap<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
+            Map<Generators, List<ServiceConfig>> configFileMap = new HashMap<>();
             boolean needReConfig = false;
             if (executeServiceRoleCommand.getCommandType() == CommandType.INSTALL_SERVICE) {
                 Integer roleGroupId = (Integer) CacheUtils.get("UseRoleGroup_" + serviceInstanceId);

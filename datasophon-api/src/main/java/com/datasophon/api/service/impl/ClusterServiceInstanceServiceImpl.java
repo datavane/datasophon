@@ -110,7 +110,6 @@ public class ClusterServiceInstanceServiceImpl
         Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         List<ClusterServiceInstanceEntity> list = this.list(new QueryWrapper<ClusterServiceInstanceEntity>()
                 .eq(Constants.CLUSTER_ID, clusterId).orderByAsc(Constants.SORT_NUM));
-        ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         for (ClusterServiceInstanceEntity serviceInstance : list) {
             serviceInstance.setServiceStateCode(serviceInstance.getServiceState().getValue());
             boolean needUpdate = false;

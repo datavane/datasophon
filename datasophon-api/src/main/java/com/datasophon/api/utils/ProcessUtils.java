@@ -17,6 +17,19 @@
 
 package com.datasophon.api.utils;
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
+import akka.actor.Props;
+import akka.dispatch.OnComplete;
+import akka.pattern.Patterns;
+import akka.util.Timeout;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.crypto.SecureUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.master.ActorUtils;
@@ -40,9 +53,9 @@ import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.common.utils.PropertyUtils;
 import com.datasophon.dao.entity.*;
 import com.datasophon.dao.enums.*;
-
 import org.apache.commons.lang.StringUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -53,24 +66,6 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-
-import akka.actor.ActorRef;
-import akka.actor.ActorSelection;
-import akka.actor.Props;
-import akka.pattern.Patterns;
-import akka.util.Timeout;
-
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.crypto.SecureUtil;
 
 public class ProcessUtils {
 
@@ -282,7 +277,7 @@ public class ProcessUtils {
 
         ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class, "commandActor");
         ActorUtils.actorSystem.scheduler().scheduleOnce(FiniteDuration.apply(
-                1L, TimeUnit.SECONDS),
+                        1L, TimeUnit.SECONDS),
                 commandActor, message,
                 ActorUtils.actorSystem.dispatcher(),
                 ActorRef.noSender());
@@ -291,19 +286,19 @@ public class ProcessUtils {
     }
 
     public static void buildExecuteServiceRoleCommand(
-                                                      Integer clusterId,
-                                                      CommandType commandType,
-                                                      String clusterCode,
-                                                      DAGGraph<String, ServiceNode, String> dag,
-                                                      Map<String, ServiceExecuteState> activeTaskList,
-                                                      Map<String, String> errorTaskList,
-                                                      Map<String, String> readyToSubmitTaskList,
-                                                      Map<String, String> completeTaskList,
-                                                      String node,
-                                                      List<ServiceRoleInfo> masterRoles,
-                                                      ServiceRoleInfo workerRole,
-                                                      ActorRef serviceActor,
-                                                      ServiceRoleType serviceRoleType) {
+            Integer clusterId,
+            CommandType commandType,
+            String clusterCode,
+            DAGGraph<String, ServiceNode, String> dag,
+            Map<String, ServiceExecuteState> activeTaskList,
+            Map<String, String> errorTaskList,
+            Map<String, String> readyToSubmitTaskList,
+            Map<String, String> completeTaskList,
+            String node,
+            List<ServiceRoleInfo> masterRoles,
+            ServiceRoleInfo workerRole,
+            ActorRef serviceActor,
+            ServiceRoleType serviceRoleType) {
         ExecuteServiceRoleCommand executeServiceRoleCommand =
                 new ExecuteServiceRoleCommand(clusterId, node, masterRoles);
         executeServiceRoleCommand.setServiceRoleType(serviceRoleType);
@@ -452,7 +447,7 @@ public class ProcessUtils {
             logger.info("create {} actor",
                     clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
             ActorUtils.actorSystem.actorOf(Props.create(MasterServiceActor.class)
-                    .withDispatcher("my-forkjoin-dispatcher"),
+                            .withDispatcher("my-forkjoin-dispatcher"),
                     clusterInfo.getClusterCode() + "-serviceActor-" + frameServiceEntity.getServiceName());
         }
     }
@@ -507,12 +502,39 @@ public class ProcessUtils {
         return execResult;
     }
 
+    public static ExecResult configServiceRoleInstance(ClusterInfoEntity clusterInfo,
+                                                       Map<Generators, List<ServiceConfig>> configFileMap,
+                                                       ClusterServiceRoleInstanceEntity roleInstanceEntity) throws Exception {
+        ServiceRoleInfo serviceRoleInfo = new ServiceRoleInfo();
+        serviceRoleInfo.setName(roleInstanceEntity.getServiceRoleName());
+        serviceRoleInfo.setParentName(roleInstanceEntity.getServiceName());
+        serviceRoleInfo.setConfigFileMap(configFileMap);
+        serviceRoleInfo.setDecompressPackageName(PackageUtils.getServiceDcPackageName(clusterInfo.getClusterFrame(), "YARN"));
+        serviceRoleInfo.setHostname(roleInstanceEntity.getHostname());
+        ServiceConfigureHandler configureHandler = new ServiceConfigureHandler();
+        return configureHandler.handlerRequest(serviceRoleInfo);
+    }
+
+    public static void asyncConfigServiceRoleInstance(ClusterInfoEntity clusterInfo,
+                                                      Map<Generators, List<ServiceConfig>> configFileMap,
+                                                      ClusterServiceRoleInstanceEntity roleInstanceEntity,
+                                                      OnComplete<Object> onComplete) {
+        ServiceRoleInfo serviceRoleInfo = new ServiceRoleInfo();
+        serviceRoleInfo.setName(roleInstanceEntity.getServiceRoleName());
+        serviceRoleInfo.setParentName(roleInstanceEntity.getServiceName());
+        serviceRoleInfo.setConfigFileMap(configFileMap);
+        serviceRoleInfo.setDecompressPackageName(PackageUtils.getServiceDcPackageName(clusterInfo.getClusterFrame(), "YARN"));
+        serviceRoleInfo.setHostname(roleInstanceEntity.getHostname());
+        ServiceConfigureAsyncHandler configureAsyncHandler = new ServiceConfigureAsyncHandler(onComplete);
+        configureAsyncHandler.handlerRequest(serviceRoleInfo);
+    }
+
     /**
      * @param configFileMap
      * @param config
      * @Description: 生成configFileMap
      */
-    public static void generateConfigFileMap(HashMap<Generators, List<ServiceConfig>> configFileMap,
+    public static void generateConfigFileMap(Map<Generators, List<ServiceConfig>> configFileMap,
                                              ClusterServiceRoleGroupConfig config) {
         Map<JSONObject, JSONArray> map = JSONObject.parseObject(config.getConfigFileJson(), Map.class);
         for (JSONObject fileJson : map.keySet()) {
@@ -520,6 +542,10 @@ public class ProcessUtils {
             List<ServiceConfig> serviceConfigs = map.get(fileJson).toJavaList(ServiceConfig.class);
             configFileMap.put(generators, serviceConfigs);
         }
+    }
+
+    public static List<ServiceConfig> getServiceConfig(ClusterServiceRoleGroupConfig config) {
+        return JSONObject.parseArray(config.getConfigJson(), ServiceConfig.class);
     }
 
     public static ServiceConfig createServiceConfig(String configName, Object configValue, String type) {
@@ -535,8 +561,7 @@ public class ProcessUtils {
 
     public static ClusterInfoEntity getClusterInfo(Integer clusterId) {
         ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
-        ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
-        return clusterInfo;
+        return clusterInfoService.getById(clusterId);
     }
 
     /**
@@ -678,4 +703,5 @@ public class ProcessUtils {
         roleInstanceService.updateById(roleInstanceEntity);
 
     }
+
 }

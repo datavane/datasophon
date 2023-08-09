@@ -102,12 +102,12 @@ public class MasterServiceActor extends UntypedActor {
                             (Integer) CacheUtils.get("UseRoleGroup_" + serviceInstanceId);
                     ClusterServiceRoleGroupConfig config =
                             roleGroupConfigService.getConfigByRoleGroupId(roleGroupId);
-                    buildConfigFileMap(configFileMap, config);
+                    ProcessUtils.generateConfigFileMap(configFileMap, config);
                 } else if (serviceRoleInstance.getNeedRestart() == NeedRestart.YES) {
                     ClusterServiceRoleGroupConfig config =
                             roleGroupConfigService.getConfigByRoleGroupId(
                                     serviceRoleInstance.getRoleGroupId());
-                    buildConfigFileMap(configFileMap, config);
+                    ProcessUtils.generateConfigFileMap(configFileMap, config);
                     needReConfig = true;
                 }
                 logger.info("enable ranger plugin is {}", enableRangerPlugin);
@@ -117,7 +117,7 @@ public class MasterServiceActor extends UntypedActor {
                     case INSTALL_SERVICE:
                         try {
                             logger.info(
-                                    "start to install {} int host {}",
+                                    "start to install {} in host {}",
                                     serviceRoleInfo.getName(),
                                     serviceRoleInfo.getHostname());
 
@@ -312,16 +312,4 @@ public class MasterServiceActor extends UntypedActor {
         return false;
     }
 
-    // generate configFileMap
-    private void buildConfigFileMap(
-                                    HashMap<Generators, List<ServiceConfig>> configFileMap,
-                                    ClusterServiceRoleGroupConfig config) {
-        Map<JSONObject, JSONArray> map =
-                JSONObject.parseObject(config.getConfigFileJson(), Map.class);
-        for (JSONObject fileJson : map.keySet()) {
-            Generators generators = fileJson.toJavaObject(Generators.class);
-            List<ServiceConfig> serviceConfigs = map.get(fileJson).toJavaList(ServiceConfig.class);
-            configFileMap.put(generators, serviceConfigs);
-        }
-    }
 }

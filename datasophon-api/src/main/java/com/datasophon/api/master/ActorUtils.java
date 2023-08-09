@@ -23,9 +23,10 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.util.Timeout;
 import com.datasophon.api.master.alert.ServiceRoleCheckActor;
-import com.datasophon.common.command.ClusterCheckCommand;
+import com.datasophon.common.command.ClusterCommand;
 import com.datasophon.common.command.HostCheckCommand;
 import com.datasophon.common.command.ServiceRoleCheckCommand;
+import com.datasophon.common.enums.ClusterCommandType;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import org.apache.commons.lang.StringUtils;
@@ -72,7 +73,7 @@ public class ActorUtils {
                 getActorRefName(MasterNodeProcessingActor.class));
 
         ActorRef clusterCheckActor =
-            actorSystem.actorOf(Props.create(ClusterCheckActor.class), getActorRefName(ClusterCheckActor.class));
+                actorSystem.actorOf(Props.create(ClusterActor.class), getActorRefName(ClusterActor.class));
 
         // 节点检测 5m 检测一次
         actorSystem.scheduler().schedule(
@@ -93,12 +94,12 @@ public class ActorUtils {
 
         // 集群检测 1m 检测一次
         actorSystem.scheduler().schedule(
-            FiniteDuration.apply(30L, TimeUnit.SECONDS),
-            FiniteDuration.apply(60L, TimeUnit.SECONDS),
-            clusterCheckActor,
-            new ClusterCheckCommand(),
-            actorSystem.dispatcher(),
-            ActorRef.noSender());
+                FiniteDuration.apply(30L, TimeUnit.SECONDS),
+                FiniteDuration.apply(60L, TimeUnit.SECONDS),
+                clusterCheckActor,
+                new ClusterCommand(ClusterCommandType.CHECK),
+                actorSystem.dispatcher(),
+                ActorRef.noSender());
 
 
         rand = SecureRandom.getInstanceStrong();
@@ -156,10 +157,11 @@ public class ActorUtils {
      * shutdown
      */
     public static void shutdown() {
-        if(actorSystem != null) {
+        if (actorSystem != null) {
             try {
                 actorSystem.shutdown();
-            } catch (Exception ignore){}
+            } catch (Exception ignore) {
+            }
             actorSystem = null;
         }
     }
