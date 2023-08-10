@@ -48,5 +48,5 @@ public interface ClusterServiceInstanceService extends IService<ClusterServiceIn
 
     List<ClusterServiceInstanceEntity> listRunningServiceInstance(Integer clusterId);
 
-    public boolean hasRunningRoleInstance(Integer serviceInstanceId);
+    boolean hasRunningRoleInstance(Integer serviceInstanceId);
 }
