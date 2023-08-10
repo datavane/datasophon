@@ -94,7 +94,7 @@ public class ClusterActor extends UntypedActor {
                     }
                 }
 
-            } else if (ClusterCommandType.UNINSTALL.equals(clusterCommand.getCommandType())) {
+            } else if (ClusterCommandType.DELETE.equals(clusterCommand.getCommandType())) {
                 Integer clusterId = clusterCommand.getClusterId();
                 if (Objects.nonNull(clusterId)) {
                     ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
@@ -180,7 +180,7 @@ public class ClusterActor extends UntypedActor {
                         }
                         List<ClusterHostEntity> hostList = clusterHostService.getHostListByClusterId(clusterId);
                         clusterHostService.deleteHosts(hostList.stream().map(h -> String.valueOf(h.getId())).collect(Collectors.joining(Constants.COMMA)));
-                        clusterInfoService.updateClusterState(clusterId, ClusterState.UNINSTALLED.getValue());
+                        clusterInfoService.updateClusterState(clusterId, ClusterState.DELETED.getValue());
                     }
                 }
             }

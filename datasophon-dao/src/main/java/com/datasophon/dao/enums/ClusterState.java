@@ -24,9 +24,9 @@ import java.util.Arrays;
 
 public enum ClusterState {
 
-    UNINSTALLED(5, "已删除"),
+    DELETED(5, "已删除"),
 
-    UNINSTALLING(4, "删除中"),
+    DELETING(4, "删除中"),
 
     STOP(3, "停止"),
 

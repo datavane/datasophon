@@ -205,9 +205,9 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
 
         ActorUtils.getLocalActor(
                         ClusterActor.class, "clusterActor")
-                .tell(new ClusterCommand(ClusterCommandType.UNINSTALL, id), ActorRef.noSender());
+                .tell(new ClusterCommand(ClusterCommandType.DELETE, id), ActorRef.noSender());
 
-        this.updateClusterState(id, ClusterState.UNINSTALLING.getValue());
+        this.updateClusterState(id, ClusterState.DELETING.getValue());
 
         // delete host
 //    clusterHostService.removeHostByClusterId(id);
