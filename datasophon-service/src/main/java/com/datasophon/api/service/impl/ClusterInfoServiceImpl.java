@@ -20,8 +20,8 @@ package com.datasophon.api.service.impl;
 import akka.actor.ActorRef;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.datasophon.api.load.ConfigBean;
 import com.datasophon.api.enums.Status;
+import com.datasophon.api.load.ConfigBean;
 import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.ClusterActor;
@@ -87,6 +87,9 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
 
     @Autowired
     private ClusterRackService rackService;
+
+    @Autowired
+    private ClusterServiceInstanceService clusterServiceInstanceService;
 
     @Override
     public ClusterInfoEntity getClusterByClusterCode(String clusterCode) {
@@ -203,11 +206,17 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         Integer id = ids.get(0);
         ClusterInfoEntity clusterInfo = this.getById(id);
 
-        ActorUtils.getLocalActor(
-                        ClusterActor.class, "clusterActor")
-                .tell(new ClusterCommand(ClusterCommandType.DELETE, id), ActorRef.noSender());
+        if (ClusterState.STOP.equals(clusterInfo.getClusterState())) {
+            List<ClusterServiceInstanceEntity> serviceInstanceList = clusterServiceInstanceService.listAll(id);
+            if (serviceInstanceList.stream().noneMatch(instance -> clusterServiceInstanceService.hasRunningRoleInstance(instance.getId()))) {
+                ActorUtils.getLocalActor(
+                                ClusterActor.class, "clusterActor")
+                        .tell(new ClusterCommand(ClusterCommandType.DELETE, id), ActorRef.noSender());
 
-        this.updateClusterState(id, ClusterState.DELETING.getValue());
+                this.updateClusterState(id, ClusterState.DELETING.getValue());
+            }
+        }
+
 
         // delete host
 //    clusterHostService.removeHostByClusterId(id);

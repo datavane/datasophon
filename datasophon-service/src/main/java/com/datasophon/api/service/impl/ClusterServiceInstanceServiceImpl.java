@@ -91,7 +91,7 @@ public class ClusterServiceInstanceServiceImpl
     }
 
     @Override
-    public Result listAll(Integer clusterId) {
+    public List<ClusterServiceInstanceEntity> listAll(Integer clusterId) {
         Map<String, String> globalVariables = GlobalVariables.get(clusterId);
         List<ClusterServiceInstanceEntity> list = this.list(new QueryWrapper<ClusterServiceInstanceEntity>()
                 .eq(Constants.CLUSTER_ID, clusterId).orderByAsc(Constants.SORT_NUM));
@@ -166,7 +166,7 @@ public class ClusterServiceInstanceServiceImpl
                 this.updateById(serviceInstance);
             }
         }
-        return Result.success(list);
+        return list;
     }
 
     @Override
@@ -253,7 +253,7 @@ public class ClusterServiceInstanceServiceImpl
                 .eq(Constants.SERVICE_STATE, ServiceState.RUNNING));
     }
 
-    private boolean hasRunningRoleInstance(Integer serviceInstanceId) {
+    public boolean hasRunningRoleInstance(Integer serviceInstanceId) {
         List<ClusterServiceRoleInstanceEntity> list =
                 roleInstanceService.getRunningServiceRoleInstanceListByServiceId(serviceInstanceId);
       return !list.isEmpty();

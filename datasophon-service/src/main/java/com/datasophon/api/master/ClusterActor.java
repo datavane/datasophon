@@ -20,11 +20,7 @@ package com.datasophon.api.master;
 import akka.actor.UntypedActor;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.extra.spring.SpringUtil;
-import com.datasophon.api.service.ClusterHostService;
-import com.datasophon.api.service.ClusterInfoService;
-import com.datasophon.api.service.ClusterServiceRoleGroupConfigService;
-import com.datasophon.api.service.ClusterServiceRoleInstanceService;
-import com.datasophon.api.service.ServiceInstallService;
+import com.datasophon.api.service.*;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.ClusterCommand;
@@ -33,10 +29,7 @@ import com.datasophon.common.model.Generators;
 import com.datasophon.common.model.ServiceConfig;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterHostEntity;
-import com.datasophon.dao.entity.ClusterInfoEntity;
-import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
-import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
+import com.datasophon.dao.entity.*;
 import com.datasophon.dao.enums.ClusterState;
 import com.datasophon.dao.enums.ServiceRoleState;
 
@@ -100,9 +93,9 @@ public class ClusterActor extends UntypedActor {
                     ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
                     if (Objects.nonNull(clusterInfo)) {
                         ClusterHostService clusterHostService = SpringUtil.getBean(ClusterHostService.class);
+                        ClusterServiceInstanceService clusterServiceInstanceService = SpringUtil.getBean(ClusterServiceInstanceService.class);
                         ClusterServiceRoleInstanceService clusterServiceRoleInstanceService = SpringUtil.getBean(ClusterServiceRoleInstanceService.class);
                         ClusterServiceRoleGroupConfigService clusterServiceRoleGroupConfigService = SpringUtil.getBean(ClusterServiceRoleGroupConfigService.class);
-                        ServiceInstallService serviceInstallService = SpringUtil.getBean(ServiceInstallService.class);
 
                         // 检查服务实例配置与目录
                         List<ClusterServiceRoleInstanceEntity> roleInstanceList = clusterServiceRoleInstanceService.getServiceRoleInstanceListByClusterId(clusterId);
@@ -110,22 +103,16 @@ public class ClusterActor extends UntypedActor {
                             String roleName = roleInstance.getServiceRoleName();
                             String hostname = roleInstance.getHostname();
                             ClusterServiceRoleGroupConfig config = clusterServiceRoleGroupConfigService.getConfigByRoleGroupId(roleInstance.getRoleGroupId());
-                            List<ServiceConfig> oldConfigs = ProcessUtils.getServiceConfig(config);
                             Map<Generators, List<ServiceConfig>> configFileMap = new ConcurrentHashMap<>();
                             ProcessUtils.generateConfigFileMap(configFileMap, config);
                             Predicate<ServiceConfig> filter = c -> Constants.PATH.equals(c.getConfigType()) && !((String) c.getValue()).contains(DEPRECATED);
-                            Consumer<ServiceConfig> peeker = c -> {
-                                String oldPath = (String) c.getValue();
-                                String newPath = String.format("%s_%s_%s_%s", oldPath, DEPRECATED, clusterId, DateUtil.today());
-                                c.setDefaultValue(oldPath);
-                                c.setValue(newPath);
-                            };
-
                             for (Map.Entry<Generators, List<ServiceConfig>> configFile : configFileMap.entrySet()) {
                                 List<ServiceConfig> serviceConfigs = configFile.getValue().stream()
                                         .filter(filter)
                                         .peek(c -> {
-                                            peeker.accept(c);
+                                            String oldPath = (String) c.getValue();
+                                            String newPath = String.format("%s_%s_%s_%s", oldPath, DEPRECATED, clusterId, DateUtil.today());
+                                            c.setValue(newPath);
                                             c.setConfigType(Constants.MV_PATH);
                                         })
                                         .collect(Collectors.toList());
@@ -150,16 +137,6 @@ public class ClusterActor extends UntypedActor {
                                                 "{} uninstall success in {}",
                                                 roleName,
                                                 hostname);
-                                        //保存配置
-                                        serviceInstallService.saveServiceConfig(clusterId,
-                                                roleInstance.getServiceName(),
-                                                oldConfigs.stream().peek(c -> {
-                                                    if (filter.test(c)) {
-                                                        peeker.accept(c);
-                                                    }
-                                                }).collect(Collectors.toList()),
-                                                roleInstance.getRoleGroupId());
-
                                     } else {
                                         logger.info(
                                                 "{} uninstall failed in {}",
@@ -178,9 +155,12 @@ public class ClusterActor extends UntypedActor {
                                 }
                             }
                         }
-                        List<ClusterHostEntity> hostList = clusterHostService.getHostListByClusterId(clusterId);
-                        clusterHostService.deleteHosts(hostList.stream().map(h -> String.valueOf(h.getId())).collect(Collectors.joining(Constants.COMMA)));
-                        clusterInfoService.updateClusterState(clusterId, ClusterState.DELETED.getValue());
+                        List<ClusterServiceInstanceEntity> serviceInstanceList = clusterServiceInstanceService.listAll(clusterId);
+                        if(serviceInstanceList.stream().allMatch(instance ->  clusterServiceInstanceService.delServiceInstance(instance.getId()).isSuccess())) {
+                            List<ClusterHostEntity> hostList = clusterHostService.getHostListByClusterId(clusterId);
+                            clusterHostService.deleteHosts(hostList.stream().map(h -> String.valueOf(h.getId())).collect(Collectors.joining(Constants.COMMA)));
+                            clusterInfoService.removeById(clusterId);
+                        }
                     }
                 }
             }

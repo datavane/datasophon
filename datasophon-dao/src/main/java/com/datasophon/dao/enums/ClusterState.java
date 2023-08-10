@@ -24,8 +24,6 @@ import java.util.Arrays;
 
 public enum ClusterState {
 
-    DELETED(5, "已删除"),
-
     DELETING(4, "删除中"),
 
     STOP(3, "停止"),
