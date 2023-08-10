@@ -24,7 +24,7 @@ import com.datasophon.dao.entity.ClusterHostEntity;
 import java.util.List;
 
 /**
- * 集群主机表 
+ * 集群主机表
  *
  * @author gaodayu
  * @email gaodayu2022@163.com
@@ -42,12 +42,12 @@ public interface ClusterHostService extends IService<ClusterHostEntity> {
     Result getRoleListByHostname(Integer clusterId, String hostname);
 
 
-
     /**
      * 批量删除主机。
      * 删除主机，首先停止主机上的服务
      * 其次删除主机 worker，同时移除 Prometheus hosts
      * 然后删除主机运行的实例
+     *
      * @param hostIds
      * @return
      */
@@ -55,7 +55,7 @@ public interface ClusterHostService extends IService<ClusterHostEntity> {
 
     Result getRack(Integer clusterId);
 
-    void deleteHostByClusterId(Integer id);
+    void removeHostByClusterId(Integer id);
 
     void updateBatchNodeLabel(List<String> hostIds, String nodeLabel);
 

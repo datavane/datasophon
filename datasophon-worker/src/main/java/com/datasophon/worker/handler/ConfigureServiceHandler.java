@@ -104,6 +104,9 @@ public class ConfigureServiceHandler {
                     if (Constants.PATH.equals(config.getConfigType())) {
                         createPath(config, runAs);
                     }
+                    if (Constants.MV_PATH.equals(config.getConfigType())) {
+                        movePath(config, runAs);
+                    }
                     if (Constants.CUSTOM.equals(config.getConfigType())) {
                         addToCustomList(iterator, customConfList, config);
                     }
@@ -145,7 +148,7 @@ public class ConfigureServiceHandler {
                     customConfList.add(serviceConfig);
                 }
                 configs.addAll(customConfList);
-                if (configs.size() > 0) {
+                if (!configs.isEmpty()) {
                     // extra app, package: META, templates
                     File extTemplateDir =
                             new File(Constants.INSTALL_PATH + File.separator + decompressPackageName, "templates");
@@ -205,6 +208,22 @@ public class ConfigureServiceHandler {
             }
         } else {
             mkdir(path, runAs);
+        }
+    }
+
+    private void movePath(ServiceConfig config, RunAs runAs) {
+        String oldPath = (String) config.getDefaultValue();
+        String newPath = (String) config.getValue();
+        if(FileUtil.exist(oldPath) && !FileUtil.exist(newPath)) {
+            if (newPath.contains(Constants.COMMA)) {
+                for (String dir : newPath.split(Constants.COMMA)) {
+                    mkdir(dir, runAs);
+                }
+            } else {
+                mkdir(newPath, runAs);
+            }
+            FileUtil.move(new File(oldPath), new File(newPath), false);
+            logger.info("move path {} to {}", oldPath, newPath);
         }
     }
 

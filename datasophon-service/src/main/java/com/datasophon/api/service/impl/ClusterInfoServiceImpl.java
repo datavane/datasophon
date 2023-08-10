@@ -17,34 +17,27 @@
 
 package com.datasophon.api.service.impl;
 
+import akka.actor.ActorRef;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.datasophon.api.load.ConfigBean;
 import com.datasophon.api.enums.Status;
+import com.datasophon.api.load.ConfigBean;
 import com.datasophon.api.load.GlobalVariables;
-import com.datasophon.api.service.AlertGroupService;
-import com.datasophon.api.service.ClusterAlertGroupMapService;
-import com.datasophon.api.service.ClusterHostService;
-import com.datasophon.api.service.ClusterInfoService;
-import com.datasophon.api.service.ClusterNodeLabelService;
-import com.datasophon.api.service.ClusterQueueCapacityService;
-import com.datasophon.api.service.ClusterRackService;
-import com.datasophon.api.service.ClusterRoleUserService;
-import com.datasophon.api.service.ClusterYarnSchedulerService;
-import com.datasophon.api.service.FrameServiceService;
+import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.master.ClusterActor;
+import com.datasophon.api.service.*;
 import com.datasophon.api.utils.PackageUtils;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.api.utils.SecurityUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
+import com.datasophon.common.command.ClusterCommand;
+import com.datasophon.common.enums.ClusterCommandType;
 import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.AlertGroupEntity;
-import com.datasophon.dao.entity.ClusterAlertGroupMap;
-import com.datasophon.dao.entity.ClusterInfoEntity;
-import com.datasophon.dao.entity.FrameServiceEntity;
-import com.datasophon.dao.entity.UserInfoEntity;
+import com.datasophon.dao.entity.*;
 import com.datasophon.dao.enums.ClusterState;
 import com.datasophon.dao.mapper.ClusterInfoMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,11 +47,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service("clusterInfoService")
 @Transactional
 public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, ClusterInfoEntity>
         implements
         ClusterInfoService {
+
 
     @Autowired
     private ClusterInfoMapper clusterInfoMapper;
@@ -93,17 +88,19 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
     @Autowired
     private ClusterRackService rackService;
 
+    @Autowired
+    private ClusterServiceInstanceService clusterServiceInstanceService;
+
     @Override
     public ClusterInfoEntity getClusterByClusterCode(String clusterCode) {
-        ClusterInfoEntity clusterInfoEntity = clusterInfoMapper.getClusterByClusterCode(clusterCode);
-        return clusterInfoEntity;
+        return clusterInfoMapper.getClusterByClusterCode(clusterCode);
     }
 
     @Override
     public Result saveCluster(ClusterInfoEntity clusterInfo) {
         List<ClusterInfoEntity> list = this
                 .list(new QueryWrapper<ClusterInfoEntity>().eq(Constants.CLUSTER_CODE, clusterInfo.getClusterCode()));
-        if (Objects.nonNull(list) && list.size() >= 1) {
+        if (Objects.nonNull(list) && !list.isEmpty()) {
             return Result.error(Status.CLUSTER_CODE_EXISTS.getMsg());
         }
         clusterInfo.setCreateTime(new Date());
@@ -170,11 +167,14 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
     @Override
     public Result updateClusterState(Integer clusterId, Integer clusterState) {
         ClusterInfoEntity clusterInfo = this.getById(clusterId);
-        if (clusterState == 2) {
-            clusterInfo.setClusterState(ClusterState.RUNNING);
+        ClusterState state = ClusterState.of(clusterState);
+        if (state != null) {
+            clusterInfo.setClusterState(state);
+            this.updateById(clusterInfo);
+            return Result.success();
+        } else {
+            return Result.error("未知状态");
         }
-        this.updateById(clusterInfo);
-        return Result.success();
     }
 
     @Override
@@ -187,7 +187,7 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
         // 集群编码判重
         List<ClusterInfoEntity> list = this
                 .list(new QueryWrapper<ClusterInfoEntity>().eq(Constants.CLUSTER_CODE, clusterInfo.getClusterCode()));
-        if (Objects.nonNull(list) && list.size() >= 1) {
+        if (Objects.nonNull(list) && !list.isEmpty()) {
             ClusterInfoEntity clusterInfoEntity = list.get(0);
             if (!clusterInfoEntity.getId().equals(clusterInfo.getId())) {
                 return Result.error(Status.CLUSTER_CODE_EXISTS.getMsg());
@@ -205,8 +205,21 @@ public class ClusterInfoServiceImpl extends ServiceImpl<ClusterInfoMapper, Clust
     public void deleteCluster(List<Integer> ids) {
         Integer id = ids.get(0);
         ClusterInfoEntity clusterInfo = this.getById(id);
-        this.removeByIds(ids);
+
+        if (ClusterState.STOP.equals(clusterInfo.getClusterState())) {
+            List<ClusterServiceInstanceEntity> serviceInstanceList = clusterServiceInstanceService.listAll(id);
+            if (serviceInstanceList.stream().noneMatch(instance -> clusterServiceInstanceService.hasRunningRoleInstance(instance.getId()))) {
+                ActorUtils.getLocalActor(
+                                ClusterActor.class, "clusterActor")
+                        .tell(new ClusterCommand(ClusterCommandType.DELETE, id), ActorRef.noSender());
+
+                this.updateClusterState(id, ClusterState.DELETING.getValue());
+            }
+        }
+
+
         // delete host
-        clusterHostService.deleteHostByClusterId(id);
+//    clusterHostService.removeHostByClusterId(id);
     }
+
 }
