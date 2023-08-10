@@ -81,7 +81,7 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     @Override
     public Result listByPage(Integer clusterId, String hostname, String ip, String cpuArchitecture, Integer hostState,
                              String orderField, String orderType, Integer page, Integer pageSize) {
-        Integer offset = (page - 1) * pageSize;
+        int offset = (page - 1) * pageSize;
         List<ClusterHostEntity> list =
                 this.list(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID, clusterId)
                         .eq(Constants.MANAGED, 1)
@@ -137,7 +137,7 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     @Transactional
     public Result deleteHosts(String hostIds) {
         // 批量移除
-        List<String> ids = Arrays.asList(hostIds.split(","));
+        String[] ids = hostIds.split(Constants.COMMA);
         for (String hostId : ids) {
             ClusterHostEntity host = this.getById(hostId);
             // 获取主机上安装的服务
@@ -147,9 +147,9 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
                             .eq(Constants.HOSTNAME, host.getHostname())
                             .eq(Constants.SERVICE_ROLE_STATE, ServiceRoleState.RUNNING)
                             .ne(Constants.ROLE_TYPE, RoleType.CLIENT));
-            List<String> roles = list.stream().map(e -> e.getServiceRoleName()).collect(Collectors.toList());
-            if (Objects.nonNull(list) && list.size() > 0) {
-                return Result.error(host.getHostname() + Status.HOST_EXIT_ONE_RUNNING_ROLE.getMsg() + roles.toString());
+            List<String> roles = list.stream().map(ClusterServiceRoleInstanceEntity::getServiceRoleName).collect(Collectors.toList());
+            if (!list.isEmpty()) {
+                return Result.error(host.getHostname() + Status.HOST_EXIT_ONE_RUNNING_ROLE.getMsg() + roles);
             }
             ClusterInfoEntity clusterInfo = clusterInfoService.getById(host.getClusterId());
             String clusterCode = clusterInfo.getClusterCode();
@@ -160,7 +160,7 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
 
             this.removeById(hostId);
 
-            if(host.getHostState().intValue() != 2){
+            if (host.getHostState() != 2) {
                 //stop the worker on this host
                 ActorRef execCmdActor = ActorUtils.getRemoteActor(host.getHostname(), "executeCmdActor");
                 ExecuteCmdCommand command = new ExecuteCmdCommand();
@@ -213,7 +213,7 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     }
 
     @Override
-    public void deleteHostByClusterId(Integer clusterId) {
+    public void removeHostByClusterId(Integer clusterId) {
         this.remove(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID, clusterId));
     }
 

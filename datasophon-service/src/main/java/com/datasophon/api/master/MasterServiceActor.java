@@ -19,6 +19,7 @@
 
 package com.datasophon.api.master;
 
+import akka.actor.UntypedActor;
 import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.master.handler.service.ServiceHandler;
 import com.datasophon.api.master.handler.service.ServiceStopHandler;
@@ -39,20 +40,10 @@ import com.datasophon.dao.entity.ClusterServiceRoleGroupConfig;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.enums.NeedRestart;
 import com.datasophon.dao.enums.ServiceRoleState;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-
-import akka.actor.UntypedActor;
+import java.util.*;
 
 public class MasterServiceActor extends UntypedActor {
 
@@ -79,7 +70,7 @@ public class MasterServiceActor extends UntypedActor {
 
             List<ServiceRoleInfo> serviceRoleInfoList = executeServiceRoleCommand.getMasterRoles();
             Collections.sort(serviceRoleInfoList);
-            Integer successNum = 0;
+            int successNum = 0;
             for (ServiceRoleInfo serviceRoleInfo : serviceRoleInfoList) {
                 logger.info(
                         "{} service role size is {}",
@@ -102,12 +93,12 @@ public class MasterServiceActor extends UntypedActor {
                             (Integer) CacheUtils.get("UseRoleGroup_" + serviceInstanceId);
                     ClusterServiceRoleGroupConfig config =
                             roleGroupConfigService.getConfigByRoleGroupId(roleGroupId);
-                    buildConfigFileMap(configFileMap, config);
+                    ProcessUtils.generateConfigFileMap(configFileMap, config);
                 } else if (serviceRoleInstance.getNeedRestart() == NeedRestart.YES) {
                     ClusterServiceRoleGroupConfig config =
                             roleGroupConfigService.getConfigByRoleGroupId(
                                     serviceRoleInstance.getRoleGroupId());
-                    buildConfigFileMap(configFileMap, config);
+                    ProcessUtils.generateConfigFileMap(configFileMap, config);
                     needReConfig = true;
                 }
                 logger.info("enable ranger plugin is {}", enableRangerPlugin);
@@ -117,7 +108,7 @@ public class MasterServiceActor extends UntypedActor {
                     case INSTALL_SERVICE:
                         try {
                             logger.info(
-                                    "start to install {} int host {}",
+                                    "start to install {} in host {}",
                                     serviceRoleInfo.getName(),
                                     serviceRoleInfo.getHostname());
 
@@ -305,23 +296,8 @@ public class MasterServiceActor extends UntypedActor {
 
     private boolean isEnableRangerPlugin(Integer clusterId, String serviceName) {
         Map<String, String> globalVariables = GlobalVariables.get(clusterId);
-        if (globalVariables.containsKey("${enable" + serviceName + "Plugin}")
-                && "true".equals(globalVariables.get("${enable" + serviceName + "Plugin}"))) {
-            return true;
-        }
-        return false;
+        return globalVariables.containsKey("${enable" + serviceName + "Plugin}")
+                && "true".equals(globalVariables.get("${enable" + serviceName + "Plugin}"));
     }
 
-    // generate configFileMap
-    private void buildConfigFileMap(
-                                    HashMap<Generators, List<ServiceConfig>> configFileMap,
-                                    ClusterServiceRoleGroupConfig config) {
-        Map<JSONObject, JSONArray> map =
-                JSONObject.parseObject(config.getConfigFileJson(), Map.class);
-        for (JSONObject fileJson : map.keySet()) {
-            Generators generators = fileJson.toJavaObject(Generators.class);
-            List<ServiceConfig> serviceConfigs = map.get(fileJson).toJavaList(ServiceConfig.class);
-            configFileMap.put(generators, serviceConfigs);
-        }
-    }
 }

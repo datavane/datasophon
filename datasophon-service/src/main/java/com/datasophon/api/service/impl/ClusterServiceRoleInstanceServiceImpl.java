@@ -138,7 +138,7 @@ public class ClusterServiceRoleInstanceServiceImpl
                 .eq(Constants.SERVICE_ROLE_NAME, name)
                 .eq(StringUtils.isNotBlank(hostname), Constants.HOSTNAME, hostname)
                 .eq(Constants.CLUSTER_ID, id));
-        if (Objects.nonNull(list) && list.size() > 0) {
+        if (Objects.nonNull(list) && !list.isEmpty()) {
             return list.get(0);
         }
         return null;
@@ -147,7 +147,7 @@ public class ClusterServiceRoleInstanceServiceImpl
     @Override
     public Result listAll(Integer serviceInstanceId, String hostname, Integer serviceRoleState, String serviceRoleName,
                           Integer roleGroupId, Integer page, Integer pageSize) {
-        Integer offset = (page - 1) * pageSize;
+        int offset = (page - 1) * pageSize;
 
         LambdaQueryChainWrapper<ClusterServiceRoleInstanceEntity> wrapper = this.lambdaQuery()
                 .eq(ClusterServiceRoleInstanceEntity::getServiceId, serviceInstanceId)
@@ -214,6 +214,11 @@ public class ClusterServiceRoleInstanceServiceImpl
     }
 
     @Override
+    public List<ClusterServiceRoleInstanceEntity> getServiceRoleInstanceListByClusterId(int clusterId) {
+        return this.lambdaQuery().eq(ClusterServiceRoleInstanceEntity::getClusterId, clusterId).list();
+    }
+
+    @Override
     public Result deleteServiceRole(List<String> idList) {
         Collection<ClusterServiceRoleInstanceEntity> list = this.listByIds(idList);
         // is there a running instance
@@ -226,7 +231,7 @@ public class ClusterServiceRoleInstanceServiceImpl
                 needRemoveList.add(instance.getId());
             }
         }
-        if (needRemoveList.size() > 0) {
+        if (!needRemoveList.isEmpty()) {
             alertHistoryService.removeAlertByRoleInstanceIds(needRemoveList);
             this.removeByIds(needRemoveList);
             // delete if there is a webui
@@ -239,9 +244,8 @@ public class ClusterServiceRoleInstanceServiceImpl
     @Override
     public List<ClusterServiceRoleInstanceEntity> getServiceRoleInstanceListByClusterIdAndRoleName(Integer clusterId,
                                                                                                    String roleName) {
-        List<ClusterServiceRoleInstanceEntity> list = this.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
+      return this.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                 .eq(Constants.CLUSTER_ID, clusterId).eq(Constants.SERVICE_ROLE_NAME, roleName));
-        return list;
     }
 
     @Override
@@ -258,7 +262,7 @@ public class ClusterServiceRoleInstanceServiceImpl
         List<ClusterServiceRoleInstanceEntity> list = this.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                 .eq(Constants.ROLE_GROUP_ID, roleGroupId)
                 .eq(Constants.NEET_RESTART, NeedRestart.YES));
-        if (Objects.nonNull(list) && list.size() > 0) {
+        if (Objects.nonNull(list) && !list.isEmpty()) {
             List<String> ids = list.stream().map(e -> e.getId() + "").collect(Collectors.toList());
             commandService.generateServiceRoleCommand(roleGroup.getClusterId(), CommandType.RESTART_SERVICE,
                     roleGroup.getServiceInstanceId(), ids);
@@ -270,7 +274,7 @@ public class ClusterServiceRoleInstanceServiceImpl
 
     @Override
     public Result decommissionNode(String serviceRoleInstanceIds, String serviceName) throws Exception {
-        TreeSet<String> hosts = new TreeSet<String>();
+        TreeSet<String> hosts = new TreeSet<>();
         Integer serviceInstanceId = null;
         String serviceRoleName = "";
         for (String str : serviceRoleInstanceIds.split(",")) {
@@ -300,7 +304,7 @@ public class ClusterServiceRoleInstanceServiceImpl
             type = "nmexclude";
             roleName = "ResourceManager";
         }
-        if (hosts.size() > 0) {
+        if (!hosts.isEmpty()) {
             ProcessUtils.hdfsEcMethond(serviceInstanceId, this, hosts, "blacklist", roleName);
         }
         return Result.success();

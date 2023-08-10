@@ -17,6 +17,7 @@
 
 package com.datasophon.api;
 
+import cn.hutool.extra.spring.EnableSpringUtil;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
@@ -36,6 +37,7 @@ import java.security.NoSuchAlgorithmException;
 @ServletComponentScan
 @ComponentScan("com.datasophon")
 @MapperScan("com.datasophon.dao")
+@EnableSpringUtil
 public class DataSophonApplicationServer extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

@@ -36,7 +36,7 @@ public interface ClusterServiceInstanceService extends IService<ClusterServiceIn
 
     String getServiceConfigByClusterIdAndServiceName(Integer id, String node);
 
-    Result listAll(Integer clusterId);
+    List<ClusterServiceInstanceEntity> listAll(Integer clusterId);
 
     Result downloadClientConfig(Integer clusterId, String serviceName);
 
@@ -47,4 +47,6 @@ public interface ClusterServiceInstanceService extends IService<ClusterServiceIn
     Result delServiceInstance(Integer serviceInstanceId);
 
     List<ClusterServiceInstanceEntity> listRunningServiceInstance(Integer clusterId);
+
+    boolean hasRunningRoleInstance(Integer serviceInstanceId);
 }
