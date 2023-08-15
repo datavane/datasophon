@@ -273,6 +273,14 @@
           "hadoopHome",
           "rangerAdminUrl"
         ]
+      },
+      {
+        "filename": "mapred-site.xml",
+        "configFormat": "xml",
+        "outputDirectory": "etc/hadoop/",
+        "includeParams": [
+          "custom.mapred-site.xml"
+        ]
       }
     ]
   },
@@ -1013,6 +1021,18 @@
     {
       "name": "custom.hadoop.env.sh",
       "label": "自定义配置hadoop-env.sh",
+      "description": "自定义配置",
+      "configType": "custom",
+      "required": false,
+      "type": "multipleWithKey",
+      "value": [],
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": ""
+    },
+    {
+      "name": "custom.mapred-site.xml",
+      "label": "自定义配置mapred-site.xml",
       "description": "自定义配置",
       "configType": "custom",
       "required": false,
