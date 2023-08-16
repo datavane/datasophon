@@ -20,7 +20,13 @@ package com.datasophon.dao.enums;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.util.Arrays;
+
 public enum ClusterState {
+
+    DELETING(4, "删除中"),
+
+    STOP(3, "停止"),
 
     RUNNING(2, "正在运行"),
     NEED_CONFIG(1, "待配置");
@@ -50,6 +56,10 @@ public enum ClusterState {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public static ClusterState of(int value) {
+        return Arrays.stream(values()).filter(state -> state.getValue() == value).findAny().orElse(null);
     }
 
     @Override

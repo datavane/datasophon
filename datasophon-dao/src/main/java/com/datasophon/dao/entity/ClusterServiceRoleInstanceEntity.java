@@ -50,7 +50,7 @@ public class ClusterServiceRoleInstanceEntity implements Serializable {
      */
     private String hostname;
     /**
-     * 服务角色状态 1:正在运行2：存在告警3：存在异常4：需要重启
+     * 服务角色状态 1:正在运行 2:停止 3:存在告警 4:退役中 5:已退役
      */
     private ServiceRoleState serviceRoleState;
 

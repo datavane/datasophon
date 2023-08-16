@@ -31,111 +31,11 @@
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
     <dependencies>
-        <!--springboot-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-to-slf4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                    <groupId>org.springframework.boot</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- use jetty -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jetty</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty.websocket</groupId>
-                    <artifactId>javax-websocket-server-impl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty.websocket</groupId>
-                    <artifactId>websocket-server</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.datasophon</groupId>
-            <artifactId>datasophon-dao</artifactId>
-            <version>${project.version}</version>
+            <artifactId>datasophon-service</artifactId>
+            <version>${revision}</version>
         </dependency>
-        <dependency>
-            <groupId>com.datasophon</groupId>
-            <artifactId>datasophon-common</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>slf4j-reload4j</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!-- ui 工程打包是一个空包，这里依赖主要是让 ui 先编译，这样前端就能自动打包到 tar 介质中-->
-        <dependency>
-            <groupId>com.datasophon</groupId>
-            <artifactId>datasophon-ui</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor_2.11</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-remote_2.11</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-persistence_2.11</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sshd</groupId>
-            <artifactId>sshd-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sshd</groupId>
-            <artifactId>sshd-sftp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.i2p.crypto</groupId>
-            <artifactId>eddsa</artifactId>
-        </dependency>
-
     </dependencies>
 
     <build>

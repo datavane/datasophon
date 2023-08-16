@@ -66,11 +66,11 @@ public class FEHandlerStrategy extends AbstractHandlerStrategy implements Servic
                         ActorUtils.getRemoteActor(command.getManagerHost(), "masterNodeProcessingActor")
                                 .tell(sqlExecCommand, ActorRef.noSender());
                     } catch (Exception e) {
-                        logger.info("add slave fe failed {}", ThrowableUtils.getStackTrace(e));
+                        logger.error("add slave fe failed {}", ThrowableUtils.getStackTrace(e));
                     }
                     logger.info("slave fe start success");
                 } else {
-                    logger.info("slave fe start failed");
+                    logger.error("slave fe start failed");
                 }
             } else {
                 startResult = serviceHandler.start(command.getStartRunner(), command.getStatusRunner(),
