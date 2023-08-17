@@ -479,7 +479,7 @@ public class ProcessUtils {
     }
 
     public static ExecResult startService(ServiceRoleInfo serviceRoleInfo, boolean needReConfig) throws Exception {
-        ExecResult execResult = new ExecResult();
+        ExecResult execResult ;
         if (needReConfig) {
             ServiceConfigureHandler serviceHandler = new ServiceConfigureHandler();
             ServiceHandler serviceStartHandler = new ServiceStartHandler();
