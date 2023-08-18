@@ -71,6 +71,7 @@ drwxr-xr-x 2 root root   70 8月   7 10:54 sql
 
 ### init.properties 说明
 
+yum.repo.need：填写是否需要部署私有化yum源（true:需要/false:不需要，如服务器不能连接外网必须部署私有化yum源）
 yum.repo.host.ip：填写即将部署私有化yum源的节点的内网IP（即执行init脚本的节点IP，推荐在主节点上进行）
 namp.server.ip=：填写未来要部署的datasophon管理端的节点内网IP
 namp.server.port：填写未来要部署的datasophon管理端节点的SSH端口号，默认22
@@ -82,7 +83,8 @@ mysql.host.ssh.password： 填写未来要部署mysql数据库的节点服务器
 mysql.password： 填写未来要部署mysql数据库的root密码，这个密码不要有特殊字符比如‘,’、‘$’等，可在初始化完成之后再自行设置高复杂度密码
 init.host.num： 填写未来要初始化的服务器数量
 init.add.host.num： 填写未来要初始化的新增服务器节点数量，全量初始化时无需修改
-init.log.dir=./logs  ：设置初始化服务器环境时日志存放目录
+init.log.dir  ：设置初始化服务器环境时日志存放目录
+init.os ：填写服务器操作系统类型openEuler/centos8/centos7......
 
 ### init-host-info.properties 说明
 
@@ -101,13 +103,13 @@ dataSophon.ssh.port.hostname.i=dataSophon0   #预备安装dataSophon集群的节
 PS:执行的
 
 cd /data/datasophon-init/sbin
-bash init.sh initAll
+bash init.sh initAll （等待程序执行完毕，中间需要有一次确认服务器时间的确认项需要选择）
 source /etc/profile
 
 当执行完 bash init.sh initAll 之后，会看到有下面输出很多的日志，因为需要配置本地离线yum源以及安装mysql8、jdk等整个过程需要一定的时间，可以查看log目录下的安装日志
 其中mysql初始化的数据库默认为datasophon，初始化过程中会自动创建用户"datasophon"密码为"datasophon"
 
-##当前初始化模块支持的操作系统版本为：CentOS-8.5.2111-x86_64
+##当前初始化模块支持的操作系统版本为：CentOS-8.5.2111-x86_64、openEuler-22.03
 ##当前初始化模块支持的mysql为：mysql-community-8.0.28
 ##自动安装的JDK为：jdk-8u333
 
