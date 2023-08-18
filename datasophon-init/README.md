@@ -20,7 +20,7 @@
 # dataSophon-init使用说明
 前言：当前版本是根据centos8.5和openEuler-22.03进行开发适配的，其它类型和版本的操作系统目前没有进行详细的测试验证可能存在兼容性问题，需要对shell脚本和本地YUM离线安装包进行适配
 1、将datasophon-init整个目录的内容放到规划的集群主节点的/data目录下(mkdir /data)；
-2、将packages.tar.gz 离线依赖库移到主节点的 /data/datasophon-init下并解压；
+2、将packages.tar.gz 离线依赖库移到主节点的 /data/datasophon-init下并解压；链接：https://pan.baidu.com/s/1iqudVwDgg2x_OO35VLkkSg 提取码：6zrz
 3、在未连接互联网的情况下预备安装datasophon的服务器已经配置好离线yum源，能够通过yum命令安装依赖包（此步骤为必须，因为初始化脚本中使用了"yum -y install  xxxx"的方式安装依赖，如果没有yum源会导致安装失败 ）；
     离线YUM源配置方法（Ps:能连公网的用户就不用配置离线yum源了，直接配置为公共的源，该步骤都是在主节点上操作）：
     配置脚本为：init-private-yum-library-${initOS}.sh
