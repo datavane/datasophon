@@ -339,27 +339,27 @@ INSERT INTO `t_ddh_cluster_alert_rule` VALUES (134001, 134001, 'TRUE', '!=', '1'
 -- ----------------------------
 -- Records of t_ddh_cluster_service_dashboard
 -- ----------------------------
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (1, 'HDFS', 'http://${grafanaHost}:3000/d/huM_B3dZz/2-hdfs?orgId=1&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (2, 'YARN', 'http://${grafanaHost}:3000/d/-ZErfqOWz/3-yarn?orgId=1&refresh=30s&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (3, 'HIVE', 'http://${grafanaHost}:3000/d/WYNeBqdZz/5-hive?orgId=1&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (4, 'HBASE', 'http://${grafanaHost}:3000/d/_S8XBqOWz/4-hbase?orgId=1&refresh=30s&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (5, 'KAFKA', 'http://${grafanaHost}:3000/d/DGHHkJKWk/6-kafka?orgId=1&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (6, 'ZOOKEEPER', 'http://${grafanaHost}:3000/d/000000261/8-zookeeper?orgId=1&refresh=1m&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (7, 'RANGER', 'http://${grafanaHost}:3000/d/qgVDEd3nk/ranger?orgId=1&refresh=30s&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (8, 'PROMETHEUS', 'http://${grafanaHost}:3000/d/dd4t3A6nz/prometheus-2-0-overview?orgId=1&refresh=30s&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (9, 'GRAFANA', 'http://${grafanaHost}:3000/d/eea-11_sik/grafana?orgId=1&refresh=5m&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (10, 'ALERTMANAGER', 'http://${grafanaHost}:3000/d/eea-9_siks/alertmanager?orgId=1&refresh=5m&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (11, 'SPARK3', 'http://${grafanaHost}:3000/d/rCUqf3dWz/7-spark?orgId=1&from=now-30m&to=now&refresh=5m&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (12, 'TOTAL', 'http://${grafanaHost}:3000/d/_4gf-qOZz/1-zong-lan?orgId=1&refresh=30s&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (13, 'TRINO', 'http://${grafanaHost}:3000/d/TGzKne5Wk/trino?orgId=1&refresh=30s&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (14, 'STARROCKS', 'http://${grafanaHost}:3000/d/wpcA3tG7z/starrocks?orgId=1&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (15, 'FLINK', 'http://${grafanaHost}:3000/d/-0rFuzoZk/flink-dashboard?orgId=1&refresh=30s&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (16, 'ELASTICSEARCH', 'http://${grafanaHost}:3000/d/3788af4adc3046dd92b3af31d0150c79/elasticsearch-cluster?orgId=1&refresh=5m&var-cluster=ddp_es&var-name=All&var-interval=5m&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (17, 'DS', 'http://${grafanaHost}:3000/d/X_NPpJOVk/dolphinscheduler?refresh=1m&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (18, 'STREAMPARK', 'http://${grafanaHost}:3000/d/98U0T1OVz/streampark?kiosk&refresh=1m');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (19, 'DINKY', 'http://${grafanaHost}:3000/d/9qU9T1OVk/dinky?kiosk&refresh=1m');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (20, 'DORIS', 'http://${grafanaHost}:3000/d/1fFiWJ4mz/doris-overview?orgId=1&from=now-6h&to=now&refresh=1m&kiosk');
-INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (21, 'KERBEROS', 'http://${grafanaHost}:3000/d/QflaxlA4k/kerberos?orgId=1&refresh=1m&kiosk');
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (1, 'HDFS', CONCAT('http://${grafanaHost','}:3000/d/huM_B3dZz/2-hdfs?orgId=1&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (2, 'YARN', CONCAT('http://${grafanaHost','}:3000/d/-ZErfqOWz/3-yarn?orgId=1&refresh=30s&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (3, 'HIVE', CONCAT('http://${grafanaHost','}:3000/d/WYNeBqdZz/5-hive?orgId=1&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (4, 'HBASE', CONCAT('http://${grafanaHost','}:3000/d/_S8XBqOWz/4-hbase?orgId=1&refresh=30s&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (5, 'KAFKA', CONCAT('http://${grafanaHost','}:3000/d/DGHHkJKWk/6-kafka?orgId=1&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (6, 'ZOOKEEPER', CONCAT('http://${grafanaHost','}:3000/d/000000261/8-zookeeper?orgId=1&refresh=1m&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (7, 'RANGER', CONCAT('http://${grafanaHost','}:3000/d/qgVDEd3nk/ranger?orgId=1&refresh=30s&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (8, 'PROMETHEUS', CONCAT('http://${grafanaHost','}:3000/d/dd4t3A6nz/prometheus-2-0-overview?orgId=1&refresh=30s&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (9, 'GRAFANA', CONCAT('http://${grafanaHost','}:3000/d/eea-11_sik/grafana?orgId=1&refresh=5m&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (10, 'ALERTMANAGER', CONCAT('http://${grafanaHost','}:3000/d/eea-9_siks/alertmanager?orgId=1&refresh=5m&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (11, 'SPARK3', CONCAT('http://${grafanaHost','}:3000/d/rCUqf3dWz/7-spark?orgId=1&from=now-30m&to=now&refresh=5m&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (12, 'TOTAL', CONCAT('http://${grafanaHost','}:3000/d/_4gf-qOZz/1-zong-lan?orgId=1&refresh=30s&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (13, 'TRINO', CONCAT('http://${grafanaHost','}:3000/d/TGzKne5Wk/trino?orgId=1&refresh=30s&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (14, 'STARROCKS', CONCAT('http://${grafanaHost','}:3000/d/wpcA3tG7z/starrocks?orgId=1&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (15, 'FLINK', CONCAT('http://${grafanaHost','}:3000/d/-0rFuzoZk/flink-dashboard?orgId=1&refresh=30s&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (16, 'ELASTICSEARCH', CONCAT('http://${grafanaHost','}:3000/d/3788af4adc3046dd92b3af31d0150c79/elasticsearch-cluster?orgId=1&refresh=5m&var-cluster=ddp_es&var-name=All&var-interval=5m&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (17, 'DS', CONCAT('http://${grafanaHost','}:3000/d/X_NPpJOVk/dolphinscheduler?refresh=1m&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (18, 'STREAMPARK', CONCAT('http://${grafanaHost','}:3000/d/98U0T1OVz/streampark?kiosk&refresh=1m'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (19, 'DINKY', CONCAT('http://${grafanaHost','}:3000/d/9qU9T1OVk/dinky?kiosk&refresh=1m'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (20, 'DORIS', CONCAT('http://${grafanaHost','}:3000/d/1fFiWJ4mz/doris-overview?orgId=1&from=now-6h&to=now&refresh=1m&kiosk'));
+INSERT INTO `t_ddh_cluster_service_dashboard` VALUES (21, 'KERBEROS', CONCAT('http://${grafanaHost','}:3000/d/QflaxlA4k/kerberos?orgId=1&refresh=1m&kiosk'));
 
 
 
