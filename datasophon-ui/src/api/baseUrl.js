@@ -22,8 +22,8 @@
 export default {
   path() {
     let path = process.env.VUE_APP_API_BASE_URL
-    console.log(path, 'path地址', process.env.NOOE_ENV)
-    if(process.env.NOOE_ENV === 'production') {
+    console.log(path, 'path地址', process.env.NODE_ENV)
+    if(process.env.NODE_ENV === 'production') {
       console.log(1)
     }else {
       path = ''
