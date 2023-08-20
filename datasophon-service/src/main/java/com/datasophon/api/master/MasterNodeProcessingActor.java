@@ -19,8 +19,8 @@ public class MasterNodeProcessingActor extends UntypedActor {
         if (message instanceof OlapSqlExecCommand) {
             OlapSqlExecCommand command = (OlapSqlExecCommand) message;
             ExecResult execResult = OlapOpsType.ADD_BE.equals(command.getOpsType())
-                    ? OlapUtils.addBackendBySqlClient(command.getFeMaster(), command.getHostName())
-                    : OlapUtils.addFollowerBySqlClient(command.getFeMaster(), command.getHostName());
+                    ? OlapUtils.addBackend(command.getFeMaster(), command.getHostName())
+                    : OlapUtils.addFollower(command.getFeMaster(), command.getHostName());
             String tip = OlapOpsType.ADD_BE.equals(command.getOpsType()) ? "backend" : "follower";
             if (execResult.getExecResult()) {
                 logger.info(command.getHostName() + " " + tip + " be added success");

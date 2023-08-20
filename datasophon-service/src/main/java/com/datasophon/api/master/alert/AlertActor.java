@@ -115,46 +115,48 @@ public class AlertActor extends UntypedActor {
                 }
                 if (RESOLVED.equals(status)) {
                     AlertHistory alertHistory = alertHistoryGateway.getEnabledAlertHistory(alertname, clusterId, hostname);
-                    boolean nodeHasWarnAlertList = alertHistoryGateway.nodeHasWarnAlertList(hostname, serviceRoleName, alertHistory.getId());
+                    if(Objects.nonNull(alertHistory)){
+                        boolean nodeHasWarnAlertList = alertHistoryGateway.nodeHasWarnAlertList(hostname, serviceRoleName, alertHistory.getId());
 
-                    if (EXCEPTION.equals(labels.getSeverity())) {// 异常告警处理
-                        if (NODE.equals(serviceRoleName)) {
-                            // 置为正常
-                            ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
-                            clusterHost.setHostState(nodeHasWarnAlertList ? HostState.EXISTS_ALARM : HostState.RUNNING);
-                            hostService.updateById(clusterHost);
-                        } else {
-                            // 查询服务角色实例
-                            ClusterServiceRoleInstanceEntity roleInstance = roleInstanceService.getOneServiceRole(labels.getServiceRoleName(), hostname, clusterId);
-                            if (roleInstance.getServiceRoleState() == ServiceRoleState.RUNNING) {
-                                roleInstance.setServiceRoleState(ServiceRoleState.RUNNING);
-                                if (nodeHasWarnAlertList) {
-                                    roleInstance.setServiceRoleState(ServiceRoleState.EXISTS_ALARM);
-                                }
-                                roleInstanceService.updateById(roleInstance);
-                            }
-                        }
-                    } else {
-                        // 警告告警处理
-                        if (NODE.equals(serviceRoleName)) {
-                            // 置为正常
-                            ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
-                            clusterHost.setHostState(nodeHasWarnAlertList ? HostState.EXISTS_ALARM : HostState.RUNNING);
-                            hostService.updateById(clusterHost);
-                        } else {
-                            // 查询服务角色实例
-                            ClusterServiceRoleInstanceEntity roleInstance = roleInstanceService.getOneServiceRole(labels.getServiceRoleName(), hostname, clusterId);
-                            if (roleInstance.getServiceRoleState() != ServiceRoleState.RUNNING) {
-                                if (nodeHasWarnAlertList) {
-                                    roleInstance.setServiceRoleState(ServiceRoleState.EXISTS_ALARM);
-                                } else {
+                        if (EXCEPTION.equals(labels.getSeverity())) {// 异常告警处理
+                            if (NODE.equals(serviceRoleName)) {
+                                // 置为正常
+                                ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
+                                clusterHost.setHostState(nodeHasWarnAlertList ? HostState.EXISTS_ALARM : HostState.RUNNING);
+                                hostService.updateById(clusterHost);
+                            } else {
+                                // 查询服务角色实例
+                                ClusterServiceRoleInstanceEntity roleInstance = roleInstanceService.getOneServiceRole(labels.getServiceRoleName(), hostname, clusterId);
+                                if (roleInstance.getServiceRoleState() == ServiceRoleState.RUNNING) {
                                     roleInstance.setServiceRoleState(ServiceRoleState.RUNNING);
+                                    if (nodeHasWarnAlertList) {
+                                        roleInstance.setServiceRoleState(ServiceRoleState.EXISTS_ALARM);
+                                    }
+                                    roleInstanceService.updateById(roleInstance);
                                 }
-                                roleInstanceService.updateById(roleInstance);
+                            }
+                        } else {
+                            // 警告告警处理
+                            if (NODE.equals(serviceRoleName)) {
+                                // 置为正常
+                                ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
+                                clusterHost.setHostState(nodeHasWarnAlertList ? HostState.EXISTS_ALARM : HostState.RUNNING);
+                                hostService.updateById(clusterHost);
+                            } else {
+                                // 查询服务角色实例
+                                ClusterServiceRoleInstanceEntity roleInstance = roleInstanceService.getOneServiceRole(labels.getServiceRoleName(), hostname, clusterId);
+                                if (roleInstance.getServiceRoleState() != ServiceRoleState.RUNNING) {
+                                    if (nodeHasWarnAlertList) {
+                                        roleInstance.setServiceRoleState(ServiceRoleState.EXISTS_ALARM);
+                                    } else {
+                                        roleInstance.setServiceRoleState(ServiceRoleState.RUNNING);
+                                    }
+                                    roleInstanceService.updateById(roleInstance);
+                                }
                             }
                         }
+                        alertHistoryGateway.updateAlertHistoryToDisabled(alertHistory.getId());
                     }
-                    alertHistoryGateway.updateAlertHistoryToDisabled(alertHistory.getId());
                 }
             }
         } else {
