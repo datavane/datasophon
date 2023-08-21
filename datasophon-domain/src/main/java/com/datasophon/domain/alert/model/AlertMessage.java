@@ -16,11 +16,11 @@
  *  limitations under the License.
  */
 
-package com.datasophon.common.model.alert;
-
-import java.util.List;
+package com.datasophon.domain.alert.model;
 
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class AlertMessage {

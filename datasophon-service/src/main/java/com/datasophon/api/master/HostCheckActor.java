@@ -34,6 +34,7 @@ import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterHostEntity;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
+import com.datasophon.dao.enums.HostState;
 import com.datasophon.dao.enums.MANAGED;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -165,11 +166,11 @@ public class HostCheckActor extends UntypedActor {
                 logger.warn("ping host: {} fail, reason: {}", host.getHostname(), execResult.getExecOut());
                 throw new IllegalStateException("ping host: " + host.getHostname() + " failed.");
               }
-              checkedHost.setHostState(1);
+              checkedHost.setHostState(HostState.RUNNING);
               checkedHost.setManaged(MANAGED.YES);
             } catch (Exception e) {
               logger.warn("host: " + host.getHostname() + " rpc error, cause: " + e.getMessage());
-              checkedHost.setHostState(2);
+              checkedHost.setHostState(HostState.OFFLINE);
             }
             checkedHosts.add(checkedHost);
           }

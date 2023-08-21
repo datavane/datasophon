@@ -1,6 +1,5 @@
+
 /*
-/*
- *
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -15,17 +14,20 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 
+package com.datasophon.domain.alert.model;
 
-export default {
-  path() {
-    let path = ''
-    // if(process.env.NODE_ENV === 'production') {
-    //   path = process.env.VUE_APP_API_BASE_URL
-    // }
-    // console.log(path, 'path地址', process.env.NODE_ENV)
-    return path
-  }
+import lombok.Data;
+
+@Data
+public class AlertLabels {
+
+    private String alertname;
+    private int clusterId;
+    private String serviceRoleName;
+    private String instance;
+    private String job;
+    private String severity;
+
 }
