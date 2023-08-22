@@ -42,10 +42,7 @@
         <fileSet>
             <directory>${basedir}/../datasophon-api/src/main/resources</directory>
             <includes>
-                <include>**/*.yml</include>
-                <include>**/logback-api.xml</include>
-                <include>**/*.conf</include>
-                <include>**/*.properties</include>
+                <include>logback-api.xml</include>
             </includes>
             <outputDirectory>conf</outputDirectory>
             <fileMode>0755</fileMode>
@@ -66,26 +63,9 @@
             <outputDirectory>conf</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
-        <fileSet>
-            <directory>${basedir}/../datasophon-dao/src/main/resources</directory>
-            <includes>
-                <include>**/*.properties</include>
-                <include>**/*.xml</include>
-            </includes>
-            <outputDirectory>conf</outputDirectory>
-            <fileMode>0755</fileMode>
-        </fileSet>
-        <fileSet>
-            <directory>${basedir}/../datasophon-dao/src/main/resources/mapper</directory>
-            <includes>
-                <include>**/*.xml</include>
-            </includes>
-            <outputDirectory>conf/mapper</outputDirectory>
-            <fileMode>0755</fileMode>
-        </fileSet>
         <!--拷贝start.sh启动脚本文件到bin目录下面-->
         <fileSet>
-            <directory>${basedir}/src/main/resources</directory>
+            <directory>${basedir}/../bin</directory>
             <includes>
                 <include>*.sh</include>
             </includes>
@@ -103,8 +83,8 @@
             <outputDirectory>conf/meta</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>${basedir}/src/main/resources/jmx</directory>
-            <outputDirectory>jmx</outputDirectory>
+            <directory>${basedir}/../jmx</directory>
+            <outputDirectory>/jmx</outputDirectory>
             <directoryMode>0755</directoryMode>
             <fileMode>0755</fileMode>
         </fileSet>
@@ -130,6 +110,15 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>${basedir}/../conf</directory>
+            <outputDirectory>/conf</outputDirectory>
+            <directoryMode>0755</directoryMode>
+            <fileMode>0755</fileMode>
+            <includes>
+                <include>**</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>${basedir}/src/main/resources/db/migration</directory>
             <outputDirectory>/conf/db/migration</outputDirectory>
             <directoryMode>0755</directoryMode>
@@ -142,9 +131,17 @@
             <directory>${basedir}/../deploy/docker</directory>
             <includes>
                 <include>Dockerfile</include>
-                <include>docker-compose.yml</include>
             </includes>
             <outputDirectory>/</outputDirectory>
+            <directoryMode>0755</directoryMode>
+            <fileMode>0755</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../deploy/compose</directory>
+            <includes>
+                <include>**</include>
+            </includes>
+            <outputDirectory>/bin/compose</outputDirectory>
             <directoryMode>0755</directoryMode>
             <fileMode>0755</fileMode>
         </fileSet>

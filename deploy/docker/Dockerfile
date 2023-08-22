@@ -8,4 +8,4 @@ COPY ./jmx/ /datasophon/jmx/
 ENV TZ=Asia/Shanghai
 EXPOSE 8081
 WORKDIR /datasophon
-ENTRYPOINT java -server -Xms1G -Xmx1G -Xmn512m -Dfile.encoding=UTF-8 -javaagent:/datasophon/jmx/jmx_prometheus_javaagent-0.16.1.jar=8586:/datasophon/jmx/jmx_exporter_config.yaml -classpath /datasophon/conf:/datasophon/lib/* com.datasophon.api.DataSophonApplicationServer
+ENTRYPOINT java -server -Xms1G -Xmx1G -Xmn512m -Dspring.profiles.active=config -Dfile.encoding=UTF-8 -javaagent:/datasophon/jmx/jmx_prometheus_javaagent-0.16.1.jar=8586:/datasophon/jmx/jmx_exporter_config.yaml -classpath /datasophon/conf:/datasophon/lib/* com.datasophon.api.DataSophonApplicationServer

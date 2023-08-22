@@ -9,11 +9,11 @@ security:
 # mysql
 spring:
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/datasophon?useUnicode=true&characterEncoding=utf-8
-    username: ${MYSQL_USER:datasophon}
-    password: ${MYSQL_USER:datasophon}
     driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://${datasource.ip:localhost}:${datasource.port:3306}/${datasource.database:datasophon}?&useUnicode=true&characterEncoding=utf-8
+    username: ${datasource.username:datasophon}
+    password: ${datasource.password:datasophon}
   #json格式化全局配置
   jackson:
     time-zone: GMT+8
