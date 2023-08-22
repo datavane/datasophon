@@ -138,5 +138,15 @@
                 <include>**</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>${basedir}/../deploy/docker</directory>
+            <includes>
+                <include>Dockerfile</include>
+                <include>docker-compose.yml</include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+            <directoryMode>0755</directoryMode>
+            <fileMode>0755</fileMode>
+        </fileSet>
     </fileSets>
 </assembly>
