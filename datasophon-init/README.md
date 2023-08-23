@@ -93,6 +93,13 @@ drwxr-xr-x 2 root root   70 8月   7 10:54 sql
 * dataSophon.ssh.port.i=22      #预备安装dataSophon集群的节点的SSH端口默认22；
 * dataSophon.ssh.port.hostname.i=dataSophon01   #预备安装dataSophon集群的节点的主机名；
 
+### init-host-info-add.properties 说明
+
+* dataSophon.ip.i=172.31.51.162  #预备新增dataSophon集群的节点内网IP（i表示1-n的取值，n为集群节点数量）；
+* dataSophon.password.i=xxxxx   #预备新增安装dataSophon集群的节点的登录密码；
+* dataSophon.ssh.port.i=22      #预备新增安装dataSophon集群的节点的SSH端口默认22；
+* dataSophon.ssh.port.hostname.i=dataSophon05   #预备新增安装dataSophon集群的节点的主机名；
+
 
 ## 全量初始化流程
 
@@ -104,14 +111,24 @@ drwxr-xr-x 2 root root   70 8月   7 10:54 sql
 
 cd /data/datasophon-init/sbin    
 bash init.sh initAll （等待程序执行完毕，中间需要有一次确认服务器时间的确认项需要选择）   
-source /etc/profile  
+PS:执行完毕之后如果服务器的终端未关闭，可能会出现一些命令无效的情况，此时需要手动在终端执行  ‘source /etc/profile ’使环境变量生效，或者关闭终端重新打开  
 
 当执行完 bash init.sh initAll 之后，会看到有下面输出很多的日志，因为需要配置本地离线yum源以及安装mysql8、jdk等整个过程需要一定的时间，可以查看log目录下的安装日志  
 其中mysql初始化的数据库默认为datasophon，初始化过程中会自动创建用户"datasophon"密码为"datasophon"     
 
 #### 当前初始化模块支持的操作系统版本为：CentOS-8.5.2111-x86_64、openEuler-22.03
 ####当前初始化模块支持的mysql为：mysql-community-8.0.28
-####自动安装的JDK为：jdk-8u333
+####自动安装的JDK为：jdk-8u333（jdk在安装datasophon的时候会自动配置，初始化工具不会再次进行重复配置）
+
+
+## 新增节点初始化流程
+
+将config/init.properties文件中的'init.add.host.num'参数修改为即将新增加的节点的实际数量，只支持整数；
+编辑config/init-host-info-add.properties，将文件中的指定信息按照既定格式进行修改，主要包括新增节点的ip、password、sshport、hostname；
+完成上述步骤后，执行如下命令即可开始一键初始化任务。
+cd /data/datasophon-init/sbin    
+bash init.sh initSingleNode （等待程序执行完毕，中间需要有一次确认服务器时间的确认项需要选择）
+PS:执行完毕之后如果服务器的终端未关闭，可能会出现一些命令无效的情况，此时需要手动在终端执行  ‘source /etc/profile ’使环境变量生效，或者关闭终端重新打开 
 
 
 

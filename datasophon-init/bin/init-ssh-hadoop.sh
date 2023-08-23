@@ -27,7 +27,6 @@ echo "PACKAGES_PATH: ${PACKAGES_PATH}"
 sshHadoopDir=/home/hadoop/.ssh/
 rm -rf ${INIT_BIN_PATH}/tmp_scp_host_info.txt
 bash ${INIT_BIN_PATH}/init-hostIp-txt.sh ${filePath} ${initAllHostNums}
-
 pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-add-hadoop-user.sh
 pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i "mkdir -p /home/hadoop/"
 pscp.pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -r /root/.ssh /home/hadoop/
