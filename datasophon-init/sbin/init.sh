@@ -56,6 +56,7 @@ initOS=$(prop "init.os")
 
 echo "yumRepoIp: ${yumRepoIp}"
 
+#初始化所有节点
 initALL() {
 
   function network() {
@@ -186,11 +187,11 @@ initALL() {
   echo "closeAllTransparentHugepage start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/closeAllTransparentHugepage_$(date +%Y%m%d).log
   checkTransparentHugepage
 
-  #Configure JDK
-  echo "installAllJDK start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installAllJDK_$(date +%Y%m%d).log
-  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-jdk.sh >>${initLogDir}/installAllJDK_$(date +%Y%m%d).log
-  echo "installAllJDK end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installAllJDK_$(date +%Y%m%d).log
-  checkJDK
+  #Configure JDK（datasophon在安装的时候会自动安装jdk,这里不在重复安装）
+  #echo "installAllJDK start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installAllJDK_$(date +%Y%m%d).log
+  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-jdk.sh >>${initLogDir}/installAllJDK_$(date +%Y%m%d).log
+  #echo "installAllJDK end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installAllJDK_$(date +%Y%m%d).log
+  #checkJDK
 
   pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-java-policy.sh >>${initLogDir}/modifyJavaPolicy_$(date +%Y%m%d).log
   pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-tmp_pid.sh
@@ -253,6 +254,116 @@ initALL() {
 
 }
 
+#初始化新增加的单节点
+initSingleNode() {
+  mkdir -p ${initLogDir}/logs
+  rm -rf ${INIT_BIN_PATH}/tmp_scp_host_info.txt
+  rm -rf ${INIT_BIN_PATH}/1.txt
+  rm -rf ${initLogDir}/installSingleSuccess_$(date +%Y%m%d).log
+
+  secretFreeSingleNodeLogin
+  checkSecretFreeSingleNodeLogin
+
+  #Distribution resource pack 分发资源包
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i "mkdir -p '${DATASOPHON_PATH}'"
+  echo "Distribution resource pack start_time:$(date '+%Y%m%d %H:%M:%S')"
+  pscp.pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -r ${INIT_PATH} ${DATASOPHON_PATH}
+
+  #close all Firewall
+  echo "closeSingleNodeFirewall start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/closeSingleNodeFirewall_$(date +%Y%m%d).log
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-stop-firewall.sh >>${initLogDir}/closeSingleNodeFirewall_$(date +%Y%m%d).log
+  echo "closeSingleNodeFirewall end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/closeSingleNodeFirewall_$(date +%Y%m%d).log
+  checkCloseSingleNodeFirewall
+
+  #close all selinux
+  echo "closeSingleNodeSelinux start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/closeSingleNodeSelinux_$(date +%Y%m%d).log
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-stop-selinux.sh >>${initLogDir}/closeSingleNodeSelinux_$(date +%Y%m%d).log
+  echo "closeSingleNodeSelinux end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/closeSingleNodeSelinux_$(date +%Y%m%d).log
+
+  #close all Swap
+  echo "closeSingleNodeSwap start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/closeSingleNodeSwap_$(date +%Y%m%d).log
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-close-swap.sh >>${initLogDir}/closeSingleNodeSwap_$(date +%Y%m%d).log
+  echo "closeSingleNodeSwap end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/closeSingleNodeSwap_$(date +%Y%m%d).log
+  checkCloseSingleNodeSwap
+
+  #configure all  slave node yum source
+  #因为安装配置yum离线源会涉及到服务器操作系统的版本问题，不同版本的操作系统离线源不同，完全自动化配置工作量巨大，由用户自己配置好
+  if [ "${yumRepoNeed}" == "true" ]; then
+    if [ ! -d "/data/private-yum-library" ]; then
+      echo "没有发现private-yum-library目录，请确认是否正确配置离线yum源资源包......."
+    else
+      pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-yum-hosts-mapping-${initOS}.sh ${yumRepoIp} >>${initLogDir}/modifySingleNodeYumRepo_$(date +%Y%m%d).log
+    fi
+  fi
+
+  echo "modifySingleNodeSystemConf start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/modifySingleNodeSystemConf_$(date +%Y%m%d).log
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-system-conf.sh >>${initLogDir}/modifySingleNodeSystemConf_$(date +%Y%m%d).log
+  echo "modifySingleNodeSystemConf end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/modifySingleNodeSystemConf_$(date +%Y%m%d).log
+
+  setSingleNodeHostname
+  checkSingleNodeHostName
+
+  modifySingleNodeHostRelation
+
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-sourceSSHHostname.sh
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-ntp-chrony-slave.sh ${ntpMasterIP}
+  checkSingleNodeNtpService
+
+  echo "installSingleNodelibxsltdevel start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installSingleNodelibxsltdevel_$(date +%Y%m%d).log
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-libxslt-devel.sh >>${initLogDir}/installSingleNodelibxsltdevel_$(date +%Y%m%d).log
+  echo "installSingleNodelibxsltdevel end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installSingleNodelibxsltdevel_$(date +%Y%m%d).log
+  checkSingleNodeLibxsltDevel
+
+  echo "installSingleNodepsmisc start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installSingleNodepsmisc_$(date +%Y%m%d).log
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-psmisc.sh >>${initLogDir}/installSingleNodepsmisc_$(date +%Y%m%d).log
+  echo "installSingleNodepsmisc end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installSingleNodepsmisc_$(date +%Y%m%d).log
+  checkSingleNodePsmisc
+
+  echo "installSingleNodePerlJSON start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installSingleNodePerlJSON_$(date +%Y%m%d).log
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-perl-JSON.sh >>${initLogDir}/installSingleNodePerlJSON_$(date +%Y%m%d).log
+  echo "installSingleNodePerlJSON end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installSingleNodePerlJSON_$(date +%Y%m%d).log
+
+  echo "closeSingleNodeTransparentHugepage start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/closeSingleNodeTransparentHugepage_$(date +%Y%m%d).log
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-close-transparent-hugepage.sh >>${initLogDir}/closeSingleNodeTransparentHugepage_$(date +%Y%m%d).log
+  echo "closeSingleNodeTransparentHugepage start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/closeSingleNodeTransparentHugepage_$(date +%Y%m%d).log
+  checkSingleNodeTransparentHugepage
+
+  #datasophon在安装的时候会自动安装jdk,这里不在重复安装
+  #echo "installSingleNodeJDK start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installSingleNodeJDK_$(date +%Y%m%d).log
+  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-jdk.sh >>${initLogDir}/installSingleNodeJDK_$(date +%Y%m%d).log
+  #echo "installSingleNodeJDK end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installSingleNodeJDK_$(date +%Y%m%d).log
+  #checkSingleNodeJDK
+
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-java-policy.sh >>${initLogDir}/modifySingleNodeJavaPolicy_$(date +%Y%m%d).log
+
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-tmp_pid.sh
+
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -t ${smallTimeOut} -i bash ${INIT_BIN_PATH}/init-xdg-utils.sh >>${initLogDir}/installSingleNodeXdg_$(date +%Y%m%d).log
+
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -t ${smallTimeOut} -i bash ${INIT_BIN_PATH}/init-gcc-c++.sh >>${initLogDir}/installSingleNodeGccC++_$(date +%Y%m%d).log
+  checkSingleNodeGccC
+
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -t ${smallTimeOut} -i bash ${INIT_BIN_PATH}/init-openssl-devel.sh >>${initLogDir}/installSingleNodeOpensslDevel_$(date +%Y%m%d).log
+
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -t ${smallTimeOut} -i bash ${INIT_BIN_PATH}/init-libtool.sh >>${initLogDir}/installSingleNodeLibtool_$(date +%Y%m%d).log
+
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-krb5-devel.sh >>${initLogDir}/installSingleNodeKrb5Devel_$(date +%Y%m%d).log
+  checkSingleNodeKrb5Devel
+
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-ntp_enable.sh >>${initLogDir}/installSingleNodeNtpEnable_$(date +%Y%m%d).log
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-chmod-dev-null.sh >>${initLogDir}/initSingleNodeChmodDevNull_$(date +%Y%m%d).log
+  pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-cleanBuff-async.sh >>${initLogDir}/initSingleNodeCleanBuff_$(date +%Y%m%d).log
+  rm -rf ${INIT_BIN_PATH}/tmp_scp_host_info.txt
+  rm -rf ${INIT_BIN_PATH}/1.txt
+  initsource
+  source /etc/profile
+  source /root/.bash_profile
+  echo "The DataSophon deployment environment of added nodes has been inited successfully . Please proceed to the next step" >>${initLogDir}/installSingleNodeSuccess_$(date +%Y%m%d).log
+  cat ${initLogDir}/installSingleNodeSuccess_$(date +%Y%m%d).log
+  rm -rf ${initLogDir}/installSingleNodeSuccess_$(date +%Y%m%d).log
+
+}
+
 initsource() {
   source /etc/profile
   source /root/.bash_profile
@@ -263,6 +374,7 @@ testFun() {
   pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-java-policy.sh >>${initLogDir}/modifyJavaPolicy_$(date +%Y%m%d).log
 }
 
+#---------------------------initAll fun start-------------------------------#
 #免密登录
 secretFreeAllLogin() {
   echo "secretFreeAllLogin........................"
@@ -814,10 +926,384 @@ checkKrb5Devel() {
   done
   echo "SUCCESS: Set krb5-devel links have been inited successfully" >>${initLogDir}/installAllSuccess_$(date +%Y%m%d).log
 }
+#---------------------------initAll fun end-------------------------------#
+
+#---------------------------init add Single node fun strat-------------------------------#
+
+secretFreeSingleNodeLogin() {
+  echo "secretFreeSingleNodeLogin start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/secretFreeSingleNodeLogin_$(date +%Y%m%d).log
+  bash ${INIT_BIN_PATH}/init-ssh-copy-key.sh ${hostSingleInfoPath} ${initSingleHostNums} ${nampServerPort} >>${initLogDir}/secretFreeSingleNodeLogin_$(date +%Y%m%d).log
+  bash ${INIT_BIN_PATH}/init-ssh-hadoop.sh ${hostSingleInfoPath} ${initSingleHostNums} >>${initLogDir}/secretFreeSingleNodeLogin_$(date +%Y%m%d).log
+  echo "secretFreeSingleNodeLogin end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/secretFreeSingleNodeLogin_$(date +%Y%m%d).log
+}
+
+checkSecretFreeSingleNodeLogin() {
+  rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+  function prop {
+    [ -f "${hostSingleInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostSingleInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initSingleHostNums}; i++)); do
+    ip=$(prop "dataSophon.ip.${i}")         #ip
+    pwd=$(prop "dataSophon.password.${i}")  # password
+    port=$(prop "dataSophon.ssh.port.${i}") # port
+    echo "${ip}"
+    echo "${pwd}"
+    echo "${port}"
+    echo "${BASE_PATH}"
+    echo "${pwd}"
+    echo "${hostSingleInfoPath}"
+    sshpass -p'${pwd}' ssh -P${port} -o StrictHostKeyChecking=no root@${ip} 'ls' </dev/null
+    if [ $? -eq 0 ]; then
+      echo "The added ${ip} free login successfully" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+    else
+      echo "ERROR: The added '${ip}' free login failed" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+      echo "ERROR: The added '${ip}' free login failed" >>${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      cat ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      exit
+    fi
+  done
+  echo "SUCCESS: The added free login links have been inited successfully" >>${initLogDir}/installSingleNodeSuccess_$(date +%Y%m%d).log
+}
+
+checkCloseSingleNodeFirewall() {
+  rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+  function prop {
+    [ -f "${hostSingleInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostSingleInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initSingleHostNums}; i++)); do
+    ip=$(prop "dataSophon.ip.${i}")         #ip
+    pwd=$(prop "dataSophon.password.${i}")  # password
+    port=$(prop "dataSophon.ssh.port.${i}") # port
+    echo "${ip}"
+    echo "${pwd}"
+    echo "${port}"
+    sshpass -p'${pwd}' ssh -P${port} -o StrictHostKeyChecking=no root@${ip} 'firewall-cmd --state' >${initLogDir}/checkCloseSingleNodeFirewall.log
+    cat ${initLogDir}/checkCloseSingleNodeFirewall.log | grep running
+    if [ $? -eq 0 ]; then
+      echo "ERROR: The added '${ip}' close firewall failed" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+      echo "ERROR: The added '${ip}' close firewall failed" >>${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      cat ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      exit
+    else
+      echo "The added ${ip} close firewall successfully" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+    fi
+  done
+  echo "SUCCESS:The added closing firewall links have been inited successfully" >>${initLogDir}/installSingleNodeSuccess_$(date +%Y%m%d).log
+}
+
+checkCloseSingleNodeSwap() {
+  rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+  function prop {
+    [ -f "${hostSingleInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostSingleInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initSingleHostNums}; i++)); do
+    ip=$(prop "dataSophon.ip.${i}")         #ip
+    pwd=$(prop "dataSophon.password.${i}")  # password
+    port=$(prop "dataSophon.ssh.port.${i}") # port
+    echo "${ip}"
+    echo "${pwd}"
+    echo "${port}"
+    sshpass -p'${pwd}' ssh -P${port} -o StrictHostKeyChecking=no root@${ip} 'cat /etc/sysctl.conf | grep vm.swappiness=0' </dev/null
+    if [ $? -eq 0 ]; then
+      echo "The added ${ip} close swap successfully" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+    else
+      echo "ERROR: The added '${ip}' close swap failed" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+      echo "ERROR: The added '${ip}' close swap failed" >>${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      cat ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      exit
+    fi
+  done
+  echo "SUCCESS: The added closing swap links have been inited successfully" >>${initLogDir}/installSingleNodeSuccess_$(date +%Y%m%d).log
+}
+
+setSingleNodeHostname() {
+  echo "setSingleNodeHostname start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/setSingleNodeHostname_$(date +%Y%m%d).log
+  function prop {
+    [ -f "${hostSingleInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostSingleInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initSingleHostNums}; i++)); do
+    ip=$(prop "dataSophon.ip.${i}")         #ip
+    pwd=$(prop "dataSophon.password.${i}")  # password
+    port=$(prop "dataSophon.ssh.port.${i}") # port
+    hostname=$(prop "dataSophon.ssh.port.hostname.${i}")
+    echo "${ip}"
+    echo "${pwd}"
+    echo "${port}"
+    echo "${BASE_PATH}"
+    echo "root@${ip}:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/setSingleNodeHostname_$(date +%Y%m%d).log
+    sshpass -p'${pwd}' ssh -P${port} -o StrictHostKeyChecking=no root@${ip} bash ${INIT_BIN_PATH}/init-hostname.sh ${hostname} </dev/null >>${initLogDir}/setSingleNodeHostname_$(date +%Y%m%d).log
+  done
+  echo "setSingleNodeHostname start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/setSingleNodeHostname_$(date +%Y%m%d).log
+}
+
+checkSingleNodeHostName() {
+  rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+  function prop {
+    [ -f "${hostSingleInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostSingleInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initSingleHostNums}; i++)); do
+    ip=$(prop "dataSophon.ip.${i}")                      #ip
+    pwd=$(prop "dataSophon.password.${i}")               # password
+    port=$(prop "dataSophon.ssh.port.${i}")              # port
+    hostname=$(prop "dataSophon.ssh.port.hostname.${i}") # hostname
+    sshpass -p'${pwd}' ssh -P${port} -o StrictHostKeyChecking=no root@${ip} 'hostname' >${initLogDir}/checkHostName.log
+    cat ${initLogDir}/checkHostName.log | grep "${hostname}"
+    if [ $? -eq 0 ]; then
+      echo "The added ${ip} hostname sets successfully" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+    else
+      echo "ERROR: The added '${ip}'  hostname failed" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+      echo "ERROR: The added '${ip}'  hostname failed" >>${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      cat ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      exit
+    fi
+  done
+  echo "SUCCESS: The added  hostname links have been inited successfully" >>${initLogDir}/installSingleNodeSuccess_$(date +%Y%m%d).log
+}
+
+modifySingleNodeHostRelation() {
+  rm -rf ${INIT_BIN_PATH}/tmp_host_info.txt
+  rm -rf ${INIT_BIN_PATH}/tmp_host_all_info.txt
+  initTotalHostNums=$(expr $initAllHostNums + $initSingleHostNums)
+  echo "modifySingleNodeHostRelation start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/modifySingleNodeHostRelation_$(date +%Y%m%d).log
+  function prop {
+    [ -f "${hostSingleInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostSingleInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initSingleHostNums}; i++)); do
+    ipSingle=$(prop "dataSophon.ip.${i}")             #ip
+    passwordSingle=$(prop "dataSophon.password.${i}") # password
+    portSingle=$(prop "dataSophon.ssh.port.${i}")     # port
+    hostnameSingle=$(prop "dataSophon.ssh.port.hostname.${i}")
+    echo "${ip}"
+    echo "${pwd}"
+    echo "${port}"
+    echo "${BASE_PATH}"
+    echo -e "${ipSingle} ${passwordSingle} ${portSingle} ${hostnameSingle}" >>${INIT_BIN_PATH}/tmp_host_all_info.txt
+    echo "${ipSingle} ${passwordSingle} ${portSingle} ${hostnameSingle}" >>${initLogDir}/modifySingleNodeHostRelation_$(date +%Y%m%d).log
+  done
+
+  function prop {
+    [ -f "${hostAllInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostAllInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initAllHostNums}; i++)); do
+    ipAll=$(prop "dataSophon.ip.${i}")             #ip
+    passwordAll=$(prop "dataSophon.password.${i}") # password
+    portAll=$(prop "dataSophon.ssh.port.${i}")     # port
+    hostnameAll=$(prop "dataSophon.ssh.port.hostname.${i}")
+    echo "${ip}"
+    echo "${pwd}"
+    echo "${port}"
+    echo "${BASE_PATH}"
+    echo -e "${ipAll} ${passwordAll} ${portAll} ${hostnameAll}" >>${INIT_BIN_PATH}/tmp_host_all_info.txt
+    echo "${ipAll} ${passwordAll} ${portAll} ${hostnameAll}" >>${initLogDir}/modifySingleNodeHostRelation_$(date +%Y%m%d).log
+  done
+  hostInfoPath=${INIT_BIN_PATH}/tmp_host_all_info.txt
+  while read line || [[ -n ${line} ]]; do
+    ip=$(echo $line | cut -d " " -f1)
+    port=$(echo $line | cut -d " " -f3)
+    echo -e "root@${ip}:${port}" >>${INIT_BIN_PATH}/tmp_host_info.txt
+  done <${hostInfoPath}
+  pscp.pssh -h ${INIT_BIN_PATH}/tmp_host_info.txt ${INIT_BIN_PATH}/tmp_host_all_info.txt ${INIT_BIN_PATH}/
+  echo "${hostInfoPath} ${initTotalHostNums}" >>${initLogDir}/modifySingleNodeHostRelation_$(date +%Y%m%d).log
+  pssh -h ${INIT_BIN_PATH}/tmp_host_info.txt -i bash ${INIT_BIN_PATH}/init-singlehosts.sh ${hostInfoPath} ${initTotalHostNums} >>${initLogDir}/modifySingleNodeHostRelation_$(date +%Y%m%d).log
+  echo "modifySingleNodeHostRelation end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/modifySingleNodeHostRelation_$(date +%Y%m%d).log
+  rm -rf ${INIT_BIN_PATH}/tmp_host_info.txt
+  rm -rf ${INIT_BIN_PATH}/tmp_host_all_info.txt
+}
+
+checkSingleNodeNtpService() {
+  rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+  function prop {
+    [ -f "${hostSingleInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostSingleInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initSingleHostNums}; i++)); do
+    ip=$(prop "dataSophon.ip.${i}")         #ip
+    pwd=$(prop "dataSophon.password.${i}")  # password
+    port=$(prop "dataSophon.ssh.port.${i}") # port
+    echo "${ip}"
+    echo "${pwd}"
+    echo "${port}"
+    sshpass -p'${pwd}' ssh -P${port} -o StrictHostKeyChecking=no root@${ip} 'rpm -qa | grep chrony-' </dev/null
+    if [ $? -eq 0 ]; then
+      echo "The added ${ip} set ntp successfully" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+    else
+      echo "ERROR: The added '${ip}' set ntp failed" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+      echo "ERROR: The added '${ip}' set ntp failed" >>${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      cat ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      exit
+    fi
+  done
+  echo "SUCCESS:The added nodes ntp  have been inited successfully" >>${initLogDir}/installSingleNodeSuccess_$(date +%Y%m%d).log
+}
+
+checkSingleNodeLibxsltDevel() {
+  rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+  function prop {
+    [ -f "${hostSingleInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostSingleInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initSingleHostNums}; i++)); do
+    ip=$(prop "dataSophon.ip.${i}")         #ip
+    pwd=$(prop "dataSophon.password.${i}")  # password
+    port=$(prop "dataSophon.ssh.port.${i}") # port
+    echo "${ip}"
+    echo "${pwd}"
+    echo "${port}"
+    sshpass -p'${pwd}' ssh -P${port} -o StrictHostKeyChecking=no root@${ip} 'rpm -qa | grep libxslt-devel' </dev/null
+    if [ $? -eq 0 ]; then
+      echo "The added ${ip} set libxslt devel successfully" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+    else
+      echo "ERROR: The added '${ip}' set libxslt devel failed" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+      echo "ERROR: The added '${ip}' set libxslt devel failed" >>${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      cat ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      exit
+    fi
+  done
+  echo "SUCCESS:The added nodes Set  libxslt devel  have been inited successfully" >>${initLogDir}/installSingleSuccess_$(date +%Y%m%d).log
+}
+
+checkSingleNodePsmisc() {
+  rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+  function prop {
+    [ -f "${hostSingleInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostSingleInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initSingleHostNums}; i++)); do
+    ip=$(prop "dataSophon.ip.${i}")         #ip
+    pwd=$(prop "dataSophon.password.${i}")  # password
+    port=$(prop "dataSophon.ssh.port.${i}") # port
+    echo "${ip}"
+    echo "${pwd}"
+    echo "${port}"
+    sshpass -p'${pwd}' ssh -P${port} -o StrictHostKeyChecking=no root@${ip} 'rpm -qa | grep psmisc' </dev/null
+    if [ $? -eq 0 ]; then
+      echo "The added ${ip} set psmisc successfully" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+    else
+      echo "ERROR: The added '${ip}' set psmisc failed" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+      echo "ERROR: The added '${ip}' set psmisc failed" >>${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      cat ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      exit
+    fi
+  done
+  echo "SUCCESS: The added nodes set  psmisc  have been inited successfully" >>${initLogDir}/installSingleNodeSuccess_$(date +%Y%m%d).log
+}
+
+checkSingleNodeTransparentHugepage() {
+  rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+  function prop {
+    [ -f "${hostSingleInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostSingleInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initSingleHostNums}; i++)); do
+    ip=$(prop "dataSophon.ip.${i}")         #ip
+    pwd=$(prop "dataSophon.password.${i}")  # password
+    port=$(prop "dataSophon.ssh.port.${i}") # port
+    echo "${ip}"
+    echo "${pwd}"
+    echo "${port}"
+    sshpass -p'${pwd}' ssh -P${port} -o StrictHostKeyChecking=no root@${ip} 'cat /sys/kernel/mm/transparent_hugepage/enabled | grep [never]' </dev/null
+    if [ $? -eq 0 ]; then
+      echo "The added ${ip} close transparent_hugepage successfully" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+    else
+      echo "ERROR: The added '${ip}' close transparent_hugepage failed" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+      echo "ERROR: The added '${ip}' close transparent_hugepage failed" >>${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      cat ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      exit
+    fi
+  done
+  echo "SUCCESS: The added nodes transparent_hugepage links have been inited successfully" >>${initLogDir}/installSingleNodeSuccess_$(date +%Y%m%d).log
+}
+
+checkSingleNodeJDK() {
+  rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+  function prop {
+    [ -f "${hostSingleInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostSingleInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initSingleHostNums}; i++)); do
+    ip=$(prop "dataSophon.ip.${i}")         #ip
+    pwd=$(prop "dataSophon.password.${i}")  # password
+    port=$(prop "dataSophon.ssh.port.${i}") # port
+    echo "${ip}"
+    echo "${pwd}"
+    echo "${port}"
+    sshpass -p'${pwd}' ssh -P${port} -o StrictHostKeyChecking=no root@${ip} 'source /etc/profile ; java -version' </dev/null
+    if [ $? -eq 0 ]; then
+      echo "The added ${ip} set jdk successfully" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+    else
+      echo "ERROR: The added '${ip}' set jdk failed" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+      echo "ERROR: The added '${ip}' set jdk failed" >>${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      cat ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      exit
+    fi
+  done
+  echo "SUCCESS: The added nodes set JDK links have been inited successfully" >>${initLogDir}/installSingleodeSuccess_$(date +%Y%m%d).log
+}
+
+checkSingleNodeGccC() {
+  rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+  function prop {
+    [ -f "${hostSingleInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostSingleInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initSingleHostNums}; i++)); do
+    ip=$(prop "dataSophon.ip.${i}")         #ip
+    pwd=$(prop "dataSophon.password.${i}")  # password
+    port=$(prop "dataSophon.ssh.port.${i}") # port
+    echo "${ip}"
+    echo "${pwd}"
+    echo "${port}"
+    sshpass -p'${pwd}' ssh -P${port} -o StrictHostKeyChecking=no root@${ip} 'rpm -qa | grep gcc-c++' </dev/null
+    if [ $? -eq 0 ]; then
+      echo "The added ${ip} set gcc-c++ successfully" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+    else
+      echo "ERROR: The added '${ip}' set gcc-c++ failed" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+      echo "ERROR: The added '${ip}' set gcc-c++ failed" >>${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      cat ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      exit
+    fi
+  done
+  echo "SUCCESS: The added nodes set gcc-c++ links have been inited successfully" >>${initLogDir}/installSingleNodeSuccess_$(date +%Y%m%d).log
+}
+
+checkSingleNodeKrb5Devel() {
+  rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+  function prop {
+    [ -f "${hostSingleInfoPath}" ] && grep -P "^\s*[^#]?${1}=.*$" ${hostSingleInfoPath} | cut -d'=' -f2
+  }
+  for ((i = 1; i <= ${initSingleHostNums}; i++)); do
+    ip=$(prop "dataSophon.ip.${i}")         #ip
+    pwd=$(prop "dataSophon.password.${i}")  # password
+    port=$(prop "dataSophon.ssh.port.${i}") # port
+    echo "${ip}"
+    echo "${pwd}"
+    echo "${port}"
+    sshpass -p'${pwd}' ssh -P${port} -o StrictHostKeyChecking=no root@${ip} 'rpm -qa | grep krb5-devel' </dev/null
+    if [ $? -eq 0 ]; then
+      echo "The added ${ip} set krb5-devel successfully" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+    else
+      echo "ERROR: The added '${ip}' set krb5-devel failed" >>${initLogDir}/installSingleNode_$(date +%Y%m%d).log
+      echo "ERROR: The added '${ip}' set krb5-devel failed" >>${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      cat ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      rm -rf ${initLogDir}/installSingleNodeError_$(date +%Y%m%d).log
+      exit
+    fi
+  done
+  echo "SUCCESS: The added nodes set krb5-devel links have been inited successfully" >>${initLogDir}/installSingleNodeSuccess_$(date +%Y%m%d).log
+}
+
+#---------------------------init add Single node fun end-------------------------------#
 
 if [ "$Action" = "initAll" ]; then
   initALL
-  echo "initALL....................."
+  echo "initAll....................."
+fi
+if [ "$Action" = "initSingleNode" ]; then
+  initSingleNode
 fi
 if [ "$Action" = "secretFreeAllLogin" ]; then
   secretFreeAllLogin
