@@ -49,6 +49,12 @@
             <artifactId>datasophon-domain</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>icu.mhb</groupId>
+            <artifactId>mybatis-plus-join</artifactId>
+            <version>${mybatis-plus-join}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
