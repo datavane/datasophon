@@ -50,8 +50,9 @@
         <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
         <maven-compiler-plugin.version>3.10.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-        <mybatis-plus.version>3.5.3</mybatis-plus.version>
-        <mybatis-plus-join>1.3.4</mybatis-plus-join>
+        <mybatis-plus.version>3.2.0</mybatis-plus.version>
+        <mybatis.spring.version>2.0.1</mybatis.spring.version>
+        <mybatis-plus-join>1.2.0</mybatis-plus-join>
         <mysql.connector.version>8.0.28</mysql.connector.version>
         <org.apache.sshd.version>2.9.2</org.apache.sshd.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
