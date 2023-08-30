@@ -18,6 +18,8 @@
 package com.datasophon.worker.strategy;
 
 import akka.actor.ActorRef;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONUtil;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.OlapOpsType;
@@ -41,6 +43,7 @@ public class FEHandlerStrategy extends AbstractHandlerStrategy implements Servic
     @Override
     public ExecResult handler(ServiceRoleOperateCommand command) {
         ExecResult startResult = new ExecResult();
+        logger.info("FEHandlerStrategy start fe"+ JSONUtil.toJsonStr(command));
         ServiceHandler serviceHandler = new ServiceHandler(command.getServiceName(), command.getServiceRoleName());
         if (command.getCommandType() == CommandType.INSTALL_SERVICE) {
             if (command.isSlave()) {
@@ -62,7 +65,7 @@ public class FEHandlerStrategy extends AbstractHandlerStrategy implements Servic
                         OlapSqlExecCommand sqlExecCommand = new OlapSqlExecCommand();
                         sqlExecCommand.setFeMaster(command.getMasterHost());
                         sqlExecCommand.setHostName(CacheUtils.getString(Constants.HOSTNAME));
-                        sqlExecCommand.setOpsType(OlapOpsType.ADD_FE);
+                        sqlExecCommand.setOpsType(OlapOpsType.ADD_FE_FOLLOWER);
                         ActorUtils.getRemoteActor(command.getManagerHost(), "masterNodeProcessingActor")
                                 .tell(sqlExecCommand, ActorRef.noSender());
                     } catch (Exception e) {

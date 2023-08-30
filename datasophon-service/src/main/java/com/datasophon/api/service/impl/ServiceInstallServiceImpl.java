@@ -703,6 +703,9 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         if ("ZkServer".equals(serviceRole) && (hosts.size() & 1) == 0) {
             throw new ServiceException(Status.ODD_NUMBER_ARE_REQUIRED_FOR_ZKSERVER.getMsg());
         }
+        if ("DorisFE".equals(serviceRole) && (hosts.size() & 1) == 0) {
+            throw new ServiceException(Status.ODD_NUMBER_ARE_REQUIRED_FOR_DORISFE.getMsg());
+        }
     }
 
     private List<ServiceConfig> listServiceConfigByServiceInstance(

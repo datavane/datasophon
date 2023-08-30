@@ -33,20 +33,13 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
-public class FEHandlerStartegy implements ServiceRoleStrategy {
+public class FEObserverHandlerStartegy implements ServiceRoleStrategy {
 
-    private static final Logger logger = LoggerFactory.getLogger(FEHandlerStartegy.class);
+    private static final Logger logger = LoggerFactory.getLogger(FEObserverHandlerStartegy.class);
 
     @Override
     public void handler(Integer clusterId, List<String> hosts) {
-        Map<String, String> globalVariables = GlobalVariables.get(clusterId);
-        // if feMaster is null, set the first host as feMaster
-        //Prevent FE Observer nodes from starting and FE Master nodes from changing
-        if (!globalVariables.containsKey("${feMaster}") || ObjUtil.isNull(globalVariables.get("${feMaster}"))) {
-            if (!hosts.isEmpty()) {
-                ProcessUtils.generateClusterVariable(globalVariables, clusterId, "${feMaster}", hosts.get(0));
-            }
-        }
+
     }
 
     @Override
