@@ -44,6 +44,35 @@
       }
     },
     {
+      "name": "DorisFEObserver",
+      "label": "DorisFEObserver",
+      "roleType": "worker",
+      "logFile": "fe/log/fe.log",
+      "jmxPort": 18031,
+      "startRunner": {
+        "timeout": "60",
+        "program": "fe/bin/start_fe.sh",
+        "args": [
+          "--daemon"
+        ]
+      },
+      "stopRunner": {
+        "timeout": "600",
+        "program": "fe/bin/stop_fe.sh",
+        "args": [
+          "--daemon"
+        ]
+      },
+      "statusRunner": {
+        "timeout": "60",
+        "program": "fe/bin/status_fe.sh",
+        "args": [
+          "status",
+          "fe"
+        ]
+      }
+    },
+    {
       "name": "DorisBE",
       "label": "DorisBE",
       "roleType": "worker",

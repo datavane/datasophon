@@ -273,7 +273,9 @@ public class PrometheusActor extends UntypedActor {
                                 + Constants.UNDERLINE
                                 + roleInstanceEntity.getServiceRoleName();
                 logger.info("jmxKey is {}", jmxKey);
-                if ("SRFE".equals(roleInstanceEntity.getServiceRoleName()) || "DorisFE".equals(roleInstanceEntity.getServiceRoleName())) {
+                if ("SRFE".equals(roleInstanceEntity.getServiceRoleName())
+                        || "DorisFE".equals(roleInstanceEntity.getServiceRoleName())
+                        || "DorisFEObserver".equals(roleInstanceEntity.getServiceRoleName())) {
                     logger.info(ServiceRoleJmxMap.get(jmxKey));
                     feList.add(
                             roleInstanceEntity.getHostname() + ":" + ServiceRoleJmxMap.get(jmxKey));
