@@ -96,6 +96,19 @@
             <!-- Linux 脚本，需要打包为 unix 格式，否则换行可能有问题 -->
             <lineEnding>unix</lineEnding>
         </fileSet>
+        <!--拷贝脚本文件到scripts目录下面-->
+        <fileSet>
+            <directory>${basedir}/../scripts</directory>
+            <includes>
+                <include>*.sh</include>
+            </includes>
+            <fileMode>0755</fileMode>
+            <directoryMode>0755</directoryMode>
+            <filtered>true</filtered>
+            <outputDirectory>scripts</outputDirectory>
+            <!-- Linux 脚本，需要打包为 unix 格式，否则换行可能有问题 -->
+            <lineEnding>unix</lineEnding>
+        </fileSet>
 
 
         <fileSet>
