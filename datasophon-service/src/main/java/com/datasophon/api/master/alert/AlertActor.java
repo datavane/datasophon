@@ -127,7 +127,7 @@ public class AlertActor extends UntypedActor {
                             } else {
                                 // 查询服务角色实例
                                 ClusterServiceRoleInstanceEntity roleInstance = roleInstanceService.getOneServiceRole(labels.getServiceRoleName(), hostname, clusterId);
-                                if (roleInstance.getServiceRoleState() == ServiceRoleState.RUNNING) {
+                                if (roleInstance.getServiceRoleState() != ServiceRoleState.RUNNING) {
                                     roleInstance.setServiceRoleState(ServiceRoleState.RUNNING);
                                     if (nodeHasWarnAlertList) {
                                         roleInstance.setServiceRoleState(ServiceRoleState.EXISTS_ALARM);
