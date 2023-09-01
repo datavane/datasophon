@@ -1,0 +1,22 @@
+172.31.51.160 free login successfully
+172.31.51.161 free login successfully
+172.31.51.160 close firewall successfully
+172.31.51.161 close firewall successfully
+172.31.51.160 close swap successfully
+172.31.51.161 close swap successfully
+172.31.51.160 set hostname successfully
+172.31.51.161 set hostname successfully
+172.31.51.160 set ntp successfully
+172.31.51.161 set ntp successfully
+172.31.51.160 set libxslt devel successfully
+172.31.51.161 set libxslt devel successfully
+172.31.51.160 set psmisc successfully
+172.31.51.161 set psmisc successfully
+172.31.51.160 close transparent_hugepage successfully
+172.31.51.161 close transparent_hugepage successfully
+172.31.51.160 set jdk successfully
+172.31.51.161 set jdk successfully
+172.31.51.160 set xdg-utils successfully
+172.31.51.161 set xdg-utils successfully
+172.31.51.160 set krb5-devel successfully
+172.31.51.161 set krb5-devel successfully

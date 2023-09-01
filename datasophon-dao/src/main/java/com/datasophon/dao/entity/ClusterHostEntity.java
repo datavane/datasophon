@@ -20,6 +20,7 @@ package com.datasophon.dao.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.datasophon.dao.enums.HostState;
 import com.datasophon.dao.enums.MANAGED;
 import lombok.Data;
 
@@ -88,7 +89,7 @@ public class ClusterHostEntity implements Serializable {
     /**
      * 1:正常运行 2：断线 3、存在告警
      */
-    private Integer hostState;
+    private HostState hostState;
     /**
      * 1:受管 2：断线
      */

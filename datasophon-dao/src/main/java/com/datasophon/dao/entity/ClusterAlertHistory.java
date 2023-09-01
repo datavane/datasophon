@@ -17,18 +17,22 @@
 
 package com.datasophon.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.datasophon.dao.enums.AlertLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import lombok.Data;
-
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
 @Data
+@Builder
 @TableName("t_ddh_cluster_alert_history")
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClusterAlertHistory implements Serializable {
 
     private static final long serialVersionUID = 1L;

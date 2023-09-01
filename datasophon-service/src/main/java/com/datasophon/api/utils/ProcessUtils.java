@@ -182,7 +182,7 @@ public class ProcessUtils {
         clusterHostEntity.setNodeLabel("default");
         clusterHostEntity.setCreateTime(new Date());
         clusterHostEntity.setIp(HostUtils.getIp(message.getHostname()));
-        clusterHostEntity.setHostState(1);
+        clusterHostEntity.setHostState(HostState.RUNNING);
         clusterHostEntity.setManaged(MANAGED.YES);
         clusterHostService.save(clusterHostEntity);
     }
@@ -671,22 +671,21 @@ public class ProcessUtils {
         ClusterServiceInstanceEntity serviceInstanceEntity =
                 serviceInstanceService.getById(roleInstanceEntity.getServiceId());
         if (Objects.isNull(clusterAlertHistory)) {
-            clusterAlertHistory = new ClusterAlertHistory();
-            clusterAlertHistory.setClusterId(roleInstanceEntity.getClusterId());
-
-            clusterAlertHistory.setAlertGroupName(roleInstanceEntity.getServiceName().toLowerCase());
-            clusterAlertHistory.setAlertTargetName(alertTargetName);
-            clusterAlertHistory.setCreateTime(new Date());
-            clusterAlertHistory.setUpdateTime(new Date());
-            clusterAlertHistory.setAlertLevel(alertLevel);
-            clusterAlertHistory.setAlertInfo("");
-            clusterAlertHistory.setAlertAdvice(alertAdvice);
-            clusterAlertHistory.setHostname(roleInstanceEntity.getHostname());
-            clusterAlertHistory.setServiceRoleInstanceId(roleInstanceEntity.getId());
-            clusterAlertHistory.setServiceInstanceId(roleInstanceEntity.getServiceId());
-            clusterAlertHistory.setIsEnabled(1);
-
-            clusterAlertHistory.setServiceInstanceId(roleInstanceEntity.getServiceId());
+            clusterAlertHistory = ClusterAlertHistory.builder()
+                    .clusterId(roleInstanceEntity.getClusterId())
+                    .alertGroupName(roleInstanceEntity.getServiceName().toLowerCase())
+                    .alertTargetName(alertTargetName)
+                    .createTime(new Date())
+                    .updateTime(new Date())
+                    .alertLevel(alertLevel)
+                    .alertInfo("")
+                    .alertAdvice(alertAdvice)
+                    .hostname(roleInstanceEntity.getHostname())
+                    .serviceRoleInstanceId(roleInstanceEntity.getId())
+                    .serviceInstanceId(roleInstanceEntity.getServiceId())
+                    .isEnabled(1)
+                    .serviceInstanceId(roleInstanceEntity.getServiceId())
+                    .build();
 
             alertHistoryService.save(clusterAlertHistory);
         }
