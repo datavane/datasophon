@@ -49,7 +49,7 @@ import com.datasophon.common.utils.HostUtils;
 import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.common.utils.PropertyUtils;
 import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterHostEntity;
+import com.datasophon.dao.entity.ClusterHostDO;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.InstallStepEntity;
 import com.datasophon.dao.mapper.InstallStepMapper;
@@ -205,7 +205,7 @@ public class InstallServiceImpl implements InstallService {
         hostInfo.setIp(HostUtils.getIp(host));
 
         // 判断是否受管
-        ClusterHostEntity hostEntity = hostService.getClusterHostByHostname(hostInfo.getHostname());
+        ClusterHostDO hostEntity = hostService.getClusterHostByHostname(hostInfo.getHostname());
         if (ObjectUtil.isNotNull(hostEntity)) {
             hostInfo.setManaged(true);
             hostInfo.setInstallState(InstallState.SUCCESS);
@@ -343,7 +343,7 @@ public class InstallServiceImpl implements InstallService {
                 (Map<String, HostInfo>) CacheUtils.get(clusterCode + Constants.HOST_MAP);
 
         for (String hostname : hostnames.split(",")) {
-            ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
+            ClusterHostDO clusterHost = hostService.getClusterHostByHostname(hostname);
             HostInfo hostInfo = new HostInfo();
             if (Objects.nonNull(map) && map.containsKey(hostname)) {
                 hostInfo = map.get(hostname);
@@ -422,10 +422,10 @@ public class InstallServiceImpl implements InstallService {
         }
         String[] clusterHostIdArray = clusterHostIds.split(Constants.COMMA);
         List<String> clusterHostIdList = Arrays.asList(clusterHostIdArray);
-        List<ClusterHostEntity> clusterHostList = hostService.getHostListByIds(clusterHostIdList);
-        for (ClusterHostEntity clusterHostEntity : clusterHostList) {
+        List<ClusterHostDO> clusterHostList = hostService.getHostListByIds(clusterHostIdList);
+        for (ClusterHostDO clusterHostDO : clusterHostList) {
             ClientSession session =
-                    MinaUtils.openConnection(clusterHostEntity.getHostname(), 22, Constants.ROOT);
+                    MinaUtils.openConnection(clusterHostDO.getHostname(), 22, Constants.ROOT);
             MinaUtils.execCmdWithResult(session, "service datasophon-worker " + commandType);
             logger.info("hostAgent command:{}", "service datasophon-worker " + commandType);
             if (ObjectUtil.isNotEmpty(session)) {
@@ -449,11 +449,11 @@ public class InstallServiceImpl implements InstallService {
             return Result.error(Status.SELECT_LEAST_ONE_HOST.getMsg());
         }
         String[] clusterHostIdArray = clusterHostIds.split(Constants.COMMA);
-        List<ClusterHostEntity> clusterHostList = hostService.getHostListByIds(Arrays.asList(clusterHostIdArray));
+        List<ClusterHostDO> clusterHostList = hostService.getHostListByIds(Arrays.asList(clusterHostIdArray));
         Result result = null;
-        for (ClusterHostEntity clusterHostEntity : clusterHostList) {
+        for (ClusterHostDO clusterHostDO : clusterHostList) {
             WorkerServiceMessage serviceMessage = new WorkerServiceMessage(
-                    clusterHostEntity.getHostname(), clusterHostEntity.getClusterId());
+                    clusterHostDO.getHostname(), clusterHostDO.getClusterId());
             try {
                 ActorRef actor =
                         ActorUtils.getLocalActor(WorkerStartActor.class, "workerStartActor");

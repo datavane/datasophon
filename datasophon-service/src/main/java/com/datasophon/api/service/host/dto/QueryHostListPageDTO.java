@@ -1,6 +1,6 @@
 package com.datasophon.api.service.host.dto;
 
-import com.datasophon.dao.enums.MANAGED;
+import com.datasophon.domain.host.enums.MANAGED;
 import lombok.Data;
 
 import java.util.Date;

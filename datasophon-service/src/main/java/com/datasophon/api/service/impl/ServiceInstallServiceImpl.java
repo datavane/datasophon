@@ -58,7 +58,7 @@ import com.datasophon.common.model.ServiceRoleInfo;
 import com.datasophon.common.utils.CollectionUtils;
 import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterHostEntity;
+import com.datasophon.dao.entity.ClusterHostDO;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceCommandEntity;
 import com.datasophon.dao.entity.ClusterServiceCommandHostCommandEntity;
@@ -564,9 +564,9 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
 
     private void addHostNodeToPrometheus(
                                          Integer clusterId, HashMap<Generators, List<ServiceConfig>> configFileMap) {
-        List<ClusterHostEntity> hostList =
+        List<ClusterHostDO> hostList =
                 hostService.list(
-                        new QueryWrapper<ClusterHostEntity>()
+                        new QueryWrapper<ClusterHostDO>()
                                 .eq(Constants.MANAGED, 1)
                                 .eq(Constants.CLUSTER_ID, clusterId));
         Generators workerGenerators = new Generators();
@@ -582,16 +582,16 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         nodeGenerators.setTemplateName("scrape.ftl");
         ArrayList<ServiceConfig> workerServiceConfigs = new ArrayList<>();
         ArrayList<ServiceConfig> nodeServiceConfigs = new ArrayList<>();
-        for (ClusterHostEntity clusterHostEntity : hostList) {
+        for (ClusterHostDO clusterHostDO : hostList) {
             ServiceConfig serviceConfig = new ServiceConfig();
-            serviceConfig.setName("worker_" + clusterHostEntity.getHostname());
-            serviceConfig.setValue(clusterHostEntity.getHostname() + ":8585");
+            serviceConfig.setName("worker_" + clusterHostDO.getHostname());
+            serviceConfig.setValue(clusterHostDO.getHostname() + ":8585");
             serviceConfig.setRequired(true);
             workerServiceConfigs.add(serviceConfig);
 
             ServiceConfig nodeServiceConfig = new ServiceConfig();
-            nodeServiceConfig.setName("node_" + clusterHostEntity.getHostname());
-            nodeServiceConfig.setValue(clusterHostEntity.getHostname() + ":9100");
+            nodeServiceConfig.setName("node_" + clusterHostDO.getHostname());
+            nodeServiceConfig.setValue(clusterHostDO.getHostname() + ":9100");
             nodeServiceConfig.setRequired(true);
             nodeServiceConfigs.add(nodeServiceConfig);
         }

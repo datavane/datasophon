@@ -35,7 +35,7 @@ import com.datasophon.common.command.remote.DelUnixUserCommand;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterGroup;
-import com.datasophon.dao.entity.ClusterHostEntity;
+import com.datasophon.dao.entity.ClusterHostDO;
 import com.datasophon.dao.entity.ClusterUser;
 import com.datasophon.dao.entity.ClusterUserGroup;
 import com.datasophon.dao.mapper.ClusterUserMapper;
@@ -76,7 +76,7 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
         if (hasRepeatUserName(clusterId, username)) {
             return Result.error(Status.DUPLICATE_USER_NAME.getMsg());
         }
-        List<ClusterHostEntity> hostList = hostService.getHostListByClusterId(clusterId);
+        List<ClusterHostDO> hostList = hostService.getHostListByClusterId(clusterId);
 
         ClusterUser clusterUser = new ClusterUser();
         clusterUser.setUsername(username);
@@ -97,7 +97,7 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
 
         ClusterGroup mainGroup = groupService.getById(mainGroupId);
         // sync to all hosts
-        for (ClusterHostEntity clusterHost : hostList) {
+        for (ClusterHostDO clusterHost : hostList) {
             ActorSelection unixUserActor = ActorUtils.actorSystem.actorSelection(
                     "akka.tcp://datasophon@" + clusterHost.getHostname() + ":2552/user/worker/unixUserActor");
 
@@ -170,9 +170,9 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
         ClusterUser clusterUser = this.getById(id);
         // delete user and group
         userGroupService.deleteByUser(id);
-        List<ClusterHostEntity> hostList = hostService.getHostListByClusterId(clusterUser.getClusterId());
+        List<ClusterHostDO> hostList = hostService.getHostListByClusterId(clusterUser.getClusterId());
         // sync to all hosts
-        for (ClusterHostEntity clusterHost : hostList) {
+        for (ClusterHostDO clusterHost : hostList) {
             ActorSelection unixUserActor = ActorUtils.actorSystem.actorSelection(
                     "akka.tcp://datasophon@" + clusterHost.getHostname() + ":2552/user/worker/unixUserActor");
             DelUnixUserCommand createUnixUserCommand = new DelUnixUserCommand();

@@ -39,11 +39,11 @@ import com.datasophon.common.model.WorkerServiceMessage;
 import com.datasophon.common.utils.CollectionUtils;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterGroup;
-import com.datasophon.dao.entity.ClusterHostEntity;
+import com.datasophon.dao.entity.ClusterHostDO;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.entity.ClusterUser;
-import com.datasophon.dao.enums.MANAGED;
+import com.datasophon.domain.host.enums.MANAGED;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +74,7 @@ public class WorkerStartActor extends UntypedActor {
                     SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
 
             // is managed?
-            ClusterHostEntity hostEntity = clusterHostService.getClusterHostByHostname(hostname);
+            ClusterHostDO hostEntity = clusterHostService.getClusterHostByHostname(hostname);
             ClusterInfoEntity cluster = clusterInfoService.getById(clusterId);
             logger.info("Host install set to 100%");
             if (CacheUtils.constainsKey(cluster.getClusterCode() + Constants.HOST_MAP)) {

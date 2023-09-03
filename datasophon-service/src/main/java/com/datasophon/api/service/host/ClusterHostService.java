@@ -19,19 +19,19 @@ package com.datasophon.api.service.host;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterHostEntity;
+import com.datasophon.dao.entity.ClusterHostDO;
 
 import java.util.List;
 
 
-public interface ClusterHostService extends IService<ClusterHostEntity> {
+public interface ClusterHostService extends IService<ClusterHostDO> {
 
-    ClusterHostEntity getClusterHostByHostname(String hostname);
+    ClusterHostDO getClusterHostByHostname(String hostname);
 
     Result listByPage(Integer clusterId, String hostname, String ip, String cpuArchitecture, Integer hostState,
                       String orderField, String orderType, Integer page, Integer pageSize);
 
-    List<ClusterHostEntity> getHostListByClusterId(Integer id);
+    List<ClusterHostDO> getHostListByClusterId(Integer id);
 
     Result getRoleListByHostname(Integer clusterId, String hostname);
 
@@ -53,9 +53,9 @@ public interface ClusterHostService extends IService<ClusterHostEntity> {
 
     void updateBatchNodeLabel(List<String> hostIds, String nodeLabel);
 
-    List<ClusterHostEntity> getHostListByIds(List<String> ids);
+    List<ClusterHostDO> getHostListByIds(List<String> ids);
 
     Result assignRack(Integer clusterId, String rack, String hostIds);
 
-    List<ClusterHostEntity> getClusterHostByRack(Integer clusterId, String rack);
+    List<ClusterHostDO> getClusterHostByRack(Integer clusterId, String rack);
 }

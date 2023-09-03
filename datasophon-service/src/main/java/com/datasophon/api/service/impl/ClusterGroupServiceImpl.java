@@ -35,7 +35,7 @@ import com.datasophon.common.command.remote.DelUnixGroupCommand;
 import com.datasophon.common.utils.ExecResult;
 import com.datasophon.common.utils.Result;
 import com.datasophon.dao.entity.ClusterGroup;
-import com.datasophon.dao.entity.ClusterHostEntity;
+import com.datasophon.dao.entity.ClusterHostDO;
 import com.datasophon.dao.entity.ClusterUser;
 import com.datasophon.dao.mapper.ClusterGroupMapper;
 import org.slf4j.Logger;
@@ -76,8 +76,8 @@ public class ClusterGroupServiceImpl extends ServiceImpl<ClusterGroupMapper, Clu
         clusterGroup.setGroupName(groupName);
         this.save(clusterGroup);
 
-        List<ClusterHostEntity> hostList = hostService.getHostListByClusterId(clusterId);
-        for (ClusterHostEntity clusterHost : hostList) {
+        List<ClusterHostDO> hostList = hostService.getHostListByClusterId(clusterId);
+        for (ClusterHostDO clusterHost : hostList) {
             ActorRef unixGroupActor = ActorUtils.getRemoteActor(clusterHost.getHostname(), "unixGroupActor");
             CreateUnixGroupCommand createUnixGroupCommand = new CreateUnixGroupCommand();
             createUnixGroupCommand.setGroupName(groupName);
@@ -114,7 +114,7 @@ public class ClusterGroupServiceImpl extends ServiceImpl<ClusterGroupMapper, Clu
 
     @Override
     public void refreshUserGroupToHost(Integer clusterId) {
-        List<ClusterHostEntity> hostList = hostService.getHostListByClusterId(clusterId);
+        List<ClusterHostDO> hostList = hostService.getHostListByClusterId(clusterId);
         List<ClusterGroup> groupList = this.list();
         for (ClusterGroup clusterGroup : groupList) {
             ProcessUtils.syncUserGroupToHosts(hostList, clusterGroup.getGroupName(), "groupadd");
@@ -129,8 +129,8 @@ public class ClusterGroupServiceImpl extends ServiceImpl<ClusterGroupMapper, Clu
             return Result.error(Status.USER_GROUP_TIPS_ONE.getMsg());
         }
         this.removeById(id);
-        List<ClusterHostEntity> hostList = hostService.getHostListByClusterId(clusterGroup.getClusterId());
-        for (ClusterHostEntity clusterHost : hostList) {
+        List<ClusterHostDO> hostList = hostService.getHostListByClusterId(clusterGroup.getClusterId());
+        for (ClusterHostDO clusterHost : hostList) {
             ActorRef unixGroupActor = ActorUtils.getRemoteActor(clusterHost.getHostname(), "unixGroupActor");
             DelUnixGroupCommand delUnixGroupCommand = new DelUnixGroupCommand();
             delUnixGroupCommand.setGroupName(clusterGroup.getGroupName());
