@@ -2,11 +2,11 @@
   "name": "ZOOKEEPER",
   "label": "ZooKeeper",
   "description": "分布式协调系统",
-  "version": "3.5.10",
+  "version": "3.8.2",
   "sortNum": 3,
   "dependencies":[],
-  "packageName": "zookeeper-3.5.10.tar.gz",
-  "decompressPackageName": "zookeeper-3.5.10",
+  "packageName": "zookeeper-3.8.2.tar.gz",
+  "decompressPackageName": "zookeeper-3.8.2",
   "roles": [
     {
       "name": "ZkServer",
