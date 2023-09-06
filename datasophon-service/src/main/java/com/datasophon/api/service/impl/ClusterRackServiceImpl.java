@@ -20,7 +20,7 @@ package com.datasophon.api.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.datasophon.api.enums.Status;
-import com.datasophon.api.service.ClusterHostService;
+import com.datasophon.api.service.host.ClusterHostService;
 import com.datasophon.api.service.ClusterRackService;
 import com.datasophon.common.Constants;
 import com.datasophon.common.utils.Result;

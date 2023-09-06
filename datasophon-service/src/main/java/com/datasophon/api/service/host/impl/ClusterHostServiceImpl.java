@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package com.datasophon.api.service.impl;
+package com.datasophon.api.service.host.impl;
 
 import akka.actor.ActorRef;
 import cn.hutool.crypto.SecureUtil;
@@ -26,9 +26,10 @@ import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.PrometheusActor;
 import com.datasophon.api.master.RackActor;
-import com.datasophon.api.service.ClusterHostService;
+import com.datasophon.api.service.host.ClusterHostService;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
+import com.datasophon.api.service.host.dto.QueryHostListPageDTO;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ExecuteCmdCommand;
@@ -44,6 +45,7 @@ import com.datasophon.dao.enums.RoleType;
 import com.datasophon.dao.enums.ServiceRoleState;
 import com.datasophon.dao.mapper.ClusterHostMapper;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,6 +84,7 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     @Override
     public Result listByPage(Integer clusterId, String hostname, String ip, String cpuArchitecture, Integer hostState,
                              String orderField, String orderType, Integer page, Integer pageSize) {
+        List<QueryHostListPageDTO> hostListPageDTOS = new ArrayList<>();
         int offset = (page - 1) * pageSize;
         List<ClusterHostEntity> list =
                 this.list(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID, clusterId)
@@ -94,17 +97,21 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
                         .orderByDesc("desc".equals(orderType), orderField)
                         .last("limit " + offset + "," + pageSize));
         for (ClusterHostEntity clusterHostEntity : list) {
+            QueryHostListPageDTO queryHostListPageDTO = new QueryHostListPageDTO();
+            BeanUtils.copyProperties(clusterHostEntity,queryHostListPageDTO);
             // 查询主机上服务角色数
             int serviceRoleNum = roleInstanceService.count(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
                     .eq(Constants.HOSTNAME, clusterHostEntity.getHostname()));
-            clusterHostEntity.setServiceRoleNum(serviceRoleNum);
+            queryHostListPageDTO.setServiceRoleNum(serviceRoleNum);
+            queryHostListPageDTO.setHostState(clusterHostEntity.getHostState().getValue());
+            hostListPageDTOS.add(queryHostListPageDTO);
         }
         int count = this.count(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.MANAGED, 1)
                 .eq(StringUtils.isNotBlank(cpuArchitecture), Constants.CPU_ARCHITECTURE, cpuArchitecture)
                 .eq(hostState != null, Constants.HOST_STATE, hostState)
                 .like(StringUtils.isNotBlank(hostname), Constants.HOSTNAME, hostname));
-        return Result.success(list).put(Constants.TOTAL, count);
+        return Result.success(hostListPageDTOS).put(Constants.TOTAL, count);
     }
 
     @Override

@@ -18,7 +18,7 @@
 package com.datasophon.api.master.handler.service;
 
 import com.datasophon.api.master.ActorUtils;
-import com.datasophon.api.service.ClusterHostService;
+import com.datasophon.api.service.host.ClusterHostService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.api.utils.SpringTool;
 import com.datasophon.common.Constants;

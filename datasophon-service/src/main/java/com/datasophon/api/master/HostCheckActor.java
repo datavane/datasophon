@@ -22,7 +22,7 @@ import akka.actor.UntypedActor;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import cn.hutool.extra.spring.SpringUtil;
-import com.datasophon.api.service.ClusterHostService;
+import com.datasophon.api.service.host.ClusterHostService;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.common.command.HostCheckCommand;

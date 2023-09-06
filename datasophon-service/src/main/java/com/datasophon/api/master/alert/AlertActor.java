@@ -4,7 +4,7 @@ import akka.actor.UntypedActor;
 import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.datasophon.api.service.ClusterAlertHistoryService;
-import com.datasophon.api.service.ClusterHostService;
+import com.datasophon.api.service.host.ClusterHostService;
 import com.datasophon.api.service.ClusterServiceInstanceService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.dao.entity.ClusterAlertHistory;
@@ -127,7 +127,7 @@ public class AlertActor extends UntypedActor {
                             } else {
                                 // 查询服务角色实例
                                 ClusterServiceRoleInstanceEntity roleInstance = roleInstanceService.getOneServiceRole(labels.getServiceRoleName(), hostname, clusterId);
-                                if (roleInstance.getServiceRoleState() == ServiceRoleState.RUNNING) {
+                                if (roleInstance.getServiceRoleState() != ServiceRoleState.RUNNING) {
                                     roleInstance.setServiceRoleState(ServiceRoleState.RUNNING);
                                     if (nodeHasWarnAlertList) {
                                         roleInstance.setServiceRoleState(ServiceRoleState.EXISTS_ALARM);

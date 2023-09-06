@@ -32,7 +32,7 @@ import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.load.ServiceInfoMap;
 import com.datasophon.api.load.ServiceRoleMap;
-import com.datasophon.api.service.ClusterHostService;
+import com.datasophon.api.service.host.ClusterHostService;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceCommandHostCommandService;
 import com.datasophon.api.service.ClusterServiceCommandService;

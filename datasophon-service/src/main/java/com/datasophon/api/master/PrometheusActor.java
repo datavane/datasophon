@@ -27,7 +27,7 @@ import cn.hutool.http.HttpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.load.ServiceRoleJmxMap;
 import com.datasophon.api.master.handler.service.ServiceConfigureHandler;
-import com.datasophon.api.service.ClusterHostService;
+import com.datasophon.api.service.host.ClusterHostService;
 import com.datasophon.api.service.ClusterServiceInstanceService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.api.utils.SpringTool;
@@ -273,7 +273,9 @@ public class PrometheusActor extends UntypedActor {
                                 + Constants.UNDERLINE
                                 + roleInstanceEntity.getServiceRoleName();
                 logger.info("jmxKey is {}", jmxKey);
-                if ("SRFE".equals(roleInstanceEntity.getServiceRoleName()) || "DorisFE".equals(roleInstanceEntity.getServiceRoleName())) {
+                if ("SRFE".equals(roleInstanceEntity.getServiceRoleName())
+                        || "DorisFE".equals(roleInstanceEntity.getServiceRoleName())
+                        || "DorisFEObserver".equals(roleInstanceEntity.getServiceRoleName())) {
                     logger.info(ServiceRoleJmxMap.get(jmxKey));
                     feList.add(
                             roleInstanceEntity.getHostname() + ":" + ServiceRoleJmxMap.get(jmxKey));

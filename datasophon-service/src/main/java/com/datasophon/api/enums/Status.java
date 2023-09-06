@@ -88,7 +88,8 @@ public enum Status {
     ODD_NUMBER_ARE_REQUIRED_FOR_DORISFE(10040, "The Number of DorisFE must be an odd number.", "DorisFE个数必须是奇数"),
     DORIS_FE_OBSERVER_NUST_IN_DIFFERENCE_NODE(10041,"The DorisFE and DorisFEObserver must in difference node.",
             "DorisFE和DorisFEObserver必须分布在不同节点"),
-            ;
+    NO_SERVICE_ROLE_SELECTED(10041, "No service role selected", "未选择需要安装的服务实例");
+
 
     private final int code;
     private final String enMsg;
