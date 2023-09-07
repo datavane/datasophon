@@ -148,7 +148,8 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
     @Override
     public Result listPage(Integer clusterId, String username, Integer page, Integer pageSize) {
         Integer offset = (page - 1) * pageSize;
-        List<ClusterUser> list = this.list(new QueryWrapper<ClusterUser>().like(Constants.USERNAME, username)
+        List<ClusterUser> list = this.list(new QueryWrapper<ClusterUser>()
+                .like(StringUtils.isNotBlank(username), Constants.USERNAME, username)
                 .eq(Constants.CLUSTER_ID, clusterId)
                 .last("limit " + offset + "," + pageSize));
         for (ClusterUser clusterUser : list) {
@@ -161,7 +162,9 @@ public class ClusterUserServiceImpl extends ServiceImpl<ClusterUserMapper, Clust
             }
             clusterUser.setMainGroup(mainGroup.getGroupName());
         }
-        int total = this.count(new QueryWrapper<ClusterUser>().like(Constants.USERNAME, username));
+        int total = this.count(new QueryWrapper<ClusterUser>()
+                .like(StringUtils.isNotBlank(username), Constants.USERNAME, username)
+                .eq(Constants.CLUSTER_ID, clusterId));
         return Result.success(list).put(Constants.TOTAL, total);
     }
 
