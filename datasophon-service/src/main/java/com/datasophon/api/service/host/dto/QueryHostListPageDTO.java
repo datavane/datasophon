@@ -7,6 +7,8 @@ import java.util.Date;
 
 @Data
 public class QueryHostListPageDTO {
+
+    private Integer id;
     /**
      * 创建时间
      */
