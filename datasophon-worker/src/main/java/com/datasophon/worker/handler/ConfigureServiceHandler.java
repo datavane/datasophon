@@ -202,7 +202,7 @@ public class ConfigureServiceHandler {
 
     private void createPath(ServiceConfig config, RunAs runAs) {
         String path = (String) config.getValue();
-        if (path.contains(config.getSeparator())) {
+        if (StringUtils.isNotBlank(config.getSeparator()) && path.contains(config.getSeparator())) {
             for (String dir : path.split(config.getSeparator())) {
                 mkdir(dir, runAs);
             }
@@ -215,7 +215,7 @@ public class ConfigureServiceHandler {
         String oldPath = (String) config.getDefaultValue();
         String newPath = (String) config.getValue();
         if (FileUtil.exist(oldPath) && !FileUtil.exist(newPath)) {
-            if (newPath.contains(config.getSeparator())) {
+            if (StringUtils.isNotBlank(config.getSeparator()) && newPath.contains(config.getSeparator())) {
                 for (String dir : newPath.split(config.getSeparator())) {
                     mkdir(dir, runAs);
                 }
