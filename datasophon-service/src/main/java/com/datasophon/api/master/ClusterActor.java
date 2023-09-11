@@ -156,7 +156,7 @@ public class ClusterActor extends UntypedActor {
                         }
                         List<ClusterServiceInstanceEntity> serviceInstanceList = clusterServiceInstanceService.listAll(clusterId);
                         if(serviceInstanceList.stream().allMatch(instance ->  clusterServiceInstanceService.delServiceInstance(instance.getId()).isSuccess())) {
-                            List<ClusterHostEntity> hostList = clusterHostService.getHostListByClusterId(clusterId);
+                            List<ClusterHostDO> hostList = clusterHostService.getHostListByClusterId(clusterId);
                             clusterHostService.deleteHosts(hostList.stream().map(h -> String.valueOf(h.getId())).collect(Collectors.joining(Constants.COMMA)));
                             clusterInfoService.removeById(clusterId);
                         }

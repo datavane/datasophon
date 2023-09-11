@@ -15,26 +15,46 @@
  *  limitations under the License.
  */
 
-package com.datasophon.api.service;
+package com.datasophon.domain.host.enums;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterGroup;
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.util.List;
+public enum HostState {
 
-public interface ClusterGroupService extends IService<ClusterGroup> {
+    RUNNING(1, "正在运行"),
+    OFFLINE(2, "掉线"),
+    EXISTS_ALARM(3, "存在告警");
 
-    Result saveClusterGroup(Integer clusterId, String groupName);
+    @EnumValue
+    private int value;
 
-    void refreshUserGroupToHost(Integer clusterId);
+    private String desc;
 
-    Result deleteUserGroup(Integer id);
+    HostState(int value, String desc) {
+        this.value = value;
+        this.desc = desc;
+    }
 
-    Result listPage(String groupName, Integer clusterId, Integer page, Integer pageSize);
+    public int getValue() {
+        return value;
+    }
 
-    List<ClusterGroup> listAllUserGroup(Integer clusterId);
+    public void setValue(int value) {
+        this.value = value;
+    }
 
-    void createUnixGroupOnHost(String hostname, String groupName);
+    @JsonValue
+    public String getDesc() {
+        return desc;
+    }
 
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    @Override
+    public String toString() {
+        return this.desc;
+    }
 }

@@ -54,6 +54,8 @@ import com.datasophon.common.utils.PlaceholderUtils;
 import com.datasophon.common.utils.PropertyUtils;
 import com.datasophon.dao.entity.*;
 import com.datasophon.dao.enums.*;
+import com.datasophon.domain.host.enums.HostState;
+import com.datasophon.domain.host.enums.MANAGED;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,20 +174,20 @@ public class ProcessUtils {
     public static void saveHostInstallInfo(StartWorkerMessage message, String clusterCode,
                                            ClusterHostService clusterHostService) {
         ClusterInfoService clusterInfoService = SpringTool.getApplicationContext().getBean(ClusterInfoService.class);
-        ClusterHostEntity clusterHostEntity = new ClusterHostEntity();
-        BeanUtil.copyProperties(message, clusterHostEntity);
+        ClusterHostDO clusterHostDO = new ClusterHostDO();
+        BeanUtil.copyProperties(message, clusterHostDO);
 
         ClusterInfoEntity cluster = clusterInfoService.getClusterByClusterCode(clusterCode);
 
-        clusterHostEntity.setClusterId(cluster.getId());
-        clusterHostEntity.setCheckTime(new Date());
-        clusterHostEntity.setRack("/default-rack");
-        clusterHostEntity.setNodeLabel("default");
-        clusterHostEntity.setCreateTime(new Date());
-        clusterHostEntity.setIp(HostUtils.getIp(message.getHostname()));
-        clusterHostEntity.setHostState(HostState.RUNNING);
-        clusterHostEntity.setManaged(MANAGED.YES);
-        clusterHostService.save(clusterHostEntity);
+        clusterHostDO.setClusterId(cluster.getId());
+        clusterHostDO.setCheckTime(new Date());
+        clusterHostDO.setRack("/default-rack");
+        clusterHostDO.setNodeLabel("default");
+        clusterHostDO.setCreateTime(new Date());
+        clusterHostDO.setIp(HostUtils.getIp(message.getHostname()));
+        clusterHostDO.setHostState(HostState.RUNNING);
+        clusterHostDO.setManaged(MANAGED.YES);
+        clusterHostService.save(clusterHostDO);
     }
 
     public static void updateCommandStateToFailed(List<String> commandIds) {
@@ -596,8 +598,8 @@ public class ProcessUtils {
         return left;
     }
 
-    public static void syncUserGroupToHosts(List<ClusterHostEntity> hostList, String groupName, String operate) {
-        for (ClusterHostEntity hostEntity : hostList) {
+    public static void syncUserGroupToHosts(List<ClusterHostDO> hostList, String groupName, String operate) {
+        for (ClusterHostDO hostEntity : hostList) {
             ActorRef execCmdActor = ActorUtils.getRemoteActor(hostEntity.getHostname(), "unixGroupActor");
             ExecuteCmdCommand command = new ExecuteCmdCommand();
             ArrayList<String> commands = new ArrayList<>();
@@ -613,9 +615,9 @@ public class ProcessUtils {
                 .collect(Collectors.toMap(ServiceConfig::getName, serviceConfig -> serviceConfig, (v1, v2) -> v1));
     }
 
-    public static void syncUserToHosts(List<ClusterHostEntity> hostList, String username, String mainGroup,
+    public static void syncUserToHosts(List<ClusterHostDO> hostList, String username, String mainGroup,
                                        String otherGroup, String operate) {
-        for (ClusterHostEntity hostEntity : hostList) {
+        for (ClusterHostDO hostEntity : hostList) {
             ActorRef execCmdActor = ActorUtils.getRemoteActor(hostEntity.getHostname(), "executeCmdActor");
             ExecuteCmdCommand command = new ExecuteCmdCommand();
             ArrayList<String> commands = new ArrayList<>();

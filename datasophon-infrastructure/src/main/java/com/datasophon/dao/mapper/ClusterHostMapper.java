@@ -15,26 +15,26 @@
  *  limitations under the License.
  */
 
-package com.datasophon.api.service;
+package com.datasophon.dao.mapper;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterGroup;
+import com.datasophon.dao.entity.ClusterHostDO;
 
-import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-public interface ClusterGroupService extends IService<ClusterGroup> {
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-    Result saveClusterGroup(Integer clusterId, String groupName);
+/**
+ * 集群主机表 
+ * 
+ * @author gaodayu
+ * @email gaodayu2022@163.com
+ * @date 2022-04-14 20:32:39
+ */
+@Mapper
+public interface ClusterHostMapper extends BaseMapper<ClusterHostDO> {
 
-    void refreshUserGroupToHost(Integer clusterId);
+    ClusterHostDO getClusterHostByHostname(@Param("hostname") String hostname);
 
-    Result deleteUserGroup(Integer id);
-
-    Result listPage(String groupName, Integer clusterId, Integer page, Integer pageSize);
-
-    List<ClusterGroup> listAllUserGroup(Integer clusterId);
-
-    void createUnixGroupOnHost(String hostname, String groupName);
-
+    void updateBatchNodeLabel(@Param("hostIds") String hostIds, @Param("nodeLabel") String nodeLabel);
 }

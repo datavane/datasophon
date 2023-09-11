@@ -15,26 +15,39 @@
  *  limitations under the License.
  */
 
-package com.datasophon.api.service;
+package com.datasophon.domain.host.enums;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterGroup;
+import com.baomidou.mybatisplus.annotation.EnumValue;
 
-import java.util.List;
+public enum MANAGED {
 
-public interface ClusterGroupService extends IService<ClusterGroup> {
+    YES(1, true),
+    NO(2, false);
 
-    Result saveClusterGroup(Integer clusterId, String groupName);
+    @EnumValue
+    private int value;
 
-    void refreshUserGroupToHost(Integer clusterId);
+    private boolean desc;
 
-    Result deleteUserGroup(Integer id);
+    MANAGED(int value, boolean desc) {
+        this.value = value;
+        this.desc = desc;
+    }
 
-    Result listPage(String groupName, Integer clusterId, Integer page, Integer pageSize);
+    public int getValue() {
+        return value;
+    }
 
-    List<ClusterGroup> listAllUserGroup(Integer clusterId);
+    public void setValue(int value) {
+        this.value = value;
+    }
 
-    void createUnixGroupOnHost(String hostname, String groupName);
+    public boolean isDesc() {
+        return desc;
+    }
+
+    public void setDesc(boolean desc) {
+        this.desc = desc;
+    }
 
 }

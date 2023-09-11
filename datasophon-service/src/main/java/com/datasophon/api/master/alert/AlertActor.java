@@ -8,11 +8,11 @@ import com.datasophon.api.service.host.ClusterHostService;
 import com.datasophon.api.service.ClusterServiceInstanceService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
 import com.datasophon.dao.entity.ClusterAlertHistory;
-import com.datasophon.dao.entity.ClusterHostEntity;
+import com.datasophon.dao.entity.ClusterHostDO;
 import com.datasophon.dao.entity.ClusterServiceInstanceEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.enums.AlertLevel;
-import com.datasophon.dao.enums.HostState;
+import com.datasophon.domain.host.enums.HostState;
 import com.datasophon.dao.enums.ServiceRoleState;
 import com.datasophon.dao.enums.ServiceState;
 import com.datasophon.domain.alert.gateway.AlertHistoryGateway;
@@ -61,7 +61,7 @@ public class AlertActor extends UntypedActor {
                     Boolean hasEnabledAlertHistory = alertHistoryGateway.hasEnabledAlertHistory(alertname, clusterId, hostname);
                     // 查询服务实例，服务角色实例
                     if (NODE.equals(serviceRoleName)) {
-                        ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
+                        ClusterHostDO clusterHost = hostService.getClusterHostByHostname(hostname);
                         clusterHost.setHostState(EXCEPTION.equals(labels.getSeverity()) ? HostState.OFFLINE : HostState.EXISTS_ALARM);
                         if (!hasEnabledAlertHistory) {
                             ClusterAlertHistory clusterAlertHistory = ClusterAlertHistory.builder()
@@ -121,7 +121,7 @@ public class AlertActor extends UntypedActor {
                         if (EXCEPTION.equals(labels.getSeverity())) {// 异常告警处理
                             if (NODE.equals(serviceRoleName)) {
                                 // 置为正常
-                                ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
+                                ClusterHostDO clusterHost = hostService.getClusterHostByHostname(hostname);
                                 clusterHost.setHostState(nodeHasWarnAlertList ? HostState.EXISTS_ALARM : HostState.RUNNING);
                                 hostService.updateById(clusterHost);
                             } else {
@@ -139,7 +139,7 @@ public class AlertActor extends UntypedActor {
                             // 警告告警处理
                             if (NODE.equals(serviceRoleName)) {
                                 // 置为正常
-                                ClusterHostEntity clusterHost = hostService.getClusterHostByHostname(hostname);
+                                ClusterHostDO clusterHost = hostService.getClusterHostByHostname(hostname);
                                 clusterHost.setHostState(nodeHasWarnAlertList ? HostState.EXISTS_ALARM : HostState.RUNNING);
                                 hostService.updateById(clusterHost);
                             } else {

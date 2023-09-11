@@ -305,11 +305,13 @@
       "configType": "path",
       "separator": ";",
       "required": true,
-      "type": "input",
-      "value": "",
+      "type": "multiple",
+      "value": [
+        "/data/be/storage"
+      ],
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "/data/be/storage"
+      "defaultValue": ""
     },
     {
       "name": "mem_limit",
