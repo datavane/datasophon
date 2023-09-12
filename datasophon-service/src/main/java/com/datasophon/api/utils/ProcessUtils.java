@@ -33,6 +33,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.master.ActorUtils;
+import com.datasophon.api.master.CancelCommandMap;
 import com.datasophon.api.master.MasterServiceActor;
 import com.datasophon.api.master.ServiceCommandActor;
 import com.datasophon.api.master.ServiceExecuteResultActor;
@@ -200,9 +201,10 @@ public class ProcessUtils {
             List<ClusterServiceCommandHostCommandEntity> hostCommandList =
                     service.getHostCommandListByCommandId(commandId);
             for (ClusterServiceCommandHostCommandEntity hostCommandEntity : hostCommandList) {
-                if (hostCommandEntity.getCommandState() == CommandState.RUNNING
-                        && hostCommandEntity.getServiceRoleType() != RoleType.MASTER) {
+                if (hostCommandEntity.getCommandState() == CommandState.RUNNING) {
                     logger.info("{} host command  set to cancel", hostCommandEntity.getCommandName());
+                    CancelCommandMap.put(hostCommandEntity.getHostCommandId(), hostCommandEntity.getCommandName());
+
                     hostCommandEntity.setCommandState(CommandState.CANCEL);
                     hostCommandEntity.setCommandProgress(100);
                     service.updateByHostCommandId(hostCommandEntity);
@@ -280,7 +282,7 @@ public class ProcessUtils {
 
         ActorRef commandActor = ActorUtils.getLocalActor(ServiceCommandActor.class, "commandActor");
         ActorUtils.actorSystem.scheduler().scheduleOnce(FiniteDuration.apply(
-                        1L, TimeUnit.SECONDS),
+                1L, TimeUnit.SECONDS),
                 commandActor, message,
                 ActorUtils.actorSystem.dispatcher(),
                 ActorRef.noSender());
@@ -482,7 +484,7 @@ public class ProcessUtils {
     }
 
     public static ExecResult startService(ServiceRoleInfo serviceRoleInfo, boolean needReConfig) throws Exception {
-        ExecResult execResult ;
+        ExecResult execResult;
         if (needReConfig) {
             ServiceConfigureHandler serviceHandler = new ServiceConfigureHandler();
             ServiceHandler serviceStartHandler = new ServiceStartHandler();
