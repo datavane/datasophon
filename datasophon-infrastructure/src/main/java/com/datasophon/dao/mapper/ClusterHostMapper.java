@@ -15,46 +15,26 @@
  *  limitations under the License.
  */
 
-package com.datasophon.dao.enums;
+package com.datasophon.dao.mapper;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.datasophon.dao.entity.ClusterHostDO;
 
-public enum HostState {
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-    RUNNING(1, "正在运行"),
-    OFFLINE(2, "掉线"),
-    EXISTS_ALARM(3, "存在告警");
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-    @EnumValue
-    private int value;
+/**
+ * 集群主机表 
+ * 
+ * @author gaodayu
+ * @email gaodayu2022@163.com
+ * @date 2022-04-14 20:32:39
+ */
+@Mapper
+public interface ClusterHostMapper extends BaseMapper<ClusterHostDO> {
 
-    private String desc;
+    ClusterHostDO getClusterHostByHostname(@Param("hostname") String hostname);
 
-    HostState(int value, String desc) {
-        this.value = value;
-        this.desc = desc;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    @JsonValue
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    @Override
-    public String toString() {
-        return this.desc;
-    }
+    void updateBatchNodeLabel(@Param("hostIds") String hostIds, @Param("nodeLabel") String nodeLabel);
 }

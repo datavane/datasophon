@@ -67,7 +67,7 @@
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
-            <directory>${basedir}/../datasophon-dao/src/main/resources</directory>
+            <directory>${basedir}/../datasophon-infrastructure/src/main/resources</directory>
             <includes>
                 <include>**/*.properties</include>
                 <include>**/*.xml</include>
@@ -76,7 +76,7 @@
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
-            <directory>${basedir}/../datasophon-dao/src/main/resources/mapper</directory>
+            <directory>${basedir}/../datasophon-infrastructure/src/main/resources/mapper</directory>
             <includes>
                 <include>**/*.xml</include>
             </includes>

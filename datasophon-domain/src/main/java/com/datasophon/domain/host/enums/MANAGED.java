@@ -15,26 +15,39 @@
  *  limitations under the License.
  */
 
-package com.datasophon.dao.mapper;
+package com.datasophon.domain.host.enums;
 
-import com.datasophon.dao.entity.ClusterHostEntity;
+import com.baomidou.mybatisplus.annotation.EnumValue;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+public enum MANAGED {
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+    YES(1, true),
+    NO(2, false);
 
-/**
- * 集群主机表 
- * 
- * @author gaodayu
- * @email gaodayu2022@163.com
- * @date 2022-04-14 20:32:39
- */
-@Mapper
-public interface ClusterHostMapper extends BaseMapper<ClusterHostEntity> {
+    @EnumValue
+    private int value;
 
-    ClusterHostEntity getClusterHostByHostname(@Param("hostname") String hostname);
+    private boolean desc;
 
-    void updateBatchNodeLabel(@Param("hostIds") String hostIds, @Param("nodeLabel") String nodeLabel);
+    MANAGED(int value, boolean desc) {
+        this.value = value;
+        this.desc = desc;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public boolean isDesc() {
+        return desc;
+    }
+
+    public void setDesc(boolean desc) {
+        this.desc = desc;
+    }
+
 }

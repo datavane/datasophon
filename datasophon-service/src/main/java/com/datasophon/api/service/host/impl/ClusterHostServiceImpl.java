@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package com.datasophon.api.service.impl;
+package com.datasophon.api.service.host.impl;
 
 import akka.actor.ActorRef;
 import cn.hutool.crypto.SecureUtil;
@@ -26,9 +26,10 @@ import com.datasophon.api.enums.Status;
 import com.datasophon.api.master.ActorUtils;
 import com.datasophon.api.master.PrometheusActor;
 import com.datasophon.api.master.RackActor;
-import com.datasophon.api.service.ClusterHostService;
+import com.datasophon.api.service.host.ClusterHostService;
 import com.datasophon.api.service.ClusterInfoService;
 import com.datasophon.api.service.ClusterServiceRoleInstanceService;
+import com.datasophon.api.service.host.dto.QueryHostListPageDTO;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.ExecuteCmdCommand;
@@ -36,14 +37,15 @@ import com.datasophon.common.command.GenerateHostPrometheusConfig;
 import com.datasophon.common.command.GenerateRackPropCommand;
 import com.datasophon.common.model.HostInfo;
 import com.datasophon.common.utils.Result;
-import com.datasophon.dao.entity.ClusterHostEntity;
+import com.datasophon.dao.entity.ClusterHostDO;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
-import com.datasophon.dao.enums.HostState;
+import com.datasophon.domain.host.enums.HostState;
 import com.datasophon.dao.enums.RoleType;
 import com.datasophon.dao.enums.ServiceRoleState;
 import com.datasophon.dao.mapper.ClusterHostMapper;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +61,7 @@ import java.util.stream.Collectors;
 
 @Service("clusterHostService")
 @Transactional
-public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, ClusterHostEntity>
+public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, ClusterHostDO>
         implements
         ClusterHostService {
 
@@ -75,16 +77,17 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     private final String IP = "ip";
 
     @Override
-    public ClusterHostEntity getClusterHostByHostname(String hostname) {
+    public ClusterHostDO getClusterHostByHostname(String hostname) {
         return hostMapper.getClusterHostByHostname(hostname);
     }
 
     @Override
     public Result listByPage(Integer clusterId, String hostname, String ip, String cpuArchitecture, Integer hostState,
                              String orderField, String orderType, Integer page, Integer pageSize) {
+        List<QueryHostListPageDTO> hostListPageDTOS = new ArrayList<>();
         int offset = (page - 1) * pageSize;
-        List<ClusterHostEntity> list =
-                this.list(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID, clusterId)
+        List<ClusterHostDO> list =
+                this.list(new QueryWrapper<ClusterHostDO>().eq(Constants.CLUSTER_ID, clusterId)
                         .eq(Constants.MANAGED, 1)
                         .eq(StringUtils.isNotBlank(cpuArchitecture), Constants.CPU_ARCHITECTURE, cpuArchitecture)
                         .eq(hostState != null, Constants.HOST_STATE, hostState)
@@ -93,23 +96,27 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
                         .orderByAsc("asc".equals(orderType), orderField)
                         .orderByDesc("desc".equals(orderType), orderField)
                         .last("limit " + offset + "," + pageSize));
-        for (ClusterHostEntity clusterHostEntity : list) {
+        for (ClusterHostDO clusterHostDO : list) {
+            QueryHostListPageDTO queryHostListPageDTO = new QueryHostListPageDTO();
+            BeanUtils.copyProperties(clusterHostDO,queryHostListPageDTO);
             // 查询主机上服务角色数
             int serviceRoleNum = roleInstanceService.count(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
-                    .eq(Constants.HOSTNAME, clusterHostEntity.getHostname()));
-            clusterHostEntity.setServiceRoleNum(serviceRoleNum);
+                    .eq(Constants.HOSTNAME, clusterHostDO.getHostname()));
+            queryHostListPageDTO.setServiceRoleNum(serviceRoleNum);
+            queryHostListPageDTO.setHostState(clusterHostDO.getHostState().getValue());
+            hostListPageDTOS.add(queryHostListPageDTO);
         }
-        int count = this.count(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID, clusterId)
+        int count = this.count(new QueryWrapper<ClusterHostDO>().eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.MANAGED, 1)
                 .eq(StringUtils.isNotBlank(cpuArchitecture), Constants.CPU_ARCHITECTURE, cpuArchitecture)
                 .eq(hostState != null, Constants.HOST_STATE, hostState)
                 .like(StringUtils.isNotBlank(hostname), Constants.HOSTNAME, hostname));
-        return Result.success(list).put(Constants.TOTAL, count);
+        return Result.success(hostListPageDTOS).put(Constants.TOTAL, count);
     }
 
     @Override
-    public List<ClusterHostEntity> getHostListByClusterId(Integer clusterId) {
-        return this.list(new QueryWrapper<ClusterHostEntity>()
+    public List<ClusterHostDO> getHostListByClusterId(Integer clusterId) {
+        return this.list(new QueryWrapper<ClusterHostDO>()
                 .eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.MANAGED, 1));
     }
@@ -140,7 +147,7 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
         // 批量移除
         String[] ids = hostIds.split(Constants.COMMA);
         for (String hostId : ids) {
-            ClusterHostEntity host = this.getById(hostId);
+            ClusterHostDO host = this.getById(hostId);
             // 获取主机上安装的服务
             List<ClusterServiceRoleInstanceEntity> list =
                     roleInstanceService.list(new QueryWrapper<ClusterServiceRoleInstanceEntity>()
@@ -215,29 +222,29 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
 
     @Override
     public void removeHostByClusterId(Integer clusterId) {
-        this.remove(new QueryWrapper<ClusterHostEntity>().eq(Constants.CLUSTER_ID, clusterId));
+        this.remove(new QueryWrapper<ClusterHostDO>().eq(Constants.CLUSTER_ID, clusterId));
     }
 
     @Override
     public void updateBatchNodeLabel(List<String> hostIds, String nodeLabel) {
-        List<ClusterHostEntity> list = this.lambdaQuery().in(ClusterHostEntity::getId, hostIds).list();
-        for (ClusterHostEntity clusterHostEntity : list) {
-            clusterHostEntity.setNodeLabel(nodeLabel);
+        List<ClusterHostDO> list = this.lambdaQuery().in(ClusterHostDO::getId, hostIds).list();
+        for (ClusterHostDO clusterHostDO : list) {
+            clusterHostDO.setNodeLabel(nodeLabel);
         }
         this.updateBatchById(list);
     }
 
     @Override
-    public List<ClusterHostEntity> getHostListByIds(List<String> ids) {
-        return this.lambdaQuery().in(ClusterHostEntity::getId, ids).or().in(ClusterHostEntity::getHostname, ids).list();
+    public List<ClusterHostDO> getHostListByIds(List<String> ids) {
+        return this.lambdaQuery().in(ClusterHostDO::getId, ids).or().in(ClusterHostDO::getHostname, ids).list();
     }
 
     @Override
     public Result assignRack(Integer clusterId, String rack, String hostIds) {
         List<String> ids = Arrays.asList(hostIds.split(","));
-        List<ClusterHostEntity> list = this.lambdaQuery().in(ClusterHostEntity::getId, ids).list();
-        for (ClusterHostEntity clusterHostEntity : list) {
-            clusterHostEntity.setRack(rack);
+        List<ClusterHostDO> list = this.lambdaQuery().in(ClusterHostDO::getId, ids).list();
+        for (ClusterHostDO clusterHostDO : list) {
+            clusterHostDO.setRack(rack);
         }
         this.updateBatchById(list);
         // tell rack actor
@@ -249,8 +256,8 @@ public class ClusterHostServiceImpl extends ServiceImpl<ClusterHostMapper, Clust
     }
 
     @Override
-    public List<ClusterHostEntity> getClusterHostByRack(Integer clusterId, String rack) {
-        return this.list(new QueryWrapper<ClusterHostEntity>()
+    public List<ClusterHostDO> getClusterHostByRack(Integer clusterId, String rack) {
+        return this.list(new QueryWrapper<ClusterHostDO>()
                 .eq(Constants.CLUSTER_ID, clusterId)
                 .eq(Constants.RACK, rack));
     }

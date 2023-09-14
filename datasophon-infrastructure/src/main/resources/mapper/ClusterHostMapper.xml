@@ -21,7 +21,7 @@
 <mapper namespace="com.datasophon.dao.mapper.ClusterHostMapper">
 
 <!--    getClusterHostByHostname-->
-    <select id="getClusterHostByHostname" resultType="com.datasophon.dao.entity.ClusterHostEntity">
+    <select id="getClusterHostByHostname" resultType="com.datasophon.dao.entity.ClusterHostDO">
         select *
         from t_ddh_cluster_host
         where hostname = #{hostname}

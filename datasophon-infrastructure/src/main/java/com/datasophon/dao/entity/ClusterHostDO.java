@@ -20,8 +20,8 @@ package com.datasophon.dao.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.datasophon.dao.enums.HostState;
-import com.datasophon.dao.enums.MANAGED;
+import com.datasophon.domain.host.enums.HostState;
+import com.datasophon.domain.host.enums.MANAGED;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -29,7 +29,7 @@ import java.util.Date;
 
 @TableName("t_ddh_cluster_host")
 @Data
-public class ClusterHostEntity implements Serializable {
+public class ClusterHostDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

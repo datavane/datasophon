@@ -15,21 +15,23 @@
  *  limitations under the License.
  */
 
-package com.datasophon.dao.enums;
+package com.datasophon.domain.host.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum MANAGED {
+public enum HostState {
 
-    YES(1, true),
-    NO(2, false);
+    RUNNING(1, "正在运行"),
+    OFFLINE(2, "掉线"),
+    EXISTS_ALARM(3, "存在告警");
 
     @EnumValue
     private int value;
 
-    private boolean desc;
+    private String desc;
 
-    MANAGED(int value, boolean desc) {
+    HostState(int value, String desc) {
         this.value = value;
         this.desc = desc;
     }
@@ -42,12 +44,17 @@ public enum MANAGED {
         this.value = value;
     }
 
-    public boolean isDesc() {
+    @JsonValue
+    public String getDesc() {
         return desc;
     }
 
-    public void setDesc(boolean desc) {
+    public void setDesc(String desc) {
         this.desc = desc;
     }
 
+    @Override
+    public String toString() {
+        return this.desc;
+    }
 }

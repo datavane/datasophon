@@ -120,6 +120,7 @@
       "name": "dataLogDir",
       "label": "事务日志存储目录",
       "description": "指定事务日志的存放目录",
+      "configType": "path",
       "required": true,
       "type": "input",
       "value": "",

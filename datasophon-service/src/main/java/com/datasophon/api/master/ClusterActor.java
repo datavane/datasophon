@@ -21,6 +21,7 @@ import akka.actor.UntypedActor;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.datasophon.api.service.*;
+import com.datasophon.api.service.host.ClusterHostService;
 import com.datasophon.api.utils.ProcessUtils;
 import com.datasophon.common.Constants;
 import com.datasophon.common.command.ClusterCommand;
@@ -155,7 +156,7 @@ public class ClusterActor extends UntypedActor {
                         }
                         List<ClusterServiceInstanceEntity> serviceInstanceList = clusterServiceInstanceService.listAll(clusterId);
                         if(serviceInstanceList.stream().allMatch(instance ->  clusterServiceInstanceService.delServiceInstance(instance.getId()).isSuccess())) {
-                            List<ClusterHostEntity> hostList = clusterHostService.getHostListByClusterId(clusterId);
+                            List<ClusterHostDO> hostList = clusterHostService.getHostListByClusterId(clusterId);
                             clusterHostService.deleteHosts(hostList.stream().map(h -> String.valueOf(h.getId())).collect(Collectors.joining(Constants.COMMA)));
                             clusterInfoService.removeById(clusterId);
                         }

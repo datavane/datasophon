@@ -24,7 +24,7 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>datasophon-dao</artifactId>
+    <artifactId>datasophon-infrastructure</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
