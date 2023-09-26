@@ -36,7 +36,7 @@ mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
   #实体扫描，多个package用逗号或者分号分隔
   typeAliasesPackage: com.datasophon.dao.entity
-  typeEnumsPackage: com.datasophon.dao.enums
+  typeEnumsPackage: com.datasophon.dao.enums,com.datasophon.domain.host.enums
   global-config:
     #数据库相关配置
     db-config:

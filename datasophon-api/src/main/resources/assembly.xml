@@ -63,6 +63,23 @@
             <outputDirectory>conf</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
+        <fileSet>
+            <directory>${basedir}/../datasophon-infrastructure/src/main/resources</directory>
+            <includes>
+                <include>**/*.properties</include>
+                <include>**/*.xml</include>
+            </includes>
+            <outputDirectory>conf</outputDirectory>
+            <fileMode>0755</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../datasophon-infrastructure/src/main/resources/mapper</directory>
+            <includes>
+                <include>**/*.xml</include>
+            </includes>
+            <outputDirectory>conf/mapper</outputDirectory>
+            <fileMode>0755</fileMode>
+        </fileSet>
         <!--拷贝start.sh启动脚本文件到bin目录下面-->
         <fileSet>
             <directory>${basedir}/../bin</directory>
