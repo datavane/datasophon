@@ -31,7 +31,7 @@ server.address=0.0.0.0        # 服务器地址（内网地址）
 2. 运行以下命令，使用新建的 `datasophon.conf` 配置启动镜像
 
 ```shell
-docker run -d --name datasophon -v your_path/datasophon.conf:/datart/config/datasophon.conf -p 8081:8081 datasophon/datasophon
+docker run -d --name datasophon -v your_path/datasophon.conf:/datasophon/conf/datasophon.conf -p 8081:8081 datasophon/datasophon
 ```
 
 ## 1.2 DDP部署包挂载
@@ -40,6 +40,6 @@ DataSophon 还需要在DDP部署包才可以真正的进行使用,由于部署�
 下载成功后可以将这个路径挂载到容器外部；在启动命令中增加参数 `-v your_path/DDP:/opt/datasophon/DDP/packages` 即可。以下是完整命令：
 
 ```shell
-docker run -d --name datasophon -v your_path/datasophon.conf:/datart/config/datasophon.conf -v your_path/DDP:/opt/datasophon/DDP/packages -p 8081:8081 datasophon/datasophon
+docker run -d --name datasophon -v your_path/datasophon.conf:/datasophon/conf/datasophon.conf -v your_path/DDP:/opt/datasophon/DDP/packages -p 8081:8081 datasophon/datasophon
 ```
 
