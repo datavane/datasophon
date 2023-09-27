@@ -187,8 +187,14 @@ initALL() {
   pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-perl-JSON.sh >>${initLogDir}/installAllPerlJSON_$(date +%Y%m%d).log
   echo "installAllPerlJSON end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installAllPerlJSON_$(date +%Y%m%d).log
 
-  #Configure Mysql and DataSophon data
-  initMysqlDataSophon
+  #初始化安装MySQL8数据库
+  echo "installMySQL8 start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installMySQL8_$(date +%Y%m%d).log
+  bash ${INIT_BIN_PATH}/init-mysql-8.sh $mysqlPassword >>${initLogDir}/installMySQL8_$(date +%Y%m%d).log
+  echo "installAllPerlJSON end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installMySQL8_$(date +%Y%m%d).log
+
+  #Configure Mysql and DataSophon data(当前在项目启动时会初始化表和数据,此步骤暂时省略)
+  #initMysqlDataSophon
+
   initMysqlDevel
 
   #Configure Disable transparent-hugepage
@@ -618,11 +624,11 @@ checkPsmisc() {
   echo "SUCCESS: Set  psmisc  have been inited successfully" >>${initLogDir}/installAllSuccess_$(date +%Y%m%d).log
 }
 
-#配置安装mysql8以及初始化DataSophon数据库
+#初始化DataSophon数据库
 initMysqlDataSophon() {
   echo "initMysqlDataSophon start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/initMysqlDataSophon_$(date +%Y%m%d).log
   echo "${mysqlIP}" >>${initLogDir}/initMysqlDataSophon_$(date +%Y%m%d).log
-  sshpass -p'${mysqlHostSshPassword}' ssh -P${mysqlPort} -o StrictHostKeyChecking=no root@${mysqlIP} bash ${INIT_BIN_PATH}/init-mysql-datasophon.sh $mysqlPassword </dev/null >>${initLogDir}/initMysqlDataSophon_$(date +%Y%m%d).log
+  sshpass -p'${mysqlHostSshPassword}' ssh -P${mysqlPort} -o StrictHostKeyChecking=no root@${mysqlIP} bash ${INIT_BIN_PATH}/init-mysql-datasophon.sh </dev/null >>${initLogDir}/initMysqlDataSophon_$(date +%Y%m%d).log
   echo "initMysqlDataSophon end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/initMysqlDataSophon_$(date +%Y%m%d).log
 }
 
