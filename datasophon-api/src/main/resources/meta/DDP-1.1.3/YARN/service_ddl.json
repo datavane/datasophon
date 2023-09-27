@@ -206,7 +206,8 @@
         "includeParams": [
           "mapreduce.jobhistory.keytab",
           "mapreduce.jobhistory.principal",
-          "mapreduce.cluster.local.dir"
+          "mapreduce.cluster.local.dir",
+          "custom.mapred.site.xml"
         ]
       }
     ]
@@ -849,6 +850,18 @@
     {
       "name": "custom.yarn.site.xml",
       "label": "自定义配置yarn-site.xml",
+      "description": "自定义配置",
+      "configType": "custom",
+      "required": false,
+      "type": "multipleWithKey",
+      "value": [],
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": ""
+    },
+    {
+      "name": "custom.mapred.site.xml",
+      "label": "自定义配置mapred-site.xml",
       "description": "自定义配置",
       "configType": "custom",
       "required": false,
