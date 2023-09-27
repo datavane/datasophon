@@ -155,6 +155,7 @@
       "name": "meta_dir",
       "label": "FE元数据的保存目录",
       "description": "FE元数据的保存目录",
+      "configType": "path",
       "required": true,
       "type": "input",
       "value": "",
