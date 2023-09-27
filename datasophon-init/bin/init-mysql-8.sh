@@ -23,6 +23,25 @@ echo "INIT_SBIN_PATH: ${INIT_SBIN_PATH}"
 PACKAGES_PATH=${INIT_PATH}/packages
 echo "PACKAGES_PATH: ${PACKAGES_PATH}"
 
+mariadb_rpm=$(rpm -qa | grep mariadb)
+if [[ "$?" == "0" ]]; then
+  echo "exist mariadb"
+  rpm -qa | grep mariadb | xargs rpm -e --nodeps
+fi
+mysql_rpm=$(rpm -qa | grep mysql)
+if [[ "$?" == "0" ]]; then
+  echo "exist mysql"
+  echo "开始卸载已存在的 mysql..............."
+  systemctl stop mysqld
+  rpm -qa | grep mysql | xargs rpm -e
+  rm -rf /var/lib/mysql
+  rm -rf /usr/sbin/mysqld
+  rm -rf /usr/local/mysql
+  rm -rf /etc/my.cnf
+  rm -rf /var/log/mysqld.log
+  rm -rf /var/log/mysql.log
+fi
+
 rpm -qa | grep zlib-devel
 if [ "$?" == "0" ]; then
   echo "zlib-devel exists"
