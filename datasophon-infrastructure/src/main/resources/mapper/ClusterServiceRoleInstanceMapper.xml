@@ -26,4 +26,10 @@
         where role_group_id = #{roleGroupId}
     </update>
 
+    <update id="updateToNeedRestartByHost">
+        update t_ddh_cluster_service_role_instance
+        set need_restart = 2
+        where hostname = #{hostName}
+    </update>
+
 </mapper>
