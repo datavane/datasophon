@@ -109,10 +109,20 @@ initALL() {
   secretFreeAllLogin
   checkSecretFreeAllLogin
 
+  #Create a tmp_scp_host_info  file 创建一个临时需要进行拷贝分发资源包的host信息文件
+  echo "Create a tmp_scp_host_info start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/CreateTmpScpHostInfoFile_$(date +%Y%m%d).log
+  bash ${INIT_BIN_PATH}/init-hostIp-txt.sh ${hostAllInfoPath} ${initAllHostNums}  >>${initLogDir}/CreateTmpScpHostInfoFile_$(date +%Y%m%d).log
+  echo "Create a tmp_scp_host_info start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/CreateTmpScpHostInfoFile_$(date +%Y%m%d).log
+
   #Distribution resource pack 分发资源包
   pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i "mkdir -p '${DATASOPHON_PATH}'"
   echo "Distribution resource pack start_time:$(date '+%Y%m%d %H:%M:%S')"
   pscp.pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -r ${INIT_PATH} ${DATASOPHON_PATH}
+
+  #Create hadoop users and groups 创建hadoop用户和组
+  echo "Create hadoop users and groups start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/initsshhadoopLogin_$(date +%Y%m%d).log
+  bash ${INIT_BIN_PATH}/init-ssh-hadoop.sh >>${initLogDir}/initsshhadoopLogin_$(date +%Y%m%d).log
+  echo "Create hadoop users and groups end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/initsshhadoopLogin_$(date +%Y%m%d).log
 
   #close all Firewall
   echo "closeAllFirewall start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/closeAllFirewall_$(date +%Y%m%d).log
@@ -177,8 +187,14 @@ initALL() {
   pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-perl-JSON.sh >>${initLogDir}/installAllPerlJSON_$(date +%Y%m%d).log
   echo "installAllPerlJSON end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installAllPerlJSON_$(date +%Y%m%d).log
 
-  #Configure Mysql and DataSophon data
-  initMysqlDataSophon
+  #初始化安装MySQL8数据库
+  echo "installMySQL8 start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installMySQL8_$(date +%Y%m%d).log
+  bash ${INIT_BIN_PATH}/init-mysql-8.sh $mysqlPassword >>${initLogDir}/installMySQL8_$(date +%Y%m%d).log
+  echo "installAllPerlJSON end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/installMySQL8_$(date +%Y%m%d).log
+
+  #Configure Mysql and DataSophon data(当前在项目启动时会初始化表和数据,此步骤暂时省略)
+  #initMysqlDataSophon
+
   initMysqlDevel
 
   #Configure Disable transparent-hugepage
@@ -209,37 +225,6 @@ initALL() {
   pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-krb5-devel.sh >>${initLogDir}/installKrb5Devel_$(date +%Y%m%d).log
   checkKrb5Devel
 
-  #redhat-lsb 配置 和python环境配置暂不需要
-  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -t ${middleTimeOut} -i bash ${INIT_BIN_PATH}/init-redhat-lsb.sh >>${initLogDir}/installRedhatLsb_$(date +%Y%m%d).log
-  #checkRedhatLsb
-  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-python2-rpm-macros.sh >>${initLogDir}/installPython2Macros_$(date +%Y%m%d).log
-  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-python-srpm-macros.sh >>${initLogDir}/installPythonSrpmMacros_$(date +%Y%m%d).log
-  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-python-rpm-macros.sh >>${initLogDir}/installPythonMacros_$(date +%Y%m%d).log
-
-  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-init-python-devel.sh >> ${initLogDir}/installPythonDevel_`date +%Y%m%d`.log
-  #checkPythonDevel
-
-  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-cyrus-sasl.sh >>${initLogDir}/installCyrusSasl_$(date +%Y%m%d).log
-  #checkCyrusSasl
-
-  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-python36-devel.sh >>${initLogDir}/installPython36Devel_$(date +%Y%m%d).log
-  #checkPython36Devel
-
-  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -t ${smallTimeOut} -i bash ${INIT_BIN_PATH}/init-Cython.sh >>${initLogDir}/installCython_$(date +%Y%m%d).log
-  #checkCython
-
-  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-six.sh >>${initLogDir}/installSix_$(date +%Y%m%d).log
-  #checkSix
-
-  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-websocket_client.sh >>${initLogDir}/installWebsocketClient_$(date +%Y%m%d).log
-  #checkWebsocketClient
-
-  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-ecdsa.sh >>${initLogDir}/installEcdsa_$(date +%Y%m%d).log
-  #checkecdsa
-
-  #pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-pytest_runner.sh >>${initLogDir}/installPytestRunner_$(date +%Y%m%d).log
-  #checkPytestRunner
-
   pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-ntp_enable.sh >>${initLogDir}/installSingleNtpEnable_$(date +%Y%m%d).log
   pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-chmod-dev-null.sh >>${initLogDir}/chmodDevNull_$(date +%Y%m%d).log
   pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i bash ${INIT_BIN_PATH}/init-cleanBuff-async.sh >>${initLogDir}/cleanBuff_$(date +%Y%m%d).log
@@ -264,10 +249,20 @@ initSingleNode() {
   secretFreeSingleNodeLogin
   checkSecretFreeSingleNodeLogin
 
+  #Create a tmp_scp_host_info  file 创建一个临时需要进行拷贝分发资源包的host信息文件
+  echo "Create a tmp_scp_host_info start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/CreateTmpScpHostInfoFile_$(date +%Y%m%d).log
+  bash ${INIT_BIN_PATH}/init-hostIp-txt.sh ${hostSingleInfoPath} ${initSingleHostNums}  >>${initLogDir}/CreateTmpScpHostInfoFile_$(date +%Y%m%d).log
+  echo "Create a tmp_scp_host_info start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/CreateTmpScpHostInfoFile_$(date +%Y%m%d).log
+
   #Distribution resource pack 分发资源包
   pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -i "mkdir -p '${DATASOPHON_PATH}'"
   echo "Distribution resource pack start_time:$(date '+%Y%m%d %H:%M:%S')"
   pscp.pssh -h ${INIT_BIN_PATH}/tmp_scp_host_info.txt -r ${INIT_PATH} ${DATASOPHON_PATH}
+
+  #Create hadoop users and groups 创建hadoop用户和组
+  echo "Create hadoop users and groups start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/initsshhadoopLogin_$(date +%Y%m%d).log
+  bash ${INIT_BIN_PATH}/init-ssh-hadoop.sh >>${initLogDir}/initsshhadoopLogin_$(date +%Y%m%d).log
+  echo "Create hadoop users and groups end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/initsshhadoopLogin_$(date +%Y%m%d).log
 
   #close all Firewall
   echo "closeSingleNodeFirewall start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/closeSingleNodeFirewall_$(date +%Y%m%d).log
@@ -404,7 +399,6 @@ secretFreeAllLogin() {
 
   bash ${INIT_BIN_PATH}/init-ssh-gen-key.sh >>${initLogDir}/secretFreeAllLogin_$(date +%Y%m%d).log
   bash ${INIT_BIN_PATH}/init-ssh-copy-key.sh ${hostAllInfoPath} ${initAllHostNums} ${nmapServerPort} >>${initLogDir}/secretFreeAllLogin_$(date +%Y%m%d).log
-  bash ${INIT_BIN_PATH}/init-ssh-hadoop.sh ${hostAllInfoPath} ${initAllHostNums} >>${initLogDir}/secretFreeAllLogin_$(date +%Y%m%d).log
   echo "secretFreeAllLogin end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/secretFreeAllLogin_$(date +%Y%m%d).log
 }
 
@@ -630,11 +624,11 @@ checkPsmisc() {
   echo "SUCCESS: Set  psmisc  have been inited successfully" >>${initLogDir}/installAllSuccess_$(date +%Y%m%d).log
 }
 
-#配置安装mysql8以及初始化DataSophon数据库
+#初始化DataSophon数据库
 initMysqlDataSophon() {
   echo "initMysqlDataSophon start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/initMysqlDataSophon_$(date +%Y%m%d).log
   echo "${mysqlIP}" >>${initLogDir}/initMysqlDataSophon_$(date +%Y%m%d).log
-  sshpass -p'${mysqlHostSshPassword}' ssh -P${mysqlPort} -o StrictHostKeyChecking=no root@${mysqlIP} bash ${INIT_BIN_PATH}/init-mysql-datasophon.sh $mysqlPassword </dev/null >>${initLogDir}/initMysqlDataSophon_$(date +%Y%m%d).log
+  sshpass -p'${mysqlHostSshPassword}' ssh -P${mysqlPort} -o StrictHostKeyChecking=no root@${mysqlIP} bash ${INIT_BIN_PATH}/init-mysql-datasophon.sh </dev/null >>${initLogDir}/initMysqlDataSophon_$(date +%Y%m%d).log
   echo "initMysqlDataSophon end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/initMysqlDataSophon_$(date +%Y%m%d).log
 }
 
@@ -933,7 +927,6 @@ checkKrb5Devel() {
 secretFreeSingleNodeLogin() {
   echo "secretFreeSingleNodeLogin start_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/secretFreeSingleNodeLogin_$(date +%Y%m%d).log
   bash ${INIT_BIN_PATH}/init-ssh-copy-key.sh ${hostSingleInfoPath} ${initSingleHostNums} ${nampServerPort} >>${initLogDir}/secretFreeSingleNodeLogin_$(date +%Y%m%d).log
-  bash ${INIT_BIN_PATH}/init-ssh-hadoop.sh ${hostSingleInfoPath} ${initSingleHostNums} >>${initLogDir}/secretFreeSingleNodeLogin_$(date +%Y%m%d).log
   echo "secretFreeSingleNodeLogin end_time:$(date '+%Y%m%d %H:%M:%S')" >>${initLogDir}/secretFreeSingleNodeLogin_$(date +%Y%m%d).log
 }
 

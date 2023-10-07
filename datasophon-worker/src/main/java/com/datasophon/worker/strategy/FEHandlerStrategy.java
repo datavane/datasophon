@@ -18,7 +18,6 @@
 package com.datasophon.worker.strategy;
 
 import akka.actor.ActorRef;
-import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
 import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
@@ -56,7 +55,7 @@ public class FEHandlerStrategy extends AbstractHandlerStrategy implements Servic
                 ServiceRoleRunner startRunner = new ServiceRoleRunner();
                 startRunner.setProgram(command.getStartRunner().getProgram());
                 startRunner.setArgs(commands);
-                startRunner.setTimeout("60");
+                startRunner.setTimeout("600");
                 startResult = serviceHandler.start(startRunner, command.getStatusRunner(),
                         command.getDecompressPackageName(), command.getRunAs());
                 if (startResult.getExecResult()) {
@@ -68,10 +67,10 @@ public class FEHandlerStrategy extends AbstractHandlerStrategy implements Servic
                         sqlExecCommand.setOpsType(OlapOpsType.ADD_FE_FOLLOWER);
                         ActorUtils.getRemoteActor(command.getManagerHost(), "masterNodeProcessingActor")
                                 .tell(sqlExecCommand, ActorRef.noSender());
+                        logger.info("slave fe start success");
                     } catch (Exception e) {
                         logger.error("add slave fe failed {}", ThrowableUtils.getStackTrace(e));
                     }
-                    logger.info("slave fe start success");
                 } else {
                     logger.error("slave fe start failed");
                 }
