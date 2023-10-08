@@ -15,7 +15,6 @@ public class CheckDorisRule extends CheckRule{
     private static final List<String> MUST_AT_NOT_SAME_NODE_DORIS =
             Arrays.asList("DorisFE","DorisFEObserver");
 
-    @Autowired
     private ClusterServiceRoleInstanceService roleInstanceService;
 
     public CheckDorisRule(ClusterServiceRoleInstanceService roleInstanceService) {
