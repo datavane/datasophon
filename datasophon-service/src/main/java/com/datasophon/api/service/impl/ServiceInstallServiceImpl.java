@@ -23,6 +23,9 @@ import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.datasophon.api.check.CheckBasicServiceRule;
+import com.datasophon.api.check.CheckDorisRule;
+import com.datasophon.api.check.CheckRule;
 import com.datasophon.api.enums.Status;
 import com.datasophon.api.exceptions.ServiceException;
 import com.datasophon.api.load.GlobalVariables;
@@ -274,7 +277,7 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     @Override
     public Result saveServiceRoleHostMapping(Integer clusterId, List<ServiceRoleHostMapping> list) {
 
-        checkOnSameNode(clusterId, list);
+        checkRules(clusterId, list);
 
         ClusterInfoEntity clusterInfo = clusterInfoService.getById(clusterId);
         String hostMapKey =
@@ -306,6 +309,19 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
                 map);
         return Result.success();
     }
+
+    /*
+    * 规则校验入口
+    * */
+    private void checkRules(Integer clusterId, List<ServiceRoleHostMapping> list) {
+        List<CheckRule> checkRules = new ArrayList<>();
+        checkRules.add(new CheckBasicServiceRule(roleInstanceService));
+        checkRules.add(new CheckDorisRule(roleInstanceService));
+        checkRules.forEach(e->{
+            e.checkeNodeRule(clusterId,list);
+        });
+    }
+
 
     @Override
     public Result saveHostServiceRoleMapping(Integer clusterId, List<HostServiceRoleMapping> list) {
@@ -655,33 +671,6 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
         roleGroupConfig.setConfigJsonMd5(SecureUtil.md5(configJson));
         roleGroupConfig.setConfigFileJson(configFileJson);
         roleGroupConfig.setConfigFileJsonMd5(SecureUtil.md5(configFileJson));
-    }
-
-    private void checkOnSameNode(Integer clusterId, List<ServiceRoleHostMapping> list) {
-        Set<String> hostnameSet =
-                list.stream()
-                        .filter(s -> MUST_AT_SAME_NODE_BASIC_SERVICE.contains(s.getServiceRole()))
-                        .map(ServiceRoleHostMapping::getHosts)
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toSet());
-        if (CollectionUtils.isEmpty(hostnameSet)) {
-            return;
-        }
-
-        Set<String> installedHostnameSet =
-                roleInstanceService.lambdaQuery()
-                        .eq(ClusterServiceRoleInstanceEntity::getClusterId, clusterId)
-                        .in(
-                                ClusterServiceRoleInstanceEntity::getServiceName,
-                                MUST_AT_SAME_NODE_BASIC_SERVICE)
-                        .list().stream()
-                        .map(ClusterServiceRoleInstanceEntity::getHostname)
-                        .collect(Collectors.toSet());
-        hostnameSet.addAll(installedHostnameSet);
-
-        if (hostnameSet.size() > 1) {
-            throw new ServiceException(Status.BASIC_SERVICE_SELECT_MOST_ONE_HOST.getMsg());
-        }
     }
 
     private void serviceValidation(ServiceRoleHostMapping serviceRoleHostMapping) {
