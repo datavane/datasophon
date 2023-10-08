@@ -18,6 +18,10 @@ public class CheckDorisRule extends CheckRule{
     @Autowired
     private ClusterServiceRoleInstanceService roleInstanceService;
 
+    public CheckDorisRule(ClusterServiceRoleInstanceService roleInstanceService) {
+        this.roleInstanceService = roleInstanceService;
+    }
+
     @Override
     public void checkeNodeRule(Integer clusterId, List<ServiceRoleHostMapping> list) {
         Set<String> hostnameSet =

@@ -18,8 +18,12 @@ public class CheckBasicServiceRule extends CheckRule{
     private static final List<String> MUST_AT_SAME_NODE_BASIC_SERVICE =
             Arrays.asList("Grafana", "AlertManager", "Prometheus");
 
-    @Autowired
+
     private ClusterServiceRoleInstanceService roleInstanceService;
+
+    public CheckBasicServiceRule(ClusterServiceRoleInstanceService roleInstanceService) {
+        this.roleInstanceService = roleInstanceService;
+    }
 
     @Override
     public void checkeNodeRule(Integer clusterId, List<ServiceRoleHostMapping> list) {

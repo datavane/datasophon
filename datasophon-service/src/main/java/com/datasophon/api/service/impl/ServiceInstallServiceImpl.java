@@ -315,8 +315,8 @@ public class ServiceInstallServiceImpl implements ServiceInstallService {
     * */
     private void checkRules(Integer clusterId, List<ServiceRoleHostMapping> list) {
         List<CheckRule> checkRules = new ArrayList<>();
-        checkRules.add(new CheckBasicServiceRule());
-        checkRules.add(new CheckDorisRule());
+        checkRules.add(new CheckBasicServiceRule(roleInstanceService));
+        checkRules.add(new CheckDorisRule(roleInstanceService));
         checkRules.forEach(e->{
             e.checkeNodeRule(clusterId,list);
         });
