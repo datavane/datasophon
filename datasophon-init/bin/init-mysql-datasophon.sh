@@ -38,12 +38,6 @@ EOF
   echo " init user datasophon finished."
   echo " init database datasophon finished."
 
-  mysql -udatasophon -p'datasophon' <<EOF
-source ${INIT_SQL_PATH}/V1.1.0__DDL.sql;
-source ${INIT_SQL_PATH}/V1.1.0__DML.sql;
-EOF
-  echo " init  datasophon data finished."
-
 else
   systemctl start mysqld
   systemctl enable mysqld

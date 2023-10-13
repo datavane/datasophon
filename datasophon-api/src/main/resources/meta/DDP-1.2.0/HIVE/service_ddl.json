@@ -371,7 +371,7 @@
     },
     {
       "name": "hive.exec.submit.local.task.via.child",
-      "label": "地任务是否单独启动进程",
+      "label": "本地任务是否单独启动进程",
       "description": "决定本地任务（通常是mapjoin的哈希表生成阶段）是否在单独的JVM中运行",
       "required": true,
       "configType": "map",
