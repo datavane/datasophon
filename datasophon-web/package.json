@@ -12,6 +12,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "@ant-design/pro-components": "^2.6.29",
+    "ahooks": "^3.7.8",
     "antd": "^5.10.0",
     "axios": "^1.5.1",
     "qs": "^6.11.2",
