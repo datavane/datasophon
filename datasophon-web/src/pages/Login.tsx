@@ -14,10 +14,7 @@ const LoginForm = () => {
             // 登录成功跳转到主页
             navigate('/cluster')
             // cookie 存储用户信息, expires 逻辑复用原有逻辑，不做变更，24 小时过期
-            const current = new Date();
-            const expires = new Date();
-            expires.setTime(current.getTime() + 1000 * 60 * 60 * 24);
-            setSessionId(data.sessionId, { expires })
+            setSessionId(data.sessionId, { expires: (() => new Date(+new Date() + 1000 * 60 * 60 * 24))(), })
         } else {
             message.error(msg)
         }
