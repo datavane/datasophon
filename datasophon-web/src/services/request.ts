@@ -88,7 +88,8 @@ export interface WrappedFetchParams extends ExtraFetchParams {
         params: query,
       })
       .then((res) => res.data);
-    return prom as Promise<unknown>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return prom as Promise<any>;
   };
  /** 接口传参校验 */
  public check<V>(value: V, name: string) {
