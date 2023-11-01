@@ -5,6 +5,7 @@ import ClusterManage from './pages/ClusterManage'
 import HostList from './pages/HostList'
 import Service from './pages/Service'
 import Login from './pages/Login'
+import UserList from './pages/User'
 
 const router = createBrowserRouter([
     {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
             {
                 path: '/cluster/:clusterId/service',
                 element: <Service/>
+            },
+            {
+                path: '/user',
+                element: <UserList />,
             },
         ]
     },

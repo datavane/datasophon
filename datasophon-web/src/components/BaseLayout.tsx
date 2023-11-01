@@ -3,8 +3,11 @@ import type { MenuProps } from 'antd';
 import { useNavigate, Outlet } from 'react-router-dom'
 const { Header, Content } = Layout
 const items: MenuProps['items'] = [{
-    label: '集群',
+    label: '集群管理',
     key: 'cluster'
+}, {
+    label: '用户管理',
+    key: 'user'
 }]
 const BaseLayout = () => {
     const navigate = useNavigate()
