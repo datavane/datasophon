@@ -17,12 +17,15 @@ const columns: ProColumns<UserType>[] = [{
     dataIndex: 'username'
   }, {
     title: '邮箱',
+    search: false,
     dataIndex: 'email'
   }, {
     title: '电话',
+    search: false,
     dataIndex: 'phone'
   }, {
     title: '创建时间',
+    search: false,
     dataIndex: 'createTime'
   }]
 
