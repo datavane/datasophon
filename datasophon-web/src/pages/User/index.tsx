@@ -2,6 +2,8 @@ import { PageContainer, ProColumns, ProTable } from '@ant-design/pro-components'
 import request from '../../services/request'
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import UserModal from './UserModal';
+import { useState } from 'react';
 
 type UserType = {
     id: number,
@@ -53,6 +55,7 @@ const columns: ProColumns<UserType>[] = [{
   },]
 
 const UserList = () => {
+  const [userModalOpen, setUserModalOpen] = useState(false);
     return (
         <PageContainer header={{ title: '用户管理'}}>
             <ProTable
@@ -78,6 +81,7 @@ const UserList = () => {
                     key="button"
                     icon={<PlusOutlined />}
                     onClick={() => {
+                      setUserModalOpen(true)
                     }}
                     type="primary"
                   >
@@ -85,6 +89,12 @@ const UserList = () => {
                   </Button>,
                 ]}
             ></ProTable>
+            <UserModal
+              open={userModalOpen} 
+              onOpenChange={(open: boolean | ((prevState: boolean) => boolean)) => {
+                setUserModalOpen(open);
+              } }
+            />
         </PageContainer>
     )
 }
