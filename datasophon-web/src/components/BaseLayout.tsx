@@ -18,7 +18,7 @@ const BaseLayout = () => {
     return (<App>
         {/* header */}
         <Header>
-            <Menu mode="horizontal" theme="dark" onClick={handleOnClick} items={items} defaultSelectedKeys={['cluster-manage']}/>
+            <Menu mode="horizontal" theme="dark" onClick={handleOnClick} items={items} defaultSelectedKeys={['cluster']}/>
         </Header>
         {/* content */}
         <Content style={{ height: '100vh'}}>
