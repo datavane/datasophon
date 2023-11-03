@@ -1,4 +1,4 @@
-import { Layout, Menu } from 'antd'
+import { App, Layout, Menu } from 'antd'
 import type { MenuProps } from 'antd';
 import { useNavigate, Outlet } from 'react-router-dom'
 const { Header, Content } = Layout
@@ -15,7 +15,7 @@ const BaseLayout = () => {
         navigate(`/${key}`)
     };
 
-    return (<div>
+    return (<App>
         {/* header */}
         <Header>
             <Menu mode="horizontal" theme="dark" onClick={handleOnClick} items={items} defaultSelectedKeys={['cluster-manage']}/>
@@ -24,7 +24,7 @@ const BaseLayout = () => {
         <Content style={{ height: '100vh'}}>
             <Outlet />
         </Content>
-    </div>)
+    </App>)
 }
 
 export default BaseLayout

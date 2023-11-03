@@ -1,12 +1,13 @@
-import { PageContainer, ProColumns, ProTable } from '@ant-design/pro-components'
+import { ActionType, PageContainer, ProColumns, ProTable } from '@ant-design/pro-components'
 import request from '../../services/request'
-import { Button } from 'antd';
+import { App, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import UserModal from './UserModal';
-import { useState } from 'react';
+import { MutableRefObject, useRef, useState } from 'react';
+import { APIS } from '../../services/user';
 
 type UserType = {
-    id: number,
+    id?: number,
     username: string;
     password: string;
     email: string;
@@ -55,10 +56,23 @@ const columns: ProColumns<UserType>[] = [{
   },]
 
 const UserList = () => {
+  const { message } = App.useApp();
   const [userModalOpen, setUserModalOpen] = useState(false);
+  const userActionRef = useRef<any>();
+  const handleOnFinishClick = async (values: unknown) => {
+    const { code, msg} = await APIS.UserApi.save(values)
+    if (code === 200) {
+      message.success('新建成功')
+      userActionRef.current?.reload()
+    } else {
+      message.error(msg)
+    }
+    setUserModalOpen(false)
+  }
     return (
         <PageContainer header={{ title: '用户管理'}}>
             <ProTable
+                actionRef={userActionRef}
                 columns={columns}
                 rowKey="id"
                 request={async (params) => {
@@ -90,10 +104,15 @@ const UserList = () => {
                 ]}
             ></ProTable>
             <UserModal
-              open={userModalOpen} 
+              title="新建用户"
+              open={userModalOpen}
               onOpenChange={(open: boolean | ((prevState: boolean) => boolean)) => {
                 setUserModalOpen(open);
               } }
+              modalProps={{
+                destroyOnClose: true,
+              }}
+              onFinish={handleOnFinishClick}
             />
         </PageContainer>
     )
