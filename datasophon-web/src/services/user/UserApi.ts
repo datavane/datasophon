@@ -31,6 +31,18 @@ export class UserApi {
             ...p
         })
     }
+
+    public delete (data?:any, opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/api/user/delete`;
+        const p: any = {};
+        p.data = data;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
 }
 
 export default new UserApi()

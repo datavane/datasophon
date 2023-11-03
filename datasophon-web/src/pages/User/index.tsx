@@ -1,6 +1,6 @@
 import { PageContainer, ProColumns, ProTable } from '@ant-design/pro-components'
 import request from '../../services/request'
-import { App, Button, Form } from 'antd';
+import { App, Button, Form, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import UserModal from './UserModal';
 import { useRef, useState } from 'react';
@@ -60,15 +60,21 @@ const UserList = () => {
       >
         编辑
       </Button>,
-      <Button
-        key="delete"
-        type="link"
-        disabled={record.userType == 1 }
-        onClick={() => {
+      <Popconfirm
+        title="确认删除当前用户？"
+        onConfirm={() => {
+          handleOnConfirmClick(record)
         }}
       >
-        删除
-      </Button>,
+          <Button
+            key="delete"
+            type="link"
+            disabled={record.userType == 1 }
+          >
+          删除
+        </Button>
+      </Popconfirm>
+     ,
     ],
   },]
 
@@ -86,6 +92,16 @@ const UserList = () => {
         ...record,
         password: ''
       })
+    }
+  }
+
+  const handleOnConfirmClick = async (record: UserType) =>  {
+    const { code, msg } = await APIS.UserApi.delete([record.id])
+    if (code === 200) {
+      message.success('删除成功！')
+      userActionRef.current?.reload()
+    } else {
+      message.error(msg)
     }
   }
 
