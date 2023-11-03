@@ -7,7 +7,8 @@ import { useRef, useState } from 'react';
 import { APIS } from '../../services/user';
 
 type UserType = {
-    id?: number,
+    id?: number;
+    userType?: number;
     username: string;
     password: string;
     email: string;
@@ -62,6 +63,7 @@ const UserList = () => {
       <Button
         key="delete"
         type="link"
+        disabled={record.userType == 1 }
         onClick={() => {
         }}
       >
