@@ -162,6 +162,10 @@ const UserList = () => {
                     新建
                   </Button>,
                 ]}
+                toolbar={{ 
+                  // 隐藏工具栏设置区
+                  settings: []
+                }}
             ></ProTable>
             <UserModal
               form={form}
