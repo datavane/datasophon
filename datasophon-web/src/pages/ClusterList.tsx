@@ -7,11 +7,21 @@ const ClusterList = () => {
     const handleOnClick = () => {
         navigate('/cluster/1')
     }
+
+    const handleOnNavigateClick = (path: string) => {
+        navigate(path)
+    }
     return (
         <PageContainer header={{
             title: '集群',
             extra: [
                 <Button type="primary" key="1">新建集群</Button>,
+                <Button type="primary" key="2" onClick={() => {
+                    handleOnNavigateClick('/cluster-storage')
+                }}>存储库管理</Button>,
+                <Button type="primary" key="3" onClick={() => {
+                    handleOnNavigateClick('/cluster-framework')
+                }}>集群框架</Button>,
             ]
         }}>
             <Space>
