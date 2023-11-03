@@ -19,6 +19,18 @@ export class UserApi {
             ...p
         })
     }
+
+    public update (data?:any, opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/api/user/update`;
+        const p: any = {};
+        p.data = data;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
 }
 
 export default new UserApi()

@@ -1,9 +1,9 @@
-import { ActionType, PageContainer, ProColumns, ProTable } from '@ant-design/pro-components'
+import { PageContainer, ProColumns, ProTable } from '@ant-design/pro-components'
 import request from '../../services/request'
-import { App, Button } from 'antd';
+import { App, Button, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import UserModal from './UserModal';
-import { MutableRefObject, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { APIS } from '../../services/user';
 
 type UserType = {
@@ -14,7 +14,19 @@ type UserType = {
     phone: string;
 }
 
-const columns: ProColumns<UserType>[] = [{
+enum ModalType {
+    Add = 'add',
+    Edit = 'edit' 
+}
+
+const UserList = () => {
+  const { message } = App.useApp();
+  const [userModalOpen, setUserModalOpen] = useState(false);
+  const [ userModalType, setUserModalType] = useState('add')
+  const [ currentRow, setCurrentRow ] = useState<any>()
+  const userActionRef = useRef<any>();
+  const [ form ] = Form.useForm<UserType>();
+  const columns: ProColumns<UserType>[] = [{
     dataIndex: 'index',
     valueType: 'indexBorder',
     width: 48,
@@ -41,6 +53,7 @@ const columns: ProColumns<UserType>[] = [{
       <a
         key="editable"
         onClick={() => {
+          handleOnModalTriggerClick(ModalType.Edit, record)
         }}
       >
         编辑
@@ -55,19 +68,46 @@ const columns: ProColumns<UserType>[] = [{
     ],
   },]
 
-const UserList = () => {
-  const { message } = App.useApp();
-  const [userModalOpen, setUserModalOpen] = useState(false);
-  const userActionRef = useRef<any>();
-  const handleOnFinishClick = async (values: unknown) => {
-    const { code, msg} = await APIS.UserApi.save(values)
-    if (code === 200) {
-      message.success('新建成功')
-      userActionRef.current?.reload()
+
+
+  const handleOnModalTriggerClick = (type: ModalType, record?: UserType) => {
+    if (type === 'add') {
+      setUserModalType(ModalType.Add)
+      setUserModalOpen(true)
     } else {
-      message.error(msg)
+      setUserModalType(ModalType.Edit)
+      setCurrentRow(record)
+      setUserModalOpen(true)
+      form.setFieldsValue({
+        ...record,
+        password: ''
+      })
     }
-    setUserModalOpen(false)
+  }
+
+  const handleOnFinishClick = async (values: any) => {
+    if(userModalType === 'edit') {
+      const { code, msg} = await APIS.UserApi.update({
+        ...currentRow,
+        ...values
+      })
+      if (code === 200) {
+        message.success('编辑成功')
+        setUserModalOpen(false)
+        userActionRef.current?.reload()
+      } else {
+        message.error(msg)
+      }
+    } else {
+      const { code, msg} = await APIS.UserApi.save(values)
+      if (code === 200) {
+        message.success('新建成功')
+        setUserModalOpen(false)
+        userActionRef.current?.reload()
+      } else {
+        message.error(msg)
+      }
+    }
   }
     return (
         <PageContainer header={{ title: '用户管理'}}>
@@ -95,7 +135,7 @@ const UserList = () => {
                     key="button"
                     icon={<PlusOutlined />}
                     onClick={() => {
-                      setUserModalOpen(true)
+                      handleOnModalTriggerClick(ModalType.Add)
                     }}
                     type="primary"
                   >
@@ -104,13 +144,15 @@ const UserList = () => {
                 ]}
             ></ProTable>
             <UserModal
-              title="新建用户"
+              form={form}
+              title={userModalType === ModalType.Add ? '新建用户' : '编辑用户'}
               open={userModalOpen}
-              onOpenChange={(open: boolean | ((prevState: boolean) => boolean)) => {
-                setUserModalOpen(open);
-              } }
+              onOpenChange={setUserModalOpen}
               modalProps={{
+                // 复杂场景慎用，会引起性能问题
                 destroyOnClose: true,
+                // https://stackoverflow.com/questions/61056421/warning-instance-created-by-useform-is-not-connect-to-any-form-element
+                forceRender: true
               }}
               onFinish={handleOnFinishClick}
             />
