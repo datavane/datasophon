@@ -50,21 +50,23 @@ const UserList = () => {
     valueType: 'option',
     key: 'option',
     render: (text, record, _, action) => [
-      <a
+      <Button
         key="editable"
+        type="link"
         onClick={() => {
           handleOnModalTriggerClick(ModalType.Edit, record)
         }}
       >
         编辑
-      </a>,
-      <a
+      </Button>,
+      <Button
         key="delete"
+        type="link"
         onClick={() => {
         }}
       >
         删除
-      </a>,
+      </Button>,
     ],
   },]
 
