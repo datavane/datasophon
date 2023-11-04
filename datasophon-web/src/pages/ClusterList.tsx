@@ -2,8 +2,10 @@ import { PageContainer, ProCard } from '@ant-design/pro-components'
 import { Space} from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { Button } from 'antd'
+import { useTranslation } from 'react-i18next'
 const ClusterList = () => {
     const navigate = useNavigate()
+    const { t } = useTranslation()
     const handleOnClick = () => {
         navigate('/cluster/1')
     }
@@ -13,7 +15,7 @@ const ClusterList = () => {
     }
     return (
         <PageContainer header={{
-            title: '集群',
+            title: t('cluster.title'),
             extra: [
                 <Button type="primary" key="1">新建集群</Button>,
                 <Button type="primary" key="2" onClick={() => {
