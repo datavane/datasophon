@@ -7,6 +7,7 @@ import './i18n/index'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
+      {/* TODO: 多语言异步加载是需要优化，最终采取的策略待定 */}
       <React.Suspense fallback="loading">
         <RouterProvider router={router} />
       </React.Suspense>
