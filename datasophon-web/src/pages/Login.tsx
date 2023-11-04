@@ -1,10 +1,11 @@
 import { LoginFormPage, ProConfigProvider, ProFormText } from '@ant-design/pro-components'
 import { APIS } from '../services/user'
-import { Tabs ,theme, App } from 'antd'
+import { Tabs ,theme, App, Button } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useCookieState } from 'ahooks'
 import { useTranslation } from 'react-i18next'
+import ChangeLanguage from '../i18n/ChangeLanguage'
 const LoginForm = () => {
     const { message } = App.useApp();
     const navigate = useNavigate();
@@ -30,6 +31,7 @@ const LoginForm = () => {
                 height: '100vh',
                 }}
             >
+                <ChangeLanguage></ChangeLanguage>
                 <LoginFormPage
                     backgroundImageUrl=""
                     logo=""

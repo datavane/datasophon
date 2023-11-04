@@ -6,12 +6,19 @@ i18next
     .use(initReactI18next)
     .use(LanguageDetector)
     .init({
-        fallbackLng: 'zh',
+        fallbackLng: 'en',
         resources: {
             zh: {
                 translation: {
                     login: {
                         tab: '账号密码登录'
+                    }
+                }
+            },
+            en: {
+                translation: {
+                    login: {
+                        tab: 'Login with account and password'
                     }
                 }
             }
