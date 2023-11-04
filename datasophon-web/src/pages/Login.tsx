@@ -4,9 +4,11 @@ import { Tabs ,theme, App } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useCookieState } from 'ahooks'
+import { useTranslation } from 'react-i18next'
 const LoginForm = () => {
     const { message } = App.useApp();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const { t } = useTranslation()
     const [, setSessionId] = useCookieState('sessionId')
     const handleOnLoginClick = async (formData: any) => {
         const { code, msg, data } = await APIS.LoginApi.login(formData)
@@ -44,7 +46,7 @@ const LoginForm = () => {
                         centered
                         activeKey="account"
                     >
-                        <Tabs.TabPane key={'account'} tab={'账号密码登录'} />
+                        <Tabs.TabPane key={'account'} tab={t('login.tab')} />
                     </Tabs>
                     <ProFormText
                         name="username"
