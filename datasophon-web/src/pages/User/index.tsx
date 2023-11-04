@@ -62,6 +62,7 @@ const UserList = () => {
       </Button>,
       <Popconfirm
         title="确认删除当前用户？"
+        key="confirm"
         onConfirm={() => {
           handleOnConfirmClick(record)
         }}
