@@ -1,5 +1,4 @@
 import { createBrowserRouter } from 'react-router-dom'
-import App from './App'
 import ClusterList from './pages/ClusterList'
 import ClusterManage from './pages/ClusterManage'
 import HostList from './pages/HostList'
@@ -8,11 +7,12 @@ import Login from './pages/Login'
 import UserList from './pages/User'
 import ClusterStorage from './pages/ClusterStorage'
 import ClusterFramework from './pages/ClusterFramework'
+import BaseLayout from './components/BaseLayout'
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <App/>,
+        element: <BaseLayout/>,
         children: [
             {
                 path: '/cluster',
