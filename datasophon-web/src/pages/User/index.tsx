@@ -1,9 +1,10 @@
-import { PageContainer, ProColumns, ProTable } from '@ant-design/pro-components'
-import request from '../../services/request'
-import { App, Button, Form, Popconfirm } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import UserModal from './UserModal';
 import { useRef, useState } from 'react';
+import { App, Button, Form, Popconfirm } from 'antd';
+import { PageContainer, ProColumns, ProTable } from '@ant-design/pro-components'
+import {  useTranslation } from 'react-i18next'
+import { PlusOutlined } from '@ant-design/icons';
+import request from '../../services/request'
+import UserModal from './UserModal';
 import { APIS } from '../../services/user';
 
 type UserType = {
@@ -22,6 +23,7 @@ enum ModalType {
 
 const UserList = () => {
   const { message } = App.useApp();
+  const { t } = useTranslation()
   const [userModalOpen, setUserModalOpen] = useState(false);
   const [ userModalType, setUserModalType] = useState('add')
   const [ currentRow, setCurrentRow ] = useState<any>()
@@ -32,22 +34,22 @@ const UserList = () => {
     valueType: 'indexBorder',
     width: 48,
   }, {
-    title: '用户名',
+    title: t('user.username'),
     dataIndex: 'username'
   }, {
-    title: '邮箱',
+    title: t('user.email'),
     search: false,
     dataIndex: 'email'
   }, {
-    title: '电话',
+    title: t('user.phone'),
     search: false,
     dataIndex: 'phone'
   }, {
-    title: '创建时间',
+    title: t('user.createTime'),
     search: false,
     dataIndex: 'createTime'
   },{
-    title: '操作',
+    title: t('user.operation'),
     valueType: 'option',
     key: 'option',
     render: (text, record, _, action) => [
@@ -58,10 +60,10 @@ const UserList = () => {
           handleOnModalTriggerClick(ModalType.Edit, record)
         }}
       >
-        编辑
+        {t('common.edit')}
       </Button>,
       <Popconfirm
-        title="确认删除当前用户？"
+        title={t('user.deleteConfirm')}
         key="confirm"
         onConfirm={() => {
           handleOnConfirmClick(record)
@@ -72,7 +74,7 @@ const UserList = () => {
             type="link"
             disabled={record.userType == 1 }
           >
-          删除
+          {t('common.delete')}
         </Button>
       </Popconfirm>
      ,
@@ -99,7 +101,7 @@ const UserList = () => {
   const handleOnConfirmClick = async (record: UserType) =>  {
     const { code, msg } = await APIS.UserApi.delete([record.id])
     if (code === 200) {
-      message.success('删除成功！')
+      message.success(`${t('common.delete')}${t('common.success')}！`)
       userActionRef.current?.reload()
     } else {
       message.error(msg)
@@ -113,7 +115,7 @@ const UserList = () => {
         ...values
       })
       if (code === 200) {
-        message.success('编辑成功')
+        message.success(`${t('common.edit')}${t('common.success')}！`)
         setUserModalOpen(false)
         userActionRef.current?.reload()
       } else {
@@ -122,7 +124,7 @@ const UserList = () => {
     } else {
       const { code, msg} = await APIS.UserApi.save(values)
       if (code === 200) {
-        message.success('新建成功')
+        message.success(`${t('common.newAdd')}${t('common.success')}！`)
         setUserModalOpen(false)
         userActionRef.current?.reload()
       } else {
@@ -131,7 +133,7 @@ const UserList = () => {
     }
   }
     return (
-        <PageContainer header={{ title: '用户管理'}}>
+        <PageContainer header={{ title: t('user.title')}}>
             <ProTable
                 actionRef={userActionRef}
                 columns={columns}
@@ -160,7 +162,7 @@ const UserList = () => {
                     }}
                     type="primary"
                   >
-                    新建
+                    {t('common.newAdd')}
                   </Button>,
                 ]}
                 toolbar={{ 
@@ -170,7 +172,7 @@ const UserList = () => {
             ></ProTable>
             <UserModal
               form={form}
-              title={userModalType === ModalType.Add ? '新建用户' : '编辑用户'}
+              title={userModalType === ModalType.Add ? `${t('common.newAdd')}${t('user.user')}` : `${t('common.edit')}${t('user.user')}`}
               open={userModalOpen}
               onOpenChange={setUserModalOpen}
               modalProps={{

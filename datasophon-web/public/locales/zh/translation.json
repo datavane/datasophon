@@ -1,8 +1,25 @@
 {
+    "common": {
+        "newAdd": "新建",
+        "edit": "编辑",
+        "delete": "删除",
+        "success": "成功",
+        "fail": "失败"
+    },
     "login": {
         "tab": "账号密码登录"
     },
     "cluster": {
         "title": "集群管理"
+    },
+    "user": {
+        "title": "用户管理",
+        "username": "用户名",
+        "user": "用户",
+        "email": "邮箱",
+        "phone": "电话",
+        "createTime": "创建时间",
+        "operation": "操作",
+        "deleteConfirm": "确认删除当前用户吗？"
     }
 }
