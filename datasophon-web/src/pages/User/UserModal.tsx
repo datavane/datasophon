@@ -1,15 +1,17 @@
 import { ModalForm, ModalFormProps, ProFormText } from '@ant-design/pro-components'
+import { useTranslation } from 'react-i18next';
 interface ModalType extends ModalFormProps {
     data?: any;
 }
 
 const UserModal = (props: ModalType) => {
+    const { t } = useTranslation()
     return (<ModalForm
     {...props}
     >
         <ProFormText
             name="username"
-            label="用户名"
+            label={t('user.username')}
             rules={[
                 {
                   required: true,
@@ -18,18 +20,18 @@ const UserModal = (props: ModalType) => {
         />
         <ProFormText
             name="email"
-            label="邮箱"
+            label={t('user.email')}
             rules={[
                 {
                   required: true,
                   pattern: new RegExp(/\w{3,}(\.\w+)*@[A-z0-9]+(\.[A-z]{2,5}){1,2}/),
-                  message: '请输入正确的邮箱地址'
+                  message: t('user.emailMessage')
                 },
               ]}
         />
         <ProFormText
             name="phone"
-            label="电话"
+            label={t('user.phone')}
             rules={[
                 {
                   required: true,
@@ -38,7 +40,7 @@ const UserModal = (props: ModalType) => {
         />
         <ProFormText.Password
             name="password"
-            label="用户密码"
+            label={t('user.password')}
             rules={[
                 {
                   required: true,

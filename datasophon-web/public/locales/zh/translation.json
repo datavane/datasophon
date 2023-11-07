@@ -24,8 +24,10 @@
         "username": "用户名",
         "user": "用户",
         "email": "邮箱",
+        "emailMessage": "请输入正确的邮箱地址",
         "phone": "电话",
         "createTime": "创建时间",
+        "password": "密码",
         "operation": "操作",
         "deleteConfirm": "确认删除当前用户吗？"
     }

@@ -24,7 +24,9 @@
         "username": "User Name",
         "user": "User",
         "email": "Email",
+        "emailMessage": "Please input the correct email address",
         "phone": "Phone",
+        "password": "Password",
         "createTime": "Create Time",
         "operation": "Operation",
         "deleteConfirm": "Confirm delete current User?"
