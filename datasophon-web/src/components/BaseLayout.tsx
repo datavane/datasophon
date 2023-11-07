@@ -1,20 +1,24 @@
 import { App, Layout, Menu } from 'antd'
 import type { MenuProps } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, Outlet } from 'react-router-dom'
 const { Header, Content } = Layout
-const items: MenuProps['items'] = [{
-    label: '集群管理',
-    key: 'cluster'
-}, {
-    label: '用户管理',
-    key: 'user'
-}]
+
 const BaseLayout = () => {
     const navigate = useNavigate()
+    const { t } = useTranslation()
+ 
+
+    const items: MenuProps['items'] = [{
+        label: t('cluster.title'),
+        key: 'cluster'
+    }, {
+        label: t('user.title'),
+        key: 'user'
+    }]
     const handleOnClick: MenuProps['onClick'] = ({key}) => {
         navigate(`/${key}`)
     };
-
     return (<App>
         {/* header */}
         <Header 
@@ -23,8 +27,6 @@ const BaseLayout = () => {
                 top: 0,
                 zIndex: 1,
                 width: '100%',
-                display: 'flex',
-                alignItems: 'center',
             }}
         >
             <Menu mode="horizontal" theme="dark" onClick={handleOnClick} items={items} defaultSelectedKeys={['cluster']}/>
