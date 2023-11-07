@@ -23,7 +23,7 @@ const ClusterList = () => {
                 }}>存储库管理</Button>,
                 <Button type="primary" key="3" onClick={() => {
                     handleOnNavigateClick('/cluster-framework')
-                }}>集群框架</Button>,
+                }}>{t('cluster.framework.title')}</Button>,
             ]
         }}>
             <Space>
