@@ -4,7 +4,7 @@ import qs from "qs"
 const axiosInstance = axios.create({
     baseURL: '/ddh',
     withCredentials: true,
-    timeout: 2000
+    timeout: 6000
 })
 
 /** 不再兼容非标准的数据结构 */

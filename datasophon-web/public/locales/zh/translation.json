@@ -10,7 +10,13 @@
         "tab": "账号密码登录"
     },
     "cluster": {
-        "title": "集群管理"
+        "title": "集群管理",
+        "framework": {
+            "title": "集群框架",
+            "serviceName": "服务",
+            "serviceVersion": "版本",
+            "serviceDesc": "描述"
+        }
     },
     "user": {
         "title": "用户管理",

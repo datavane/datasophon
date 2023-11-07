@@ -11,7 +11,13 @@ interface Resources {
       "tab": "Login with account and password"
     },
     "cluster": {
-      "title": "Cluster Manage"
+      "title": "Cluster Manage",
+      "framework": {
+        "title": "Cluster Framework",
+        "serviceName": "Name",
+        "serviceVersion": "Version",
+        "serviceDesc": "Description"
+      }
     },
     "user": {
       "title": "User Manage",
