@@ -17,11 +17,26 @@ const BaseLayout = () => {
 
     return (<App>
         {/* header */}
-        <Header>
+        <Header 
+            style={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 1,
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+            }}
+        >
             <Menu mode="horizontal" theme="dark" onClick={handleOnClick} items={items} defaultSelectedKeys={['cluster']}/>
         </Header>
         {/* content */}
-        <Content style={{ height: '100vh'}}>
+        <Content
+            style={{
+                position: 'fixed',
+                overflow: 'auto',
+                height: '100vh',
+                width: '100%',
+            }}>
             <Outlet />
         </Content>
     </App>)
