@@ -16,7 +16,8 @@ interface Resources {
         "title": "Cluster Framework",
         "serviceName": "Name",
         "serviceVersion": "Version",
-        "serviceDesc": "Description"
+        "serviceDesc": "Description",
+        "deleteConfirm": "Do you want to delete {{serviceName}}？"
       }
     },
     "user": {

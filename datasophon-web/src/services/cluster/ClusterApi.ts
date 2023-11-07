@@ -19,6 +19,18 @@ export class ClusterApi {
             ...p
         })
     }
+
+    public frameDelete (data?:any, opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `api/frame/service/delete/${data.id}`;
+        const p: any = {};
+        p.data = data;
+        return ajax.ajax({
+            ...opt,
+            method: 'GET',
+            url,
+            ...p
+        })
+    }
 }
 
 export default new ClusterApi()

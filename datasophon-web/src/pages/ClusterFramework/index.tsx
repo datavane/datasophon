@@ -2,7 +2,7 @@ import { PageContainer, ProTable, ProColumns } from '@ant-design/pro-components'
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { APIS } from '../../services/cluster';
-import { message } from 'antd';
+import { Button, Popconfirm, message } from 'antd';
 
 type ClusterFrameworkType = {
     id?: number;
@@ -40,10 +40,31 @@ const ClusterFramework = () => {
         {
             title: t('cluster.framework.serviceDesc'),
             dataIndex: 'serviceDesc'
-        }
+        },{
+            title: t('user.operation'),
+            valueType: 'option',
+            key: 'option',
+            render: (text, record, _, action) => [
+              <Popconfirm
+                title={t('cluster.framework.deleteConfirm', { serviceName: record.serviceName })}
+                key="confirm"
+                onConfirm={() => {
+                  handleOnConfirmClick(record)
+                }}
+              >
+                  <Button
+                    key="delete"
+                    type="link"
+                  >
+                  {t('common.delete')}
+                </Button>
+              </Popconfirm>
+             ,
+            ],
+          },
     ];
 
-    const initList = async () => {
+    const initList = async (activeKey) => {
         setLoading(true)
         const { code , data, msg} = await APIS.ClusterApi.frameList()
         if (code === 200) {
@@ -63,7 +84,7 @@ const ClusterFramework = () => {
                 })
             });
             setTabItems(items)
-            setActiveKey(items[0].key as string)
+            setActiveKey(activeKey ? activeKey: items[0].key as string)
             setLoading(false)
         } else {
             message.error(msg)
@@ -71,6 +92,16 @@ const ClusterFramework = () => {
         }
        
     }
+
+    const handleOnConfirmClick = async (record: ClusterFrameworkType) =>  {
+        const { code, msg } = await APIS.ClusterApi.frameDelete(record)
+        if (code === 200) {
+          message.success(`${t('common.delete')}${t('common.success')}！`)
+          initList(activeKey)
+        } else {
+          message.error(msg)
+        }
+      }
     useEffect(() => {
         initList()
     }, [])

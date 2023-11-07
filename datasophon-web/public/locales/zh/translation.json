@@ -15,7 +15,8 @@
             "title": "集群框架",
             "serviceName": "服务",
             "serviceVersion": "版本",
-            "serviceDesc": "描述"
+            "serviceDesc": "描述",
+            "deleteConfirm": "是否删除{{serviceName}}吗？"
         }
     },
     "user": {
