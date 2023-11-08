@@ -82,16 +82,19 @@ const ClusterList = () => {
                             cardActionProps: 'actions'
                         },
                         content: {
-                            render: (text, row) => (
-                                <div>
-                                    {/* 这里为多个管理员 */}
-                                    <div>集群管理员： {row.clusterManagerList.map(item => {
-                                        return item.username
-                                    })}</div>
-                                    <div>创建时间：{row.createTime}</div>
-                                </div>
-                                
-                            )
+                            render: (text, row) => {
+                                const user: Array<string> = []
+                                row.clusterManagerList.forEach(item => {
+                                    user.push(item.username)
+                                })
+                                return (
+                                    <div>
+                                        {/* 这里为多个管理员 */}
+                                        <div>集群管理员： {user.join(',')}</div>
+                                        <div>创建时间：{row.createTime}</div>
+                                    </div>
+                                )
+                            }
                         }
                     }
                   }
