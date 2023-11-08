@@ -1,14 +1,22 @@
-import { PageContainer, ProCard } from '@ant-design/pro-components'
-import { Space} from 'antd'
+import { PageContainer, ProList } from '@ant-design/pro-components'
 import { useNavigate } from 'react-router-dom'
-import { Button } from 'antd'
+import { Button, Tag } from 'antd'
 import { useTranslation } from 'react-i18next'
+import request from '../services/request'
+
+type ClusterListType = {
+    id: number;
+    clusterName: string;
+    clusterState: string;
+    clusterStateCode: number;
+    createTime: string;
+    clusterManagerList: Array<T>;
+}
+
+
 const ClusterList = () => {
     const navigate = useNavigate()
     const { t } = useTranslation()
-    const handleOnClick = () => {
-        navigate('/cluster/1')
-    }
 
     const handleOnNavigateClick = (path: string) => {
         navigate(path)
@@ -26,23 +34,75 @@ const ClusterList = () => {
                 }}>{t('cluster.framework.title')}</Button>,
             ]
         }}>
-            <Space>
-                <ProCard title="集群1" bordered onClick={handleOnClick}>
-                    <div>Card content</div>
-                    <div>Card content</div>
-                    <div>Card content</div>
-                </ProCard>
-                <ProCard title="集群2" bordered>
-                    <div>Card content</div>
-                    <div>Card content</div>
-                    <div>Card content</div>
-                </ProCard>
-                <ProCard title="集群3" bordered>
-                    <div>Card content</div>
-                    <div>Card content</div>
-                    <div>Card content</div>
-                </ProCard>
-            </Space>
+            <ProList<ClusterListType>
+                grid={{ gutter: 16, column: 3 }}
+                rowKey="id"
+                request={async (params) => {
+                    const { code, data } = await request.ajax({
+                        method: 'POST',
+                        url: '/api/cluster/list',
+                        data: {
+                            ...params,
+                            // 需要将 current 修改为 page
+                            page: params.current,
+                        }
+                    });
+                    return {
+                        data,
+                        success: code === 200
+                    }
+                  }}
+                  metas={
+                    {
+                        title: {
+                            dataIndex: 'clusterName'
+                        },
+                        subTitle: {
+                            dataIndex: 'clusterState',
+                            render: (text, row) => {
+                                const StatusMap: any = {
+                                    1: 'processing',
+                                    2: 'warning',
+                                    3: 'error'
+                                }
+                                return <Tag color={StatusMap[row.clusterStateCode]}>{row.clusterState}</Tag>
+                            }
+                        },
+                        actions: {
+                            render: () => {
+                                return (
+                                    <div style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-around'}}>
+                                        <Button type="link" key={1}>授权</Button>
+                                        <Button type="link" key={2}>编辑</Button>
+                                        <Button type="link" key={3}>配置</Button>
+                                        <Button type="link" key={4}>删除</Button>
+                                    </div>
+                                )
+                                },
+                            cardActionProps: 'actions'
+                        },
+                        content: {
+                            render: (text, row) => (
+                                <div>
+                                    {/* 这里为多个管理员 */}
+                                    <div>集群管理员： {row.clusterManagerList.map(item => {
+                                        return item.username
+                                    })}</div>
+                                    <div>创建时间：{row.createTime}</div>
+                                </div>
+                                
+                            )
+                        }
+                    }
+                  }
+                  onItem={(record: ClusterListType) => {
+                    return {
+                      onClick: () => {
+                        navigate(`/cluster/${record.id}`)
+                      },
+                    };
+                  }}
+            ></ProList>
         </PageContainer>
     )
 }
