@@ -41,6 +41,7 @@ import com.datasophon.common.Constants;
 import com.datasophon.common.cache.CacheUtils;
 import com.datasophon.common.command.DispatcherHostAgentCommand;
 import com.datasophon.common.command.HostCheckCommand;
+import com.datasophon.common.enums.CommandType;
 import com.datasophon.common.enums.InstallState;
 import com.datasophon.common.model.CheckResult;
 import com.datasophon.common.model.HostInfo;
@@ -451,9 +452,11 @@ public class InstallServiceImpl implements InstallService {
         String[] clusterHostIdArray = clusterHostIds.split(Constants.COMMA);
         List<ClusterHostDO> clusterHostList = hostService.getHostListByIds(Arrays.asList(clusterHostIdArray));
         Result result = null;
+
+        CommandType serviceCommandType = "start".equalsIgnoreCase(commandType) ? CommandType.START_SERVICE : CommandType.STOP_SERVICE;
         for (ClusterHostDO clusterHostDO : clusterHostList) {
             WorkerServiceMessage serviceMessage = new WorkerServiceMessage(
-                    clusterHostDO.getHostname(), clusterHostDO.getClusterId());
+                clusterHostDO.getHostname(), clusterHostDO.getClusterId(), serviceCommandType);
             try {
                 ActorRef actor =
                         ActorUtils.getLocalActor(WorkerStartActor.class, "workerStartActor");
