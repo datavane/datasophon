@@ -45,7 +45,7 @@ const UserList = () => {
     search: false,
     dataIndex: 'phone'
   }, {
-    title: t('user.createTime'),
+    title: t('common.createTime'),
     search: false,
     dataIndex: 'createTime'
   },{
