@@ -1,9 +1,9 @@
 import { LoginFormPage, ProConfigProvider, ProFormText } from '@ant-design/pro-components'
 import { APIS } from '../services/user'
-import { Tabs ,theme, App, Button } from 'antd'
+import { Tabs ,theme, App } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-import { useCookieState } from 'ahooks'
+import { useCookieState, useLocalStorageState } from 'ahooks'
 import { useTranslation } from 'react-i18next'
 import ChangeLanguage from '../i18n/ChangeLanguage'
 const LoginForm = () => {
@@ -11,13 +11,16 @@ const LoginForm = () => {
     const navigate = useNavigate();
     const { t } = useTranslation()
     const [, setSessionId] = useCookieState('sessionId')
+    const [, setUser] = useLocalStorageState('user')
     const handleOnLoginClick = async (formData: any) => {
-        const { code, msg, data } = await APIS.LoginApi.login(formData)
+        const { code, msg, data, userInfo } = await APIS.LoginApi.login(formData)
         if (code === 200) {
             // 登录成功跳转到主页
             navigate('/cluster')
             // cookie 存储用户信息, expires 逻辑复用原有逻辑，不做变更，24 小时过期
             setSessionId(data.sessionId, { expires: (() => new Date(+new Date() + 1000 * 60 * 60 * 24))(), })
+            // local 存储当前登录用户信息
+            setUser(userInfo)
         } else {
             message.error(msg)
         }
