@@ -2,7 +2,7 @@ import { PageContainer, ProList } from '@ant-design/pro-components'
 import { useNavigate } from 'react-router-dom'
 import { Button, Tag } from 'antd'
 import { useTranslation } from 'react-i18next'
-import request from '../services/request'
+import request from '../../services/request'
 import { useLocalStorageState } from 'ahooks'
 
 type ClusterListType = {
