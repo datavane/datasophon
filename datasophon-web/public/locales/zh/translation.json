@@ -4,7 +4,8 @@
         "edit": "编辑",
         "delete": "删除",
         "success": "成功",
-        "fail": "失败"
+        "fail": "失败",
+        "createTime": "创建时间"
     },
     "login": {
         "tab": "账号密码登录"
@@ -17,7 +18,10 @@
             "serviceVersion": "版本",
             "serviceDesc": "描述",
             "deleteConfirm": "是否删除{{serviceName}}吗？"
-        }
+        },
+        "auth": "授权",
+        "config": "配置",
+        "clusterAdministrator": "集群管理员"
     },
     "user": {
         "title": "用户管理",

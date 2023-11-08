@@ -5,7 +5,8 @@ interface Resources {
       "edit": "Edit",
       "delete": "Delete",
       "success": "Success",
-      "fail": "Fail"
+      "fail": "Fail",
+      "createTime": "Create Time"
     },
     "login": {
       "tab": "Login with account and password"
@@ -18,7 +19,10 @@ interface Resources {
         "serviceVersion": "Version",
         "serviceDesc": "Description",
         "deleteConfirm": "Do you want to delete {{serviceName}}？"
-      }
+      },
+      "auth": "Auth",
+      "config": "Config",
+      "clusterAdministrator": "Cluster Administrator"
     },
     "user": {
       "title": "User Manage",

@@ -80,9 +80,9 @@ const ClusterList = () => {
                                 return (
                                     <div style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-around'}}>
                                         {/* only admin */}
-                                        <Button type="link" key={1} disabled={!authDisabled}>授权</Button>
+                                        <Button type="link" key={1} disabled={!authDisabled}>{t('cluster.auth')}</Button>
                                         <Button type="link" key={2} disabled={clusterDisabled}>{t('common.edit')}</Button>
-                                        <Button type="link" key={3} disabled={clusterDisabled}>配置</Button>
+                                        <Button type="link" key={3} disabled={clusterDisabled}>{t('cluster.config')}</Button>
                                         <Button type="link" key={4} disabled={clusterDisabled}>{t('common.delete')}</Button>
                                     </div>
                                 )
@@ -98,8 +98,8 @@ const ClusterList = () => {
                                 return (
                                     <div>
                                         {/* 这里为多个管理员 */}
-                                        <div>集群管理员： {user.join(',')}</div>
-                                        <div>创建时间：{row.createTime}</div>
+                                        <div>{t('cluster.clusterAdministrator')}： {user.join(',')}</div>
+                                        <div>{t('common.createTime')}：{row.createTime}</div>
                                     </div>
                                 )
                             }
