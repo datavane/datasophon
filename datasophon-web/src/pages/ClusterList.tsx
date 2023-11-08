@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Tag } from 'antd'
 import { useTranslation } from 'react-i18next'
 import request from '../services/request'
+import { useLocalStorageState } from 'ahooks'
 
 type ClusterListType = {
     id: number;
@@ -13,10 +14,11 @@ type ClusterListType = {
     clusterManagerList: Array<T>;
 }
 
-
 const ClusterList = () => {
     const navigate = useNavigate()
     const { t } = useTranslation()
+
+    const [user,] = useLocalStorageState<any>('user')
 
     const handleOnNavigateClick = (path: string) => {
         navigate(path)
@@ -69,13 +71,19 @@ const ClusterList = () => {
                             }
                         },
                         actions: {
-                            render: () => {
+                            render: (text, row) => {
+                                const { userType } = user
+                                // 仅 admin 才可以授权
+                                const authDisabled = userType === 1
+                                // 集群状态：正在运行
+                                const clusterDisabled = row.clusterStateCode === 2
                                 return (
                                     <div style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-around'}}>
-                                        <Button type="link" key={1}>授权</Button>
-                                        <Button type="link" key={2}>编辑</Button>
-                                        <Button type="link" key={3}>配置</Button>
-                                        <Button type="link" key={4}>删除</Button>
+                                        {/* only admin */}
+                                        <Button type="link" key={1} disabled={!authDisabled}>授权</Button>
+                                        <Button type="link" key={2} disabled={clusterDisabled}>{t('common.edit')}</Button>
+                                        <Button type="link" key={3} disabled={clusterDisabled}>配置</Button>
+                                        <Button type="link" key={4} disabled={clusterDisabled}>{t('common.delete')}</Button>
                                     </div>
                                 )
                                 },
@@ -101,7 +109,10 @@ const ClusterList = () => {
                   onItem={(record: ClusterListType) => {
                     return {
                       onClick: () => {
-                        navigate(`/cluster/${record.id}`)
+                        // 待配置状态集群群无法进入
+                        if (record.clusterStateCode !== 1) {
+                            navigate(`/cluster/${record.id}`)
+                        }
                       },
                     };
                   }}
