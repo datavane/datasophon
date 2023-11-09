@@ -1,6 +1,6 @@
-import { PageContainer, ProList } from '@ant-design/pro-components'
+import { ActionType, PageContainer, ProList } from '@ant-design/pro-components'
 import { useNavigate } from 'react-router-dom'
-import { App, Button, Form, Tag, message } from 'antd'
+import { App, Button, Form, Tag } from 'antd'
 import { useTranslation } from 'react-i18next'
 import request from '../../services/request'
 import { useLocalStorageState } from 'ahooks'
@@ -30,7 +30,7 @@ type UserOptionType = {
 
 const ClusterList = () => {
     const [authModalOpen, setAuthModalOpen] = useState(false);
-    const clusterActionRef = useRef<any>();
+    const clusterActionRef = useRef<ActionType>();
     const navigate = useNavigate()
     const { t } = useTranslation()
     const [user,] = useLocalStorageState<any>('user')
