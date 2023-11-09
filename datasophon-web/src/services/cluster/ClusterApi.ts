@@ -31,6 +31,19 @@ export class ClusterApi {
             ...p
         })
     }
+
+    public saveClusterManager (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/api/cluster/user/saveClusterManager`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 }
 
 export default new ClusterApi()

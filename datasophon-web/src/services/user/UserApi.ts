@@ -43,6 +43,19 @@ export class UserApi {
             ...p
         })
     }
+
+    public all (form?:any, opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/api/user/all`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 }
 
 export default new UserApi()
