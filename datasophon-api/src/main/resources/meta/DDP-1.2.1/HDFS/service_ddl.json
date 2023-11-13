@@ -98,6 +98,58 @@
       }
     },
     {
+      "name": "DFSRouter",
+      "label": "DFSRouter",
+      "roleType": "master",
+      "runAs": {
+        "user": "hdfs",
+        "group": "hadoop"
+      },
+      "cardinality": "1+",
+      "sortNum": 4,
+      "logFile": "${hadoopLogDir}/hadoop-hdfs-dfsrouter-${host}.log",
+      "jmxPort": "27008",
+      "startRunner": {
+        "timeout": "60",
+        "program": "bin/hdfs",
+        "args": [
+          "--daemon",
+          "start",
+          "dfsrouter"
+        ]
+      },
+      "stopRunner": {
+        "timeout": "600",
+        "program": "bin/hdfs",
+        "args": [
+          "--daemon",
+          "stop",
+          "dfsrouter"
+        ]
+      },
+      "statusRunner": {
+        "timeout": "60",
+        "program": "control_hadoop.sh",
+        "args": [
+          "status",
+          "dfsrouter"
+        ]
+      },
+      "restartRunner": {
+        "timeout": "60",
+        "program": "control_hadoop.sh",
+        "args": [
+          "restart",
+          "namenode"
+        ]
+      },
+      "externalLink": {
+        "name": "DFSRouter Ui",
+        "label": "DFSRouter Ui",
+        "url": "http://${host}:50071"
+      }
+    },
+    {
       "name": "DataNode",
       "label": "DataNode",
       "roleType": "worker",
@@ -106,7 +158,7 @@
         "group": "hadoop"
       },
       "cardinality": "1+",
-      "sortNum": 4,
+      "sortNum": 5,
       "logFile": "${hadoopLogDir}/hadoop-hdfs-datanode-${host}.log",
       "jmxPort": "27002",
       "startRunner": {
@@ -198,6 +250,7 @@
           "hadoop.proxyuser.kyuubi.users",
           "hadoop.http.staticuser.user",
           "ha.zookeeper.quorum",
+          "hadoop.zk.address",
           "hadoop.tmp.dir",
           "net.topology.script.file.name",
           "hadoop.security.authentication",
@@ -233,11 +286,11 @@
           "dfs.namenode.handler.count",
           "dfs.datanode.data.dir",
           "dfs.nameservices",
-          "dfs.ha.namenodes.nameservice1",
-          "dfs.namenode.rpc-address.nameservice1.nn1",
-          "dfs.namenode.rpc-address.nameservice1.nn2",
-          "dfs.namenode.http-address.nameservice1.nn1",
-          "dfs.namenode.http-address.nameservice1.nn2",
+          "dfs.ha.namenodes.${dfs.nameservices}",
+          "dfs.namenode.rpc-address.${dfs.nameservices}.nn1",
+          "dfs.namenode.rpc-address.${dfs.nameservices}.nn2",
+          "dfs.namenode.http-address.${dfs.nameservices}.nn1",
+          "dfs.namenode.http-address.${dfs.nameservices}.nn2",
           "dfs.namenode.shared.edits.dir",
           "dfs.ha.fencing.methods",
           "dfs.ha.fencing.ssh.private-key-files",
@@ -264,7 +317,8 @@
           "net.topology.table.file.name",
           "net.topology.node.switch.mapping.impl",
           "dfs.datanode.address",
-          "dfs.datanode.http.address"
+          "dfs.datanode.http.address",
+          "dfs.router.monitor.namenode"
         ]
       },
       {
@@ -281,15 +335,27 @@
   },
   "parameters": [
     {
-      "name": "fs.defaultFS",
-      "label": "NameNode地址",
-      "description": "NameNode地址",
+      "name": "dfs.nameservices",
+      "label": "集群名称",
+      "description": "集群名称",
+      "configType": "ha",
       "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "hdfs://nameservice1"
+      "defaultValue": "nameservice1"
+    },
+    {
+      "name": "fs.defaultFS",
+      "label": "NameNode地址",
+      "description": "NameNode地址",
+      "required": true,
+      "type": "input",
+      "value": "hdfs://${dfs.nameservices}",
+      "configurableInWizard": true,
+      "hidden": true,
+      "defaultValue": "hdfs://${dfs.nameservices}"
     },
     {
       "name": "hadoop.tmp.dir",
@@ -503,20 +569,22 @@
       "hidden": false,
       "defaultValue": "${HADOOP_HOME}/logs"
     },
+
     {
-      "name": "dfs.nameservices",
-      "label": "集群名称",
-      "description": "集群名称",
+      "name": "ha.zookeeper.quorum",
+      "label": "zk地址",
+      "description": "zk地址",
       "configType": "ha",
       "required": true,
       "type": "input",
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "nameservice1"
+      "defaultValue": "${zkUrls}"
     },
+
     {
-      "name": "ha.zookeeper.quorum",
+      "name": "hadoop.zk.address",
       "label": "zk地址",
       "description": "zk地址",
       "configType": "ha",
@@ -540,63 +608,63 @@
       "defaultValue": "true"
     },
     {
-      "name": "dfs.ha.namenodes.nameservice1",
+      "name": "dfs.ha.namenodes.${dfs.nameservices}",
       "label": "NameNode节点",
       "description": "NameNode节点",
       "configType": "ha",
       "required": true,
       "type": "input",
-      "value": "",
+      "value": "nn1,nn2",
       "configurableInWizard": true,
-      "hidden": false,
+      "hidden": true,
       "defaultValue": "nn1,nn2"
     },
     {
-      "name": "dfs.namenode.rpc-address.nameservice1.nn1",
+      "name": "dfs.namenode.rpc-address.${dfs.nameservices}.nn1",
       "label": "nn1的rpc通信地址",
       "description": "nn1的rpc通信地址",
       "configType": "ha",
       "required": true,
       "type": "input",
-      "value": "",
+      "value": "${nn1}:8020",
       "configurableInWizard": true,
-      "hidden": false,
+      "hidden": true,
       "defaultValue": "${nn1}:8020"
     },
     {
-      "name": "dfs.namenode.rpc-address.nameservice1.nn2",
+      "name": "dfs.namenode.rpc-address.${dfs.nameservices}.nn2",
       "label": "nn2的rpc通信地址",
       "description": "nn2的rpc通信地址",
       "configType": "ha",
       "required": true,
       "type": "input",
-      "value": "",
+      "value": "${nn2}:8020",
       "configurableInWizard": true,
-      "hidden": false,
+      "hidden": true,
       "defaultValue": "${nn2}:8020"
     },
     {
-      "name": "dfs.namenode.http-address.nameservice1.nn1",
+      "name": "dfs.namenode.http-address.${dfs.nameservices}.nn1",
       "label": "nn1的http通信地址",
       "description": "nn1的rpc通信地址",
       "configType": "ha",
       "required": true,
       "type": "input",
-      "value": "",
+      "value": "${nn1}:9870",
       "configurableInWizard": true,
-      "hidden": false,
+      "hidden": true,
       "defaultValue": "${nn1}:9870"
     },
     {
-      "name": "dfs.namenode.http-address.nameservice1.nn2",
+      "name": "dfs.namenode.http-address.${dfs.nameservices}.nn2",
       "label": "nn2的http通信地址",
       "description": "nn2的rpc通信地址",
       "configType": "ha",
       "required": true,
       "type": "input",
-      "value": "",
+      "value": "${nn2}:9870",
       "configurableInWizard": true,
-      "hidden": false,
+      "hidden": true,
       "defaultValue": "${nn2}:9870"
     },
     {
@@ -606,10 +674,10 @@
       "required": true,
       "configType": "ha",
       "type": "input",
-      "value": "",
+      "value": "qjournal://${journalNode1}:8485;${journalNode2}:8485;${journalNode3}:8485/meta",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "qjournal://${journalNode1}:8485;${journalNode2}:8485;${journalNode3}:8485/nameservice1"
+      "defaultValue": "qjournal://${journalNode1}:8485;${journalNode2}:8485;${journalNode3}:8485/meta"
     },
     {
       "name": "dfs.ha.fencing.methods",
