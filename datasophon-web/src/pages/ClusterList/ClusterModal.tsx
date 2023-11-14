@@ -13,14 +13,17 @@ const ClusterModal = (props: ModalType) => {
             <ProFormText
                 name="clusterName"
                 label={t('cluster.clusterName')}
+                required
             ></ProFormText>
               <ProFormText
                 name="clusterCode"
                 label={t('cluster.clusterCode')}
+                required
             ></ProFormText>
             <ProFormSelect
                 name="clusterFrame"
                 label={t('cluster.clusterFramework')}
+                required
                 options={props.data?.frameworkOptions || []}
             ></ProFormSelect>
         </ModalForm>

@@ -101,12 +101,12 @@ const ClusterList = () => {
     }
 
     const frameList = async () => {
-        const options: { value: number; label: string }[] = []
+        const options: { value: string; label: string }[] = []
         const { code, data } = await APISCLUSTER.ClusterApi.frameList()
         if (code === 200) {
-            data.forEach((element: { id: number; frameCode: string }) => {
+            data.forEach((element: { frameCode: string }) => {
                 options.push({
-                    value: element.id,
+                    value: element.frameCode,
                     label: element.frameCode
                 })
             });
