@@ -3,13 +3,14 @@ import { BaseModalContext } from "./baseModalContextProvider";
 
 const modalCallbacks: any = {};
 export const useBaseModal = (modalId: string) => {
-    const baseContext = useContext(BaseModalContext)
+    const baseContext = useContext(BaseModalContext || null)
     if(!baseContext) {
         throw new Error("BaseModalContext not found");
     }
     const { state, dispatch } = baseContext
     const args: any = state[modalId]
-    const show = useCallback((args: any)=> {
+    const hiding: any = state.hiding? state.hiding[modalId] : null
+    const show = useCallback((args?: any)=> {
         return new Promise((resolve)=> {
             modalCallbacks[modalId] = resolve;
             dispatch({
@@ -28,7 +29,7 @@ export const useBaseModal = (modalId: string) => {
             delete modalCallbacks[modalId]
         }
     }, [modalId])
-    const hide = useCallback((force: boolean)=> {
+    const hide = useCallback((force?: boolean)=> {
         dispatch({
             type: 'base-modal/hide',
             payload: {
@@ -42,6 +43,7 @@ export const useBaseModal = (modalId: string) => {
         show,
         hide,
         visible: !!args,
-        resolve
+        resolve,
+        hiding
     }
 }

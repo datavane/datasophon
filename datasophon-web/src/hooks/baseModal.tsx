@@ -1,35 +1,28 @@
-import { ModalForm, ModalFormProps } from "@ant-design/pro-components"
 import { useBaseModal } from "./useBaseModal"
 import { ReactNode } from "react";
-import { Form } from "antd";
+import { Modal, ModalProps } from "antd";
 
-interface BaseModalType extends  ModalFormProps{
+interface BaseModalType extends  ModalProps{
     id: string;
     children: ReactNode,
-    data: any
+    data?: any
 }
 
 
-export const BaseModal: React.FC<BaseModalType> = ({ id, children, data, ...rest}) =>{
-    const modalForm = useBaseModal(id)
-    const [ form ] = Form.useForm();
+export const BaseModal: React.FC<BaseModalType> = ({ id, children, ...rest}) =>{
+    const modal = useBaseModal(id)
     return (
-        <ModalForm
-            form={form}
-            open={modalForm.visible}
-            onOpenChange={(visible) => {
-                if (!visible) {
-                    modalForm.hide(!false)
-                }
-            }}
-            onFinish={async () => {
-                modalForm.resolve({ ...data, ...form.getFieldsValue() })
-                modalForm.hide(!false)
+        <Modal
+            open={!modal.hiding}
+            onOk={() => { modal.hide()}}
+            onCancel={() => { modal.hide()}}
+            afterClose={() => {
+                modal.hide(true)
             }}
             {...rest}
         >
             {children}
-        </ModalForm>
+        </Modal>
     )
 }
 

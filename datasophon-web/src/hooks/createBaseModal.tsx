@@ -1,3 +1,4 @@
+import React from "react"
 import { useBaseModal } from "./useBaseModal"
 
 const CreateBaseModal = (modalId: string, Comp: React.ComponentType<any>) => {
