@@ -8,6 +8,7 @@ import ClusterAuthModal from './ClusterAuthModal'
 import { useRef, useState } from 'react'
 import { APIS } from '../../services/user'
 import { APIS as APISCLUSTER } from '../../services/cluster'
+import ClusterModal from './ClusterModal'
 
 type ClusterListType = {
     id: number;
@@ -19,8 +20,15 @@ type ClusterListType = {
 }
 
 type ClusterAuthType = {
-    id: number,
-    userIds: Array<number>
+    id: number;
+    userIds: Array<number>;
+}
+
+type ClusterType = {
+    id: number;
+    frameCode: string;
+    frameName: string;
+    clusterFrame: string;
 }
 
 type UserOptionType = {
@@ -30,12 +38,15 @@ type UserOptionType = {
 
 const ClusterList = () => {
     const [authModalOpen, setAuthModalOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
     const clusterActionRef = useRef<ActionType>();
     const navigate = useNavigate()
     const { t } = useTranslation()
     const [user,] = useLocalStorageState<any>('user')
     const [ formAuth ] = Form.useForm<ClusterAuthType>();
+    const [ form ] = Form.useForm<ClusterType>();
     const [adminOptions, setAdminOptions] = useState<UserOptionType[]>()
+    const [frameworkOptions, setFrameworkOptions] = useState<UserOptionType[]>()
     const [clusterId, setClusterId] = useState<number>()
     const { message } = App.useApp();
 
@@ -59,6 +70,19 @@ const ClusterList = () => {
             id: row.id
         })
     }
+
+    const handleOnClusterModalClick = async (row?: ClusterListType) => {
+        setModalOpen(true)
+        setClusterId(row?.id)
+        // 初始化进群框架列表
+        const list = await frameList()
+        setFrameworkOptions(list)
+        if(row?.id) {
+            form.setFieldsValue({
+                ...row
+            })
+        }
+    }
     
     const userApiAll = async () => {
         const options: UserOptionType[] = []
@@ -68,6 +92,20 @@ const ClusterList = () => {
                 options.push({
                     value: element.id,
                     label: element.username
+                })
+            });
+        }
+        return options
+    }
+
+    const frameList = async () => {
+        const options: { value: number; label: string }[] = []
+        const { code, data } = await APISCLUSTER.ClusterApi.frameList()
+        if (code === 200) {
+            data.forEach((element: { id: number; frameCode: string }) => {
+                options.push({
+                    value: element.id,
+                    label: element.frameCode
                 })
             });
         }
@@ -84,11 +122,36 @@ const ClusterList = () => {
             message.error(msg)
         }
     }
+    const handleOnFinishClick = async (values: any) => {
+        if (clusterId) {
+            // 编辑
+            const { code, msg } = await APISCLUSTER.ClusterApi.clusterUpdate({ ...values, id: clusterId})
+            if (code === 200) {
+                message.success(t('cluster.editSuccessFul'))
+                clusterActionRef.current?.reload()
+                setModalOpen(false)
+            } else {
+                message.error(msg)
+            }
+        } else {
+            // 创建
+            const { code, msg } = await APISCLUSTER.ClusterApi.clusterSave(values)
+            if (code === 200) {
+                message.success(t('cluster.createSuccessFul'))
+                clusterActionRef.current?.reload()
+                setModalOpen(false)
+            } else {
+                message.error(msg)
+            }
+        }
+    }
     return (
         <PageContainer header={{
             title: t('cluster.title'),
             extra: [
-                <Button type="primary" key="1">新建集群</Button>,
+                <Button type="primary" key="1" onClick={() => {
+                    handleOnClusterModalClick()
+                }}>新建集群</Button>,
                 <Button type="primary" key="2" onClick={() => {
                     handleOnNavigateClick('/cluster-storage')
                 }}>存储库管理</Button>,
@@ -145,7 +208,9 @@ const ClusterList = () => {
                                         <Button type="link" key={1} disabled={!authDisabled} onClick={() => {
                                             handleOnAuthClick(row)
                                         }}>{t('cluster.auth')}</Button>
-                                        <Button type="link" key={2} disabled={clusterDisabled}>{t('common.edit')}</Button>
+                                        <Button type="link" key={2} disabled={clusterDisabled} onClick={() => {
+                                            handleOnClusterModalClick(row)
+                                        }}>{t('common.edit')}</Button>
                                         <Button type="link" key={3} disabled={clusterDisabled}>{t('cluster.config')}</Button>
                                         <Button type="link" key={4} disabled={clusterDisabled}>{t('common.delete')}</Button>
                                     </div>
@@ -198,7 +263,23 @@ const ClusterList = () => {
                 }}
                 onFinish={handleOnAuthFinishClick}
             ></ClusterAuthModal>
-            {/* 编辑 */}
+            {/* 编辑 and 创建 */}
+            <ClusterModal
+                form={form}
+                open={modalOpen}
+                title={clusterId ? t('cluster.editCluster') : t('cluster.createCluster')}
+                onOpenChange={setModalOpen}
+                data={{
+                    frameworkOptions
+                }}
+                modalProps={{
+                    // 复杂场景慎用，会引起性能问题
+                    destroyOnClose: true,
+                    // https://stackoverflow.com/questions/61056421/warning-instance-created-by-useform-is-not-connect-to-any-form-element
+                    forceRender: true
+                }}
+                onFinish={handleOnFinishClick}
+            ></ClusterModal>
             {/* 配置 */}
             {/* 删除 */}
         </PageContainer>

@@ -6,13 +6,15 @@ interface Resources {
       "delete": "Delete",
       "success": "Success",
       "fail": "Fail",
-      "createTime": "Create Time"
+      "createTime": "Create Time",
+      "name": "Name"
     },
     "login": {
       "tab": "Login with account and password"
     },
     "cluster": {
       "title": "Cluster Manage",
+      "cluster": "Cluster",
       "framework": {
         "title": "Cluster Framework",
         "serviceName": "Name",
@@ -22,7 +24,14 @@ interface Resources {
       },
       "auth": "Auth",
       "config": "Config",
-      "clusterAdministrator": "Cluster Administrator"
+      "clusterAdministrator": "Cluster Administrator",
+      "clusterName": "Cluster Name",
+      "clusterCode": "Cluster Code",
+      "clusterFramework": "Cluster Framework",
+      "createCluster": "Create Cluster",
+      "editCluster": "Edit Cluster",
+      "editSuccessFul": "edit successful",
+      "createSuccessFul": "create successful"
     },
     "user": {
       "title": "User Manage",

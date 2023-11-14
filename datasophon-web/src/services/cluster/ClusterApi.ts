@@ -44,6 +44,30 @@ export class ClusterApi {
         })
     }
 
+    public clusterSave (data?:any, opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `api/cluster/save`;
+        const p: any = {};
+        p.data = data;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public clusterUpdate (data?:any, opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `api/cluster/update`;
+        const p: any = {};
+        p.data = data;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 }
 
 export default new ClusterApi()
