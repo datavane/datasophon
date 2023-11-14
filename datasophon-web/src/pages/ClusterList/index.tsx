@@ -1,6 +1,6 @@
 import { ActionType, PageContainer, ProList } from '@ant-design/pro-components'
 import { useNavigate } from 'react-router-dom'
-import { App, Button, Form, Tag } from 'antd'
+import { App, Button, Form, Tag, Modal } from 'antd'
 import { useTranslation } from 'react-i18next'
 import request from '../../services/request'
 import { useLocalStorageState } from 'ahooks'
@@ -9,6 +9,7 @@ import { useRef, useState } from 'react'
 import { APIS } from '../../services/user'
 import { APIS as APISCLUSTER } from '../../services/cluster'
 import ClusterModal from './ClusterModal'
+import { ExclamationCircleFilled } from '@ant-design/icons'
 
 type ClusterListType = {
     id: number;
@@ -49,6 +50,7 @@ const ClusterList = () => {
     const [frameworkOptions, setFrameworkOptions] = useState<UserOptionType[]>()
     const [clusterId, setClusterId] = useState<number>()
     const { message } = App.useApp();
+    const { confirm } = Modal
 
     const handleOnNavigateClick = (path: string) => {
         navigate(path)
@@ -145,6 +147,28 @@ const ClusterList = () => {
             }
         }
     }
+
+    const handleOnClusterDeleteClick = async (row?: ClusterListType) => {
+        confirm({
+            title: '提示',
+            icon: <ExclamationCircleFilled />,
+            content: '确定要删除当前集群？',
+            okType: 'danger',
+            onOk() {
+               return APISCLUSTER.ClusterApi.clusterDelete([row?.id]).then((res: { code: number })=> {
+                if (res.code === 200) {
+                    message.success('删除成功')
+                    clusterActionRef.current?.reload()
+                } else {
+                    message.success('删除失败')
+                }
+               })
+            },
+            onCancel() {
+              return 
+            },
+          });
+    }
     return (
         <PageContainer header={{
             title: t('cluster.title'),
@@ -212,7 +236,9 @@ const ClusterList = () => {
                                             handleOnClusterModalClick(row)
                                         }}>{t('common.edit')}</Button>
                                         <Button type="link" key={3} disabled={clusterDisabled}>{t('cluster.config')}</Button>
-                                        <Button type="link" key={4} disabled={clusterDisabled}>{t('common.delete')}</Button>
+                                        <Button type="link" key={4} disabled={clusterDisabled} onClick={() => {
+                                            handleOnClusterDeleteClick(row)
+                                        }}>{t('common.delete')}</Button>
                                     </div>
                                 )
                                 },

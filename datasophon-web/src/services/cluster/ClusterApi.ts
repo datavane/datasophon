@@ -68,6 +68,18 @@ export class ClusterApi {
         })
     }
 
+    public clusterDelete (data?:any, opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `api/cluster/delete`;
+        const p: any = {};
+        p.data = data;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 }
 
 export default new ClusterApi()
