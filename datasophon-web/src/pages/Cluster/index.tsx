@@ -48,7 +48,9 @@ const Cluster = () => {
             // 缺一个面包屑导航
             extra: [
                 <Button type="primary" key="1" onClick={handleOnClick}>主机管理</Button>,
-                <Button type="primary" key="2">告警管理</Button>,
+                <Button type="primary" key="2" onClick={() => {
+                    navigate(`/cluster/${clusterId}/alarm`)
+                }}>告警管理</Button>,
                 <Button type="primary" key="3">系统管理</Button>,
                 <Dropdown
                     key="dropdown"

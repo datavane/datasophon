@@ -104,7 +104,6 @@ export class WrappedFetch {
 }
 
 axiosInstance.interceptors.response.use((response) => {
-  console.log(response)
   return response
 }, ({response: {status}}) => {
   if( status === 401) {

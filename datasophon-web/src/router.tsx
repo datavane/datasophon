@@ -8,6 +8,7 @@ import ClusterStorage from './pages/ClusterStorage'
 import ClusterFramework from './pages/ClusterFramework'
 import BaseLayout from './components/BaseLayout'
 import Cluster from './pages/Cluster'
+import Alarm from './pages/Alarm'
 
 const router = createBrowserRouter([
     {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
             {
                 path: '/cluster/:clusterId/host',
                 element: <HostList/>
+            },
+            {
+                path: '/cluster/:clusterId/alarm',
+                element: <Alarm/>
             },
             {
                 path: '/cluster/:clusterId/service/:serviceId',
