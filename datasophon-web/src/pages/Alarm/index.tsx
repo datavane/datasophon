@@ -19,7 +19,7 @@ const Alarm = () => {
     const handleOnTabChange = (activeKey: string) => {
         SetSearchParams({ activeKey })
     }
-    const activeKey: string = searchParams.get('activeKey') || ''
+    const activeKey: string = searchParams.get('activeKey') || 'alarm-group'
     const activeComponent= tabMap[activeKey].component
     return (<PageContainer
         header={{ title: '告警管理'}}
@@ -38,7 +38,11 @@ const Alarm = () => {
         ]}
         onTabChange={handleOnTabChange}
     >
-        {activeComponent}
+        <div  style={{
+            height: '100vh'
+        }}>
+            {activeComponent}
+        </div>
     </PageContainer>)
 }
 
