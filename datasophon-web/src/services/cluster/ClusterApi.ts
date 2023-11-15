@@ -20,6 +20,18 @@ export class ClusterApi {
         })
     }
 
+    public frameServiceList (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/api/frame/service/list`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
     public frameDelete (data?:any, opt?:any): AjaxPromise<string>  {
         const url = this.$basePath + `api/frame/service/delete/${data.id}`;
         const p: any = {};
@@ -91,6 +103,19 @@ export class ClusterApi {
             ...p
         })
     }
+
+    public alarmGroupSave (data?:any, opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/alert/group/save`;
+        const p: any = {};
+        p.data = data;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 
 }
 
