@@ -266,7 +266,7 @@ const ClusterList = () => {
                       onClick: () => {
                         // 待配置状态集群群无法进入
                         if (record.clusterStateCode !== 1) {
-                            navigate(`/cluster/${record.id}`)
+                            navigate(`/cluster/${record.id}?clusterName=${record.clusterName}`)
                         }
                       },
                     };
