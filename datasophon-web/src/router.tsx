@@ -27,7 +27,7 @@ const router = createBrowserRouter([
                 element: <HostList/>
             },
             {
-                path: '/cluster/:clusterId/service',
+                path: '/cluster/:clusterId/service/:serviceId',
                 element: <Service/>
             },
             {

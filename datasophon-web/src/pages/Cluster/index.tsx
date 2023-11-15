@@ -1,18 +1,46 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { Button, Space, Dropdown } from 'antd'
+import { Button, Space, Dropdown, App } from 'antd'
 import { PageContainer, ProCard } from '@ant-design/pro-components'
 import { EllipsisOutlined } from '@ant-design/icons'
 import useSearchParams from '../../hooks/useSearchParams'
+import { APIS } from '../../services/cluster'
+import { useCallback, useEffect, useState } from 'react'
+
+type CLusterType = {
+    id: number;
+    serviceName: string;
+    serviceStateCode: number;
+}
+
 const Cluster = () => {
     const { clusterId } = useParams()
     const clusterName = useSearchParams('clusterName')
+    const [clusterList, setClusterList] = useState<Array<CLusterType>>()
+    const { message } = App.useApp()
     const navigate = useNavigate()
     const handleOnClick = () => {
         navigate('/cluster/1/host')
     }
-    const handleOnServiceClick = () => {
-        navigate('/cluster/1/service')
+    const handleOnServiceClick = (id: number) => {
+        navigate(`/cluster/${clusterId}/service/${id}`)
     }
+
+    const clusterServiceList =useCallback(async (clusterId:string) => {
+        const { code, data, msg } = await APIS.ClusterApi.clusterServiceList({clusterId})
+        if (code === 200) {
+            setClusterList(data)
+        } else {
+            message.error(msg)
+        }
+    }, [message])
+
+    useEffect(()=> {
+        if (clusterId) {
+            clusterServiceList(clusterId)
+        }
+        // TODO: // 容错处理
+    }, [clusterId, clusterServiceList])
+
     return (<PageContainer
         title={clusterName}
         header={{
@@ -49,21 +77,20 @@ const Cluster = () => {
         }}
         >
             <Space>
-                <ProCard bordered onClick={handleOnServiceClick}>
-                    <div> {clusterId}Card content</div>
-                    <div>Card content</div>
-                    <div>Card content</div>
-                </ProCard>
-                <ProCard bordered>
-                    <div>Card content</div>
-                    <div>Card content</div>
-                    <div>Card content</div>
-                </ProCard>
-                <ProCard bordered>
-                    <div>Card content</div>
-                    <div>Card content</div>
-                    <div>Card content</div>
-                </ProCard>
+                {
+                    clusterList?.map((item) => {
+                        return (
+                            <ProCard 
+                                key={item.id}
+                                bordered
+                                onClick={() => {
+                                handleOnServiceClick(item.id)
+                            }}>
+                                <div>{item.serviceName}</div>
+                            </ProCard>
+                        )
+                    })
+                }
             </Space>
         </PageContainer>)
 }

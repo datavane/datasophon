@@ -80,6 +80,18 @@ export class ClusterApi {
         })
     }
 
+    public clusterServiceList (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/service/instance/list`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 }
 
 export default new ClusterApi()
