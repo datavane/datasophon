@@ -1,5 +1,6 @@
 import axios from "axios"
 import qs from "qs"
+import { redirect } from "react-router-dom";
 
 const axiosInstance = axios.create({
     baseURL: '/ddh',
@@ -39,10 +40,10 @@ export interface WrappedFetchParams extends ExtraFetchParams {
     header?: any;
     /** path data */
     path?: any;
-  }
+}
 
   
-  export class WrappedFetch {
+export class WrappedFetch {
     /** ajax 方法 */
     public ajax = (
       { method, url, data, form, query, header, extra, headers }: WrappedFetchParams,
@@ -102,6 +103,15 @@ export interface WrappedFetchParams extends ExtraFetchParams {
     }
   }
 }
+
+axiosInstance.interceptors.response.use((response) => {
+  console.log(response)
+  return response
+}, ({response: {status}}) => {
+  if( status === 401) {
+    window.location.replace('/login')
+  }
+})
 
 export default new WrappedFetch();
 
