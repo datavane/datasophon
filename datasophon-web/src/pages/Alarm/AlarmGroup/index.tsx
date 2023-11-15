@@ -1,63 +1,47 @@
 import { ProTable, ProColumns } from '@ant-design/pro-components'
 import request from '../../../services/request';
+import { useParams } from 'react-router-dom';
 
 type AlarmGroupType = {
     id: number;
-    alertQuotaName: string;
-    compareMethod: string;
-    alertThreshold: number;
     alertGroupName: string;
-    noticeGroupId: number;
-    quotaStateCode: number;
-    quotaState: string;
+    alertGroupCategory: string;
+    alertQuotaNum: number;
 }
 
 const AlarmGroup = () => {
+    const { clusterId } = useParams()
     const columns: ProColumns<AlarmGroupType>[] = [
     { 
         dataIndex: 'index',
         valueType: 'indexBorder',
         width: 48
     },{
-        title: '指标名称',
-        dataIndex: 'alertQuotaName'
-    },
-    {
-        title: '比较方式',
-        dataIndex: 'compareMethod',
-        search: false
-    },
-    {
-        title: '告警阈值',
-        dataIndex: 'alertThreshold',
-        search: false
-    },
-    {
-        title: '告警组',
+        title: '名称',
         dataIndex: 'alertGroupName'
     },
     {
-        title: '通知组',
-        dataIndex: 'noticeGroupId',
+        title: '模板类别',
+        dataIndex: 'alertGroupCategory',
         search: false
     },
     {
-        title: '状态',
-        dataIndex: 'quotaState',
+        title: '告警指标数',
+        dataIndex: 'alertQuotaNum',
         search: false
-    },
-    ]
+    },]
     return (<ProTable
         columns={columns}
         rowKey="id"
         request={async (params) => {
             const { code, data, total } = await request.ajax({
                 method: 'POST',
-                url: '/cluster/alert/quota/list',
+                url: '/alert/group/list',
                 form: {
                     ...params,
                     // 需要将 current 修改为 page
                     page: params.current,
+                    clusterId
                 }
             });
             return {
