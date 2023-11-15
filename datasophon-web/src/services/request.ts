@@ -1,6 +1,5 @@
 import axios from "axios"
 import qs from "qs"
-import { redirect } from "react-router-dom";
 
 const axiosInstance = axios.create({
     baseURL: '/ddh',
