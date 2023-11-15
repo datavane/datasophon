@@ -13,12 +13,20 @@ const AlarmGroupModal = (props: ModalType) => {
             <ProFormText
                 name="alertGroupName"
                 label="告警组名称"
-                required
+                rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
             ></ProFormText>
             <ProFormSelect
                 name="alertGroupCategory"
                 label="告警组类别"
-                required
+                rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
                 options={props.data?.groupOptions || []}
             ></ProFormSelect>
         </ModalForm>

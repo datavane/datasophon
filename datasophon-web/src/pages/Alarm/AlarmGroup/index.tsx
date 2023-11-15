@@ -5,7 +5,7 @@ import { App, Button, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import AlarmGroupModal from './AlarmGroupModal';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { APIS } from '../../../services/cluster';
 
 type AlarmGroupType = {
