@@ -21,8 +21,9 @@ const Cluster = () => {
     const handleOnClick = () => {
         navigate('/cluster/1/host')
     }
-    const handleOnServiceClick = (id: number) => {
-        navigate(`/cluster/${clusterId}/service/${id}`)
+    const handleOnServiceClick = (id: number, serviceName: string) => {
+        // TODO: 暂时以页面的形式跳转，后期需改造为 double click 弹窗的形式
+        navigate(`/cluster/${clusterId}/service/${id}?serviceName=${serviceName}`)
     }
 
     const clusterServiceList =useCallback(async (clusterId:string) => {
@@ -84,7 +85,7 @@ const Cluster = () => {
                                 key={item.id}
                                 bordered
                                 onClick={() => {
-                                handleOnServiceClick(item.id)
+                                handleOnServiceClick(item.id, item.serviceName)
                             }}>
                                 <div>{item.serviceName}</div>
                             </ProCard>
