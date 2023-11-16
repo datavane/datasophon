@@ -2,11 +2,11 @@
   "name": "FLINK",
   "label": "Flink",
   "description": "实时计算引擎",
-  "version": "1.15.2",
+  "version": "1.17.1",
   "sortNum": 6,
   "dependencies":[],
-  "packageName": "flink-1.15.2.tar.gz",
-  "decompressPackageName": "flink-1.15.2",
+  "packageName": "flink-1.17.1.tar.gz",
+  "decompressPackageName": "flink-1.17.1",
   "runAs":"root",
   "roles": [
     {
@@ -32,7 +32,8 @@
           "high-availability.zookeeper.quorum",
           "high-availability.zookeeper.client.acl",
           "high-availability.zookeeper.path.root",
-          "custom.flink.conf.yaml"
+          "custom.flink.conf.yaml",
+          "classloader.check-leaked-classloader"
         ]
       }
     ]
@@ -140,6 +141,17 @@
       "configurableInWizard": true,
       "hidden": false,
       "defaultValue": ""
+    },
+    {
+      "name": "classloader.check-leaked-classloader",
+      "label": "禁用classloader.check",
+      "description": "禁用classloader.check",
+      "required": true,
+      "type": "switch",
+      "value": false,
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": false
     }
   ]
 }
