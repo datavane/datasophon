@@ -11,6 +11,7 @@
     "interface": "i18next-resources-for-ts interface -i ./public/locales/en -o ./src/@types/resources.d.ts"
   },
   "dependencies": {
+    "@ahooksjs/use-url-state": "^3.5.1",
     "@ant-design/icons": "^5.2.6",
     "@ant-design/pro-components": "^2.6.29",
     "ahooks": "^3.7.8",

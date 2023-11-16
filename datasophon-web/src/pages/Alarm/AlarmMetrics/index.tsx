@@ -1,9 +1,10 @@
 import { ProTable, ProColumns } from '@ant-design/pro-components'
 import request from '../../../services/request';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { SetStateAction, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { APIS } from '../../../services/cluster';
 import { message } from 'antd';
+import useUrlState from '@ahooksjs/use-url-state';
 
 type AlarmMetricsType = {
     id: number;
@@ -18,7 +19,7 @@ type AlarmMetricsType = {
 
 const AlarmMetrics = () => {
     const { clusterId } = useParams()
-    const [searchParams,] = useSearchParams()
+    const [urlState, setUrlState] = useUrlState()
     const [alarmGroup, setAlarmGroup] = useState<[]>([])
     const columns: ProColumns<AlarmMetricsType>[] = [
     { 
@@ -44,7 +45,7 @@ const AlarmMetrics = () => {
         dataIndex: 'alertGroupName',
         valueType: 'select',
         fieldProps: {
-            options: alarmGroup
+            options: alarmGroup,
         }
     },
     {
@@ -77,7 +78,6 @@ const AlarmMetrics = () => {
             message.error(msg)
         }
     }, [clusterId])
-
     useEffect(()=>{
         alarmGroupList()
     }, [alarmGroupList])
@@ -86,6 +86,9 @@ const AlarmMetrics = () => {
         columns={columns}
         rowKey="id"
         request={async (params) => {
+            if (params.alertGroupName) {
+                setUrlState({alertGroupId: params.alertGroupName})
+            }
             const { code, data, total } = await request.ajax({
                 method: 'POST',
                 url: '/cluster/alert/quota/list',
@@ -94,7 +97,7 @@ const AlarmMetrics = () => {
                     // 需要将 current 修改为 page
                     page: params.current,
                     clusterId,
-                    alertGroupId: searchParams.get('alertGroupId') || params.alertGroupName || ''
+                    alertGroupId: params.alertGroupName || ''
                 }
             });
             return {
