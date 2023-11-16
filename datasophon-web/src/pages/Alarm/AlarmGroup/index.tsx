@@ -1,7 +1,7 @@
 import { ProTable, ProColumns, ActionType } from '@ant-design/pro-components'
 import request from '../../../services/request';
 import { useParams } from 'react-router-dom';
-import { App, Button, Form } from 'antd';
+import { App, Button, Form, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import AlarmGroupModal from './AlarmGroupModal';
@@ -41,11 +41,52 @@ const AlarmGroup = () => {
         title: '告警指标数',
         dataIndex: 'alertQuotaNum',
         search: false
-    },]
+    },{
+        title: t('user.operation'),
+        valueType: 'option',
+        key: 'option',
+        render: (text, record, _, action) => [
+          <Button
+            key="editable"
+            type="link"
+            onClick={() => {
+                handleOnNavigateClick(record)
+            }}
+          >
+            查看告警指标
+          </Button>,
+          <Popconfirm
+            title="确定删除吗？"
+            key="confirm"
+            onConfirm={() => {
+                handleOnConfirmClick(record)
+            }}
+          >
+              <Button
+                key="delete"
+                type="link"
+              >
+              {t('common.delete')}
+            </Button>
+          </Popconfirm>
+         ,
+        ],
+      },]
     const handleOnModalTriggerClick = async () => {
         const options = await frameServiceList()
         setGroupOptions(options)
         setModalOpen(true)
+    }
+    const handleOnNavigateClick = () => {}
+    const handleOnConfirmClick =  async (record: AlarmGroupType) => {
+        const { code, msg } = await APIS.ClusterApi.alarmGroupDelete([record.id])
+        if (code === 200) {
+            alarmActionRef.current?.reload()
+            message.success('删除成功')
+        } else {
+            message.error(msg)
+        }
+
     }
     const handleOnFinishClick = async (values: any) => {
         const { code, msg} = await APIS.ClusterApi.alarmGroupSave({...values, clusterId})

@@ -116,6 +116,18 @@ export class ClusterApi {
         })
     }
 
+    public alarmGroupDelete (data?:any, opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/alert/group/delete`;
+        const p: any = {};
+        p.data = data;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 
 }
 
