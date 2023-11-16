@@ -32,13 +32,7 @@ const BaseLayout = () => {
             <Menu mode="horizontal" theme="dark" onClick={handleOnClick} items={items} defaultSelectedKeys={['cluster']}/>
         </Header>
         {/* content */}
-        <Content
-            style={{
-                position: 'fixed',
-                overflow: 'auto',
-                height: '100vh',
-                width: '100%',
-            }}>
+        <Content>
             <Outlet />
         </Content>
     </App>)
