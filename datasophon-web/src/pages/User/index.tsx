@@ -134,6 +134,7 @@ const UserList = () => {
   }
     return (
         <PageContainer header={{ title: t('user.title')}}>
+          {/* https://github.com/ant-design/pro-components/issues/6556 */}
             <ProTable
                 actionRef={userActionRef}
                 columns={columns}
