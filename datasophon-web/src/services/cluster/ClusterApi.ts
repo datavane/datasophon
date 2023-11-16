@@ -140,6 +140,18 @@ export class ClusterApi {
         })
     }
 
+    public getServiceRoleByServiceName (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/api/frame/service/role/getServiceRoleByServiceName`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 }
 
 export default new ClusterApi()
