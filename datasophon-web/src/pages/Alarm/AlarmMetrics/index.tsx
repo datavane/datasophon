@@ -88,7 +88,7 @@ const AlarmMetrics = () => {
             {t('common.edit')}
           </Button>,
           <Popconfirm
-            title={t('user.deleteConfirm')}
+            title="确认删除吗？"
             key="confirm"
             onConfirm={() => {
               handleOnConfirmClick(record)
@@ -121,7 +121,15 @@ const AlarmMetrics = () => {
           }
     }
 
-    const handleOnConfirmClick = (record: AlarmMetricsType) => {}
+    const handleOnConfirmClick = async (record: AlarmMetricsType) => {
+      const { code, msg } = await APIS.ClusterApi.alertQuotaDelete([record.id])
+      if (code === 200) {
+        message.success(`${t('common.delete')}${t('common.success')}！`)
+        alarmActionRef.current?.reload()
+      } else {
+        message.error(msg)
+      }
+    }
 
     const getServiceRoleByServiceName = async (clusterId: string | undefined, alertGroupId: string)=> {
       const options: any = []
@@ -248,7 +256,12 @@ const AlarmMetrics = () => {
             onOpenChange={setModalOpen}
             data={{
               alarmGroup,
-              serviceRoleName
+              serviceRoleName,
+              onAlertGroupIdChange:  async (value: string) => {
+                const option = await getServiceRoleByServiceName(clusterId, value)
+                setServiceRoleName(option)
+                form.setFieldValue('serviceRoleName', option[0].value)
+              }
             }}
             modalProps={{
                 // 复杂场景慎用，会引起性能问题
@@ -257,12 +270,6 @@ const AlarmMetrics = () => {
                 forceRender: true
             }}
             onFinish={handleOnFinishClick}
-            onAlertGroupIdChange={ async (value) => {
-              const option = await getServiceRoleByServiceName(clusterId, value)
-              setServiceRoleName(option)
-              form.setFieldValue('serviceRoleName', option[0].value)
-
-            }}
         ></AlarmMetricsModal>
     </>
     )

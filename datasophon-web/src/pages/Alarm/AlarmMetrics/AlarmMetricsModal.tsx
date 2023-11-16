@@ -3,10 +3,6 @@ import { useTranslation } from "react-i18next";
 
 interface ModalType extends ModalFormProps {
     data?: any;
-
-    onAlertGroupIdChange: (value: string) => void;
-
-    
 }
 const AlarmMetricsModal = (props: ModalType) => {
     const { t } = useTranslation()
@@ -93,7 +89,7 @@ const AlarmMetricsModal = (props: ModalType) => {
                   ]}
                 options={props.data?.alarmGroup || []}
                 onChange={(value: string) => {
-                  props.onAlertGroupIdChange(value)
+                  props.data.onAlertGroupIdChange(value)
                 }}
             ></ProFormSelect>
             <ProFormSelect
