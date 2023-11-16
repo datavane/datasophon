@@ -1,6 +1,9 @@
 import { ProTable, ProColumns } from '@ant-design/pro-components'
 import request from '../../../services/request';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { SetStateAction, useCallback, useEffect, useState } from 'react';
+import { APIS } from '../../../services/cluster';
+import { message } from 'antd';
 
 type AlarmMetricsType = {
     id: number;
@@ -16,6 +19,7 @@ type AlarmMetricsType = {
 const AlarmMetrics = () => {
     const { clusterId } = useParams()
     const [searchParams,] = useSearchParams()
+    const [alarmGroup, setAlarmGroup] = useState<[]>([])
     const columns: ProColumns<AlarmMetricsType>[] = [
     { 
         dataIndex: 'index',
@@ -37,7 +41,11 @@ const AlarmMetrics = () => {
     },
     {
         title: '告警组',
-        dataIndex: 'alertGroupName'
+        dataIndex: 'alertGroupName',
+        valueType: 'select',
+        fieldProps: {
+            options: alarmGroup
+        }
     },
     {
         title: '通知组',
@@ -48,8 +56,32 @@ const AlarmMetrics = () => {
         title: '状态',
         dataIndex: 'quotaState',
         search: false
-    },
-    ]
+    },]
+
+    const alarmGroupList = useCallback(async () => {
+        const { code, data, msg } = await APIS.ClusterApi.alarmGroupList({
+            pageSize: 1000,
+            page: 1,
+            clusterId
+        })
+        const options: any = []
+        if (code === 200) {
+            data.forEach((element: { id: number; alertGroupName: string; }) => {
+                options.push({
+                    value: element.id,
+                    label: element.alertGroupName
+                })
+            });
+            setAlarmGroup(options)
+        } else {
+            message.error(msg)
+        }
+    }, [clusterId])
+
+    useEffect(()=>{
+        alarmGroupList()
+    }, [alarmGroupList])
+
     return (<ProTable
         columns={columns}
         rowKey="id"
@@ -62,7 +94,7 @@ const AlarmMetrics = () => {
                     // 需要将 current 修改为 page
                     page: params.current,
                     clusterId,
-                    alertGroupId: searchParams.get('alertGroupId') || ''
+                    alertGroupId: searchParams.get('alertGroupId') || params.alertGroupName || ''
                 }
             });
             return {

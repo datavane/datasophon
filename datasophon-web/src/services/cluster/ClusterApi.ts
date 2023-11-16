@@ -128,6 +128,17 @@ export class ClusterApi {
         })
     }
 
+    public alarmGroupList (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/alert/group/list`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
 
 }
 
