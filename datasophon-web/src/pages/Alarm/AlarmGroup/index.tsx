@@ -1,6 +1,6 @@
 import { ProTable, ProColumns, ActionType } from '@ant-design/pro-components'
 import request from '../../../services/request';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { App, Button, Form, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +17,7 @@ type AlarmGroupType = {
 
 const AlarmGroup = () => {
     const { clusterId } = useParams()
+    const [, setSearchParams] = useSearchParams()
     const [modalOpen, setModalOpen] = useState(false);
     const [groupOptions, setGroupOptions] = useState<any[]>()
     const alarmActionRef = useRef<ActionType>();
@@ -77,7 +78,12 @@ const AlarmGroup = () => {
         setGroupOptions(options)
         setModalOpen(true)
     }
-    const handleOnNavigateClick = () => {}
+    const handleOnNavigateClick = (record: AlarmGroupType) => {
+        setSearchParams({
+            activeKey: 'alarm-metrics',
+            alertGroupId: record.id + ''
+        })
+    }
     const handleOnConfirmClick =  async (record: AlarmGroupType) => {
         const { code, msg } = await APIS.ClusterApi.alarmGroupDelete([record.id])
         if (code === 200) {

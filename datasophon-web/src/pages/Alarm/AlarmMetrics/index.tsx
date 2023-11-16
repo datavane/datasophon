@@ -1,6 +1,6 @@
 import { ProTable, ProColumns } from '@ant-design/pro-components'
 import request from '../../../services/request';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 type AlarmMetricsType = {
     id: number;
@@ -15,6 +15,7 @@ type AlarmMetricsType = {
 
 const AlarmMetrics = () => {
     const { clusterId } = useParams()
+    const [searchParams,] = useSearchParams()
     const columns: ProColumns<AlarmMetricsType>[] = [
     { 
         dataIndex: 'index',
@@ -60,7 +61,8 @@ const AlarmMetrics = () => {
                     ...params,
                     // 需要将 current 修改为 page
                     page: params.current,
-                    clusterId
+                    clusterId,
+                    alertGroupId: searchParams.get('alertGroupId') || ''
                 }
             });
             return {
