@@ -1,12 +1,12 @@
 import { ModalForm, ModalFormProps, ProFormRadio, ProFormSelect, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
 import { useTranslation } from "react-i18next";
-import { APIS } from "../../../services/cluster";
-import { useParams } from "react-router-dom";
-import { useState } from "react";
 
 interface ModalType extends ModalFormProps {
     data?: any;
+
     onAlertGroupIdChange: (value: string) => void;
+
+    
 }
 const AlarmMetricsModal = (props: ModalType) => {
     const { t } = useTranslation()
@@ -124,7 +124,7 @@ const AlarmMetricsModal = (props: ModalType) => {
             <ProFormRadio.Group
                 name="alertTactic"
                 label="告警策略"
-                initialValue="1"
+                initialValue={1}
                 rules={[
                   {
                     required: true,
@@ -133,11 +133,11 @@ const AlarmMetricsModal = (props: ModalType) => {
                 options={[
                     {
                         label: '单次',
-                        value: '1',
+                        value: 1,
                     },
                     {
                         label: '连续',
-                        value: '2',
+                        value: 2,
                     },
                 ]}
           />

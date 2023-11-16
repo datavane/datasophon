@@ -152,6 +152,42 @@ export class ClusterApi {
         })
     }
 
+    public alertQuotaSave (data?:any, opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/alert/quota/save`;
+        const p: any = {};
+        p.data = data;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public alertQuotaUpdate (data?:any, opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/alert/quota/update`;
+        const p: any = {};
+        p.data = data;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public alertQuotaDelete (data?:any, opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/alert/quota/delete`;
+        const p: any = {};
+        p.data = data;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 }
 
 export default new ClusterApi()

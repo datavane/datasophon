@@ -1,12 +1,13 @@
 import { ProTable, ProColumns } from '@ant-design/pro-components'
 import request from '../../../services/request';
-import { useParams, useSearchParams } from 'react-router-dom';
-import { useCallback, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { APIS } from '../../../services/cluster';
 import { Button, Form, Popconfirm, message } from 'antd';
 import useUrlState from '@ahooksjs/use-url-state';
 import { useTranslation } from 'react-i18next';
 import AlarmMetricsModal from './AlarmMetricsModal';
+import { PlusOutlined } from '@ant-design/icons';
 
 type AlarmMetricsType = {
     id: number;
@@ -17,6 +18,7 @@ type AlarmMetricsType = {
     noticeGroupId: number;
     quotaStateCode: number;
     quotaState: string;
+    alertGroupId: string
 }
 
 enum ModalType {
@@ -32,8 +34,9 @@ const AlarmMetrics = () => {
     const [ form ] = Form.useForm<AlarmMetricsType>();
     const [alarmGroup, setAlarmGroup] = useState<[]>([])
     const [serviceRoleName, setServiceRoleName] = useState<[]>([])
-    const [ userAlarmType, setAlarmModalType] = useState('add')
+    const [ alarmModalType, setAlarmModalType] = useState('add')
     const [ currentRow, setCurrentRow ] = useState<any>()
+    const alarmActionRef = useRef<any>();
     const columns: ProColumns<AlarmMetricsType>[] = [
     { 
         dataIndex: 'index',
@@ -102,7 +105,7 @@ const AlarmMetrics = () => {
         ],
       }]
     
-    const handleOnModalTriggerClick = (type: ModalType, record?: AlarmMetricsType) => {
+    const handleOnModalTriggerClick = async (type: ModalType, record?: AlarmMetricsType) => {
         if (type === 'add') {
             setAlarmModalType(ModalType.Add)
             setModalOpen(true)
@@ -110,16 +113,17 @@ const AlarmMetrics = () => {
             setAlarmModalType(ModalType.Edit)
             setCurrentRow(record)
             setModalOpen(true)
-            // form.setFieldsValue({
-            //   ...record,
-            //   password: ''
-            // })
+            const option = await getServiceRoleByServiceName(clusterId, record?.alertGroupId || '')
+            setServiceRoleName(option)
+            form.setFieldsValue({
+              ...record,
+            })
           }
     }
 
     const handleOnConfirmClick = (record: AlarmMetricsType) => {}
 
-    const getServiceRoleByServiceName = async (clusterId: string | undefined,alertGroupId: string)=> {
+    const getServiceRoleByServiceName = async (clusterId: string | undefined, alertGroupId: string)=> {
       const options: any = []
       const { code, data} = await APIS.ClusterApi.getServiceRoleByServiceName({
         alertGroupId,
@@ -156,7 +160,30 @@ const AlarmMetrics = () => {
         }
     }, [clusterId])
 
-    const handleOnFinishClick = async () => {}
+    const handleOnFinishClick = async (values: any) => {
+      if(alarmModalType === 'edit') {
+        const { code, msg} = await APIS.ClusterApi.alertQuotaUpdate({
+          ...currentRow,
+          ...values
+        })
+        if (code === 200) {
+          message.success(`${t('common.edit')}${t('common.success')}！`)
+          setModalOpen(false)
+          alarmActionRef.current?.reload()
+        } else {
+          message.error(msg)
+        }
+      } else {
+        const { code, msg} = await APIS.ClusterApi.alertQuotaSave(values)
+        if (code === 200) {
+          message.success(`${t('common.newAdd')}${t('common.success')}！`)
+          setModalOpen(false)
+          alarmActionRef.current?.reload()
+        } else {
+          message.error(msg)
+        }
+      }
+    }
     useEffect(()=>{
         alarmGroupList()
     }, [alarmGroupList])
@@ -164,6 +191,7 @@ const AlarmMetrics = () => {
     return (
     <>
       <ProTable
+          actionRef={alarmActionRef}
           columns={columns}
           rowKey="id"
           request={async (params) => {
@@ -187,6 +215,18 @@ const AlarmMetrics = () => {
                   success: code === 200
               }
             }}
+            toolBarRender={() => [
+              <Button
+                key="button"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  handleOnModalTriggerClick(ModalType.Add)
+                }}
+                type="primary"
+              >
+                {t('common.newAdd')}
+              </Button>,
+            ]}
             toolbar={{ 
               // 隐藏工具栏设置区
               settings: []
@@ -204,7 +244,7 @@ const AlarmMetrics = () => {
             }
             form={form}
             open={modalOpen}
-            title={t('common.newAdd')}
+            title={alarmModalType === ModalType.Add ? `${t('common.newAdd')}` : `${t('common.edit')}`}
             onOpenChange={setModalOpen}
             data={{
               alarmGroup,
