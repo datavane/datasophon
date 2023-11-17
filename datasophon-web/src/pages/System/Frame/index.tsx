@@ -121,7 +121,7 @@ const Frame = () => {
         <FrameModal
             form={form}
             open={modalOpen}
-            title={clusterId ? t('cluster.editCluster') : t('cluster.createCluster')}
+            title={t('common.newAdd')}
             onOpenChange={setModalOpen}
             modalProps={{
                 // 复杂场景慎用，会引起性能问题

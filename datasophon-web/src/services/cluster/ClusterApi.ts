@@ -236,6 +236,30 @@ export class ClusterApi {
         })
     }
 
+    public labelSave (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/node/label/save`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public labelDelete (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/node/label/save`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 }
 
 export default new ClusterApi()
