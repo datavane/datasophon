@@ -212,6 +212,30 @@ export class ClusterApi {
         })
     }
 
+    public rackSave (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/rack/save`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public rackDelete (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/rack/delete`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 }
 
 export default new ClusterApi()
