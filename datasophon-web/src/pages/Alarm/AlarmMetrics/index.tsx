@@ -3,7 +3,7 @@ import request from '../../../services/request';
 import { useParams } from 'react-router-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { APIS } from '../../../services/cluster';
-import { Button, Form, Popconfirm, message } from 'antd';
+import { Button, Form, Popconfirm, Space, message } from 'antd';
 import useUrlState from '@ahooksjs/use-url-state';
 import { useTranslation } from 'react-i18next';
 import AlarmMetricsModal from './AlarmMetricsModal';
@@ -37,6 +37,7 @@ const AlarmMetrics = () => {
     const [ alarmModalType, setAlarmModalType] = useState('add')
     const [ currentRow, setCurrentRow ] = useState<any>()
     const alarmActionRef = useRef<any>();
+    let currentSelectedRowKeys: (string | number)[] = [];
     const columns: ProColumns<AlarmMetricsType>[] = [
     { 
         dataIndex: 'index',
@@ -103,7 +104,7 @@ const AlarmMetrics = () => {
           </Popconfirm>
          ,
         ],
-      }]
+    }]
     
     const handleOnModalTriggerClick = async (type: ModalType, record?: AlarmMetricsType) => {
         if (type === 'add') {
@@ -192,6 +193,7 @@ const AlarmMetrics = () => {
         }
       }
     }
+
     useEffect(()=>{
         alarmGroupList()
     }, [alarmGroupList])
@@ -235,6 +237,55 @@ const AlarmMetrics = () => {
                 {t('common.newAdd')}
               </Button>,
             ]}
+            rowSelection={{
+              defaultSelectedRowKeys: []
+            }}
+            tableAlertRender={({
+              selectedRowKeys,
+              onCleanSelected,
+            }) => {
+              currentSelectedRowKeys = selectedRowKeys
+              return (
+                <Space size={24}>
+                  <span>
+                    已选 {selectedRowKeys.length} 项
+                    <a style={{ marginInlineStart: 8 }} onClick={onCleanSelected}>
+                      取消选择
+                    </a>
+                  </span>
+                </Space>
+              );
+            }}
+            tableAlertOptionRender={() => {
+              return (
+                <Space size={16}>
+                  <a key="start" onClick={
+                    async () => {
+                      const { code } = await APIS.ClusterApi.alertQuotaStart({ alertQuotaIds: currentSelectedRowKeys.join(','), clusterId})
+                      if (code === 200) {
+                        console.log(alarmActionRef)
+                        alarmActionRef.current?.reload()
+                      } else {
+                        message.error('启用指标失败')
+                      }
+                  }}>
+                    启用指标
+                  </a>
+                  <a key="stop" onClick={
+                    async () => {
+                      const { code } = await APIS.ClusterApi.alertQuotaStart({ alertQuotaIds: currentSelectedRowKeys.join(','), clusterId})
+                      if (code === 200) {
+                        message.success('停用指标成功')
+                        alarmActionRef.current?.reload()
+                      } else {
+                        message.error('停用指标失败')
+                      }
+                  }}>
+                    停用指标
+                  </a>
+                </Space>
+              );
+            }}
             toolbar={{ 
               // 隐藏工具栏设置区
               settings: []

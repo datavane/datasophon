@@ -3,9 +3,9 @@ export class ClusterApi {
     protected $basePath = ''.replace(/\/$/, '');
 
     public constructor(basePath?: string) {
-        if (basePath !== undefined) {
-          this.$basePath = basePath.replace(/\/$/, '');
-        }
+      if (basePath !== undefined) {
+        this.$basePath = basePath.replace(/\/$/, '');
+      }
     }
 
     public frameList (form?:any , opt?:any): AjaxPromise<string>  {
@@ -180,6 +180,30 @@ export class ClusterApi {
         const url = this.$basePath + `/cluster/alert/quota/delete`;
         const p: any = {};
         p.data = data;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public alertQuotaStart (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/alert/quota/start`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public alertQuotaStop (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/alert/quota/stop`;
+        const p: any = {};
+        p.form = form;
         return ajax.ajax({
             ...opt,
             method: 'POST',
