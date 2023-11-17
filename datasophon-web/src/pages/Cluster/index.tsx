@@ -51,7 +51,9 @@ const Cluster = () => {
                 <Button type="primary" key="2" onClick={() => {
                     navigate(`/cluster/${clusterId}/alarm`)
                 }}>告警管理</Button>,
-                <Button type="primary" key="3">系统管理</Button>,
+                <Button type="primary" key="3" onClick={() => {
+                    navigate(`/cluster/${clusterId}/system`)
+                }}>系统管理</Button>,
                 <Dropdown
                     key="dropdown"
                     trigger={['click']}

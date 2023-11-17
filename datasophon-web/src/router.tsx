@@ -9,6 +9,7 @@ import ClusterFramework from './pages/ClusterFramework'
 import BaseLayout from './components/BaseLayout'
 import Cluster from './pages/Cluster'
 import Alarm from './pages/Alarm'
+import System from './pages/System'
 
 const router = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
             {
                 path: '/cluster/:clusterId/alarm',
                 element: <Alarm/>
+            },
+            {
+                path: '/cluster/:clusterId/system',
+                element: <System/>
             },
             {
                 path: '/cluster/:clusterId/service/:serviceId',
