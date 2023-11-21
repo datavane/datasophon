@@ -112,7 +112,6 @@ export default {
       this.form.validateFields((err, values) => {
         console.log(values);
         if (!err) {
-          debugger
           const params = {
             clusterId:localStorage.getItem("clusterId"),
             username: values.username,
