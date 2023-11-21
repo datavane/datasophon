@@ -260,6 +260,67 @@ export class ClusterApi {
         })
     }
 
+    public userDelete (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/user/delete`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public userCreate (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/user/create`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public groupList (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/group/list`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public groupSave(form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/group/save`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public groupDelete (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/group/delete`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+
 }
 
 export default new ClusterApi()
