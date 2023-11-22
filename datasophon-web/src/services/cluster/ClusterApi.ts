@@ -320,6 +320,17 @@ export class ClusterApi {
         })
     }
 
+    public getRoleListByHostname (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/api/cluster/host/getRoleListByHostname`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
 
 }
 

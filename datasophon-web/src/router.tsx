@@ -1,6 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
 import ClusterList from './pages/ClusterList'
-import HostList from './pages/HostList'
 import Service from './pages/Service'
 import Login from './pages/Login'
 import UserList from './pages/User'
@@ -10,6 +9,7 @@ import BaseLayout from './components/BaseLayout'
 import Cluster from './pages/Cluster'
 import Alarm from './pages/Alarm'
 import System from './pages/System'
+import Host from './pages/Host'
 
 const router = createBrowserRouter([
     {
@@ -26,7 +26,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '/cluster/:clusterId/host',
-                element: <HostList/>
+                element: <Host/>
             },
             {
                 path: '/cluster/:clusterId/alarm',
