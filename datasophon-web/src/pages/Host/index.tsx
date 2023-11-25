@@ -257,7 +257,7 @@ const Host = () => {
             if (item.api) {
               const { code } = await item.api.bind(APIS.ClusterApi)({
                 commandType: item.commandType,
-                // 这里的 id 绑定有问题 
+                // 这里的 id 绑定有问题
                 clusterHostIds: currentSelectedRowKeys.join(','),
                 clusterId
               })
@@ -372,31 +372,6 @@ const Host = () => {
                       }}>{item.name}</a>
                     })
                   }
-             
-                  {/* <a key="start" onClick={
-                    async () => {
-                      const { code } = await APIS.ClusterApi.alertQuotaStart({ alertQuotaIds: currentSelectedRowKeys.join(','), clusterId})
-                      if (code === 200) {
-                        console.log(alarmActionRef)
-                        alarmActionRef.current?.reload()
-                      } else {
-                        message.error('启用指标失败')
-                      }
-                  }}>
-                    启用指标
-                  </a>
-                  <a key="stop" onClick={
-                    async () => {
-                      const { code } = await APIS.ClusterApi.alertQuotaStart({ alertQuotaIds: currentSelectedRowKeys.join(','), clusterId})
-                      if (code === 200) {
-                        message.success('停用指标成功')
-                        alarmActionRef.current?.reload()
-                      } else {
-                        message.error('停用指标失败')
-                      }
-                  }}>
-                    停用指标
-                  </a> */}
                 </Space>
               );
             }}
