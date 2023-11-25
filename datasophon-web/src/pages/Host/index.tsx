@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import CreateModal from './CreateModal';
 import { PlusOutlined } from '@ant-design/icons';
 import { APIS } from '../../services/cluster';
-import request from '../../services/request';
+import request, { AjaxPromise } from '../../services/request';
 import RoleModal from './RoleModal';
 
 type ColumnType = {
@@ -30,6 +30,13 @@ type ColumnType = {
 enum ModalType {
     Add = 'add',
     Edit = 'edit' 
+}
+
+type actionType = {
+  key: string;
+  name: string;
+  api?: any;
+  commandType?: string;
 }
 
 const Host = () => {
@@ -241,11 +248,7 @@ const Host = () => {
       }
     }
 
-    const handleOnActionClick = (item: {
-      commandType: string;
-      api: any; key: string; name: string; 
-}) => {
-      console.log(item)
+    const handleOnActionClick = (item: actionType) => {
       // 判断多选
       if (currentSelectedRowKeys.length > 0) {
         // 根据不同的动作显示 Confirm Modal 内容， 有下拉选择内容
@@ -329,7 +332,7 @@ const Host = () => {
               );
             }}
             tableAlertOptionRender={() => {
-              const actionMap = [{
+              const actionMap: actionType[]  = [{
                 key: 'start-host',
                 name: '启动主机服务',
                 api: APIS.ClusterApi.generateHostServiceCommand,
@@ -366,7 +369,7 @@ const Host = () => {
               return (
                 <Space size={16}>
                   {
-                    actionMap.map(item => {
+                    actionMap.map((item: actionType) => {
                       return <a key={item.key} onClick={() => {
                         handleOnActionClick(item)
                       }}>{item.name}</a>
