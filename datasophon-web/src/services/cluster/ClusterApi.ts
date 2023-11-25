@@ -332,6 +332,43 @@ export class ClusterApi {
         })
     }
 
+    public generateHostServiceCommand (form?:any , opt?:any): AjaxPromise<string>  {
+        console.log('this', this)
+        const url = this.$basePath + `/host/install/generateHostServiceCommand`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public generateHostAgentCommand (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/host/install/generateHostAgentCommand`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public reStartDispatcherHostAgent (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/host/install/reStartDispatcherHostAgent`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 }
 
 export default new ClusterApi()

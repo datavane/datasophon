@@ -1,7 +1,7 @@
 import { ProTable, ProColumns, PageContainer } from '@ant-design/pro-components'
 import { useParams } from 'react-router-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Form, Popover, Progress, Space, message } from 'antd';
+import { Button, Form, Modal, Progress, Space, message } from 'antd';
 import useUrlState from '@ahooksjs/use-url-state';
 import { useTranslation } from 'react-i18next';
 import CreateModal from './CreateModal';
@@ -44,6 +44,7 @@ const Host = () => {
     const [ alarmModalType, setAlarmModalType] = useState('add')
     const [ currentRow, setCurrentRow ] = useState<any>()
     const alarmActionRef = useRef<any>();
+    const [modal,contextHolder] = Modal.useModal()
     let currentSelectedRowKeys: (string | number)[] = [];
     const columns: ProColumns<ColumnType>[] = [
         { 
@@ -240,6 +241,35 @@ const Host = () => {
       }
     }
 
+    const handleOnActionClick = (item: {
+      commandType: string;
+      api: any; key: string; name: string; 
+}) => {
+      console.log(item)
+      // 判断多选
+      if (currentSelectedRowKeys.length > 0) {
+        // 根据不同的动作显示 Confirm Modal 内容， 有下拉选择内容
+        modal.confirm({
+          title: '提示',
+          content: `确认要${item.name}吗？`,
+          // 点击确认调用接口
+          async onOk() {
+            if (item.api) {
+              const { code } = await item.api.bind(APIS.ClusterApi)({
+                commandType: item.commandType,
+                // 这里的 id 绑定有问题 
+                clusterHostIds: currentSelectedRowKeys.join(','),
+                clusterId
+              })
+              if (code === 200) {
+                message.success(`${item.name}成功！`)
+              }
+            }
+          }
+        })
+      }
+    }
+
     useEffect(()=>{
         alarmGroupList()
     }, [alarmGroupList])
@@ -249,7 +279,7 @@ const Host = () => {
       <ProTable
           actionRef={alarmActionRef}
           columns={columns}
-          rowKey="id"
+          rowKey="hostname"
           request={async (params) => {
               const { code, data, total } = await request.ajax({
                   method: 'POST',
@@ -299,9 +329,51 @@ const Host = () => {
               );
             }}
             tableAlertOptionRender={() => {
+              const actionMap = [{
+                key: 'start-host',
+                name: '启动主机服务',
+                api: APIS.ClusterApi.generateHostServiceCommand,
+                commandType: 'start'
+              },{
+                key: 'stop-host',
+                name: '停止主机服务',
+                api: APIS.ClusterApi.generateHostServiceCommand,
+                commandType: 'stop'
+              },{
+                key: 'start-worker',
+                name: '启动主机Worker',
+                api: APIS.ClusterApi.generateHostAgentCommand,
+                commandType: 'start'
+              },{
+                key: 'stop-worker',
+                name: '停止主机Worker',
+                api: APIS.ClusterApi.generateHostAgentCommand,
+                commandType: 'stop'
+              },{
+                key: 're-install-worker',
+                name: '重新安装Worker',
+                api: APIS.ClusterApi.reStartDispatcherHostAgent,
+              },{
+                key: 'assign-tag',
+                name: '分配标签'
+              },{
+                key: 'assign-frame',
+                name: '分配机架'
+              },{
+                key: 'delete',
+                name: '删除'
+              }]
               return (
                 <Space size={16}>
-                  <a key="start" onClick={
+                  {
+                    actionMap.map(item => {
+                      return <a key={item.key} onClick={() => {
+                        handleOnActionClick(item)
+                      }}>{item.name}</a>
+                    })
+                  }
+             
+                  {/* <a key="start" onClick={
                     async () => {
                       const { code } = await APIS.ClusterApi.alertQuotaStart({ alertQuotaIds: currentSelectedRowKeys.join(','), clusterId})
                       if (code === 200) {
@@ -324,7 +396,7 @@ const Host = () => {
                       }
                   }}>
                     停用指标
-                  </a>
+                  </a> */}
                 </Space>
               );
             }}
@@ -376,6 +448,7 @@ const Host = () => {
           }}
           footer={null}
         ></RoleModal>
+        {contextHolder}
     </PageContainer>
     )
 }
