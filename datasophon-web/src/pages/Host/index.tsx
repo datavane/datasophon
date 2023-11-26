@@ -9,6 +9,8 @@ import { PlusOutlined } from '@ant-design/icons';
 import { APIS } from '../../services/cluster';
 import request, { AjaxPromise } from '../../services/request';
 import RoleModal from './RoleModal';
+import AssignModal from './AssignModal';
+import AssignFrameModal from './AssignFrameModal';
 
 type ColumnType = {
     id: number;
@@ -37,6 +39,8 @@ type actionType = {
   name: string;
   api?: any;
   commandType?: string;
+  modalConfirm?: boolean;
+  form?: Array<any>;
 }
 
 const Host = () => {
@@ -45,12 +49,15 @@ const Host = () => {
     const [urlState, setUrlState] = useUrlState()
     const [modalOpen, setModalOpen] = useState(false);
     const [roleModalOpen, setRoleModalOpen] = useState(false);
+    const [assignModalOpen, setAssignModalOpen] = useState(false);
+    const [assignFrameModalOpen, setAssignFrameModalOpen] = useState(false);
     const [ form ] = Form.useForm<ColumnType>();
     const [alarmGroup, setAlarmGroup] = useState<[]>([])
+    const [assignOption, setAssignOption] = useState<[]>([])
     const [serviceRoleName, setServiceRoleName] = useState<[]>([])
     const [ alarmModalType, setAlarmModalType] = useState('add')
     const [ currentRow, setCurrentRow ] = useState<any>()
-    const alarmActionRef = useRef<any>();
+    const actionRef = useRef<any>();
     const [modal,contextHolder] = Modal.useModal()
     let currentSelectedRowKeys: (string | number)[] = [];
     const columns: ProColumns<ColumnType>[] = [
@@ -176,16 +183,6 @@ const Host = () => {
           }
     }
 
-    const handleOnConfirmClick = async (record: ColumnType) => {
-      const { code, msg } = await APIS.ClusterApi.alertQuotaDelete([record.id])
-      if (code === 200) {
-        message.success(`${t('common.delete')}${t('common.success')}！`)
-        alarmActionRef.current?.reload()
-      } else {
-        message.error(msg)
-      }
-    }
-
     const getServiceRoleByServiceName = async (clusterId: string | undefined, alertGroupId: string)=> {
       const options: any = []
       const { code, data} = await APIS.ClusterApi.getServiceRoleByServiceName({
@@ -248,28 +245,86 @@ const Host = () => {
       }
     }
 
-    const handleOnActionClick = (item: actionType) => {
+    const handleOnActionClick = async (item: actionType) => {
       // 判断多选
       if (currentSelectedRowKeys.length > 0) {
-        // 根据不同的动作显示 Confirm Modal 内容， 有下拉选择内容
-        modal.confirm({
-          title: '提示',
-          content: `确认要${item.name}吗？`,
-          // 点击确认调用接口
-          async onOk() {
-            if (item.api) {
-              const { code } = await item.api.bind(APIS.ClusterApi)({
-                commandType: item.commandType,
-                // 这里的 id 绑定有问题
-                clusterHostIds: currentSelectedRowKeys.join(','),
-                clusterId
-              })
-              if (code === 200) {
-                message.success(`${item.name}成功！`)
+        // 根据不同的动作显示 Confirm Modal 内容
+        if (item.modalConfirm) {
+          modal.confirm({
+            title: '提示',
+            content: `确认要${item.name}吗？`,
+            // 点击确认调用接口
+            async onOk() {
+              if (item.api) {
+                const { code } = await item.api.bind(APIS.ClusterApi)({
+                  commandType: item.commandType,
+                  // 这里的 id 绑定有问题
+                  clusterHostIds: currentSelectedRowKeys.join(','),
+                  clusterId
+                })
+                if (code === 200) {
+                  message.success(`${item.name}成功！`)
+                }
               }
             }
+          })
+        } else {
+          // 批量分配标签、机架 Modal
+          // 初始化 Select Options 数据
+          if (item.key === 'assign-tag') {
+            setAssignModalOpen(true)
+            const { code, data, msg } = await APIS.ClusterApi.labelList({ clusterId})
+            const options: any = []
+            if (code === 200) {
+                data.forEach((element: { id: number; nodeLabel: string; }) => {
+                    options.push({
+                        value: element.id,
+                        label: element.nodeLabel
+                    })
+                });
+                setAssignOption(options)
+            } else {
+                message.error(msg)
+            }
+          } else if (item.key === 'assign-frame') {
+            setAssignFrameModalOpen(true)
+            const { code, data, msg } = await APIS.ClusterApi.rackList({ clusterId})
+            const options: any = []
+            if (code === 200) {
+                data.forEach((element: { id: number; rack: string; }) => {
+                    options.push({
+                        value: element.id,
+                        label: element.rack
+                    })
+                });
+                setAssignOption(options)
+            } else {
+                message.error(msg)
+            }
           }
-        })
+        }
+      }
+    }
+
+    const handleOnAssignFinishClick = async (values: any) => {
+      const { code, msg } = await APIS.ClusterApi.labelAssign({...values, hostIds: currentSelectedRowKeys.join(','), clusterId })
+      if (code === 200) {
+        message.success(`分配成功`)
+        setAssignModalOpen(false)
+        actionRef.current?.reload()
+      } else {
+        message.error(msg)
+      }
+    }
+
+    const handleOnAssignFrameFinishClick = async (values: any) => {
+      const { code, msg } = await APIS.ClusterApi.assignRack({...values, hostIds: currentSelectedRowKeys.join(','), clusterId })
+      if (code === 200) {
+        message.success(`分配成功`)
+        setAssignFrameModalOpen(false)
+        actionRef.current?.reload()
+      } else {
+        message.error(msg)
       }
     }
 
@@ -280,9 +335,9 @@ const Host = () => {
     return (
     <PageContainer title='主机管理'>
       <ProTable
-          actionRef={alarmActionRef}
+          actionRef={actionRef}
           columns={columns}
-          rowKey="hostname"
+          rowKey="id"
           request={async (params) => {
               const { code, data, total } = await request.ajax({
                   method: 'POST',
@@ -336,35 +391,43 @@ const Host = () => {
                 key: 'start-host',
                 name: '启动主机服务',
                 api: APIS.ClusterApi.generateHostServiceCommand,
-                commandType: 'start'
+                commandType: 'start',
+                modalConfirm: true
               },{
                 key: 'stop-host',
                 name: '停止主机服务',
                 api: APIS.ClusterApi.generateHostServiceCommand,
-                commandType: 'stop'
+                commandType: 'stop',
+                modalConfirm: true
               },{
                 key: 'start-worker',
                 name: '启动主机Worker',
                 api: APIS.ClusterApi.generateHostAgentCommand,
-                commandType: 'start'
+                commandType: 'start',
+                modalConfirm: true
               },{
                 key: 'stop-worker',
                 name: '停止主机Worker',
                 api: APIS.ClusterApi.generateHostAgentCommand,
-                commandType: 'stop'
+                commandType: 'stop',
+                modalConfirm: true
               },{
                 key: 're-install-worker',
                 name: '重新安装Worker',
                 api: APIS.ClusterApi.reStartDispatcherHostAgent,
+                modalConfirm: true
               },{
                 key: 'assign-tag',
-                name: '分配标签'
+                name: '分配标签',
+                modalConfirm: false,
               },{
                 key: 'assign-frame',
-                name: '分配机架'
+                name: '分配机架',
+                modalConfirm: false
               },{
                 key: 'delete',
-                name: '删除'
+                name: '删除',
+                modalConfirm: true
               }]
               return (
                 <Space size={16}>
@@ -386,6 +449,7 @@ const Host = () => {
               pageSize: 10
             }}
       ></ProTable>
+      {/* create host modal */}
       <CreateModal
             layout="horizontal"
             labelCol={
@@ -414,6 +478,7 @@ const Host = () => {
             }}
             onFinish={handleOnFinishClick}
         ></CreateModal>
+        {/* role list show */}
         <RoleModal
           title="角色列表"
           open={roleModalOpen} 
@@ -426,7 +491,42 @@ const Host = () => {
           }}
           footer={null}
         ></RoleModal>
+        {/* mode.confirm */}
         {contextHolder}
+        {/* assign tag */}
+        <AssignModal
+          title="分配标签"
+          open={assignModalOpen}
+          onOpenChange={setAssignModalOpen}
+          data={{
+            options: assignOption
+          }}
+          modalProps={{
+            // 复杂场景慎用，会引起性能问题
+            destroyOnClose: true,
+            // https://stackoverflow.com/questions/61056421/warning-instance-created-by-useform-is-not-connect-to-any-form-element
+            forceRender: true
+        }}
+        onFinish={handleOnAssignFinishClick}
+        
+        ></AssignModal>
+        {/* assign frame */}
+        <AssignFrameModal
+          title="分配机架"
+          open={assignFrameModalOpen}
+          onOpenChange={setAssignFrameModalOpen}
+          data={{
+            options: assignOption
+          }}
+          modalProps={{
+            // 复杂场景慎用，会引起性能问题
+            destroyOnClose: true,
+            // https://stackoverflow.com/questions/61056421/warning-instance-created-by-useform-is-not-connect-to-any-form-element
+            forceRender: true
+        }}
+        onFinish={handleOnAssignFrameFinishClick}
+        
+        ></AssignFrameModal>
     </PageContainer>
     )
 }

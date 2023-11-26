@@ -212,6 +212,18 @@ export class ClusterApi {
         })
     }
 
+    public rackList (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/rack/list`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
     public rackSave (form?:any , opt?:any): AjaxPromise<string>  {
         const url = this.$basePath + `/cluster/rack/save`;
         const p: any = {};
@@ -238,6 +250,18 @@ export class ClusterApi {
 
     public labelSave (form?:any , opt?:any): AjaxPromise<string>  {
         const url = this.$basePath + `/cluster/node/label/save`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public labelList (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/node/label/list`;
         const p: any = {};
         p.form = form;
         return ajax.ajax({
@@ -359,6 +383,30 @@ export class ClusterApi {
 
     public reStartDispatcherHostAgent (form?:any , opt?:any): AjaxPromise<string>  {
         const url = this.$basePath + `/host/install/reStartDispatcherHostAgent`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public labelAssign (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/cluster/node/label/assign`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
+    public assignRack (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `api/cluster/host/assignRack`;
         const p: any = {};
         p.form = form;
         return ajax.ajax({
