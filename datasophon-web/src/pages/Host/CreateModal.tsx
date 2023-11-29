@@ -1,170 +1,99 @@
-import { ModalForm, ModalFormProps, ProFormRadio, ProFormSelect, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
+import { ProFormText, ProFormTextArea, StepsForm } from "@ant-design/pro-components";
+import { Alert, Modal, ModalProps, message } from "antd";
 import { useTranslation } from "react-i18next";
-
-interface ModalType extends ModalFormProps {
+import { APIS } from "../../services/cluster";
+import { useParams } from "react-router-dom";
+interface ModalType extends ModalProps {
     data?: any;
 }
+
 const CreateModal = (props: ModalType) => {
     const { t } = useTranslation()
+    const { clusterId } = useParams()
+    let timer: number | undefined = undefined
+    const analysisHostList = async (values: any) => {
+      const { code, data, msg } = await APIS.ClusterApi.analysisHostList({
+        page: 1,
+        pageSize: 10,
+        clusterId,
+        ...values
+      })
+      if (code === 200) {
+        // 返回主机列表之后需要轮询来查询主机状态
+        if (!timer) {
+          timer = setInterval(()=> {
+            analysisHostList(values)
+          }, 3000)
+        }
+        return true
+      } else {
+        // TODO: 异常处理比较粗暴，待优化
+        message.error(msg)
+        return false
+      }
+    }
+
     return (
-        <ModalForm
-            { ...props}
+      <StepsForm
+        stepsFormRender={(dom, submitter) => {
+          return (
+            <Modal
+              width={1000}
+              footer={submitter}
+              destroyOnClose
+              {...props}
+            >
+              {dom}
+            </Modal>
+          );
+        }}
+      >
+        <StepsForm.StepForm
+            name="install"
+            title="安装主机"
+            onFinish={async (values: any) => {
+              return analysisHostList(values)
+          }}
         >
-            <ProFormText
-                name="alertQuotaName"
-                label="告警指标名称"
-                rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-            ></ProFormText>
-            <ProFormText
-                name="alertExpr"
-                label="指标表达式"
-                rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-            ></ProFormText>
-            <ProFormSelect
-                name="compareMethod"
-                label="比较方式"
-                rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                options={[
-                    {
-                        label: "!=",
-                        value: "!=",
-                      },
-                      {
-                        label: ">",
-                        value: ">",
-                      },
-                      {
-                        label: "<",
-                        value: "<",
-                      },
-                ]}
-            ></ProFormSelect>
-            <ProFormText
-                name="alertThreshold"
-                label="告警阀值"
-                rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-            ></ProFormText>
-            <ProFormSelect
-                name="alertLevel"
-                label="告警级别"
-                rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                options={[
-                    {
-                        label: "警告",
-                        value: "warning",
-                      },
-                      {
-                        label: "异常",
-                        value: "exception",
-                      },
-                ]}
-            ></ProFormSelect>
-             <ProFormSelect
-                name="alertGroupId"
-                label="告警组"
-                rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                options={props.data?.alarmGroup || []}
-                onChange={(value: string) => {
-                  props.data.onAlertGroupIdChange(value)
-                }}
-            ></ProFormSelect>
-            <ProFormSelect
-                name="serviceRoleName"
-                label="绑定角色"
-                rules={[
-                    {
-                      required: true,
-                    },
-                ]}
-                options={props.data?.serviceRoleName || []}
-            ></ProFormSelect>
-            <ProFormSelect
-                name="noticeGroupId"
-                label="通知组"
-                rules={[
-                    {
-                      required: true,
-                    },
-                ]}
-                  options={[
-                    {
-                        label: "数据开发组",
-                        value: 1,
-                    },
-                ]}
-            ></ProFormSelect>
-            <ProFormRadio.Group
-                name="alertTactic"
-                label="告警策略"
-                initialValue={1}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-                options={[
-                    {
-                        label: '单次',
-                        value: 1,
-                    },
-                    {
-                        label: '连续',
-                        value: 2,
-                    },
-                ]}
+          <Alert message="提示：使用IP或主机名输入主机列表，按逗号分隔或使用主机域批量添加主机，例如：10.3.144.[19-23]" type="info"></Alert>
+          <ProFormTextArea 
+            name="hosts"
+            label="主机列表"
+            rules={[{ required: true }]}
           />
-           <ProFormText
-                name="intervalDuration"
-                label="间隔时长(分钟)"
-                rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-            ></ProFormText>
-            <ProFormText
-                name="triggerDuration"
-                label="触发时长(秒)"
-                rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-            ></ProFormText>
-            <ProFormTextArea
-                name="alertAdvice"
-                label="告警建议"
-                rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-            ></ProFormTextArea>
-        </ModalForm>
+          <ProFormText
+            name="sshUser"
+            label="SSH用户名"
+            initialValue="root"
+            rules={[{ required: true }]}
+          />
+          <ProFormText
+            name="sshPort"
+            label="SSH端口"
+            initialValue={22}
+            rules={[{ required: true }]}
+          />
+        </StepsForm.StepForm>
+        <StepsForm.StepForm
+            name="check"
+            title="主机环境校验"
+            onFinish={async () => {
+              clearInterval(timer)
+              return true;
+          }}
+        >
+          
+        </StepsForm.StepForm>
+        <StepsForm.StepForm
+            name="distribute"
+            title="主机Agent分发"
+            onFinish={async () => {
+              return true;
+          }}
+        >
+        </StepsForm.StepForm>
+
+      </StepsForm>
     )
 }
 

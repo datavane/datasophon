@@ -168,19 +168,8 @@ const Host = () => {
     ]
 
     const handleOnModalTriggerClick = async (type: ModalType, record?: ColumnType) => {
-        if (type === 'add') {
-            setAlarmModalType(ModalType.Add)
-            setModalOpen(true)
-          } else {
-            setAlarmModalType(ModalType.Edit)
-            setCurrentRow(record)
-            setModalOpen(true)
-            const option = await getServiceRoleByServiceName(clusterId, record?.alertGroupId || '')
-            setServiceRoleName(option)
-            form.setFieldsValue({
-              ...record,
-            })
-          }
+        setModalOpen(true)
+  
     }
 
     const getServiceRoleByServiceName = async (clusterId: string | undefined, alertGroupId: string)=> {
@@ -221,28 +210,6 @@ const Host = () => {
     }, [clusterId])
 
     const handleOnFinishClick = async (values: any) => {
-      if(alarmModalType === 'edit') {
-        const { code, msg} = await APIS.ClusterApi.alertQuotaUpdate({
-          ...currentRow,
-          ...values
-        })
-        if (code === 200) {
-          message.success(`${t('common.edit')}${t('common.success')}！`)
-          setModalOpen(false)
-          alarmActionRef.current?.reload()
-        } else {
-          message.error(msg)
-        }
-      } else {
-        const { code, msg} = await APIS.ClusterApi.alertQuotaSave(values)
-        if (code === 200) {
-          message.success(`${t('common.newAdd')}${t('common.success')}！`)
-          setModalOpen(false)
-          alarmActionRef.current?.reload()
-        } else {
-          message.error(msg)
-        }
-      }
     }
 
     const handleOnActionClick = async (item: actionType) => {
@@ -451,33 +418,12 @@ const Host = () => {
       ></ProTable>
       {/* create host modal */}
       <CreateModal
-            layout="horizontal"
-            labelCol={
-              {
-                span: 4,
-              }
-            }
-            form={form}
-            open={modalOpen}
-            title={alarmModalType === ModalType.Add ? `${t('common.newAdd')}` : `${t('common.edit')}`}
-            onOpenChange={setModalOpen}
-            data={{
-              alarmGroup,
-              serviceRoleName,
-              onAlertGroupIdChange:  async (value: string) => {
-                const option = await getServiceRoleByServiceName(clusterId, value)
-                setServiceRoleName(option)
-                form.setFieldValue('serviceRoleName', option[0].value)
-              }
-            }}
-            modalProps={{
-                // 复杂场景慎用，会引起性能问题
-                destroyOnClose: true,
-                // https://stackoverflow.com/questions/61056421/warning-instance-created-by-useform-is-not-connect-to-any-form-element
-                forceRender: true
-            }}
-            onFinish={handleOnFinishClick}
-        ></CreateModal>
+          title="为集群安装主机"
+          open={modalOpen}
+          onCancel={() => {
+            setModalOpen(false)
+          }}
+      ></CreateModal>
         {/* role list show */}
         <RoleModal
           title="角色列表"
