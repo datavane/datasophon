@@ -12,7 +12,6 @@ export HBASE_HOME=/opt/datasophon/hbase-2.4.16
 export FLINK_HOME=/opt/datasophon/flink-1.17.1
 export HADOOP_HOME=/opt/datasophon/hadoop-3.3.3
 export HADOOP_CONF_DIR=/opt/datasophon/hadoop-3.3.3/etc/hadoop
-export HADOOP_CLASSPATH=`hadoop classpath`
 export PATH=$PATH:$JAVA_HOME/bin:$SPARK_HOME/bin:$HADOOP_HOME/bin:$HIVE_HOME/bin:$FLINK_HOME/bin:$KAFKA_HOME/bin:$HBASE_HOME/bin
-
+export HADOOP_CLASSPATH=`hadoop classpath`
 
