@@ -163,7 +163,28 @@
       "hidden": false,
       "defaultValue": "${kadminHost}"
     },
-
+    {
+      "name": "kadminPrincipal",
+      "label": "Kerberos管理员用户主体",
+      "description": "",
+      "required": true,
+      "type": "input",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "admin/admin"
+    },
+    {
+      "name": "kadminPassword",
+      "label": "Kerberos管理员用户密码",
+      "description": "",
+      "required": true,
+      "type": "password",
+      "value": "",
+      "configurableInWizard": true,
+      "hidden": false,
+      "defaultValue": "admin"
+    },
     {
       "name": "ticketLifetime",
       "label": "票据有效时长",
