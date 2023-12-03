@@ -179,7 +179,7 @@
       "label": "Kerberos管理员用户密码",
       "description": "",
       "required": true,
-      "type": "password",
+      "type": "input",
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
