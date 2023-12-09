@@ -150,7 +150,7 @@
       "value": "",
       "configurableInWizard": true,
       "hidden": false,
-      "defaultValue": "hdfs://nameservice1/streampark"
+      "defaultValue": "hdfs://${dfs.nameservices}/user/yarn/nodeLabelsstreampark"
     }
   ]
 }
