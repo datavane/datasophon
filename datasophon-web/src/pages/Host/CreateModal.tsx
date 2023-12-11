@@ -5,6 +5,7 @@ import { APIS } from "../../services/cluster";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import CreateCheckList from "./CreateCheckList";
+import CreateAgentList from "./CreateAgentList";
 interface ModalType extends ModalProps {
     data?: any;
 }
@@ -24,6 +25,7 @@ const CreateModal = (props: ModalType) => {
     const { t } = useTranslation()
     const { clusterId } = useParams()
     const [analysisList, setAnalysisList] = useState<Array<AnalysisType>>([])
+    const [agentList, setAgentList] = useState<Array<any>>([])
     let timer: number | undefined = undefined
     const analysisHostList = async (values: any) => {
       const { code, data, msg } = await APIS.ClusterApi.analysisHostList({
@@ -38,6 +40,28 @@ const CreateModal = (props: ModalType) => {
         if (!timer) {
           timer = setInterval(()=> {
             analysisHostList(values)
+          }, 3000)
+        }
+        return true
+      } else {
+        // TODO: 异常处理比较粗暴，待优化
+        message.error(msg)
+        return false
+      }
+    }
+
+    const dispatcherHostAgentList = async () => {
+      const { code, data, msg } = await APIS.ClusterApi.dispatcherHostAgentList({
+        page: 1,
+        pageSize: 10,
+        clusterId,
+      })
+      if (code === 200) {
+        // 返回主机列表之后需要轮询来查询主机状态
+        setAgentList(data)
+        if (!timer) {
+          timer = setInterval(()=> {
+            dispatcherHostAgentList()
           }, 3000)
         }
         return true
@@ -93,9 +117,9 @@ const CreateModal = (props: ModalType) => {
         <StepsForm.StepForm
             name="check"
             title="主机环境校验"
-            onFinish={async () => {
+            onFinish={() => {
               clearInterval(timer)
-              return true;
+              return dispatcherHostAgentList();
           }}
         >
           <CreateCheckList  data={analysisList}/>
@@ -107,6 +131,7 @@ const CreateModal = (props: ModalType) => {
               return true;
           }}
         >
+          <CreateAgentList  data={agentList}/>
         </StepsForm.StepForm>
 
       </StepsForm>

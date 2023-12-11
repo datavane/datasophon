@@ -10,7 +10,7 @@ type ListType = {
     data: any
 }
 
-const CreateCheckList = (props: ListType) => {
+const CreateAgentList = (props: ListType) => {
     const { t } = useTranslation()
     const { clusterId } = useParams()
     let currentSelectedRowKeys: (string | number)[] = [];
@@ -26,18 +26,15 @@ const CreateCheckList = (props: ListType) => {
           dataIndex: 'hostname'
         },
         {
-          title: '当前受管',
+          title: '进度',
           dataIndex: 'managed',
           render: (text, record, _, action) => {
-            return record.managed === true ? '是' : '否'
+            return record.progress
           }
         },
         {
-          title: '检查结果',
-          dataIndex: 'checkResult',
-          render: (text, record, _, action) => {
-            return record.checkResult?.msg
-          }
+          title: '进度信息',
+          dataIndex: 'message',
         },{
           title: t('user.operation'),
           valueType: 'option',
@@ -46,6 +43,7 @@ const CreateCheckList = (props: ListType) => {
             <Button
               key="restart"
               type="link"
+              disabled={ record.installStateCode === 3 ? false : true}
               onClick={async () => {
                 const { code, msg } = await APIS.ClusterApi.rehostCheck({
                   clusterId,
@@ -77,6 +75,11 @@ const CreateCheckList = (props: ListType) => {
             dataSource={props.data}
             rowSelection={{
               defaultSelectedRowKeys: [],
+              getCheckboxProps: (record) => {
+                return {
+                  disabled: record.installStateCode === 3 ? false : true
+                }
+              }
             }}
             tableAlertRender={({
               selectedRowKeys,
@@ -115,4 +118,4 @@ const CreateCheckList = (props: ListType) => {
     )
 }
 
-export default CreateCheckList
+export default CreateAgentList
