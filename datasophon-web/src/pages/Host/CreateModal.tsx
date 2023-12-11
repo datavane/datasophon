@@ -1,5 +1,5 @@
 import { ProFormText, ProFormTextArea, ProTable, StepsForm } from "@ant-design/pro-components";
-import { Alert, Modal, ModalProps, message } from "antd";
+import { Alert, Button, Modal, ModalProps, message } from "antd";
 import { useTranslation } from "react-i18next";
 import { APIS } from "../../services/cluster";
 import { useParams } from "react-router-dom";
@@ -70,6 +70,30 @@ const CreateModal = (props: ModalType) => {
       render: (text, record, _, action) => {
         return record.checkResult?.msg
       }
+    },{
+      title: t('user.operation'),
+      valueType: 'option',
+      key: 'option',
+      render: (text, record, _, action) => [
+        <Button
+          key="restart"
+          type="link"
+          onClick={async () => {
+            const { code, msg } = await APIS.ClusterApi.rehostCheck({
+              clusterId,
+              hostnames: record.hostname,
+              sshPort: record.sshPort,
+              sshUser: record.sshUser
+            })
+            if (code === 200) {
+              message.success(msg)
+            } else {
+              message.error(msg)
+            }
+          }}
+        >
+          重试
+        </Button>]
     }
     ]
 

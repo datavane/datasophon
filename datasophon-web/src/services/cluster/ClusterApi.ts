@@ -429,6 +429,18 @@ export class ClusterApi {
         })
     }
 
+    public rehostCheck (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/host/install/rehostCheck`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 }
 
 export default new ClusterApi()
