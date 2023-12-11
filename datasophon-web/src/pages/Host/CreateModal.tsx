@@ -1,15 +1,28 @@
-import { ProFormText, ProFormTextArea, StepsForm } from "@ant-design/pro-components";
+import { ProFormText, ProFormTextArea, ProTable, StepsForm } from "@ant-design/pro-components";
 import { Alert, Modal, ModalProps, message } from "antd";
 import { useTranslation } from "react-i18next";
 import { APIS } from "../../services/cluster";
 import { useParams } from "react-router-dom";
+import { useState } from "react";
 interface ModalType extends ModalProps {
     data?: any;
+}
+
+
+type CheckResultType = {
+  code: number;
+  msg: string;
+}
+type AnalysisType = {
+  hostname: string;
+  managed: boolean;
+  checkResult: CheckResultType;
 }
 
 const CreateModal = (props: ModalType) => {
     const { t } = useTranslation()
     const { clusterId } = useParams()
+    const [analysisList, setAnalysisList] = useState<Array<AnalysisType>>([])
     let timer: number | undefined = undefined
     const analysisHostList = async (values: any) => {
       const { code, data, msg } = await APIS.ClusterApi.analysisHostList({
@@ -20,6 +33,7 @@ const CreateModal = (props: ModalType) => {
       })
       if (code === 200) {
         // 返回主机列表之后需要轮询来查询主机状态
+        setAnalysisList(data)
         if (!timer) {
           timer = setInterval(()=> {
             analysisHostList(values)
@@ -32,6 +46,32 @@ const CreateModal = (props: ModalType) => {
         return false
       }
     }
+
+    const analysisColumns = [
+    { 
+        dataIndex: 'index',
+        valueType: 'indexBorder',
+        width: 48
+    },
+    {
+      title: '主机',
+      dataIndex: 'hostname'
+    },
+    {
+      title: '当前受管',
+      dataIndex: 'managed',
+      render: (text, record, _, action) => {
+        return record.managed === true ? '是' : '否'
+      }
+    },
+    {
+      title: '检查结果',
+      dataIndex: 'checkResult',
+      render: (text, record, _, action) => {
+        return record.checkResult?.msg
+      }
+    }
+    ]
 
     return (
       <StepsForm
@@ -47,6 +87,7 @@ const CreateModal = (props: ModalType) => {
             </Modal>
           );
         }}
+        containerStyle={{ width: '100%'}}
       >
         <StepsForm.StepForm
             name="install"
@@ -82,7 +123,15 @@ const CreateModal = (props: ModalType) => {
               return true;
           }}
         >
-          
+          <ProTable
+            columns={analysisColumns}
+            search={false}
+            toolbar={{ 
+              // 隐藏工具栏设置区
+              settings: []
+            }}
+            dataSource={analysisList}
+          ></ProTable>
         </StepsForm.StepForm>
         <StepsForm.StepForm
             name="distribute"
