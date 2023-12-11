@@ -7,7 +7,8 @@ export PYSPARK_ALLOW_INSECURE_GATEWAY=1
 export HIVE_HOME=/opt/datasophon/hive-3.1.0
 
 export KAFKA_HOME=/opt/datasophon/kafka-2.4.1
-export HBASE_HOME=/opt/datasophon/hbase-2.4.16
+export HBASE_HOME=/opt/datasophon/hbase-2.5.6.1
+export HBASE_PID_PATH_MK=/opt/datasophon/hbase-2.5.6.1/pid
 export FLINK_HOME=/opt/datasophon/flink-1.15.2
 export HADOOP_HOME=/opt/datasophon/hadoop-3.3.3
 export HADOOP_CONF_DIR=/opt/datasophon/hadoop-3.3.3/etc/hadoop
