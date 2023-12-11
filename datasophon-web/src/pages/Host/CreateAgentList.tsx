@@ -102,7 +102,7 @@ const CreateAgentList = (props: ListType) => {
                 <Space size={16}>
                   <a key="restart" onClick={
                     async () => {
-                      const { code, msg } = await APIS.ClusterApi.rehostCheck({ hostnames: currentSelectedRowKeys.join(','), clusterId,   sshPort: props.data[0].sshPort, sshUser: props.data[0].sshUser})
+                      const { code, msg } = await APIS.ClusterApi.reStartDispatcherHostAgent({ hostnames: currentSelectedRowKeys.join(','), clusterId})
                       if (code === 200) {
                         actionRef.current?.reload()
                       } else {
