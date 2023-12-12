@@ -19,6 +19,9 @@
 
 package com.datasophon.api.strategy;
 
+import akka.actor.ActorRef;
+import akka.pattern.Patterns;
+import akka.util.Timeout;
 import com.datasophon.api.load.GlobalVariables;
 import com.datasophon.api.load.ServiceConfigMap;
 import com.datasophon.api.master.ActorUtils;
@@ -34,7 +37,8 @@ import com.datasophon.common.utils.ExecResult;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.entity.ClusterYarnScheduler;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
@@ -43,13 +47,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import akka.actor.ActorRef;
-import akka.pattern.Patterns;
-import akka.util.Timeout;
 
 public class RMHandlerStrategy extends ServiceHandlerAbstract implements ServiceRoleStrategy {
 
@@ -120,8 +117,8 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
 
     @Override
     public void handlerServiceRoleCheck(
-                                        ClusterServiceRoleInstanceEntity roleInstanceEntity,
-                                        Map<String, ClusterServiceRoleInstanceEntity> map) {
+            ClusterServiceRoleInstanceEntity roleInstanceEntity,
+            Map<String, ClusterServiceRoleInstanceEntity> map) {
 
         Map<String, String> globalVariable = GlobalVariables.get(roleInstanceEntity.getClusterId());
         String rm2 = globalVariable.get("${rm2}");
@@ -136,7 +133,7 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
     }
 
     private void getRMState(
-                            ClusterServiceRoleInstanceEntity roleInstanceEntity, String commandLine) {
+            ClusterServiceRoleInstanceEntity roleInstanceEntity, String commandLine) {
         ClusterServiceRoleInstanceWebuisService webuisService =
                 SpringTool.getApplicationContext()
                         .getBean(ClusterServiceRoleInstanceWebuisService.class);
@@ -149,7 +146,7 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
         try {
             ExecResult execResult = (ExecResult) Await.result(execFuture, timeout.duration());
             if (execResult.getExecResult()) {
-                if (ACTIVE.equals(execResult.getExecOut())) {
+                if (execResult.getExecOut().contains(ACTIVE)) {
                     webuisService.updateWebUiToActive(roleInstanceEntity.getId());
                 } else {
                     webuisService.updateWebUiToStandby(roleInstanceEntity.getId());
