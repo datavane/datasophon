@@ -43,5 +43,18 @@
         "createTime": "Create Time",
         "operation": "Operation",
         "deleteConfirm": "Confirm delete current User?"
+    },
+    "service": {
+        "title": "Service Manage",
+        "roleType": "Role Type",
+        "roleTypePlaceholder": "Please select role type",
+        "hostname": "Host Name",
+        "hostnamePlaceholder": "Please input host name",
+        "roleGroupName": "Role Group Name",
+        "roleGroupNamePlaceholder": "Please select role group name",
+        "state": "state",
+        "statePlaceholder": "Please select state",
+        "operation": "Operation",
+        "viewLog": "View Log"
     }
 }

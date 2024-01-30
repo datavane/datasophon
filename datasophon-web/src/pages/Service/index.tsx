@@ -53,7 +53,7 @@ const Service = () => {
       ]}
       onTabChange={handleOnTabChange}
     >
-      <div>
+      <div style={{height: '100vh'}}>
         {activeComponent}
       </div>
     </PageContainer>

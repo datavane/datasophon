@@ -43,5 +43,18 @@
         "password": "密码",
         "operation": "操作",
         "deleteConfirm": "确认删除当前用户吗？"
+    },
+    "service": {
+        "title": "服务管理",
+        "roleType": "角色类型",
+        "roleTypePlaceholder": "请选择角色类型",
+        "hostname": "主机名",
+        "hostnamePlaceholder": "请输入主机名",
+        "roleGroupName": "角色组",
+        "roleGroupNamePlaceholder": "请选择角色组",
+        "state": "状态",
+        "statePlaceholder": "请选择状态",
+        "operation": "操作",
+        "viewLog": "查看日志"
     }
 }
