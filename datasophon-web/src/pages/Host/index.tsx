@@ -295,6 +295,22 @@ const Host = () => {
       }
     }
 
+    const dispatcherHostAgentCompleted = async () => {
+      let finish = false
+      const { code, dispatcherHostAgentCompleted, msg } = await APIS.ClusterApi.dispatcherHostAgentCompleted({ clusterId })
+      if (code === 200 && dispatcherHostAgentCompleted) {
+        // TODO: 刷新主机列表
+        finish = dispatcherHostAgentCompleted
+        setModalOpen(!finish)
+        actionRef.current?.reload()
+      } else {
+        // 这里的接口逻辑需要优化一下，新建失败之后的文案提示有问题
+        message.error(msg)
+        finish = dispatcherHostAgentCompleted;
+      }
+      return finish
+    }
+
     useEffect(()=>{
         alarmGroupList()
     }, [alarmGroupList])
@@ -423,6 +439,9 @@ const Host = () => {
           onCancel={() => {
             setModalOpen(false)
           }}
+          onFinish={async () => {
+            return dispatcherHostAgentCompleted()
+        }}
       ></CreateModal>
         {/* role list show */}
         <RoleModal

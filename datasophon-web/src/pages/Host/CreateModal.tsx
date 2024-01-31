@@ -8,6 +8,7 @@ import CreateCheckList from "./CreateCheckList";
 import CreateAgentList from "./CreateAgentList";
 interface ModalType extends ModalProps {
     data?: any;
+    onFinish: (values:T)=>Promise<false>;
 }
 
 
@@ -72,24 +73,9 @@ const CreateModal = (props: ModalType) => {
       }
     }
 
-    const dispatcherHostAgentCompleted = async () => {
-      let finish = false
-      const { code, dispatcherHostAgentCompleted, msg } = await APIS.ClusterApi.dispatcherHostAgentCompleted({ clusterId })
-      if (code === 200) {
-        // TODO: 刷新主机列表
-        finish = dispatcherHostAgentCompleted
-      } else {
-        message.error(msg)
-        finish = dispatcherHostAgentCompleted;
-      }
-      return finish
-    }
-
     return (
       <StepsForm
-        onFinish={async () => {
-            return dispatcherHostAgentCompleted()
-        }}
+        onFinish={props.onFinish}
         stepsFormRender={(dom, submitter) => {
           return (
             <Modal
