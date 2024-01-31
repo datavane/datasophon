@@ -453,6 +453,18 @@ export class ClusterApi {
         })
     }
 
+    public dispatcherHostAgentCompleted (form?:any , opt?:any): AjaxPromise<string>  {
+        const url = this.$basePath + `/host/install/dispatcherHostAgentCompleted`;
+        const p: any = {};
+        p.form = form;
+        return ajax.ajax({
+            ...opt,
+            method: 'POST',
+            url,
+            ...p
+        })
+    }
+
 }
 
 export default new ClusterApi()
