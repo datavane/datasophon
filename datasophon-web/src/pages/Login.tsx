@@ -43,11 +43,6 @@ const LoginForm = () => {
                     logo={logo}
                     // backgroundVideoUrl="https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr"
                     title="DataSophon"
-                    containerStyle={{
-                        backgroundColor: 'rgba(0, 0, 0,0.65)',
-                        backdropFilter: 'blur(4px)',
-                    }}
-                    
                     onFinish={handleOnLoginClick}
                 >
                     <Tabs

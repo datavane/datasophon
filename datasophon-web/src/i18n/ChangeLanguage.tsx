@@ -14,7 +14,7 @@ const ChangeLanguage = () => {
         <Button
             type='primary'
             shape="circle"
-            style={{ position: 'fixed', right: '0px', top: '10px', zIndex: '1'}}
+            style={{ position: 'fixed', right: '50px', top: '20px', zIndex: '1'}}
             onClick={handleOnChangeLanguageClick}
         >
             { language === 'zh' ? 'EN': '中'}
