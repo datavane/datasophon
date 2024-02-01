@@ -1,5 +1,5 @@
-import { ProFormText, ProFormTextArea, ProTable, StepsForm } from "@ant-design/pro-components";
-import { Alert, Button, Modal, ModalProps, message } from "antd";
+import { ProFormText, ProFormTextArea, StepsForm } from "@ant-design/pro-components";
+import { Alert, Modal, ModalProps, message } from "antd";
 import { useTranslation } from "react-i18next";
 import { APIS } from "../../services/cluster";
 import { useParams } from "react-router-dom";
