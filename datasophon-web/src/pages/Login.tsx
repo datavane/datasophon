@@ -6,6 +6,9 @@ import { useNavigate } from 'react-router-dom'
 import { useCookieState, useLocalStorageState } from 'ahooks'
 import { useTranslation } from 'react-i18next'
 import ChangeLanguage from '../i18n/ChangeLanguage'
+import background from '../assets/bg.png'
+import logo from '../assets/logo.png'
+
 const LoginForm = () => {
     const { message } = App.useApp();
     const navigate = useNavigate();
@@ -27,7 +30,7 @@ const LoginForm = () => {
     }
     const { token } = theme.useToken();
     return ( 
-        <ProConfigProvider dark={true}>
+        <ProConfigProvider>
             <div
                 style={{
                 backgroundColor: 'white',
@@ -36,9 +39,9 @@ const LoginForm = () => {
             >
                 <ChangeLanguage></ChangeLanguage>
                 <LoginFormPage
-                    backgroundImageUrl=""
-                    logo=""
-                    backgroundVideoUrl="https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr"
+                    backgroundImageUrl={background}
+                    logo={logo}
+                    // backgroundVideoUrl="https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr"
                     title="DataSophon"
                     containerStyle={{
                         backgroundColor: 'rgba(0, 0, 0,0.65)',
