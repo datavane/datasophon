@@ -8,7 +8,7 @@ import CreateCheckList from "./CreateCheckList";
 import CreateAgentList from "./CreateAgentList";
 interface ModalType extends ModalProps {
     data?: any;
-    onFinish: (values:T)=>Promise<false>;
+    onFinish: (values: T) => Promise<boolean | void>;
 }
 
 
@@ -28,7 +28,7 @@ const CreateModal = (props: ModalType) => {
     const [analysisList, setAnalysisList] = useState<Array<AnalysisType>>([])
     const [agentList, setAgentList] = useState<Array<any>>([])
     const refTimer: any = useRef()
-    let timer: number | undefined = undefined
+    const timer: any = useRef()
     const analysisHostList = async (values: any) => {
       const { code, data, msg } = await APIS.ClusterApi.analysisHostList({
         page: 1,
@@ -61,8 +61,8 @@ const CreateModal = (props: ModalType) => {
       if (code === 200) {
         // 返回主机列表之后需要轮询来查询主机状态
         setAgentList(data)
-        if (!timer) {
-          timer = setInterval(()=> {
+        if (!timer.current) {
+          timer.current = setInterval(()=> {
             dispatcherHostAgentList()
           }, 3000)
         }
@@ -76,7 +76,10 @@ const CreateModal = (props: ModalType) => {
 
     return (
       <StepsForm
-        onFinish={props.onFinish}
+        onFinish={(values) => {
+          clearInterval(timer.current)
+          return props.onFinish(values)
+        }}
         stepsFormRender={(dom, submitter) => {
           return (
             <Modal
