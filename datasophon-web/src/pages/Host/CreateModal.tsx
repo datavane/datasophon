@@ -3,7 +3,7 @@ import { Alert, Modal, ModalProps, message } from "antd";
 import { useTranslation } from "react-i18next";
 import { APIS } from "../../services/cluster";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import CreateCheckList from "./CreateCheckList";
 import CreateAgentList from "./CreateAgentList";
 interface ModalType extends ModalProps {
@@ -27,6 +27,7 @@ const CreateModal = (props: ModalType) => {
     const { clusterId } = useParams()
     const [analysisList, setAnalysisList] = useState<Array<AnalysisType>>([])
     const [agentList, setAgentList] = useState<Array<any>>([])
+    const refTimer: any = useRef()
     let timer: number | undefined = undefined
     const analysisHostList = async (values: any) => {
       const { code, data, msg } = await APIS.ClusterApi.analysisHostList({
@@ -38,8 +39,8 @@ const CreateModal = (props: ModalType) => {
       if (code === 200) {
         // 返回主机列表之后需要轮询来查询主机状态
         setAnalysisList(data)
-        if (!timer) {
-          timer = setInterval(()=> {
+        if (!refTimer.current) {
+          refTimer.current = setInterval(()=> {
             analysisHostList(values)
           }, 3000)
         }
@@ -120,7 +121,7 @@ const CreateModal = (props: ModalType) => {
             name="check"
             title="主机环境校验"
             onFinish={() => {
-              clearInterval(timer)
+              clearInterval(refTimer.current)
               return dispatcherHostAgentList();
           }}
         >
