@@ -1,4 +1,5 @@
-import { App, Layout, Menu } from 'antd'
+import { useLocalStorageState } from 'ahooks';
+import { App, Avatar, Flex, Layout, Menu } from 'antd'
 import type { MenuProps } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Outlet } from 'react-router-dom'
@@ -7,8 +8,7 @@ const { Header, Content } = Layout
 const BaseLayout = () => {
     const navigate = useNavigate()
     const { t } = useTranslation()
- 
-
+    const [user,] = useLocalStorageState<any>('user')
     const items: MenuProps['items'] = [{
         label: t('cluster.title'),
         key: 'cluster'
@@ -29,7 +29,17 @@ const BaseLayout = () => {
                 width: '100%',
             }}
         >
-            <Menu mode="horizontal" theme="dark" onClick={handleOnClick} items={items} defaultSelectedKeys={['cluster']}/>
+            <Flex justify='space-between'>
+                <div>
+                    <Menu mode="horizontal" theme="dark" onClick={handleOnClick} items={items} defaultSelectedKeys={['cluster']}/>
+                </div>
+                <div>
+                    <Avatar
+                        style={{ backgroundColor: '#1677ff'}}
+                        size="large"
+                        >{user.username}</Avatar>
+                </div>
+            </Flex>
         </Header>
         {/* content */}
         <Content>
