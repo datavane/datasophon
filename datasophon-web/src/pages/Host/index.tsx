@@ -1,13 +1,12 @@
 import { ProTable, ProColumns, PageContainer } from '@ant-design/pro-components'
 import { useParams } from 'react-router-dom';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Form, Modal, Progress, Space, message } from 'antd';
-import useUrlState from '@ahooksjs/use-url-state';
+import { Key, useRef, useState } from 'react';
+import { Button, Modal, Progress, Space, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import CreateModal from './CreateModal';
 import { PlusOutlined } from '@ant-design/icons';
 import { APIS } from '../../services/cluster';
-import request, { AjaxPromise } from '../../services/request';
+import request from '../../services/request';
 import RoleModal from './RoleModal';
 import AssignModal from './AssignModal';
 import AssignFrameModal from './AssignFrameModal';
@@ -29,11 +28,6 @@ type ColumnType = {
     serviceRoleNum: number;
 }
 
-enum ModalType {
-    Add = 'add',
-    Edit = 'edit' 
-}
-
 type actionType = {
   key: string;
   name: string;
@@ -46,20 +40,15 @@ type actionType = {
 const Host = () => {
     const { clusterId } = useParams()
     const { t } = useTranslation()
-    const [urlState, setUrlState] = useUrlState()
     const [modalOpen, setModalOpen] = useState(false);
     const [roleModalOpen, setRoleModalOpen] = useState(false);
     const [assignModalOpen, setAssignModalOpen] = useState(false);
     const [assignFrameModalOpen, setAssignFrameModalOpen] = useState(false);
-    const [ form ] = Form.useForm<ColumnType>();
-    const [alarmGroup, setAlarmGroup] = useState<[]>([])
     const [assignOption, setAssignOption] = useState<[]>([])
-    const [serviceRoleName, setServiceRoleName] = useState<[]>([])
-    const [ alarmModalType, setAlarmModalType] = useState('add')
     const [ currentRow, setCurrentRow ] = useState<any>()
     const actionRef = useRef<any>();
     const [modal,contextHolder] = Modal.useModal()
-    let currentSelectedRowKeys: (string | number)[] = [];
+    let currentSelectedRowKeys: (number | string | Key)[] = [];
     const columns: ProColumns<ColumnType>[] = [
         { 
             dataIndex: 'index',
@@ -99,7 +88,7 @@ const Host = () => {
             title: '内存使用',
             dataIndex: 'usedMem',
             search: false,
-            render(dom, entity, index, action, schema) {
+            render(dom, entity) {
                 const percent = parseFloat((entity.usedMem  / entity.totalMem).toFixed(2)) * 100
                 const text = `${entity.usedMem}GB/${entity.totalMem}GB`
                 return (
@@ -114,7 +103,7 @@ const Host = () => {
             title: '磁盘使用',
             dataIndex: 'usedDisk',
             search: false,
-            render(dom, entity, index, action, schema) {
+            render(dom, entity) {
                 const percent = parseFloat((entity.usedDisk  / entity.totalDisk).toFixed(2)) * 100
                 const text = `${entity.usedDisk}GB/${entity.totalDisk}GB`
                 return (
@@ -156,7 +145,7 @@ const Host = () => {
             title: '角色',
             dataIndex: 'serviceRoleNum',
             search: false,
-            render(dom, entity, index, action, schema) {
+            render(dom, entity) {
                 return (
                   <Button type="link" onClick={() => {
                     setCurrentRow(entity)
@@ -167,51 +156,9 @@ const Host = () => {
         }
     ]
 
-    const handleOnModalTriggerClick = async (type: ModalType, record?: ColumnType) => {
+    const handleOnModalTriggerClick = async () => {
         setModalOpen(true)
-  
     }
-
-    const getServiceRoleByServiceName = async (clusterId: string | undefined, alertGroupId: string)=> {
-      const options: any = []
-      const { code, data} = await APIS.ClusterApi.getServiceRoleByServiceName({
-        alertGroupId,
-        clusterId
-      })
-      
-      if (code === 200) {
-        data.forEach((element: { id: number; serviceRoleName: string; }) => {
-          options.push({
-              value: element.id,
-              label: element.serviceRoleName
-          })
-        });
-      }
-      return options
-    }
-    const alarmGroupList = useCallback(async () => {
-        const { code, data, msg } = await APIS.ClusterApi.alarmGroupList({
-            pageSize: 1000,
-            page: 1,
-            clusterId
-        })
-        const options: any = []
-        if (code === 200) {
-            data.forEach((element: { id: number; alertGroupName: string; }) => {
-                options.push({
-                    value: element.id,
-                    label: element.alertGroupName
-                })
-            });
-            setAlarmGroup(options)
-        } else {
-            message.error(msg)
-        }
-    }, [clusterId])
-
-    const handleOnFinishClick = async (values: any) => {
-    }
-
     const handleOnActionClick = async (item: actionType) => {
       // 判断多选
       if (currentSelectedRowKeys.length > 0) {
@@ -311,10 +258,6 @@ const Host = () => {
       return finish
     }
 
-    useEffect(()=>{
-        alarmGroupList()
-    }, [alarmGroupList])
-
     return (
     <PageContainer title='主机管理'>
       <ProTable
@@ -343,7 +286,7 @@ const Host = () => {
                 key="button"
                 icon={<PlusOutlined />}
                 onClick={() => {
-                  handleOnModalTriggerClick(ModalType.Add)
+                  handleOnModalTriggerClick()
                 }}
                 type="primary"
               >
