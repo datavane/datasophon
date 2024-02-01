@@ -44,7 +44,7 @@ const BaseLayout = () => {
             }}
         >
             <Flex justify='space-between'>
-                <div>
+                <div style={{ width: '300px'}}>
                     <Menu mode="horizontal" theme="dark" onClick={handleOnClick} items={items} defaultSelectedKeys={['cluster']}/>
                 </div>
                 <div>
