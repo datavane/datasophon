@@ -12,7 +12,7 @@ const BaseLayout = () => {
     const [, setSessionId] = useCookieState('sessionId')
     const items: MenuProps['items'] = [{
         label: t('cluster.title'),
-        key: 'cluster'
+        key: ''
     }, {
         label: t('user.title'),
         key: 'user'
@@ -45,7 +45,7 @@ const BaseLayout = () => {
         >
             <Flex justify='space-between'>
                 <div style={{ width: '300px'}}>
-                    <Menu mode="horizontal" theme="dark" onClick={handleOnClick} items={items} defaultSelectedKeys={['cluster']}/>
+                    <Menu mode="horizontal" theme="dark" onClick={handleOnClick} items={items} defaultSelectedKeys={['']}/>
                 </div>
                 <div>
                     <Dropdown menu={{ items: dropMenuItems, onClick: handleOnDropMenuClick }} placement="bottomRight">

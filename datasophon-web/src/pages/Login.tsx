@@ -19,7 +19,7 @@ const LoginForm = () => {
         const { code, msg, data, userInfo } = await APIS.LoginApi.login(formData)
         if (code === 200) {
             // 登录成功跳转到主页
-            navigate('/cluster')
+            navigate('/')
             // cookie 存储用户信息, expires 逻辑复用原有逻辑，不做变更，24 小时过期
             setSessionId(data.sessionId, { expires: (() => new Date(+new Date() + 1000 * 60 * 60 * 24))(), })
             // local 存储当前登录用户信息

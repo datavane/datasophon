@@ -9,7 +9,7 @@ const NotFound: React.FC = () => {
             title="404"
             subTitle="抱歉，访问的页面不存在！"
             extra={
-                <Button type="primary" onClick={() => navigate('/cluster')}>
+                <Button type="primary" onClick={() => navigate('/')}>
                     返回首页
                 </Button>
               }

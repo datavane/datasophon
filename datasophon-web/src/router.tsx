@@ -19,7 +19,7 @@ const router = createBrowserRouter([
         element: <BaseLayout/>,
         children: [
             {
-                path: '/cluster',
+                path: '/',
                 element: <ClusterList />,
             },
             {
