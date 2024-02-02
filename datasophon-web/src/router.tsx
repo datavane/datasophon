@@ -10,6 +10,8 @@ import Cluster from './pages/Cluster'
 import Alarm from './pages/Alarm'
 import System from './pages/System'
 import Host from './pages/Host'
+import NotFound from './pages/404'
+
 
 const router = createBrowserRouter([
     {
@@ -52,6 +54,10 @@ const router = createBrowserRouter([
                 path: '/user',
                 element: <UserList />,
             },
+            {
+                path: "*",
+                element: <NotFound />
+            }
         ]
     },
     {
