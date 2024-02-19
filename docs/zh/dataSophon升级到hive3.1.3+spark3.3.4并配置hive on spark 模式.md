@@ -36,6 +36,13 @@ cp ./spark-3.3.4.tar.gz.md5 /opt/datasophon/DDP/packages/
 
 ### 在datasophon中删除已经安装的hive服务和spark服务
 
+### 修改环境变量
+```shell
+vim /etc/profile.d/datasophon-env.sh
+export SPARK_HOME=/opt/datasophon/spark-3.3.4
+export HIVE_HOME=/opt/datasophon/hive-3.1.3
+```
+
 ### 各节点worker重启
 ```shell
 sh /opt/datasophon/datasophon-worker/bin/datasophon-worker.sh restart worker
