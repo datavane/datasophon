@@ -109,6 +109,7 @@ public class WorkerApplicationServer {
         userMap.put("mapred", HADOOP);
         userMap.put("hbase", HADOOP);
         userMap.put("kyuubi",HADOOP);
+        userMap.put("flink", HADOOP);
         userMap.put("elastic", "elastic");
     }
 

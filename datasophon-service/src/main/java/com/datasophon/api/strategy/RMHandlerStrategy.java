@@ -37,6 +37,7 @@ import com.datasophon.common.utils.ExecResult;
 import com.datasophon.dao.entity.ClusterInfoEntity;
 import com.datasophon.dao.entity.ClusterServiceRoleInstanceEntity;
 import com.datasophon.dao.entity.ClusterYarnScheduler;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.concurrent.Await;
@@ -121,15 +122,25 @@ public class RMHandlerStrategy extends ServiceHandlerAbstract implements Service
             Map<String, ClusterServiceRoleInstanceEntity> map) {
 
         Map<String, String> globalVariable = GlobalVariables.get(roleInstanceEntity.getClusterId());
-        String rm2 = globalVariable.get("${rm2}");
-        String commandLine =
-                globalVariable.get("${HADOOP_HOME}") + "/bin/yarn rmadmin -getServiceState rm1";
-
-        if (rm2.equals(roleInstanceEntity.getHostname())) {
-            commandLine =
-                    globalVariable.get("${HADOOP_HOME}") + "/bin/yarn rmadmin -getServiceState rm2";
-        }
+        String commandLine = getRMStateCommand(globalVariable,roleInstanceEntity.getHostname());
         getRMState(roleInstanceEntity, commandLine);
+    }
+
+    private String getRMStateCommand(Map<String, String> globalVariable,String hostName) {
+
+        String commandLine = null;
+        String yarnAclAdminUser = globalVariable.get("${yarn.admin.acl}");
+        String rm2 = globalVariable.get("${rm2}");
+        String curRm = rm2.equals(hostName) ? "rm2" : "rm1";
+
+        if (StringUtils.isNotEmpty(yarnAclAdminUser)) {
+            commandLine = String.format("sudo -u %s %s/bin/yarn rmadmin -getServiceState %s",
+                    yarnAclAdminUser, globalVariable.get("${HADOOP_HOME}"),curRm);
+        } else {
+            commandLine = String.format("%s/bin/yarn rmadmin -getServiceState %s",
+                     globalVariable.get("${HADOOP_HOME}"),curRm);
+        }
+        return commandLine;
     }
 
     private void getRMState(
