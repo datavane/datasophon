@@ -53,31 +53,7 @@ const Cluster = () => {
                 }}>告警管理</Button>,
                 <Button type="primary" key="3" onClick={() => {
                     navigate(`/cluster/${clusterId}/system`)
-                }}>系统管理</Button>,
-                <Dropdown
-                    key="dropdown"
-                    trigger={['click']}
-                    menu={{
-                    items: [
-                        {
-                        label: '下拉菜单',
-                        key: '1',
-                        },
-                        {
-                        label: '下拉菜单2',
-                        key: '2',
-                        },
-                        {
-                        label: '下拉菜单3',
-                        key: '3',
-                        },
-                    ],
-                    }}
-                >
-                    <Button key="4" style={{ padding: '0 8px' }}>
-                    <EllipsisOutlined />
-                    </Button>
-                </Dropdown>,
+                }}>系统管理</Button>
             ]
         }}
         >
