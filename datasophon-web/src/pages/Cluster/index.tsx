@@ -73,6 +73,34 @@ const Cluster = () => {
                                     key={item.id}
                                     bordered
                                     style={{ width: 220 }}
+                                    extra={
+                                        <Dropdown
+                                            key="dropdown"
+                                            trigger={['click']}
+                                            menu={{
+                                                items: [
+                                                    {
+                                                        label: '启动',
+                                                        key: '1',
+                                                    },
+                                                    {
+                                                        label: '停止',
+                                                        key: '2',
+                                                    },
+                                                    {
+                                                        label: '重启',
+                                                        key: '3',
+                                                    },
+                                                    {
+                                                        label: '删除',
+                                                        key: '4',
+                                                    },
+                                                ],
+                                            }}
+                                        >
+                                            <EllipsisOutlined />
+                                        </Dropdown>
+                                    }
                                     onClick={() => {
                                     handleOnServiceClick(item.id, item.serviceName)
                                 }}>
