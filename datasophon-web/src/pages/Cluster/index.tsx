@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { Button, Space, Dropdown, App, Row, Col } from 'antd'
+import { Button, Space, Dropdown, App, Row, Col, Badge } from 'antd'
 import { PageContainer, ProCard } from '@ant-design/pro-components'
 import { EllipsisOutlined } from '@ant-design/icons'
 import useSearchParams from '../../hooks/useSearchParams'
@@ -35,6 +35,13 @@ const Cluster = () => {
         }
     }, [message])
 
+    const serviceStatusMap: any = {
+        1: 'default',
+        2: 'success',
+        3: 'warning',
+        4: 'error'
+    }
+
     useEffect(()=> {
         if (clusterId) {
             clusterServiceList(clusterId)
@@ -69,7 +76,7 @@ const Cluster = () => {
                                     onClick={() => {
                                     handleOnServiceClick(item.id, item.serviceName)
                                 }}>
-                                    <div>{item.serviceName}</div>
+                                    <div><Badge status={serviceStatusMap[item.serviceStateCode]}></Badge> {item.serviceName}</div>
                                 </ProCard>
                             </Col>
                             
