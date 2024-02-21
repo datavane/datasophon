@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import { Button, Space, Dropdown, App } from 'antd'
+import { Button, Space, Dropdown, App, Row, Col } from 'antd'
 import { PageContainer, ProCard } from '@ant-design/pro-components'
 import { EllipsisOutlined } from '@ant-design/icons'
 import useSearchParams from '../../hooks/useSearchParams'
@@ -57,21 +57,28 @@ const Cluster = () => {
             ]
         }}
         >
-            <Space>
+            <Row gutter={[16, 16]} justify={'center'}>
                 {
                     clusterList?.map((item) => {
                         return (
-                            <ProCard 
-                                key={item.id}
-                                bordered
-                                onClick={() => {
-                                handleOnServiceClick(item.id, item.serviceName)
-                            }}>
-                                <div>{item.serviceName}</div>
-                            </ProCard>
+                            <Col>
+                                <ProCard 
+                                    key={item.id}
+                                    bordered
+                                    style={{ width: 220 }}
+                                    onClick={() => {
+                                    handleOnServiceClick(item.id, item.serviceName)
+                                }}>
+                                    <div>{item.serviceName}</div>
+                                </ProCard>
+                            </Col>
+                            
                         )
                     })
                 }
+            </Row>
+            <Space>
+                
             </Space>
         </PageContainer>)
 }
