@@ -85,7 +85,7 @@ CREATE TABLE `t_ddh_cluster_alert_history`  (
 
 CREATE TABLE `t_ddh_cluster_alert_quota`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `alert_quota_name` varchar(32)  DEFAULT NULL COMMENT '告警指标名称',
+  `alert_quota_name` varchar(255)  DEFAULT NULL COMMENT '告警指标名称',
   `service_category` varchar(32)  DEFAULT NULL COMMENT '服务分类',
   `alert_expr` varchar(1024)  DEFAULT NULL COMMENT '告警指标表达式',
   `alert_level` int(11) DEFAULT NULL COMMENT '告警级别 1:警告2：异常',
